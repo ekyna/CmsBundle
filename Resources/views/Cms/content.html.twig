@@ -1,0 +1,25 @@
+{% block cms_content %}
+{% spaceless %}
+{% set blockWidths = 0 %}
+{% for block in content.blocks %}
+    {% if blockWidths % 12 == 0 %}<div class="row">{% endif %}
+    <div class="col-sm-{{ block.width }}">
+	    {{ cms_block(block) }}
+	</div>
+	{% set blockWidths = blockWidths + block.width %}
+	{% if blockWidths % 12 == 0 %}</div>{% endif %}
+{% endfor %}
+{% endspaceless %}
+{% endblock cms_content %}
+
+{% block cms_block_text %}
+    <h1>{{ block.text|raw }}</h1>
+{% endblock %}
+
+{% block cms_block_tinymce %}
+    {{ block.html|raw }}
+{% endblock %}
+
+{% block cms_block_image %}
+    <img alt="{{ block.alt }}" class="img-responsive" src="{{ block.path|imagine_filter('admin_modal') }}" />
+{% endblock %}

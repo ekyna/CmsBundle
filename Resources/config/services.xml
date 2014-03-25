@@ -1,0 +1,161 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="ekyna_seo.class">Ekyna\Bundle\CmsBundle\Entity\Seo</parameter>
+        <parameter key="ekyna_seo.form.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
+        <parameter key="ekyna_page.class">Ekyna\Bundle\CmsBundle\Entity\Page</parameter>
+        <parameter key="ekyna_page.form.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>
+        <parameter key="ekyna_image_block.listener.class">Ekyna\Bundle\CmsBundle\Listener\ImageBlockListener</parameter>
+        <parameter key="ekyna_page.listener.class">Ekyna\Bundle\CmsBundle\Listener\PageListener</parameter>
+        <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>
+
+        <parameter key="ekyna_text_block.class">Ekyna\Bundle\CmsBundle\Entity\TextBlock</parameter>
+
+        <parameter key="ekyna_content.form.class">Ekyna\Bundle\CmsBundle\Form\Type\ContentType</parameter>
+        <parameter key="ekyna_block_collection.form.class">Ekyna\Bundle\CmsBundle\Form\Type\BlockCollectionType</parameter>
+        <parameter key="ekyna_text_block.form.class">Ekyna\Bundle\CmsBundle\Form\Type\Block\TextBlockType</parameter>
+        <parameter key="ekyna_tinymce_block.class">Ekyna\Bundle\CmsBundle\Entity\TinymceBlock</parameter>
+        <parameter key="ekyna_tinymce_block.form.class">Ekyna\Bundle\CmsBundle\Form\Type\Block\TinymceBlockType</parameter>
+        <parameter key="ekyna_image_block.class">Ekyna\Bundle\CmsBundle\Entity\ImageBlock</parameter>
+        <parameter key="ekyna_image_block.form.class">Ekyna\Bundle\CmsBundle\Form\Type\Block\ImageBlockType</parameter>
+
+        <parameter key="ekyna_cms.layout_factory.class">Ekyna\Bundle\CmsBundle\Layout\LayoutFactory</parameter>
+        <parameter key="ekyna_cms.layout_registry.class">Ekyna\Bundle\CmsBundle\Layout\LayoutRegistry</parameter>
+
+        <parameter key="ekyna_cms.route_provider.class">Ekyna\Bundle\CmsBundle\Routing\RouteProvider</parameter>
+        <parameter key="ekyna_cms.nested_matcher.class">Ekyna\Bundle\CmsBundle\Routing\NestedMatcher</parameter>
+        <parameter key="ekyna_cms.final_matcher.class">Ekyna\Bundle\CmsBundle\Routing\FinalMatcher</parameter>
+        <parameter key="ekyna_cms.url_generator.class">Ekyna\Bundle\CmsBundle\Routing\UrlGenerator</parameter>
+
+        <parameter key="ekyna_cms.twig.cms_extension.class">Ekyna\Bundle\CmsBundle\Twig\CmsExtension</parameter>
+        <parameter key="ekyna_cms.menu_builder.class">Ekyna\Bundle\CmsBundle\Menu\MenuBuilder</parameter>
+    </parameters>
+
+    <services>
+        <!-- Form Types -->
+        <service id="ekyna_page.form" class="%ekyna_page.form.class%">
+            <argument>%ekyna_page.class%</argument>
+            <argument>%ekyna_cms.content_enabled%</argument>
+            <tag name="form.type" alias="ekyna_page" />
+        </service>
+        <service id="ekyna_seo.form" class="%ekyna_seo.form.class%">
+            <argument>%ekyna_seo.class%</argument>
+            <tag name="form.type" alias="ekyna_seo" />
+        </service>
+        <service id="ekyna_content.form" class="%ekyna_content.form.class%">
+            <tag name="form.type" alias="ekyna_content" />
+        </service>
+
+        <!-- Blocks Form Types -->
+        <service id="ekyna_block_collection.form" class="%ekyna_block_collection.form.class%">
+            <tag name="form.type" alias="ekyna_block_collection" />
+        </service>
+        <service id="ekyna_text_block.form" class="%ekyna_text_block.form.class%">
+            <argument>%ekyna_text_block.class%</argument>
+            <tag name="form.type" alias="ekyna_text_block" />
+        </service>
+        <service id="ekyna_tinymce_block.form" class="%ekyna_tinymce_block.form.class%">
+            <argument>%ekyna_tinymce_block.class%</argument>
+            <tag name="form.type" alias="ekyna_tinymce_block" />
+        </service>
+        <service id="ekyna_image_block.form" class="%ekyna_image_block.form.class%">
+            <argument>%ekyna_image_block.class%</argument>
+            <tag name="form.type" alias="ekyna_image_block" />
+        </service>
+
+        <!-- Entity listeners -->
+        <service id="ekyna_image_block.listener" class="%ekyna_image_block.listener.class%">
+            <argument type="service" id="ekyna_core.image_uploader" />
+            <tag name="doctrine.entity_listener" />
+        </service>
+        <service id="ekyna_page.listener" class="%ekyna_page.listener.class%">
+            <argument>%ekyna_cms.default_controller%</argument>
+            <tag name="doctrine.entity_listener" />
+        </service>
+
+        <!-- Doctrine subscriber -->
+        <service id="ekyna_cms.content_subscriber" class="%ekyna_cms.content_subscriber.class%">
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+
+        <!-- Layouts -->
+        <service id="ekyna_cms.layout_factory" class="%ekyna_cms.layout_factory.class%" />
+        <service id="ekyna_cms.layout_registry" class="%ekyna_cms.layout_registry.class%">
+            <!-- Services with "ekyna_cms.layout" tag -->
+            <argument type="collection" />
+        </service>
+
+        <!-- Route provider -->
+        <service id="ekyna_cms.route_provider" class="%ekyna_cms.route_provider.class%">
+            <argument type="service" id="ekyna_page.repository" />
+        </service>
+
+        <!-- Dynamic router -->
+        <service id="ekyna_cms.router" class="Ekyna\Bundle\CmsBundle\Routing\Router">
+            <argument type="service" id="router.request_context" />
+            <argument type="service" id="ekyna_cms.nested_matcher" />
+            <argument type="service" id="ekyna_cms.url_generator" />
+            <argument>null</argument>
+            <argument type="service" id="event_dispatcher" on-invalid="ignore"/>
+            <tag name="router"></tag>
+        </service>
+
+        <!-- Nested Matcher -->
+        <service id="ekyna_cms.nested_matcher" class="%ekyna_cms.nested_matcher.class%">
+            <argument type="service" id="ekyna_cms.route_provider" />
+            <argument type="service" id="ekyna_cms.final_matcher"/>
+        </service>
+
+        <!-- Final Matcher -->
+        <service id="ekyna_cms.final_matcher" class="%ekyna_cms.final_matcher.class%">
+            <argument type="service" id="ekyna_cms.matcher.dummy_collection" />
+            <argument type="service" id="ekyna_cms.matcher.dummy_context" />
+        </service>
+        <service id="ekyna_cms.matcher.dummy_collection" class="Symfony\Component\Routing\RouteCollection" public="false"/>
+        <service id="ekyna_cms.matcher.dummy_context" class="Symfony\Component\Routing\RequestContext" public="false"/>
+
+        <!-- Url Generator -->
+        <service id="ekyna_cms.url_generator" class="%ekyna_cms.url_generator.class%">
+            <argument type="service" id="ekyna_cms.route_provider" />
+            <argument type="service" id="logger" on-invalid="ignore" />
+        </service>
+
+        <!-- TwigExtension -->
+        <service id="ekyna_cms.twig.cms_extension" class="%ekyna_cms.twig.cms_extension.class%">
+            <argument type="service" id="ekyna_page.repository" />
+            <argument type="service" id="request_stack" />
+            <argument type="service" id="twig" />
+            <argument>%ekyna_cms.default_template%</argument>
+            <argument>%ekyna_cms.content_enabled%</argument>
+            <tag name="twig.extension" />
+        </service>
+
+        <!-- Menus -->
+        <service id="ekyna_cms.menu_builder" class="%ekyna_cms.menu_builder.class%">
+	        <argument type="service" id="knp_menu.factory" />
+	        <argument type="service" id="ekyna_page.repository" />
+	        <argument type="service" id="security.context" />
+	    </service>
+	    <service id="ekyna_cms.menu.main"
+	        class="Knp\Menu\MenuItem"
+	        factory-service="ekyna_cms.menu_builder"
+	        factory-method="createMainMenu"
+	        scope="request">
+	        <argument type="service" id="request" />
+	        <tag name="knp_menu.menu" alias="main" />
+	    </service>
+	    <service id="ekyna_cms.menu.user"
+	        class="Knp\Menu\MenuItem"
+	        factory-service="ekyna_cms.menu_builder"
+	        factory-method="createUserMenu"
+	        scope="request">
+	        <argument type="service" id="request" />
+	        <tag name="knp_menu.menu" alias="user" />
+	    </service>
+    </services>
+
+</container>

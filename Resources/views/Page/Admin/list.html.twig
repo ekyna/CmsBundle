@@ -1,0 +1,13 @@
+{% extends "EkynaAdminBundle:Entity:layout.html.twig" %}
+
+{% block title %}
+<h1>{{ 'ekyna.page.header.list'|trans|raw }}</h1>
+{% endblock %}
+
+{% block actions %}
+{{ ui_link(path('ekyna_page_admin_new'), 'ekyna.page.button.new', 'primary', 'sm', 'plus') }}
+{% endblock %}
+
+{% block main %}
+{{ ekyna_table_render(pages, {'class': 'table-nested'}) }}
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "EkynaAdminBundle:Entity:sided.html.twig" %}
+
+{% block title %}
+<h1>{{ 'ekyna.page.header.show'|trans({'%name%': page.name})|raw }}</h1>
+{% endblock %}
+
+{% block actions %}
+{{ ui_link(path('ekyna_page_admin_list'), 'ekyna.admin.button.back_to_list', 'default', 'sm', 'list') }}
+{{ ui_link(path('ekyna_page_admin_new'), 'ekyna.page.button.new', 'primary', 'sm', 'plus') }}
+{% endblock %}
+
+{% block main %}
+<div class="actions">
+    {% if cms_content_enabled %}
+    {{ ui_link(path('ekyna_page_admin_content', {'pageId': page.id}), 'ekyna.admin.button.content', 'default', 'sm', 'th-large') }}
+    {% endif %}
+    {{ ui_link(path('ekyna_page_admin_edit', {'pageId': page.id}), 'ekyna.admin.button.edit', 'warning', 'sm', 'pencil') }}
+    {{ ui_link(path('ekyna_page_admin_remove', {'pageId': page.id}), 'ekyna.admin.button.remove', 'danger', 'sm', 'trash') }}
+</div>
+<div class="show show-with-tabs">
+    <ul class="nav nav-tabs">
+	    <li class="active"><a href="#general" data-toggle="tab">Général</a></li>
+	    <li><a href="#seo" data-toggle="tab">Référencement</a></li>
+	</ul>
+	<div class="show-body">
+	    <div class="tab-content">
+		    <div class="tab-pane active" id="general">
+				<dl class="dl-horizontal">
+					<dt>Nom</dt><dd>{{ page.name }}</dd>
+					{% if page.html|length > 0 %}
+					<dt>Contenu</dt><dd class="block">{{ page.html|raw }}</dd>
+					{% endif %}
+				</dl>
+		    </div>
+		    <div class="tab-pane" id="seo">
+				<dl class="dl-horizontal">
+					<dt>Titre</dt><dd>{{ page.seo.title }}</dd>
+					<dt>Description</dt><dd class="block">{{ page.seo.description }}</dd>
+					<dt>Url</dt><dd>{{ page.path }}</dd>
+					<dt>Fréqu. de modif.</dt><dd>{{ page.seo.changefreq }}</dd>
+					<dt>Priorité</dt><dd>{{ page.seo.priority }}</dd>
+				</dl>
+		    </div>
+	    </div>
+	</div>
+</div>
+{% endblock %}
+
+{% block side %}
+{% endblock %}

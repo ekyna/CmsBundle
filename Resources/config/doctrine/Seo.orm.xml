@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping 
+    xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                        http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="Ekyna\Bundle\CmsBundle\Entity\Seo" table="cms_seo">
+	    <id name="id" type="integer" column="id">
+	        <generator strategy="AUTO" />
+	    </id>
+
+        <one-to-one field="page" target-entity="Ekyna\Bundle\CmsBundle\Entity\Page" mapped-by="seo">
+            <cascade>
+                <cascade-all/>
+            </cascade>
+        </one-to-one>
+
+	    <field name="title" type="string" column="name" length="255" />
+	    <field name="description" type="string" column="description" length="255" />
+
+	    <field name="changefreq" type="text" column="changefreq" length="8" />
+	    <field name="priority" type="decimal" precision="2" scale="1" />
+    </entity>
+
+</doctrine-mapping>

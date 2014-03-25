@@ -1,0 +1,21 @@
+ekyna:
+    page:
+        label:
+            singular: Page
+            plural: Pages
+        header:
+            list: Pages <small>Liste des pages</small>
+            show: Detail de la page <small>%name%</small>
+            content: Contenu de la page <small>%name%</small>
+            new: Créer une nouvelle page
+            new_child: Créer une nouvelle page sous <small>%name%</small>
+            edit: Modifier la page <small>%name%</small>
+            content_edit: Modifier le contenu de la page <small>%name%</small>
+            remove: Supprimer la page <small>%name%</small>
+        button:
+            list: Liste des pages
+            show: Detail de la page
+            new: Nouvelle page
+            edit: Modifier la page
+        alert:
+            no_user: Aucune page configuré

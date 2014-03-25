@@ -1,0 +1,23 @@
+{% extends "EkynaAdminBundle:Entity:content.html.twig" %}
+
+{% block title %}
+<h1>{{ 'ekyna.page.header.content'|trans({'%name%': page.name})|raw }}</h1>
+{% endblock %}
+
+{% block actions %}
+{{ ui_link(path('ekyna_page_admin_list'), 'ekyna.admin.button.back_to_list', 'default', 'sm', 'list') }}
+{{ ui_link(path('ekyna_page_admin_new'), 'ekyna.page.button.new', 'primary', 'sm', 'plus') }}
+{% endblock %}
+
+{% block main %}
+<div class="actions">
+    {{ ui_link(path('ekyna_page_admin_content_edit', {'pageId': page.id}), 'ekyna.admin.button.edit', 'warning', 'sm', 'pencil') }}
+    {{ ui_link(path('ekyna_page_admin_show', {'pageId': page.id}), 'ekyna.admin.button.back_to_show', 'default', 'sm', 'eye-open') }}
+</div>
+<div class="show">
+    {{ cms_content(page.content) }}
+</div>
+{% endblock %}
+
+{% block side %}
+{% endblock %}

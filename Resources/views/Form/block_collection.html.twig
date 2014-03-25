@@ -1,0 +1,59 @@
+{# see bootstrap_collection_widget #}
+
+{% block ekyna_block_collection_widget %}
+{% spaceless %}
+    {#% if prototype is defined %}
+        {% set prototype_vars = {} %}
+        {% if style is defined %}
+            {% set prototype_vars = prototype_vars|merge({'style': style}) %}
+        {% endif %}
+        {% set prototype_html = '<div class="col-xs-' ~ form.vars.sub_widget_col ~ '">' ~ form_widget(prototype, prototype_vars) ~ '</div>' %}
+        {% if form.vars.allow_delete %}
+            {% set prototype_html = prototype_html ~ '<div class="col-xs-' ~ form.vars.button_col ~ '"><a href="#" class="btn btn-danger btn-small" data-removefield="collection" data-field="__id__">' ~ form.vars.delete_button_text|trans({}, translation_domain) ~ '</a></div>' %}
+        {% endif %}
+        {% set prototype_html = '<div class="row">' ~ prototype_html ~ '</div>' %}
+
+        {% set attr = attr|merge({'data-prototype': prototype_html }) %}
+        {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
+    {% endif %#}
+    {% set attr = attr|merge({'class': 'col-md-10 cms-content-container'}) %}
+    <div class="row cms-content-editor">
+	    <div {{ block('widget_container_attributes') }}>
+	        <div class="row cms-content-row cms-content-row-new"></div>
+	        {% set col_widths = 0 %}
+	        {% for field in form %}
+	        {% if col_widths % 12 == 0 %}<div class="row cms-content-row">{% endif %}
+	            <div class="col-sm-{{ field.vars.col_width }} cms-content-column">
+	                <div class="cms-content-widget">
+		                {{ form_widget(field) }}
+		                {{ form_errors(field) }}
+	                </div>
+	            </div>
+	            {#% if form.vars.allow_delete %}
+	            <div class="col-xs-{{ form.vars.button_col }}">
+	                <a href="#" class="btn btn-danger btn-small" data-removefield="collection" data-field="{{ field.vars.id }}">{{ form.vars.delete_button_text|trans({}, translation_domain) }}</a>
+	            </div>
+	            {% endif %#}
+	        {% set col_widths = col_widths + field.vars.col_width %}
+	        {% if col_widths % 12 == 0 %}</div><div class="row cms-content-row cms-content-row-new"></div>{% endif %}
+	        {% endfor %}
+	        {#% if form.vars.allow_add %}
+	            <a href="#" class="btn btn-primary btn-small" data-addfield="collection" data-collection="{{ form.vars.id }}" data-prototype-name="{{ prototype_name }}">{{ form.vars.add_button_text|trans({}, translation_domain) }}</a>
+	        {% endif %#}
+	        {#<div class="row">
+	            <div class="col-sm-12 cms-content-new-row">
+	                <span class="glyphicon glyphicon-plus"></span>
+	            </div>
+	        </div>#}
+	    </div>
+	    <div class="col-md-2">
+	        <div class="cms-content-widget-factory">
+	            <p>Widgets ...</p>
+	        </div>
+	        <div class="cms-content-widget-trash">
+	            
+	        </div>
+	    </div>
+    </div>
+{% endspaceless %}
+{% endblock ekyna_block_collection_widget %}

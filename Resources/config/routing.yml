@@ -1,0 +1,7 @@
+ekyna_page_admin:
+    resource: "routing/admin/page.yml"
+    prefix:   /admin/pages
+
+ekyna_cms_test:
+    path: /cms/test
+    defaults: { _controller: "EkynaCmsBundle:Cms:test" }
