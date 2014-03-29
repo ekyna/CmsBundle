@@ -189,7 +189,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
                 ->setSeo($seo)
                 ->setRoute($definition->getRouteName())
                 ->setPath($definition->getPath())
-                ->setContent(sprintf('<p>Page en cours de rédaction.</p>', $definition->getPageName()))
+                ->setHtml(sprintf('<p>Page en cours de rédaction.</p>', $definition->getPageName()))
                 ->setStatic(true)
                 ->setLocked($definition->getLocked())
                 ->setMenu($definition->getMenu())

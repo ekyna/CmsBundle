@@ -3,7 +3,7 @@
 	$.fn.contentEditor = function(params) {
 
 		params = $.extend({
-			columnMinWidth: 2,
+			columnMinWidth: 2
         }, params);
 
 		this.each(function() {
@@ -76,7 +76,7 @@
                         	editor.setColumnWidth($prevColumn, newPrevWidth);
                         }
                         ui.element.css({width: false, height: false});
-                    },
+                    }
                 });
                 if ($column.is(':first-child')) {
                 	$column.resizable( "disable" );
@@ -157,14 +157,14 @@
                     	editor.fixColumnsWidth($(this));
                     	editor.fixColumnsResizable($(this));
                     	editor.cleanNewRows();
-                    },
+                    }
                 }).draggable({
                     connectToSortable: '.cms-content-widget-trash',
                     helper: "clone",
                     appendTo: $('body'),
                     cursorAt: { left: 75, top: 20 },
                     snap: true,
-                    revert: false,
+                    revert: false
                 });
             };
 
@@ -179,7 +179,7 @@
 	            	helper: 'clone',
 	            	stop: function(event, ui) {
 	            		editor.cleanNewRows();
-	            	},
+	            	}
 	            });
 
 	            $(editor).find('.cms-content-widget-trash').droppable({
@@ -189,7 +189,7 @@
 	                drop: function(event, ui) {
 	                    ui.draggable.remove();
 	                    editor.cleanNewRows();
-	                },
+	                }
 	            });
 			};
 

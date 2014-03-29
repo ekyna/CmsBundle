@@ -79,6 +79,7 @@
 
         <!-- Doctrine subscriber -->
         <service id="ekyna_cms.content_subscriber" class="%ekyna_cms.content_subscriber.class%">
+            <argument>%ekyna_cms.content_enabled%</argument>
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
 
