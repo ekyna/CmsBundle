@@ -21,7 +21,7 @@ class ContentSubjectSubscriber implements EventSubscriber
     {
         $this->contentEnabled = (bool) $contentEnabled;
     }
-    
+
     /**
      * @param LoadClassMetadataEventArgs $eventArgs
      */
@@ -30,7 +30,7 @@ class ContentSubjectSubscriber implements EventSubscriber
         if(!$this->contentEnabled) {
             return;
         }
-        
+
         $metadata = $eventArgs->getClassMetadata();
 
         if (!in_array(self::SUBJECT_INTERFACE, class_implements($metadata->getName()))) {
