@@ -9,7 +9,6 @@
         <parameter key="ekyna_seo.form.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
         <parameter key="ekyna_page.class">Ekyna\Bundle\CmsBundle\Entity\Page</parameter>
         <parameter key="ekyna_page.form.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>
-        <parameter key="ekyna_image_block.listener.class">Ekyna\Bundle\CmsBundle\Listener\ImageBlockListener</parameter>
         <parameter key="ekyna_page.listener.class">Ekyna\Bundle\CmsBundle\Listener\PageListener</parameter>
         <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>
 
@@ -68,10 +67,6 @@
         </service>
 
         <!-- Entity listeners -->
-        <service id="ekyna_image_block.listener" class="%ekyna_image_block.listener.class%">
-            <argument type="service" id="ekyna_core.image_uploader" />
-            <tag name="doctrine.entity_listener" />
-        </service>
         <service id="ekyna_page.listener" class="%ekyna_page.listener.class%">
             <argument>%ekyna_cms.default_controller%</argument>
             <tag name="doctrine.entity_listener" />

@@ -8,9 +8,6 @@
     <entity name="Ekyna\Bundle\CmsBundle\Entity\ImageBlock" table="cms_block_image">
         <field name="path" type="string" column="path" length="255" />
         <field name="alt" type="string" column="alt" length="255" />
-        <entity-listeners>
-            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\ImageBlockListener" />
-        </entity-listeners>
     </entity>
 
 </doctrine-mapping>
