@@ -6,6 +6,8 @@ use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
  * PageRepository
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class PageRepository extends NestedTreeRepository
 {

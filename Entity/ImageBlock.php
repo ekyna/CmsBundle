@@ -4,9 +4,12 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CoreBundle\Model\ImageInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Gedmo\Sluggable\Util\Urlizer;
 
 /**
  * ImageBlock
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class ImageBlock extends Block implements ImageInterface
 {
@@ -50,9 +53,7 @@ class ImageBlock extends Block implements ImageInterface
     }
 
     /**
-     * Image has file
-     * 
-     * @return boolean
+     * {@inheritdoc}
      */
     public function hasFile()
     {
@@ -60,9 +61,7 @@ class ImageBlock extends Block implements ImageInterface
     }
 
     /**
-     * Get file
-     * 
-     * @return \Symfony\Component\HttpFoundation\File\UploadedFile
+     * {@inheritdoc}
      */
     public function getFile()
     {
@@ -78,14 +77,12 @@ class ImageBlock extends Block implements ImageInterface
     public function setFile(UploadedFile $file)
     {
         $this->file = $file;
-        
+
         return $this;
     }
 
     /**
-     * Image has path
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
     public function hasPath()
     {
@@ -93,9 +90,7 @@ class ImageBlock extends Block implements ImageInterface
     }
 
     /**
-     * Get path
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getPath()
     {
@@ -103,10 +98,7 @@ class ImageBlock extends Block implements ImageInterface
     }
 
     /**
-     * Set path
-     *
-     * @param string $path
-     * @return \Ekyna\Bundle\CmsBundle\Entity\ImageBlock
+     * {@inheritdoc}
      */
     public function setPath($path)
     {
@@ -116,9 +108,7 @@ class ImageBlock extends Block implements ImageInterface
     }
 
     /**
-     * Image should be renamed
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
     public function shouldBeRenamed()
     {
@@ -126,34 +116,40 @@ class ImageBlock extends Block implements ImageInterface
     }
 
     /**
-     * Guess file name
-     *
-     * @return string
+     * {@inheritdoc}
+     */
+    public function guessExtension()
+    {
+        if($this->hasFile()) {
+            return $this->file->guessExtension();
+        }elseif($this->hasPath()) {
+            return pathinfo($this->getPath(), PATHINFO_EXTENSION);
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function guessFilename()
     {
         // Extension
-        $extension = null;
-        if($this->hasFile()) {
-            $extension = $this->file->guessExtension();
-        }elseif($this->hasPath()) {
-            $extension = pathinfo($this->getPath(), PATHINFO_EXTENSION);
-        }
-        
+        $extension = $this->guessExtension();
+
         // Filename
         $filename = null;
         if($this->hasName()) {
-            $filename = pathinfo($this->name, PATHINFO_FILENAME);
+            $filename = Urlizer::transliterate(pathinfo($this->name, PATHINFO_FILENAME)).'.'.$extension;;
         }elseif($this->hasFile()) {
             $filename = pathinfo($this->file->getFilename(), PATHINFO_FILENAME);
         }elseif($this->hasPath()) {
             $filename = pathinfo($this->path, PATHINFO_FILENAME);
         }
-        
+
         if($filename !== null && $extension !== null) {
             return $filename.'.'.$extension;
         }
-        
+
         return null;
     }
 
@@ -185,7 +181,7 @@ class ImageBlock extends Block implements ImageInterface
     public function setName($name)
     {
         $this->name = $name;
-        
+
         return $this;
     }
 
@@ -208,7 +204,7 @@ class ImageBlock extends Block implements ImageInterface
     public function setAlt($alt)
     {
         $this->alt = $alt;
-        
+
         return $this;
     }
 

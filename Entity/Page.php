@@ -8,6 +8,8 @@ use Ekyna\Bundle\CmsBundle\Model\ContentSubjectTrait;
 
 /**
  * Page
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class Page implements ContentSubjectInterface
 {

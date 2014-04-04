@@ -6,6 +6,8 @@ use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 
 /**
  * Block
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 abstract class Block implements BlockInterface
 {

@@ -3,7 +3,9 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 /**
- * TinymceBlock
+ * Ekyna\Bundle\CmsBundle\Entity$TinymceBlock
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class TinymceBlock extends Block
 {

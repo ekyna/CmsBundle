@@ -7,6 +7,8 @@ use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 
 /**
  * Content
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class Content implements ContentInterface
 {

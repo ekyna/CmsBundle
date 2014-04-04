@@ -3,7 +3,9 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 /**
- * Text
+ * Ekyna\Bundle\CmsBundle\Entity$TextBlock
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class TextBlock extends Block
 {

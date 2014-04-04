@@ -7,7 +7,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
- * Seo
+ * Ekyna\Bundle\CmsBundle\Entity$Seo
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class Seo
 {
