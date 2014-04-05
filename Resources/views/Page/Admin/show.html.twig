@@ -41,7 +41,7 @@
 		    <div class="tab-pane" id="seo">
 		        {{ show_row(page.seo.title, 'text', 'Titre') }}
 		        {{ show_row(page.seo.description, 'text', 'Description') }}
-		        {{ show_row(path(page.route), 'url', 'Url') }}
+		        {{ show_row(page.path, 'url', 'Url') }}
 		        <div class="row">
 	                <div class="col-md-6">
 	                    {{ show_row(page.seo.changefreq, 'text', 'Fréqu. de modif.', {'label_nb_col': 4}) }}
