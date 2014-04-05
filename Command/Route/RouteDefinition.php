@@ -78,8 +78,8 @@ class RouteDefinition
         $this->path = $route->getPath();
 
         $this->locked   = isset($options['locked'])   ? (bool) $options['locked']    : true;
-        $this->menu     = isset($options['menu'])     ? (bool) $options['menu']      : true;
-        $this->footer   = isset($options['footer'])   ? (bool) $options['footer']    : true;
+        $this->menu     = isset($options['menu'])     ? (bool) $options['menu']      : false;
+        $this->footer   = isset($options['footer'])   ? (bool) $options['footer']    : false;
         $this->position = isset($options['position']) ? intval($options['position']) : 0;
 
         // TODO: other route attributes (methods, requirements ?)
