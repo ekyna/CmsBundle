@@ -193,6 +193,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
                 ->setStatic(true)
                 ->setLocked($definition->getLocked())
                 ->setMenu($definition->getMenu())
+                ->setFooter($definition->getFooter())
                 ->setParent($parentPage)
             ;
 

@@ -8,7 +8,10 @@
 	    <div class="tab-pane active" id="general">
 	        {{ form_row(form.name) }}
 	        {{ form_row(form.parent) }}
-	        {{ form_row(form.menu) }}
+	        <div class="row">
+	            <div class="col-md-6">{{ form_row(form.menu, {'label_col': 4, 'widget_col': 8}) }}</div>
+	            <div class="col-md-6">{{ form_row(form.footer, {'label_col': 4, 'widget_col': 8}) }}</div>
+	        </div>
 	        {% if form.html is defined %}
 	            {{ form_row(form.html) }}
 	        {% endif %}

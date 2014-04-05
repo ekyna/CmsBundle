@@ -34,6 +34,11 @@ class PageType extends AbstractType
                 'required' => false,
                 'attr' => array('align_with_widget' => true)
             ))
+            ->add('footer', 'checkbox', array(
+                'label' => 'Afficher dans le menu du pied de page',
+                'required' => false,
+                'attr' => array('align_with_widget' => true)
+            ))
         ;
 
         if(!$this->contentEnabled) {

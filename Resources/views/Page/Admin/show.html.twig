@@ -25,21 +25,31 @@
 	<div class="show-body">
 	    <div class="tab-content">
 		    <div class="tab-pane active" id="general">
-				<dl class="dl-horizontal">
-					<dt>Nom</dt><dd>{{ page.name }}</dd>
-					{% if page.html|length > 0 %}
-					<dt>Contenu</dt><dd class="block">{{ page.html|raw }}</dd>
-					{% endif %}
-				</dl>
+		        {{ show_row(page.name, 'text', 'Nom') }}
+		        <div class="row">
+	                <div class="col-md-6">
+	                    {{ show_row(page.menu, 'checkbox', 'Menu principal', {'label_nb_col': 4}) }}
+	                </div>
+	                <div class="col-md-6">
+                        {{ show_row(page.footer, 'checkbox', 'Menu pied de page', {'label_nb_col': 4}) }}
+	                </div>
+	            </div>
+	            {% if page.html|length > 0 %}
+		        {{ show_row(page.html, 'tinymce', 'Contenu') }}
+		        {% endif %}
 		    </div>
 		    <div class="tab-pane" id="seo">
-				<dl class="dl-horizontal">
-					<dt>Titre</dt><dd>{{ page.seo.title }}</dd>
-					<dt>Description</dt><dd class="block">{{ page.seo.description }}</dd>
-					<dt>Url</dt><dd>{{ page.path }}</dd>
-					<dt>Fréqu. de modif.</dt><dd>{{ page.seo.changefreq }}</dd>
-					<dt>Priorité</dt><dd>{{ page.seo.priority }}</dd>
-				</dl>
+		        {{ show_row(page.seo.title, 'text', 'Titre') }}
+		        {{ show_row(page.seo.description, 'text', 'Description') }}
+		        {{ show_row(path(page.route), 'url', 'Url') }}
+		        <div class="row">
+	                <div class="col-md-6">
+	                    {{ show_row(page.seo.changefreq, 'text', 'Fréqu. de modif.', {'label_nb_col': 4}) }}
+	                </div>
+	                <div class="col-md-6">
+                        {{ show_row(page.seo.priority, 'text', 'Priorité', {'label_nb_col': 4}) }}
+	                </div>
+	            </div>
 		    </div>
 	    </div>
 	</div>

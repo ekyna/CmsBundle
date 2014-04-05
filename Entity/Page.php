@@ -66,6 +66,11 @@ class Page implements ContentSubjectInterface
     protected $menu;
 
     /**
+     * @var boolean
+     */
+    protected $footer;
+
+    /**
      * @var \Ekyna\Bundle\CmsBundle\Entity\Seo
      */
     protected $seo;
@@ -352,6 +357,29 @@ class Page implements ContentSubjectInterface
     public function getMenu()
     {
         return $this->menu;
+    }
+
+    /**
+     * Set footer
+     *
+     * @param boolean $footer
+     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     */
+    public function setFooter($footer)
+    {
+        $this->footer = (bool) $footer;
+
+        return $this;
+    }
+
+    /**
+     * Get footer
+     *
+     * @return boolean
+     */
+    public function getFooter()
+    {
+        return $this->footer;
     }
 
     /**

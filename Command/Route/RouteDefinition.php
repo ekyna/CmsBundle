@@ -40,6 +40,11 @@ class RouteDefinition
     protected $menu;
 
     /**
+     * @var boolean
+     */
+    protected $footer;
+
+    /**
      * @var integer
      */
     protected $position = 0;
@@ -74,6 +79,7 @@ class RouteDefinition
 
         $this->locked   = isset($options['locked'])   ? (bool) $options['locked']    : true;
         $this->menu     = isset($options['menu'])     ? (bool) $options['menu']      : true;
+        $this->footer   = isset($options['footer'])   ? (bool) $options['footer']    : true;
         $this->position = isset($options['position']) ? intval($options['position']) : 0;
 
         // TODO: other route attributes (methods, requirements ?)
@@ -166,6 +172,30 @@ class RouteDefinition
     public function setMenu($menu)
     {
         $this->menu = (bool) $menu;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether page should be displayed in the footer menu
+     * 
+     * @return boolean
+     */
+    public function getFooter()
+    {
+        return $this->footer;
+    }
+
+    /**
+     * Sets whether page should be displayed in the footer menu
+     * 
+     * @return boolean
+     * 
+     * @return RouteDefinition
+     */
+    public function setFooter($footer)
+    {
+        $this->footer = (bool) $footer;
 
         return $this;
     }

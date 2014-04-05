@@ -120,7 +120,7 @@
             <argument type="service" id="logger" on-invalid="ignore" />
         </service>
 
-        <!-- TwigExtension -->
+        <!-- Twig extensions -->
         <service id="ekyna_cms.twig.cms_extension" class="%ekyna_cms.twig.cms_extension.class%">
             <argument type="service" id="ekyna_page.repository" />
             <argument type="service" id="request_stack" />
