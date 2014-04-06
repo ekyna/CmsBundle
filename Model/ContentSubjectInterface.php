@@ -11,6 +11,20 @@ use Doctrine\Common\Collections\ArrayCollection;
 interface ContentSubjectInterface
 {
     /**
+     * Returns the html
+     * 
+     * @return string
+     */
+    public function getHtml();
+
+    /**
+     * Returns the current content (last version)
+     * 
+     * @return Content
+     */
+    public function getContent();
+
+    /**
      * Sets the contents
      * 
      * @param ArrayCollection $contents
@@ -41,11 +55,4 @@ interface ContentSubjectInterface
      * Returns all contents
      */
     public function getContents();
-
-    /**
-     * Returns the current content (last version)
-     * 
-     * @return Content
-     */
-    public function getContent();
 }

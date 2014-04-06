@@ -119,7 +119,11 @@ class CmsExtension extends \Twig_Extension
     {
         if (null === $content) {
             if (null !== $page = $this->getCurrentPage()) {
-                $content = $page->getContent();
+                if(null === $content = $page->getContent()) {
+                    if(0 < strlen($html = $page->getHtml())) {
+                        return $html;
+                    }
+                }
             }
         }
 

@@ -11,9 +11,37 @@ use Doctrine\Common\Collections\ArrayCollection;
 trait ContentSubjectTrait
 {
     /**
+     * @var string
+     */
+    protected $html;
+
+    /**
      * @var ArrayCollection
      */
     protected $contents;
+
+    /**
+     * Set html
+     *
+     * @param string $html
+     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     */
+    public function setHtml($html)
+    {
+        $this->html = $html;
+    
+        return $this;
+    }
+
+    /**
+     * Get html
+     *
+     * @return string
+     */
+    public function getHtml()
+    {
+        return $this->html;
+    }
 
     /**
      * Get content
@@ -22,7 +50,7 @@ trait ContentSubjectTrait
      */
     public function getContent()
     {
-        if(0 < $this->contents->count()) {
+        if(null !== $this->contents && 0 < $this->contents->count()) {
             return $this->contents->first();
         }
         return null;
