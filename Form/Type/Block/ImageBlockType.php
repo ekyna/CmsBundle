@@ -19,7 +19,7 @@ class ImageBlockType extends BlockType
      */
     public function getParent()
     {
-        return 'ekyna_image';
+        return 'ekyna_core_image';
     }
 
     /**
@@ -27,6 +27,6 @@ class ImageBlockType extends BlockType
      */
     public function getName()
     {
-        return 'ekyna_image_block';
+        return 'ekyna_cms_image_block';
     }
 }

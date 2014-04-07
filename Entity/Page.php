@@ -362,7 +362,6 @@ class Page implements ContentSubjectInterface
      */
     public function setSeo(Seo $seo)
     {
-        $seo->setPage($this);
         $this->seo = $seo;
 
         return $this;

@@ -26,6 +26,6 @@ class TinymceBlockType extends BlockType
      */
     public function getName()
     {
-        return 'ekyna_tinymce_block';
+        return 'ekyna_cms_tinymce_block';
     }
 }

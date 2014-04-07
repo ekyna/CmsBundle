@@ -25,7 +25,7 @@ class PageType extends AbstractTableType
         $tableBuilder
             ->addColumn('name', 'nested_anchor', array(
                 'label' => 'Nom',
-                'route_name' => 'ekyna_page_admin_show',
+                'route_name' => 'ekyna_cms_page_admin_show',
                 'route_parameters_map' => array(
                     'pageId' => 'id'
                 ),
@@ -41,9 +41,9 @@ class PageType extends AbstractTableType
             ))
             ->addColumn('actions', 'nested_actions', array(
                 'disable_property_path' => 'locked',
-                'new_child_route' => 'ekyna_page_admin_new_child',
-                'move_up_route' => 'ekyna_page_admin_move_up',
-                'move_down_route' => 'ekyna_page_admin_move_down',
+                'new_child_route' => 'ekyna_cms_page_admin_new_child',
+                'move_up_route' => 'ekyna_cms_page_admin_move_up',
+                'move_down_route' => 'ekyna_cms_page_admin_move_down',
                 'routes_parameters_map' => array(
                     'pageId' => 'id'
                 ),
@@ -52,7 +52,7 @@ class PageType extends AbstractTableType
                         'label' => 'Modifier',
                         'icon' => 'pencil',
                         'class' => 'warning',
-                        'route_name' => 'ekyna_page_admin_edit',
+                        'route_name' => 'ekyna_cms_page_admin_edit',
                         'route_parameters_map' => array(
                             'pageId' => 'id'
                         ),
@@ -61,7 +61,7 @@ class PageType extends AbstractTableType
                         'label' => 'Supprimer',
                         'icon' => 'trash',
                         'class' => 'danger',
-                        'route_name' => 'ekyna_page_admin_remove',
+                        'route_name' => 'ekyna_cms_page_admin_remove',
                         'route_parameters_map' => array(
                             'pageId' => 'id'
                         ),
@@ -87,6 +87,6 @@ class PageType extends AbstractTableType
      */
     public function getName()
     {
-        return 'ekyna_page';
+        return 'ekyna_cms_page';
     }
 }

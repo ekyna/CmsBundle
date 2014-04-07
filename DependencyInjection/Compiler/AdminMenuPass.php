@@ -19,7 +19,7 @@ class AdminMenuPass implements CompilerPassInterface
             'content', 'ekyna.content.label', 'file', null, 98
         ));
         $pool->addMethodCall('createEntryReference', array(
-            'content', 'pages', 'ekyna_page_admin_home', 'ekyna.page.label.plural'
+            'content', 'pages', 'ekyna_cms_page_admin_home', 'ekyna.page.label.plural'
         ));
     }
 }

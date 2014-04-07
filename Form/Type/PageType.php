@@ -26,7 +26,7 @@ class PageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('seo', 'ekyna_seo', array(
+            ->add('seo', 'ekyna_cms_seo', array(
                 'label' => false
             ))
             ->add('menu', 'checkbox', array(
@@ -123,6 +123,6 @@ class PageType extends AbstractType
      */
     public function getName()
     {
-    	return 'ekyna_page';
+    	return 'ekyna_cms_page';
     }
 }

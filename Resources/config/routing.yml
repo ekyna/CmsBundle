@@ -1,6 +1,6 @@
-ekyna_page_admin:
+ekyna_cms_page_admin:
     resource: "routing/admin/page.yml"
-    prefix:   /admin/pages
+    prefix:   /admin/cms/pages
 
 ekyna_cms_test:
     path: /cms/test

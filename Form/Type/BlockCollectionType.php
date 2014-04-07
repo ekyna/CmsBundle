@@ -13,6 +13,6 @@ class BlockCollectionType extends AbstractType
     
     public function getName()
     {
-        return 'ekyna_block_collection';
+        return 'ekyna_cms_block_collection';
     }
 }

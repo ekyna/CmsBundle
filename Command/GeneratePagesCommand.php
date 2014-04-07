@@ -60,8 +60,8 @@ class GeneratePagesCommand extends ContainerAwareCommand
 
         $output->writeln('Generating pages based and routing configuration :');
 
-        $this->em = $this->getContainer()->get('ekyna_page.manager');
-        $this->repository = $this->getContainer()->get('ekyna_page.repository');
+        $this->em = $this->getContainer()->get('ekyna_cms.page.manager');
+        $this->repository = $this->getContainer()->get('ekyna_cms.page.repository');
 
         $this->createPage($this->homeDefinition, $output);
 

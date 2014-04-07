@@ -60,6 +60,6 @@ abstract class BlockType extends AbstractType
      */
     public function getName()
     {
-        return 'ekyna_block';
+        return 'ekyna_cms_block';
     }
 }

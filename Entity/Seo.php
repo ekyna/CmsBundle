@@ -19,11 +19,6 @@ class Seo
     protected $id;
 
     /**
-     * @var \Ekyna\Bundle\CmsBundle\Entity\Page
-     */
-    protected $page;
-
-    /**
      * @var string
      */
     protected $title;
@@ -61,29 +56,6 @@ class Seo
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set page
-     *
-     * @param \Ekyna\Bundle\CmsBundle\Entity\Page $page
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Route
-     */
-    public function setPage(Page $page)
-    {
-        $this->page = $page;
-    
-        return $this;
-    }
-
-    /**
-     * Get page
-     *
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
-     */
-    public function getPage()
-    {
-        return $this->page;
     }
 
     /**

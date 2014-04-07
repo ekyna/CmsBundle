@@ -5,22 +5,21 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="ekyna_seo.class">Ekyna\Bundle\CmsBundle\Entity\Seo</parameter>
-        <parameter key="ekyna_seo.form.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
-        <parameter key="ekyna_page.class">Ekyna\Bundle\CmsBundle\Entity\Page</parameter>
-        <parameter key="ekyna_page.form.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>
-        <parameter key="ekyna_page.listener.class">Ekyna\Bundle\CmsBundle\Listener\PageListener</parameter>
+        <parameter key="ekyna_cms.seo.class">Ekyna\Bundle\CmsBundle\Entity\Seo</parameter>
+        <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
+        <parameter key="ekyna_cms.page.class">Ekyna\Bundle\CmsBundle\Entity\Page</parameter>
+        <parameter key="ekyna_cms.page.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>
+        <parameter key="ekyna_cms.page.listener.class">Ekyna\Bundle\CmsBundle\Listener\PageListener</parameter>
         <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>
 
-        <parameter key="ekyna_text_block.class">Ekyna\Bundle\CmsBundle\Entity\TextBlock</parameter>
-
-        <parameter key="ekyna_content.form.class">Ekyna\Bundle\CmsBundle\Form\Type\ContentType</parameter>
-        <parameter key="ekyna_block_collection.form.class">Ekyna\Bundle\CmsBundle\Form\Type\BlockCollectionType</parameter>
-        <parameter key="ekyna_text_block.form.class">Ekyna\Bundle\CmsBundle\Form\Type\Block\TextBlockType</parameter>
-        <parameter key="ekyna_tinymce_block.class">Ekyna\Bundle\CmsBundle\Entity\TinymceBlock</parameter>
-        <parameter key="ekyna_tinymce_block.form.class">Ekyna\Bundle\CmsBundle\Form\Type\Block\TinymceBlockType</parameter>
-        <parameter key="ekyna_image_block.class">Ekyna\Bundle\CmsBundle\Entity\ImageBlock</parameter>
-        <parameter key="ekyna_image_block.form.class">Ekyna\Bundle\CmsBundle\Form\Type\Block\ImageBlockType</parameter>
+        <parameter key="ekyna_cms.content.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\ContentType</parameter>
+        <parameter key="ekyna_cms.block_collection.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\BlockCollectionType</parameter>
+        <parameter key="ekyna_cms.text_block.class">Ekyna\Bundle\CmsBundle\Entity\TextBlock</parameter>
+        <parameter key="ekyna_cms.text_block.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\Block\TextBlockType</parameter>
+        <parameter key="ekyna_cms.tinymce_block.class">Ekyna\Bundle\CmsBundle\Entity\TinymceBlock</parameter>
+        <parameter key="ekyna_cms.tinymce_block.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\Block\TinymceBlockType</parameter>
+        <parameter key="ekyna_cms.image_block.class">Ekyna\Bundle\CmsBundle\Entity\ImageBlock</parameter>
+        <parameter key="ekyna_cms.image_block.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\Block\ImageBlockType</parameter>
 
         <parameter key="ekyna_cms.layout_factory.class">Ekyna\Bundle\CmsBundle\Layout\LayoutFactory</parameter>
         <parameter key="ekyna_cms.layout_registry.class">Ekyna\Bundle\CmsBundle\Layout\LayoutRegistry</parameter>
@@ -36,38 +35,38 @@
 
     <services>
         <!-- Form Types -->
-        <service id="ekyna_page.form" class="%ekyna_page.form.class%">
-            <argument>%ekyna_page.class%</argument>
+        <service id="ekyna_cms.page.form_type" class="%ekyna_cms.page.form_type.class%">
+            <argument>%ekyna_cms.page.class%</argument>
             <argument>%ekyna_cms.content_enabled%</argument>
-            <tag name="form.type" alias="ekyna_page" />
+            <tag name="form.type" alias="ekyna_cms_page" />
         </service>
-        <service id="ekyna_seo.form" class="%ekyna_seo.form.class%">
-            <argument>%ekyna_seo.class%</argument>
-            <tag name="form.type" alias="ekyna_seo" />
+        <service id="ekyna_cms.seo.form_type" class="%ekyna_cms.seo.form_type.class%">
+            <argument>%ekyna_cms.seo.class%</argument>
+            <tag name="form.type" alias="ekyna_cms_seo" />
         </service>
-        <service id="ekyna_content.form" class="%ekyna_content.form.class%">
-            <tag name="form.type" alias="ekyna_content" />
+        <service id="ekyna_cms.content.form_type" class="%ekyna_cms.content.form_type.class%">
+            <tag name="form.type" alias="ekyna_cms_content" />
         </service>
 
         <!-- Blocks Form Types -->
-        <service id="ekyna_block_collection.form" class="%ekyna_block_collection.form.class%">
-            <tag name="form.type" alias="ekyna_block_collection" />
+        <service id="ekyna_cms.block_collection.form_type" class="%ekyna_cms.block_collection.form_type.class%">
+            <tag name="form.type" alias="ekyna_cms_block_collection" />
         </service>
-        <service id="ekyna_text_block.form" class="%ekyna_text_block.form.class%">
-            <argument>%ekyna_text_block.class%</argument>
-            <tag name="form.type" alias="ekyna_text_block" />
+        <service id="ekyna_cms.text_block.form_type" class="%ekyna_cms.text_block.form_type.class%">
+            <argument>%ekyna_cms.text_block.class%</argument>
+            <tag name="form.type" alias="ekyna_cms_text_block" />
         </service>
-        <service id="ekyna_tinymce_block.form" class="%ekyna_tinymce_block.form.class%">
-            <argument>%ekyna_tinymce_block.class%</argument>
-            <tag name="form.type" alias="ekyna_tinymce_block" />
+        <service id="ekyna_cms.tinymce_block.form_type" class="%ekyna_cms.tinymce_block.form_type.class%">
+            <argument>%ekyna_cms.tinymce_block.class%</argument>
+            <tag name="form.type" alias="ekyna_cms_tinymce_block" />
         </service>
-        <service id="ekyna_image_block.form" class="%ekyna_image_block.form.class%">
-            <argument>%ekyna_image_block.class%</argument>
-            <tag name="form.type" alias="ekyna_image_block" />
+        <service id="ekyna_cms.image_block.form_type" class="%ekyna_cms.image_block.form_type.class%">
+            <argument>%ekyna_cms.image_block.class%</argument>
+            <tag name="form.type" alias="ekyna_cms_image_block" />
         </service>
 
         <!-- Entity listeners -->
-        <service id="ekyna_page.listener" class="%ekyna_page.listener.class%">
+        <service id="ekyna_cms.page.listener" class="%ekyna_cms.page.listener.class%">
             <argument>%ekyna_cms.default_controller%</argument>
             <tag name="doctrine.entity_listener" />
         </service>
@@ -87,7 +86,7 @@
 
         <!-- Route provider -->
         <service id="ekyna_cms.route_provider" class="%ekyna_cms.route_provider.class%">
-            <argument type="service" id="ekyna_page.repository" />
+            <argument type="service" id="ekyna_cms.page.repository" />
         </service>
 
         <!-- Dynamic router -->
@@ -122,7 +121,7 @@
 
         <!-- Twig extensions -->
         <service id="ekyna_cms.twig.cms_extension" class="%ekyna_cms.twig.cms_extension.class%">
-            <argument type="service" id="ekyna_page.repository" />
+            <argument type="service" id="ekyna_cms.page.repository" />
             <argument type="service" id="request_stack" />
             <argument type="service" id="twig" />
             <argument>%ekyna_cms.default_template%</argument>
@@ -133,7 +132,7 @@
         <!-- Menus -->
         <service id="ekyna_cms.menu_builder" class="%ekyna_cms.menu_builder.class%">
 	        <argument type="service" id="knp_menu.factory" />
-	        <argument type="service" id="ekyna_page.repository" />
+	        <argument type="service" id="ekyna_cms.page.repository" />
 	        <argument type="service" id="security.context" />
 	    </service>
 	    <service id="ekyna_cms.menu.main"

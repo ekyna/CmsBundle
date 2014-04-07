@@ -1,73 +1,73 @@
-ekyna_page_admin_home:
+ekyna_cms_page_admin_home:
     path: /
-    defaults: { _controller: "ekyna_page.controller:homeAction" }
+    defaults: { _controller: "ekyna_cms.page.controller:homeAction" }
     requirements:
         _method: GET
 
-ekyna_page_admin_list:
+ekyna_cms_page_admin_list:
     path: /list
-    defaults: { _controller: "ekyna_page.controller:listAction" }
+    defaults: { _controller: "ekyna_cms.page.controller:listAction" }
     requirements:
         _method: GET|POST
 
-ekyna_page_admin_new:
+ekyna_cms_page_admin_new:
     path: /new
-    defaults: { _controller: "ekyna_page.controller:newAction" }
+    defaults: { _controller: "ekyna_cms.page.controller:newAction" }
     requirements:
         _method: GET|POST
 
-ekyna_page_admin_new_child:
+ekyna_cms_page_admin_new_child:
     path: /{pageId}/new-child
-    defaults: { _controller: "ekyna_page.controller:newChildAction" }
+    defaults: { _controller: "ekyna_cms.page.controller:newChildAction" }
     requirements:
         _method: GET|POST
         pageId:  \d+
 
-ekyna_page_admin_show:
+ekyna_cms_page_admin_show:
     path: /{pageId}/show
-    defaults: { _controller: "ekyna_page.controller:showAction" }
+    defaults: { _controller: "ekyna_cms.page.controller:showAction" }
     requirements:
         _method: GET
         pageId:  \d+
 
-ekyna_page_admin_edit:
+ekyna_cms_page_admin_edit:
     path: /{pageId}/edit
-    defaults: { _controller: "ekyna_page.controller:editAction" }
+    defaults: { _controller: "ekyna_cms.page.controller:editAction" }
     requirements:
         _method: GET|POST
         pageId:  \d+
 
-ekyna_page_admin_content:
+ekyna_cms_page_admin_content:
     path: /{pageId}/content
-    defaults: { _controller: "ekyna_page.controller:contentShowAction" }
+    defaults: { _controller: "ekyna_cms.page.controller:contentShowAction" }
     requirements:
         _method: GET
         pageId:  \d+
 
-ekyna_page_admin_content_edit:
+ekyna_cms_page_admin_content_edit:
     path: /{pageId}/content/edit
-    defaults: { _controller: "ekyna_page.controller:contentEditAction" }
+    defaults: { _controller: "ekyna_cms.page.controller:contentEditAction" }
     requirements:
         _method: GET|POST
         pageId:  \d+
 
-ekyna_page_admin_move_up:
+ekyna_cms_page_admin_move_up:
     path: /{pageId}/moveup
-    defaults: { _controller: "ekyna_page.controller:moveUpAction" }
+    defaults: { _controller: "ekyna_cms.page.controller:moveUpAction" }
     requirements:
         _method: GET
         pageId:  \d+
 
-ekyna_page_admin_move_down:
+ekyna_cms_page_admin_move_down:
     path: /{pageId}/movedown
-    defaults: { _controller: "ekyna_page.controller:moveDownAction" }
+    defaults: { _controller: "ekyna_cms.page.controller:moveDownAction" }
     requirements:
         _method: GET
         pageId:  \d+
 
-ekyna_page_admin_remove:
+ekyna_cms_page_admin_remove:
     path: /{pageId}/remove
-    defaults: { _controller: "ekyna_page.controller:removeAction" }
+    defaults: { _controller: "ekyna_cms.page.controller:removeAction" }
     requirements:
         _method: GET|POST
         pageId:  \d+

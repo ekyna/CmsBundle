@@ -37,6 +37,6 @@ class ContentType extends AbstractType
 
     public function getName()
     {
-    	return 'ekyna_content';
+    	return 'ekyna_cms_content';
     }
 }

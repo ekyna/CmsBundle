@@ -22,6 +22,6 @@ class TextBlockType extends BlockType
      */
     public function getName()
     {
-        return 'ekyna_text_block';
+        return 'ekyna_cms_text_block';
     }
 }

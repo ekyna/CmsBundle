@@ -42,7 +42,7 @@
         <field name="menu" type="boolean" column="menu" />
         <field name="footer" type="boolean" column="footer" />
 
-        <one-to-one field="seo" target-entity="Ekyna\Bundle\CmsBundle\Entity\Seo" inversed-by="page" fetch="EAGER">
+        <one-to-one field="seo" target-entity="Ekyna\Bundle\CmsBundle\Entity\Seo">
             <cascade><cascade-all /></cascade>
             <join-column name="seo_id" referenced-column-name="id" />
         </one-to-one>

@@ -46,7 +46,7 @@ trait ContentTrait
             $newContent = true;
             $content = $this->generateDefaultContent();
         }
-        $form = $this->createForm('ekyna_content', $content);
+        $form = $this->createForm('ekyna_cms_content', $content);
 
         $form->handleRequest($this->getRequest());
         if ($form->isValid()) {

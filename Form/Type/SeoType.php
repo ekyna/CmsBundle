@@ -55,6 +55,6 @@ class SeoType extends AbstractType
 
     public function getName()
     {
-    	return 'ekyna_seo';
+    	return 'ekyna_cms_seo';
     }
 }

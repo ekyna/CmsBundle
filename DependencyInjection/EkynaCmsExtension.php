@@ -17,7 +17,7 @@ class EkynaCmsExtension extends AbstractExtension implements PrependExtensionInt
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        list($config, $loader) = $this->configure($configs, new Configuration(), $container);
+        list($config, $loader) = $this->configure($configs, 'ekyna_cms', new Configuration(), $container);
 
         $container->setParameter('ekyna_cms.content_enabled', $config['enable_contents']);
         $container->setParameter('ekyna_cms.home_route_name', $config['defaults']['home_route']);
