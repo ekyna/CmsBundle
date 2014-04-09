@@ -19,3 +19,8 @@ ekyna_cms:
             edit: Modifier la page
         alert:
             no_user: Aucune page configuré
+    field:
+        main_menu: Menu principal
+        footer_menu: Menu pied de page
+        show_main_menu: Afficher dans le menu principal
+        show_footer_menu: Afficher dans le menu du pied de page

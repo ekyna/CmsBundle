@@ -30,12 +30,12 @@ class PageType extends AbstractType
                 'label' => false
             ))
             ->add('menu', 'checkbox', array(
-                'label' => 'Afficher dans le menu principal',
+                'label' => 'ekyna_cms.field.show_main_menu',
                 'required' => false,
                 'attr' => array('align_with_widget' => true)
             ))
             ->add('footer', 'checkbox', array(
-                'label' => 'Afficher dans le menu du pied de page',
+                'label' => 'ekyna_cms.field.show_footer_menu',
                 'required' => false,
                 'attr' => array('align_with_widget' => true)
             ))
@@ -44,7 +44,7 @@ class PageType extends AbstractType
         if(!$this->contentEnabled) {
             $builder
                 ->add('html', 'textarea', array(
-                    'label' => 'Contenu',
+                    'label' => 'ekyna_core.field.content',
                     'attr' => array(
                 	    'class' => 'tinymce',
                         'data-theme' => 'advanced',
@@ -59,27 +59,27 @@ class PageType extends AbstractType
 
             if($page->getStatic()) {
                 $form->add('name', 'text', array(
-                    'label' => 'Nom',
+                    'label' => 'ekyna_core.field.name',
                 	'disabled' => true,
                 ));
                 $form->add('parent', 'entity', array(
-                    'label' => 'Parent',
+                    'label' => 'ekyna_core.field.parent',
                 	'class' => $this->dataClass,
                     'property' => 'name',
                     'empty_value' => 'Racine',
                 	'disabled' => true,
                 ))
                 ->add('path', 'text', array(
-                    'label' => 'Url',
+                    'label' => 'ekyna_core.field.url',
                     'disabled' => true,
                 ));
             }else{
                 $form->add('name', 'text', array(
-                    'label' => 'Nom',
+                    'label' => 'ekyna_core.field.name',
                     'required' => true,
                 ));
                 $form->add('parent', 'entity', array(
-                    'label' => 'Parent',
+                    'label' => 'ekyna_core.field.parent',
                     'class' => $this->dataClass,
                     'query_builder' => function(EntityRepository $er) use ($page) {
                         $qb = $er->createQueryBuilder('p')
@@ -97,13 +97,13 @@ class PageType extends AbstractType
                 ));
                 if(null === $page->getId()) {
                     $form->add('path', 'text', array(
-                        'label' => 'Url',
+                        'label' => 'ekyna_core.field.url',
                         'required' => false,
                         'attr' => array('input_group' => array('prepend' => $page->getParent()->getPath().'/')),
                     ));
                 }else{
                     $form->add('path', 'text', array(
-                        'label' => 'Url',
+                        'label' => 'ekyna_core.field.url',
                         'disabled' => true,
                     ));
                 }

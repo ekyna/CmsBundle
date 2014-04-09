@@ -22,24 +22,24 @@ class SeoType extends AbstractType
     {
         $builder
             ->add('title', 'text', array(
-                'label' => 'Titre',
+                'label' => 'ekyna_core.field.title',
                 'required' => true
             ))
             ->add('description', 'textarea', array(
-                'label' => 'Description',
+                'label' => 'ekyna_core.field.description',
                 'required' => true
             ))
             ->add('changefreq', 'choice', array(
-                'label' => 'Fréqu. de modif.',
+                'label' => 'ekyna_core.field.changefreq',
                 'choices'   => array(
-                    'hourly' => 'Toutes les heures', 
-                    'monthly' => 'Tous les mois',
-                    'yearly' => 'Tous les ans',
+                    'hourly' => 'ekyna_core.changefreq.hourly', 
+                    'monthly' => 'ekyna_core.changefreq.monthly',
+                    'yearly' => 'ekyna_core.changefreq.yearly',
                 ),
                 'required' => true
             ))
             ->add('priority', 'number', array(
-                'label' => 'Priorité',
+                'label' => 'ekyna_core.field.priority',
                 'precision' => 1,
                 'required' => true
             ))

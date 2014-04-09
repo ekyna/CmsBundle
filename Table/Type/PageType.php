@@ -24,20 +24,20 @@ class PageType extends AbstractTableType
     {
         $tableBuilder
             ->addColumn('name', 'nested_anchor', array(
-                'label' => 'Nom',
+                'label' => 'ekyna_core.field.name',
                 'route_name' => 'ekyna_cms_page_admin_show',
                 'route_parameters_map' => array(
                     'pageId' => 'id'
                 ),
             ))
             ->addColumn('seo.title', 'text', array(
-                'label' => 'Titre',
+                'label' => 'ekyna_core.field.title',
             ))
             ->addColumn('path', 'text', array(
-                'label' => 'Url',
+                'label' => 'ekyna_core.field.url',
             ))
-            ->addColumn('createdAt', 'datetime', array(
-                'label' => 'Date de création',
+            ->addColumn('updatedAt', 'datetime', array(
+                'label' => 'ekyna_core.field.update_date',
             ))
             ->addColumn('actions', 'nested_actions', array(
                 'disable_property_path' => 'locked',
@@ -49,7 +49,7 @@ class PageType extends AbstractTableType
                 ),
                 'buttons' => array(
                     array(
-                        'label' => 'Modifier',
+                        'label' => 'ekyna_core.button.edit',
                         'icon' => 'pencil',
                         'class' => 'warning',
                         'route_name' => 'ekyna_cms_page_admin_edit',
@@ -58,7 +58,7 @@ class PageType extends AbstractTableType
                         ),
                     ),
                     array(
-                        'label' => 'Supprimer',
+                        'label' => 'ekyna_core.button.remove',
                         'icon' => 'trash',
                         'class' => 'danger',
                         'route_name' => 'ekyna_cms_page_admin_remove',

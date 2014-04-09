@@ -16,7 +16,7 @@ class AdminMenuPass implements CompilerPassInterface
         $pool = $container->getDefinition('ekyna_admin.menu.pool');
 
         $pool->addMethodCall('createGroupReference', array(
-            'content', 'ekyna.content.label', 'file', null, 98
+            'content', 'ekyna_core.field.content', 'file', null, 98
         ));
         $pool->addMethodCall('createEntryReference', array(
             'content', 'pages', 'ekyna_cms_page_admin_home', 'ekyna_cms.page.label.plural'

@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block actions %}
-{{ ui_link(path('ekyna_cms_page_admin_list', identifiers), 'ekyna.admin.button.back_to_list', 'default', 'sm', 'list') }}
+{{ ui_link(path('ekyna_cms_page_admin_list', identifiers), 'ekyna_core.button.back_to_list', 'default', 'sm', 'list') }}
 {#{ ui_link(path('ekyna_cms_page_admin_new', identifiers), 'ekyna_cms.page.button.new', 'primary', 'sm', 'plus') }#}
 {% endblock %}
 
@@ -15,7 +15,7 @@
 	    {{ bootstrap_set_style('horizontal') }}
 		{{ form_widget(form) }}
     </div>
-    {{ ui_form_footer(path('ekyna_cms_page_admin_show', identifiers|merge({'pageId': page.id})), 'ekyna.admin.button.remove', 'danger') }}
+    {{ ui_form_footer(path('ekyna_cms_page_admin_show', identifiers|merge({'pageId': page.id})), 'ekyna_core.button.remove', 'danger') }}
 </form>
 {% endblock %}
 
