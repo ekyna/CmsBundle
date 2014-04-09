@@ -1,11 +1,11 @@
 {% extends "EkynaAdminBundle:Entity:layout.html.twig" %}
 
 {% block title %}
-<h1>{{ 'ekyna.page.header.list'|trans|raw }}</h1>
+<h1>{{ 'ekyna_cms.page.header.list'|trans|raw }}</h1>
 {% endblock %}
 
 {% block actions %}
-{#{ ui_link(path('ekyna_cms_page_admin_new'), 'ekyna.page.button.new', 'primary', 'sm', 'plus') }#}
+{#{ ui_link(path('ekyna_cms_page_admin_new', identifiers), 'ekyna_cms.page.button.new', 'primary', 'sm', 'plus') }#}
 {% endblock %}
 
 {% block main %}

@@ -6,7 +6,11 @@
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Ekyna\Bundle\CmsBundle\Entity\Page" repository-class="Ekyna\Bundle\CmsBundle\Entity\PageRepository" table="cms_page">
+    <entity
+        name="Ekyna\Bundle\CmsBundle\Entity\Page" 
+        repository-class="Ekyna\Bundle\CmsBundle\Entity\PageRepository" 
+        table="cms_page">
+
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO" />
         </id>
@@ -74,6 +78,7 @@
         <entity-listeners>
             <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\PageListener" />
         </entity-listeners>
+
     </entity>
 
 </doctrine-mapping>

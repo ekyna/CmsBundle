@@ -1,17 +1,17 @@
 {% extends "EkynaAdminBundle:Entity:sided.html.twig" %}
 
 {% block title %}
-<h1>{{ 'ekyna.page.header.new'|trans|raw }}</h1>
+<h1>{{ 'ekyna_cms.page.header.new'|trans|raw }}</h1>
 {% endblock %}
 
 {% block actions %}
-{{ ui_link(path('ekyna_cms_page_admin_list'), 'ekyna.admin.button.back_to_list', 'default', 'sm', 'list') }}
+{{ ui_link(path('ekyna_cms_page_admin_list', identifiers), 'ekyna.admin.button.back_to_list', 'default', 'sm', 'list') }}
 {% endblock %}
 
 {% block main %}
-<form action="{{ path('ekyna_cms_page_admin_new') }}" {{ form_enctype(form) }} method="post" class="form-horizontal form-with-tabs">
+<form action="{{ path('ekyna_cms_page_admin_new', identifiers) }}" {{ form_enctype(form) }} method="post" class="form-horizontal form-with-tabs">
     {% include "EkynaCmsBundle:Page/Admin:_form.html.twig" %}
-    {{ ui_form_footer(path('ekyna_cms_page_admin_list')) }}
+    {{ ui_form_footer(path('ekyna_cms_page_admin_list', identifiers)) }}
 </form>
 {% endblock %}
 

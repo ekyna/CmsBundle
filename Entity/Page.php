@@ -118,6 +118,16 @@ class Page implements ContentSubjectInterface
     }
 
     /**
+     * Returns a string representation
+     * 
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->getName();
+    }
+    
+    /**
      * Get id
      *
      * @return integer

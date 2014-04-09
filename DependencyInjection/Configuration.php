@@ -76,7 +76,7 @@ class Configuration implements ConfigurationInterface
                                 ->scalarNode('templates')->defaultValue('EkynaCmsBundle:Page/Admin')->end()
                                 ->scalarNode('parent')->end()
                                 ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Page')->end()
-                                ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\PageController')->end()
+                                ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\PageController')->end()
                                 ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\PageRepository')->end()
                                 ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\PageType')->end()
                                 ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\PageType')->end()

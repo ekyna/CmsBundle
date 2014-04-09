@@ -1,21 +1,21 @@
 {% extends "EkynaAdminBundle:Entity:sided.html.twig" %}
 
 {% block title %}
-<h1>{{ 'ekyna.page.header.show'|trans({'%name%': page.name})|raw }}</h1>
+<h1>{{ 'ekyna_cms.page.header.show'|trans({'%name%': page.name})|raw }}</h1>
 {% endblock %}
 
 {% block actions %}
-{{ ui_link(path('ekyna_cms_page_admin_list'), 'ekyna.admin.button.back_to_list', 'default', 'sm', 'list') }}
-{#{ ui_link(path('ekyna_cms_page_admin_new'), 'ekyna.page.button.new', 'primary', 'sm', 'plus') }#}
+{{ ui_link(path('ekyna_cms_page_admin_list', identifiers), 'ekyna.admin.button.back_to_list', 'default', 'sm', 'list') }}
+{#{ ui_link(path('ekyna_cms_page_admin_new', identifiers), 'ekyna_cms.page.button.new', 'primary', 'sm', 'plus') }#}
 {% endblock %}
 
 {% block main %}
 <div class="actions">
     {% if cms_content_enabled %}
-    {{ ui_link(path('ekyna_cms_page_admin_content', {'pageId': page.id}), 'ekyna.admin.button.content', 'default', 'sm', 'th-large') }}
+    {{ ui_link(path('ekyna_cms_page_admin_content', identifiers|merge({'pageId': page.id})), 'ekyna.admin.button.content', 'default', 'sm', 'th-large') }}
     {% endif %}
-    {{ ui_link(path('ekyna_cms_page_admin_edit', {'pageId': page.id}), 'ekyna.admin.button.edit', 'warning', 'sm', 'pencil') }}
-    {{ ui_link(path('ekyna_cms_page_admin_remove', {'pageId': page.id}), 'ekyna.admin.button.remove', 'danger', 'sm', 'trash') }}
+    {{ ui_link(path('ekyna_cms_page_admin_edit', identifiers|merge({'pageId': page.id})), 'ekyna.admin.button.edit', 'warning', 'sm', 'pencil') }}
+    {{ ui_link(path('ekyna_cms_page_admin_remove', identifiers|merge({'pageId': page.id})), 'ekyna.admin.button.remove', 'danger', 'sm', 'trash') }}
 </div>
 <div class="show show-with-tabs">
     <ul class="nav nav-tabs">
