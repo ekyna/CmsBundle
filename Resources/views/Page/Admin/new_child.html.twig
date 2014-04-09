@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block main %}
-<form action="{{ path('ekyna_cms_page_admin_new_child', identifiers|merge({'pageId': page.id})) }}" method="post" class="form-horizontal form-with-tabs">
+<form action="{{ path('ekyna_cms_page_admin_new_child', identifiers|merge({'pageId': page.id})) }}" {{ form_enctype(form) }} method="post" class="form-horizontal form-with-tabs">
     {% include "EkynaCmsBundle:Page/Admin:_form.html.twig" %}
     {{ ui_form_footer(path('ekyna_cms_page_admin_list', identifiers)) }}
 </form>
