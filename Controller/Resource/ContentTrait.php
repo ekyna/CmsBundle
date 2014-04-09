@@ -2,8 +2,10 @@
 
 namespace Ekyna\Bundle\CmsBundle\Controller\Resource;
 
-use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
+use Ekyna\Bundle\CmsBundle\Entity\Content;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * ContentTrait
@@ -12,38 +14,44 @@ trait ContentTrait
 {
     public function contentShowAction(Request $request)
     {
-        $resource = $this->findResourceOrThrowException();
+        $context = $this->loadContext($request);
+        $resourceName = $this->config->getResourceName();
+        $resource = $context->getResource($resourceName);
+
+        $this->isGranted('VIEW', $resource);
+
         if (!$resource instanceOf ContentSubjectInterface) {
             throw new \Exception('Resource must implements ContentSubjectInterface.');
         }
 
-        $this->isGranted('VIEW', $resource);
-
         // TODO: select version
-        $resourceName = $this->getResourceName();
+
+        // TODO: Breadcrumb
 
         return $this->render(
-            $this->configuration->getTemplate('content_show.html'),
-            array(
-                $resourceName => $resource
-            )
+            $this->config->getTemplate('content_show.html'),
+            $context->getTemplateVars()
         );
     }
 
     public function contentEditAction(Request $request)
     {
-        $resource = $this->findResourceOrThrowException();
+        $context = $this->loadContext($request);
+        $resourceName = $this->config->getResourceName();
+        $resource = $context->getResource($resourceName);
+
+        $this->isGranted('EDIT', $resource);
+
         if (!$resource instanceOf ContentSubjectInterface) {
             throw new \Exception('Resource must implements ContentSubjectInterface.');
         }
 
-        $this->isGranted('EDIT', $resource);
-
         $newContent = false;
-        $resourceName = $this->getResourceName();
+
         // TODO: select version
         if (null === $content = $resource->getContent()) {
             $newContent = true;
+            // TODO: Test if generateDefaultContent method exists ? User abstract method definition ?
             $content = $this->generateDefaultContent();
         }
         $form = $this->createForm('ekyna_cms_content', $content);
@@ -60,20 +68,47 @@ trait ContentTrait
             return $this->redirect(
                 $this->generateUrl(
                     $this->configuration->getRoute('content'),
-                    array(
-                        sprintf('%sId', $resourceName) => $resource->getId()
-                    )
+                    $context->getIdentifiers(true)
                 )
             );
         }
 
+        // TODO: Breadcrumb
+
         return $this->render(
             $this->configuration->getTemplate('content_edit.html'),
-            array(
-                $resourceName => $resource,
+            $context->getTemplateVars(array(
                 'form' => $form->createView()
-            )
+            ))
         );
     }
 
+    protected function generateDefaultContent()
+    {
+        $layout = $this->container->get('ekyna_cms.layout_registry')->get('default');
+    
+        $blocks = new ArrayCollection();
+        foreach ($layout->getConfiguration() as $config) {
+            $key = sprintf('ekyna_%s_block.class', $config['type']);
+            if(!$this->container->hasParameter($key)) {
+                throw new \InvalidArgumentException('Unknown block type "%s".', $config['type']);
+            }
+            $class = $this->container->getParameter($key);
+            $block = new $class;
+            $block
+            ->setWidth($config['width'])
+            ->setRow($config['row'])
+            ->setColumn($config['column'])
+            ;
+            $blocks[] = $block;
+        }
+    
+        $content = new Content();
+        $content
+        ->setBlocks($blocks)
+        ->setVersion(1)
+        ;
+    
+        return $content;
+    }
 }

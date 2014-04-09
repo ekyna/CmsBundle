@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 {% if not cms_content_enabled %}
-                {{ show_row(page.html, 'tinymce', 'Contenu') }}
+                {{ show_row(path('ekyna_cms_page_admin_tinymce', identifiers|merge({'pageId': page.id})), 'tinymce', 'Contenu') }}
                 {% endif %}
             </div>
             <div class="tab-pane" id="seo">

@@ -1,7 +1,7 @@
 {% extends "EkynaAdminBundle:Entity:sided.html.twig" %}
 
 {% block title %}
-<h1>{{ 'ekyna_cms.page.header.new_child'|trans({'%name%': parent.name})|raw }}</h1>
+<h1>{{ 'ekyna_cms.page.header.new_child'|trans({'%name%': page.name})|raw }}</h1>
 {% endblock %}
 
 {% block actions %}
@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block main %}
-<form action="{{ path('ekyna_cms_page_admin_new_child', {'pageId': parent.id}) }}" method="post" class="form-horizontal form-with-tabs">
+<form action="{{ path('ekyna_cms_page_admin_new_child', identifiers|merge({'pageId': page.id})) }}" method="post" class="form-horizontal form-with-tabs">
     {% include "EkynaCmsBundle:Page/Admin:_form.html.twig" %}
     {{ ui_form_footer(path('ekyna_cms_page_admin_list', identifiers)) }}
 </form>

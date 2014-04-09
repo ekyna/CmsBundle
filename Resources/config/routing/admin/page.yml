@@ -37,6 +37,13 @@ ekyna_cms_page_admin_edit:
         _method: GET|POST
         pageId:  \d+
 
+ekyna_cms_page_admin_tinymce:
+    path: /{pageId}/tinymce
+    defaults: { _controller: "ekyna_cms.page.controller:tinymceAction", field: html }
+    requirements:
+        _method: GET
+        pageId:  \d+
+
 ekyna_cms_page_admin_content:
     path: /{pageId}/content
     defaults: { _controller: "ekyna_cms.page.controller:contentShowAction" }
