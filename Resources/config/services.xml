@@ -5,6 +5,8 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
+        <parameter key="ekyna_cms.settings.class">Ekyna\Bundle\CmsBundle\Settings\CmsSettingsSchema</parameter>
+        
         <parameter key="ekyna_cms.seo.class">Ekyna\Bundle\CmsBundle\Entity\Seo</parameter>
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
         <parameter key="ekyna_cms.page.class">Ekyna\Bundle\CmsBundle\Entity\Page</parameter>
@@ -34,6 +36,14 @@
     </parameters>
 
     <services>
+        <!-- Settings Schema -->
+        <service id="ekyna_cms.settings" class="%ekyna_cms.settings.class%">
+            <argument type="collection">
+                <argument key="locale">%locale%</argument>
+            </argument>
+            <tag name="ekyna_setting.schema" namespace="cms" />
+        </service>
+
         <!-- Form Types -->
         <service id="ekyna_cms.page.form_type" class="%ekyna_cms.page.form_type.class%">
             <argument>%ekyna_cms.page.class%</argument>

@@ -17,12 +17,12 @@ class ContentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('blocks', 'ekyna_block_collection', array(
+            ->add('blocks', 'ekyna_cms_block_collection', array(
                 'label' => false,
                 'types' => array(
-                    'ekyna_text_block', // The first defined Type becomes the default
-                    'ekyna_tinymce_block',
-                    'ekyna_image_block',
+                    'ekyna_cms_text_block', // The first defined Type becomes the default
+                    'ekyna_cms_tinymce_block',
+                    'ekyna_cms_image_block',
                 ),
                 'allow_add' => true,
                 'allow_delete' => true,

@@ -67,7 +67,7 @@ trait ContentTrait
 
             return $this->redirect(
                 $this->generateUrl(
-                    $this->configuration->getRoute('content'),
+                    $this->config->getRoute('content'),
                     $context->getIdentifiers(true)
                 )
             );
@@ -76,7 +76,7 @@ trait ContentTrait
         // TODO: Breadcrumb
 
         return $this->render(
-            $this->configuration->getTemplate('content_edit.html'),
+            $this->config->getTemplate('content_edit.html'),
             $context->getTemplateVars(array(
                 'form' => $form->createView()
             ))
@@ -89,24 +89,24 @@ trait ContentTrait
     
         $blocks = new ArrayCollection();
         foreach ($layout->getConfiguration() as $config) {
-            $key = sprintf('ekyna_%s_block.class', $config['type']);
+            $key = sprintf('ekyna_cms.%s_block.class', $config['type']);
             if(!$this->container->hasParameter($key)) {
-                throw new \InvalidArgumentException('Unknown block type "%s".', $config['type']);
+                throw new \InvalidArgumentException(sprintf('Unknown block type "%s".', $config['type']));
             }
             $class = $this->container->getParameter($key);
             $block = new $class;
             $block
-            ->setWidth($config['width'])
-            ->setRow($config['row'])
-            ->setColumn($config['column'])
+                ->setWidth($config['width'])
+                ->setRow($config['row'])
+                ->setColumn($config['column'])
             ;
             $blocks[] = $block;
         }
     
         $content = new Content();
         $content
-        ->setBlocks($blocks)
-        ->setVersion(1)
+            ->setBlocks($blocks)
+            ->setVersion(1)
         ;
     
         return $content;
