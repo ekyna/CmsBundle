@@ -54,7 +54,7 @@ trait ContentTrait
             // TODO: Test if generateDefaultContent method exists ? User abstract method definition ?
             $content = $this->generateDefaultContent();
         }
-        $form = $this->createForm('ekyna_cms_content', $content);
+        $form = $this->createForm('ekyna_cms_content', $content, array('admin_mode' => true));
 
         $form->handleRequest($this->getRequest());
         if ($form->isValid()) {
