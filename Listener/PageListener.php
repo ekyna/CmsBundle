@@ -8,6 +8,8 @@ use Gedmo\Sluggable\Util\Urlizer;
 
 /**
  * PageListener
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class PageListener
 {

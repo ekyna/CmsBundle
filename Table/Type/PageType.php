@@ -7,6 +7,8 @@ use Ekyna\Component\Table\AbstractTableType;
 
 /**
  * PageType
+ * 
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class PageType extends AbstractTableType
 {

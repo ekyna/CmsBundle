@@ -11,6 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * PageType
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class PageType extends AbstractType
 {

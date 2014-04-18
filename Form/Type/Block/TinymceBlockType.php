@@ -4,6 +4,11 @@ namespace Ekyna\Bundle\CmsBundle\Form\Type\Block;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * TinymceBlockType
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
+ */
 class TinymceBlockType extends BlockType
 {
     /**

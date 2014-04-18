@@ -8,6 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * ContentType
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class ContentType extends AbstractType
 {

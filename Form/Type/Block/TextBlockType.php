@@ -4,6 +4,11 @@ namespace Ekyna\Bundle\CmsBundle\Form\Type\Block;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * TextBlockType
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
+ */
 class TextBlockType extends BlockType
 {
     /**

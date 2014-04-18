@@ -4,6 +4,11 @@ namespace Ekyna\Bundle\CmsBundle\Form\Type\Block;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * ImageBlockType
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
+ */
 class ImageBlockType extends BlockType
 {
     /**

@@ -14,6 +14,7 @@ use Symfony\Component\Routing\RouteCollection;
  * RouteProvider
  * 
  * @see http://symfony.com/doc/master/cmf/components/routing/nested_matcher.html#the-routeprovider
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class RouteProvider implements RouteProviderInterface
 {

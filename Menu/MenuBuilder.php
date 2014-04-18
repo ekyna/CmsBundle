@@ -11,6 +11,8 @@ use Symfony\Component\Security\Core\SecurityContext;
 
 /**
  * MenuBuilder
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class MenuBuilder
 {

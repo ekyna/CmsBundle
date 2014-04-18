@@ -6,6 +6,8 @@ use Symfony\Component\Routing\Route;
 
 /**
  * RouteDefinition
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class RouteDefinition
 {

@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * ContentSubjectTrait
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 trait ContentSubjectTrait
 {

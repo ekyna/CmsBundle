@@ -2,6 +2,11 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+/**
+ * BlockInterface
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
+ */
 interface BlockInterface
 {
     /**

@@ -9,6 +9,8 @@ use Symfony\Component\DependencyInjection\Definition;
 
 /**
  * EkynaCmsExtension
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class EkynaCmsExtension extends AbstractExtension implements PrependExtensionInterface
 {

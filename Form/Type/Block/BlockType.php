@@ -10,6 +10,8 @@ use Symfony\Component\Form\FormInterface;
 
 /**
  * BlockType
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 abstract class BlockType extends AbstractType
 {

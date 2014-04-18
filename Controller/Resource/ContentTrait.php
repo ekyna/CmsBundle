@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * ContentTrait
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 trait ContentTrait
 {

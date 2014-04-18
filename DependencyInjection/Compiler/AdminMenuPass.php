@@ -5,6 +5,11 @@ namespace Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
+/**
+ * AdminMenuPass
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
+ */
 class AdminMenuPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)

@@ -8,6 +8,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 /**
  * SeoType
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class SeoType extends AbstractType
 {

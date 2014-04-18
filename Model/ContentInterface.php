@@ -2,6 +2,11 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+/**
+ * ContentInterface
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
+ */
 interface ContentInterface
 {
     /**

@@ -4,6 +4,8 @@ namespace Ekyna\Bundle\CmsBundle\Layout;
 
 /**
  * LayoutRegistry
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class LayoutRegistry
 {

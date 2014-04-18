@@ -4,6 +4,11 @@ namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 
+/**
+ * BlockCollectionType
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
+ */
 class BlockCollectionType extends AbstractType
 {
     public function getParent()

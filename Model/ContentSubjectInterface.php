@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * ContentSubjectInterface
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 interface ContentSubjectInterface
 {

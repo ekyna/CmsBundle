@@ -4,6 +4,8 @@ namespace Ekyna\Bundle\CmsBundle\Layout;
 
 /**
  * LayoutFactory
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class LayoutFactory
 {

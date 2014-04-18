@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * CmsController
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class CmsController extends Controller
 {

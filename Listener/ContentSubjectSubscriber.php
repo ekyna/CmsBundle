@@ -8,7 +8,10 @@ use Doctrine\ORM\Events;
 
 /**
  * ContentSubjectSubscriber
+ * 
  * @see http://www.theodo.fr/blog/2013/11/dynamic-mapping-in-doctrine-and-symfony-how-to-extend-entities/
+ *
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class ContentSubjectSubscriber implements EventSubscriber
 {

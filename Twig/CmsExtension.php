@@ -9,6 +9,8 @@ use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 
 /**
  * CmsExtension
+ * 
+ * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class CmsExtension extends \Twig_Extension
 {
