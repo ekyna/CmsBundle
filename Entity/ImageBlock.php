@@ -28,6 +28,13 @@ class ImageBlock extends Block implements ImageInterface
     protected $path;
 
     /**
+     * Old path (to be removed)
+     * 
+     * @var string
+     */
+    protected $oldPath;
+
+    /**
      * Name
      * 
      * @var string
@@ -41,6 +48,12 @@ class ImageBlock extends Block implements ImageInterface
      */
     protected $alt;
 
+    /**
+     * Update date
+     *
+     * @var \Datetime
+     */
+    protected $updatedAt;
 
     /**
      * Get id
@@ -77,6 +90,7 @@ class ImageBlock extends Block implements ImageInterface
     public function setFile(UploadedFile $file)
     {
         $this->file = $file;
+        $this->updatedAt = new \DateTime();
 
         return $this;
     }
@@ -104,6 +118,32 @@ class ImageBlock extends Block implements ImageInterface
     {
         $this->path = $path;
         
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasOldPath()
+    {
+        return null !== $this->oldPath;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOldPath()
+    {
+        return $this->oldPath;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOldPath($oldPath)
+    {
+        $this->oldPath = $oldPath;
+    
         return $this;
     }
 
@@ -139,7 +179,7 @@ class ImageBlock extends Block implements ImageInterface
         // Filename
         $filename = null;
         if($this->hasName()) {
-            $filename = Urlizer::transliterate(pathinfo($this->name, PATHINFO_FILENAME)).'.'.$extension;;
+            $filename = Urlizer::transliterate(pathinfo($this->name, PATHINFO_FILENAME));
         }elseif($this->hasFile()) {
             $filename = pathinfo($this->file->getFilename(), PATHINFO_FILENAME);
         }elseif($this->hasPath()) {
@@ -160,7 +200,8 @@ class ImageBlock extends Block implements ImageInterface
      */
     public function hasName()
     {
-        return (bool) (1 === preg_match('/^[a-z0-9-]+\.(jpg|jpeg|gif|png)$/', $this->name));
+        return 0 < strlen($this->name);
+        //return (bool) (1 === preg_match('/^[a-z0-9-]+\.(jpg|jpeg|gif|png)$/', $this->name));
     }
 
     /**
@@ -175,11 +216,15 @@ class ImageBlock extends Block implements ImageInterface
 
     /**
      * Set name
+     * 
      * @param string $name
      * @return \Ekyna\Bundle\CmsBundle\Entity\ImageBlock
      */
     public function setName($name)
     {
+        if($name !== $this->name) {
+            $this->updatedAt = new \DateTime();
+        }
         $this->name = $name;
 
         return $this;
@@ -204,6 +249,29 @@ class ImageBlock extends Block implements ImageInterface
     public function setAlt($alt)
     {
         $this->alt = $alt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \Datetime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \Datetime $updated
+     * @return \Ekyna\Bundle\CmsBundle\Entity\ImageBlock
+     */
+    public function setUpdatedAt(\DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

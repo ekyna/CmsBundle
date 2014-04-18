@@ -42,7 +42,7 @@
         <gedmo:tree type="nested"/>
 
 	    <field name="name" type="string" column="name" length="64" />
-	    <field name="html" type="text" column="html" />
+	    <field name="html" type="text" column="html" nullable="true" />
         <field name="menu" type="boolean" column="menu" />
         <field name="footer" type="boolean" column="footer" />
 

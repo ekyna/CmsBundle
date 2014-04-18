@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<constraint-mapping
+    xmlns="http://symfony.com/schema/dic/constraint-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping
+                        http://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Page">
+        <property name="name">
+            <constraint name="NotBlank" />
+            <constraint name="Length">
+                <option name="min">2</option>
+                <option name="max">64</option>
+            </constraint>
+        </property>
+        <property name="seo">
+            <constraint name="Valid" />
+        </property>
+    </class>
+
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Seo">
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">title</option>
+            <option name="message">ekyna_cms.validation.seo.unique_title</option>
+        </constraint>
+
+        <property name="title">
+            <constraint name="NotBlank" />
+            <constraint name="Length">
+                <option name="min">24</option>
+                <option name="max">255</option>
+            </constraint>
+        </property>
+        <property name="description">
+            <constraint name="NotBlank" />
+            <constraint name="Length">
+                <option name="min">24</option>
+                <option name="max">255</option>
+            </constraint>
+        </property>
+	    <property name="changefreq">
+	        <constraint name="Choice">
+	            <option name="callback">getChangefreqs</option>
+	        </constraint>
+	    </property>
+        <property name="priority">
+            <constraint name="NotBlank" />
+            <constraint name="Range">
+                <option name="min">0</option>
+                <option name="max">1</option>
+            </constraint>
+        </property>
+    </class>
+
+</constraint-mapping>

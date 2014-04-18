@@ -2,10 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
-
 /**
  * Ekyna\Bundle\CmsBundle\Entity$Seo
  *
@@ -13,6 +9,16 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  */
 class Seo
 {
+    /**
+     * Returns valid changefreq choices
+     * 
+     * @return array
+     */
+    public static function getChangefreqs()
+    {
+        return array('hourly', 'monthly', 'yearly');
+    }
+
     /**
      * @var integer
      */
@@ -148,21 +154,5 @@ class Seo
     public function getPriority()
     {
         return $this->priority;
-    }
-
-    /**
-     * Adds validation constraints
-     *
-     * @param ClassMetadata $metadata
-     */
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        $metadata->addConstraint(new UniqueEntity(array(
-            'fields'  => 'title',
-            'message' => 'Une page est déjà définie avec ce titre.',
-        )));
-
-        $metadata->addPropertyConstraint('title', new Assert\NotBlank());
-        $metadata->addPropertyConstraint('description', new Assert\NotBlank());
     }
 }
