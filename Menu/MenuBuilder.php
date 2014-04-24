@@ -82,6 +82,9 @@ class MenuBuilder
         $menu = $this->factory->createItem('root', array('style' => 'navbar'));
 
         if (null !== $home = $this->pageRepository->findOneBy(array('route' => 'home'))) {
+            if ($home->getMenu()) {
+                $menu->addChild($home->getName(), array('route' => $home->getRoute()));
+            }
             $this->appendChildren($menu, $home);
         }
 
