@@ -6,10 +6,10 @@
 
     <parameters>
         <parameter key="ekyna_cms.settings.class">Ekyna\Bundle\CmsBundle\Settings\CmsSettingsSchema</parameter>
-        
+
         <parameter key="ekyna_cms.seo.class">Ekyna\Bundle\CmsBundle\Entity\Seo</parameter>
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
-        <parameter key="ekyna_cms.page.class">Ekyna\Bundle\CmsBundle\Entity\Page</parameter>
+
         <parameter key="ekyna_cms.page.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>
         <parameter key="ekyna_cms.page.listener.class">Ekyna\Bundle\CmsBundle\Listener\PageListener</parameter>
         <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>

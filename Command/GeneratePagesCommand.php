@@ -191,6 +191,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
 
             $page
                 ->setName($definition->getPageName())
+                ->setTitle($definition->getPageName())
                 ->setSeo($seo)
                 ->setRoute($definition->getRouteName())
                 ->setPath($definition->getPath())

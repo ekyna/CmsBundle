@@ -7,7 +7,7 @@ use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 
 /**
- * ContentSubjectSubscriber
+ * ContentSubjectSubscriber.
  * 
  * @see http://www.theodo.fr/blog/2013/11/dynamic-mapping-in-doctrine-and-symfony-how-to-extend-entities/
  *
@@ -20,6 +20,11 @@ class ContentSubjectSubscriber implements EventSubscriber
 
     protected $contentEnabled = false;
 
+    /**
+     * Constructor.
+     * 
+     * @param boolean $contentEnabled
+     */
     public function __construct($contentEnabled)
     {
         $this->contentEnabled = (bool) $contentEnabled;
@@ -72,6 +77,9 @@ class ContentSubjectSubscriber implements EventSubscriber
         ));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSubscribedEvents()
     {
         return array(

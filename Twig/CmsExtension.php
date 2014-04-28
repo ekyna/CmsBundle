@@ -53,9 +53,9 @@ class CmsExtension extends \Twig_Extension
         $contentEnabled = false
     ) {
         $this->pageRepository = $pageRepository;
-        $this->requestStack = $requestStack;
-        $this->environment = $environment;
-        $this->template = $template;
+        $this->requestStack   = $requestStack;
+        $this->environment    = $environment;
+        $this->template       = $template;
         $this->contentEnabled = $contentEnabled;
     }
 
@@ -65,9 +65,10 @@ class CmsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'ekyna_cms_metas' => new \Twig_Function_Method($this, 'renderMetas', array('is_safe' => array('html'))),
+            'cms_metas'   => new \Twig_Function_Method($this, 'renderMetas',   array('is_safe' => array('html'))),
+            'cms_title'   => new \Twig_Function_Method($this, 'renderTitle',   array('is_safe' => array('html'))),
             'cms_content' => new \Twig_Function_Method($this, 'renderContent', array('is_safe' => array('html'))),
-            'cms_block' => new \Twig_Function_Method($this, 'renderBlock', array('is_safe' => array('html'))),
+            'cms_block'   => new \Twig_Function_Method($this, 'renderBlock',   array('is_safe' => array('html'))),
         );
     }
 
@@ -80,7 +81,7 @@ class CmsExtension extends \Twig_Extension
             'cms_content_enabled' => $this->contentEnabled,
         );
     }
-    
+
     /**
      * Returns the current page
      * 
@@ -108,6 +109,22 @@ class CmsExtension extends \Twig_Extension
             $output .= sprintf('<meta name="description" content="%s">', $seo->getDescription());
         }
         return $output;
+    }
+
+    /**
+     * Returns current page's title
+     * 
+     * @param string $tag
+     * 
+     * @return string
+     */
+    public function renderTitle($tag = 'h1')
+    {
+        $title = 'Undefined title';
+        if (null !== $page = $this->getCurrentPage()) {
+            $title = $page->getTitle();
+        }
+        return sprintf('<%s>%s</%s>', $tag, $title, $tag);
     }
 
     /**

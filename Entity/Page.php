@@ -56,6 +56,11 @@ class Page implements ContentSubjectInterface
     protected $name;
 
     /**
+     * @var string
+     */
+    protected $title;
+
+    /**
      * @var boolean
      */
     protected $menu;
@@ -316,6 +321,29 @@ class Page implements ContentSubjectInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set title
+     *
+     * @param string $title
+     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string 
+     */
+    public function getTitle()
+    {
+        return $this->title;
     }
 
     /**
