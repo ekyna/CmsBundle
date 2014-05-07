@@ -6,7 +6,7 @@ use Ekyna\Bundle\CmsBundle\Entity\Content;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * ContentSubjectInterface
+ * ContentSubjectInterface.
  *
  * @author Étienne Dauvergne <contact@ekyna.com>
  */

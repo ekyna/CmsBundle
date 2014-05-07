@@ -26,7 +26,7 @@ trait ContentSubjectTrait
      * Set html
      *
      * @param string $html
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return ContentSubjectInterface
      */
     public function setHtml($html)
     {
