@@ -56,7 +56,13 @@ trait ContentTrait
             // TODO: Test if generateDefaultContent method exists ? User abstract method definition ?
             $content = $this->generateDefaultContent();
         }
-        $form = $this->createForm('ekyna_cms_content', $content, array('admin_mode' => true));
+        $form = $this->createForm('ekyna_cms_content', $content, array(
+            'admin_mode' => true,
+            '_redirect_enabled' => true,
+            '_footer' => array(
+                'cancel_path' => $this->generateUrl($this->config->getRoute('list')),
+            ),
+        ));
 
         $form->handleRequest($this->getRequest());
         if ($form->isValid()) {
@@ -66,6 +72,10 @@ trait ContentTrait
             $this->persist($resource);
 
             $this->addFlash('Le contenu a été modifiée avec succès.', 'success');
+
+            if (null !== $redirectPath = $form->get('_redirect')->getData()) {
+                return $this->redirect($redirectPath);
+            }
 
             return $this->redirect(
                 $this->generateUrl(
