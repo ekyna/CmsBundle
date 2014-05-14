@@ -12,7 +12,7 @@
 {% block main %}
 <form action="{{ path('ekyna_cms_page_admin_edit', {'pageId': page.id}) }}" {{ form_enctype(form) }} method="post" class="form-horizontal form-with-tabs">
     {% include "EkynaCmsBundle:Page/Admin:_form.html.twig" %}
-    {{ ui_form_footer(path('ekyna_cms_page_admin_show', {'pageId': page.id})) }}
+    {{ ui_form_footer(form) }}
 </form>
 {% endblock %}
 

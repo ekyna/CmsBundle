@@ -74,4 +74,28 @@ class CmsSettingsSchema implements SchemaInterface
             ))
         ;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getLabel()
+    {
+        return 'ekyna_core.field.seo';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getShowTemplate()
+    {
+        return 'EkynaCmsBundle:Settings:show.html.twig';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFormTemplate()
+    {
+        return 'EkynaCmsBundle:Settings:form.html.twig';
+    }
 }

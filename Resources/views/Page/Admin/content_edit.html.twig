@@ -14,7 +14,7 @@
     <div class="form-body">
 	    {{ form_widget(form) }}
     </div>
-    {{ ui_form_footer(path('ekyna_cms_page_admin_content', identifiers|merge({'pageId': page.id}))) }}
+    {{ ui_form_footer(form) }}
 </form>
 {% endblock %}
 
