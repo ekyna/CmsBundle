@@ -41,7 +41,7 @@
             <argument type="collection">
                 <argument key="locale">%locale%</argument>
             </argument>
-            <tag name="ekyna_setting.schema" namespace="cms" />
+            <tag name="ekyna_setting.schema" namespace="cms" position="10" />
         </service>
 
         <!-- Form Types -->

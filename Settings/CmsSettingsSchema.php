@@ -2,18 +2,18 @@
 
 namespace Ekyna\Bundle\CmsBundle\Settings;
 
-use Ekyna\Bundle\SettingBundle\Schema\SchemaInterface;
+use Ekyna\Bundle\SettingBundle\Schema\AbstractSchema;
 use Ekyna\Bundle\SettingBundle\Schema\SettingsBuilderInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Locale;
 
 /**
- * CmsSettingsSchema
+ * CmsSettingsSchema.
  *
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class CmsSettingsSchema implements SchemaInterface
+class CmsSettingsSchema extends AbstractSchema
 {
     /**
      * @var array
@@ -35,8 +35,8 @@ class CmsSettingsSchema implements SchemaInterface
     {
         $builder
             ->setDefaults(array_merge(array(
-                'title'            => 'Website default title',
-                'meta_description' => 'website default description',
+                'title'            => 'Page default title',
+                'meta_description' => 'Page default description',
                 'locale'           => 'fr',
             ), $this->defaults))
             ->setAllowedTypes(array(
@@ -50,7 +50,7 @@ class CmsSettingsSchema implements SchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('title', 'text', array(
@@ -97,5 +97,10 @@ class CmsSettingsSchema implements SchemaInterface
     public function getFormTemplate()
     {
         return 'EkynaCmsBundle:Settings:form.html.twig';
+    }
+
+    public function getName()
+    {
+        return 'ekyna_cms_settings';
     }
 }

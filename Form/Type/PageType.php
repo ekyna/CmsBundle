@@ -28,6 +28,9 @@ class PageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('title', 'text', array(
+                'label' => 'ekyna_core.field.title'
+            ))
             ->add('seo', 'ekyna_cms_seo', array(
                 'label' => false
             ))
