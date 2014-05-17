@@ -6,7 +6,7 @@ ekyna_cms:
         header:
             list: Pages <small>Liste des pages</small>
             show: Detail de la page <small>%name%</small>
-            content: Contenu de la page <small>%name%</small>
+            content_show: Contenu de la page <small>%name%</small>
             new: Créer une nouvelle page
             new_child: Créer une nouvelle page sous <small>%name%</small>
             edit: Modifier la page <small>%name%</small>
@@ -17,6 +17,7 @@ ekyna_cms:
             show: Detail de la page
             new: Nouvelle page
             edit: Modifier la page
+            remove: Supprimer la page
         alert:
             no_user: Aucune page configuré
     field:
