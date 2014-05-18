@@ -41,7 +41,7 @@ class PageType extends AbstractTableType
             ->addColumn('updatedAt', 'datetime', array(
                 'label' => 'ekyna_core.field.update_date',
             ))
-            ->addColumn('actions', 'nested_actions', array(
+            ->addColumn('actions', 'admin_nested_actions', array(
                 'disable_property_path' => 'locked',
                 'new_child_route' => 'ekyna_cms_page_admin_new_child',
                 'move_up_route' => 'ekyna_cms_page_admin_move_up',
@@ -58,6 +58,7 @@ class PageType extends AbstractTableType
                         'route_parameters_map' => array(
                             'pageId' => 'id'
                         ),
+                        'permission' => 'edit',
                     ),
                     array(
                         'label' => 'ekyna_core.button.remove',
@@ -68,6 +69,7 @@ class PageType extends AbstractTableType
                             'pageId' => 'id'
                         ),
                         'disable_property_path' => 'static',
+                        'permission' => 'delete',
                     ),
                 ),
             ))
