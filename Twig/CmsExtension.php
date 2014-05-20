@@ -133,10 +133,13 @@ class CmsExtension extends \Twig_Extension
      * 
      * @return string
      */
-    public function renderTitle($tag = 'h1', $content = 'Undefined title')
+    public function renderTitle($tag = 'h1', $content = null)
     {
-        if (null !== $page = $this->getCurrentPage()) {
+        if (null === $content && null !== $page = $this->getCurrentPage()) {
             $content = $page->getTitle();
+        }
+        if (0 == strlen($content)) {
+            $content = 'Undefined title';
         }
         return sprintf('<%s>%s</%s>', $tag, $content, $tag);
     }
