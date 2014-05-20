@@ -6,6 +6,7 @@ use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 
 /**
  * CmsExtension
@@ -66,6 +67,7 @@ class CmsExtension extends \Twig_Extension
     {
         return array(
             'cms_metas'   => new \Twig_Function_Method($this, 'renderMetas',   array('is_safe' => array('html'))),
+            'cms_meta'    => new \Twig_Function_Method($this, 'renderMeta',    array('is_safe' => array('html'))),
             'cms_title'   => new \Twig_Function_Method($this, 'renderTitle',   array('is_safe' => array('html'))),
             'cms_content' => new \Twig_Function_Method($this, 'renderContent', array('is_safe' => array('html'))),
             'cms_block'   => new \Twig_Function_Method($this, 'renderBlock',   array('is_safe' => array('html'))),
@@ -83,7 +85,7 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
-     * Returns the current page
+     * Returns the current page.
      * 
      * @return \Ekyna\Bundle\CmsBundle\Entity\Page
      */
@@ -96,39 +98,51 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
-     * Generates document title and metas tags regarding to current request
+     * Generates document title and metas tags from the given Seo object or regarding to the current page.
      * 
      * @return string
      */
-    public function renderMetas()
+    public function renderMetas(SeoInterface $seo = null)
     {
-        $output = '<title>Undefined</title>';
-        if (null !== $page = $this->getCurrentPage()) {
-            $seo = $page->getSeo();
-            $output = sprintf('<title>%s</title>', $seo->getTitle()) . "\n";
-            $output .= sprintf('<meta name="description" content="%s">', $seo->getDescription());
+        if (null === $seo) {
+            if (null !== $page = $this->getCurrentPage()) {
+                $seo = $page->getSeo();
+            }
         }
-        return $output;
+        if (null !== $seo) {
+            return $this->renderTitle('title', $seo->getTitle()) . $this->renderMeta('description', $seo->getDescription());
+        }
+        return '<title>Undefined</title>';
     }
 
     /**
-     * Returns current page's title
+     * Generates a meta tag.
+     * 
+     * @return string
+     */
+    public function renderMeta($name, $content)
+    {
+        return sprintf('<meta name="%s" content="%s">', $name, $content);
+    }
+
+    /**
+     * Returns current page's title.
      * 
      * @param string $tag
+     * @param string $content
      * 
      * @return string
      */
-    public function renderTitle($tag = 'h1')
+    public function renderTitle($tag = 'h1', $content = 'Undefined title')
     {
-        $title = 'Undefined title';
         if (null !== $page = $this->getCurrentPage()) {
-            $title = $page->getTitle();
+            $content = $page->getTitle();
         }
-        return sprintf('<%s>%s</%s>', $tag, $title, $tag);
+        return sprintf('<%s>%s</%s>', $tag, $content, $tag);
     }
 
     /**
-     * Generates html from given Content
+     * Generates html from given Content.
      * 
      * @param ContentInterface $content
      * 
@@ -158,7 +172,7 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
-     * Generates html from given Block
+     * Generates html from given Block.
      * 
      * @param BlockInterface $block
      * 

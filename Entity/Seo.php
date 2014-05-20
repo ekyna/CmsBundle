@@ -2,23 +2,15 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+
 /**
  * Ekyna\Bundle\CmsBundle\Entity$Seo
  *
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class Seo
+class Seo implements SeoInterface
 {
-    /**
-     * Returns valid changefreq choices
-     * 
-     * @return array
-     */
-    public static function getChangefreqs()
-    {
-        return array('hourly', 'monthly', 'yearly');
-    }
-
     /**
      * @var integer
      */
@@ -78,9 +70,7 @@ class Seo
     }
 
     /**
-     * Get title
-     *
-     * @return string 
+     * {@inheritDoc}
      */
     public function getTitle()
     {
@@ -101,9 +91,7 @@ class Seo
     }
 
     /**
-     * Get description
-     *
-     * @return string 
+     * {@inheritDoc}
      */
     public function getDescription()
     {
@@ -124,9 +112,7 @@ class Seo
     }
 
     /**
-     * Get changefreq
-     *
-     * @return string 
+     * {@inheritDoc} 
      */
     public function getChangefreq()
     {
@@ -147,12 +133,18 @@ class Seo
     }
 
     /**
-     * Get priority
-     *
-     * @return string 
+     * {@inheritDoc}
      */
     public function getPriority()
     {
         return $this->priority;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getChangefreqs()
+    {
+        return array('hourly', 'monthly', 'yearly');
     }
 }
