@@ -6,7 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
 /**
- * AdminMenuPass
+ * AdminMenuPass.
  *
  * @author Étienne Dauvergne <contact@ekyna.com>
  */

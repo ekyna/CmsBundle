@@ -2,6 +2,6 @@ ekyna_cms_page_admin:
     resource: "routing/admin/page.yml"
     prefix:   /admin/cms/pages
 
-ekyna_cms_test:
-    path: /cms/test
-    defaults: { _controller: "EkynaCmsBundle:Cms:test" }
+ekyna_cms_editor:
+    resource: "routing/editor.yml"
+    prefix:   /cms/editor

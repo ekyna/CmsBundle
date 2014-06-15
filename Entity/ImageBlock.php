@@ -7,11 +7,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Gedmo\Sluggable\Util\Urlizer;
 
 /**
- * ImageBlock
+ * ImageBlock.
  *
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class ImageBlock extends Block implements ImageInterface
+class ImageBlock extends AbstractBlock implements ImageInterface
 {
     /**
      * File uploaded

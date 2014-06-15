@@ -3,11 +3,11 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 /**
- * Ekyna\Bundle\CmsBundle\Entity$TextBlock
+ * TextBlock.
  *
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class TextBlock extends Block
+class TextBlock extends AbstractBlock
 {
     /**
      * @var string

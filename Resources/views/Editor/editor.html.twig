@@ -1,0 +1,44 @@
+{% spaceless %}
+<style>
+<!--
+{% include '@EkynaCms/Editor/editor.css' %}
+-->
+</style>
+<div class="cms-editor-box pinned">
+    <div class="cms-editor-head">
+        <button class="btn cms-editor-enable" title="Activer"></button>
+        <button class="btn cms-editor-pin" title="Accrocher"></button>
+        <button class="btn cms-editor-save" title="Sauvegarder"></button>
+        <span class="cms-editor-busy" title="Sauvergarde en cours ..."></span>
+    </div>
+    <div class="cms-editor-group">
+        <button class="btn cms-editor-row-add" title="New row"></button>
+        <button class="btn cms-editor-row-remove" title="Remove row"></button>
+        <button class="btn cms-editor-row-insert-before" title="Insert row before"></button>
+        <button class="btn cms-editor-row-insert-after" title="Insert row after"></button>
+        <button class="btn cms-editor-row-move-up" title="Move up row"></button>
+        <button class="btn cms-editor-row-move-down" title="Move down row"></button>
+    </div>
+    <div class="cms-editor-group">
+        <button class="btn cms-editor-column-add" title="New column"></button>
+        <button class="btn cms-editor-column-remove" title="Remove column"></button>
+        <button class="btn cms-editor-column-insert-before" title="Insert column before"></button>
+        <button class="btn cms-editor-column-insert-after" title="Insert column after"></button><br>
+        <button class="btn cms-editor-column-move-left" title="Move column to the left"></button>
+        <button class="btn cms-editor-column-move-right" title="Move column to the right"></button>
+        <button class="btn cms-editor-column-move-up" title="Move column to the up"></button>
+        <button class="btn cms-editor-column-move-down" title="Move column to the down"></button>
+        <button class="btn cms-editor-column-grow" title="Grow up column"></button>
+        <button class="btn cms-editor-column-reduce" title="Reduce column"></button>
+    </div>
+    <div class="cms-editor-group">
+        <select id="cms-editor-plugin-type"></select>
+        <div id="cms-editor-plugin-controls"></div>
+    </div>
+</div>
+<script>/*<![CDATA[*/
+{% include '@EkynaCms/Editor/editor.js' %}
+{% include '@EkynaCms/Editor/plugins/tinymce.js' %}
+{% include '@EkynaCms/Editor/plugins/image.js' %}
+/*]]>*/</script>
+{% endspaceless %}

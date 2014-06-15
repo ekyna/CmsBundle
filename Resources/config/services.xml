@@ -14,6 +14,7 @@
         <parameter key="ekyna_cms.page.listener.class">Ekyna\Bundle\CmsBundle\Listener\PageListener</parameter>
         <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>
 
+        <parameter key="ekyna_cms.block_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\BlockSubscriber</parameter>
         <parameter key="ekyna_cms.content.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\ContentType</parameter>
         <parameter key="ekyna_cms.block_collection.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\BlockCollectionType</parameter>
         <parameter key="ekyna_cms.text_block.class">Ekyna\Bundle\CmsBundle\Entity\TextBlock</parameter>
@@ -23,14 +24,12 @@
         <parameter key="ekyna_cms.image_block.class">Ekyna\Bundle\CmsBundle\Entity\ImageBlock</parameter>
         <parameter key="ekyna_cms.image_block.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\Block\ImageBlockType</parameter>
 
-        <parameter key="ekyna_cms.layout_factory.class">Ekyna\Bundle\CmsBundle\Layout\LayoutFactory</parameter>
-        <parameter key="ekyna_cms.layout_registry.class">Ekyna\Bundle\CmsBundle\Layout\LayoutRegistry</parameter>
-
         <parameter key="ekyna_cms.route_provider.class">Ekyna\Bundle\CmsBundle\Routing\RouteProvider</parameter>
         <parameter key="ekyna_cms.nested_matcher.class">Ekyna\Bundle\CmsBundle\Routing\NestedMatcher</parameter>
         <parameter key="ekyna_cms.final_matcher.class">Ekyna\Bundle\CmsBundle\Routing\FinalMatcher</parameter>
         <parameter key="ekyna_cms.url_generator.class">Ekyna\Bundle\CmsBundle\Routing\UrlGenerator</parameter>
 
+        <parameter key="ekyna_cms.editor_listener.class">Ekyna\Bundle\CmsBundle\Listener\EditorListener</parameter>
         <parameter key="ekyna_cms.twig.cms_extension.class">Ekyna\Bundle\CmsBundle\Twig\CmsExtension</parameter>
         <parameter key="ekyna_cms.menu_builder.class">Ekyna\Bundle\CmsBundle\Menu\MenuBuilder</parameter>
     </parameters>
@@ -86,12 +85,9 @@
             <argument>%ekyna_cms.content_enabled%</argument>
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
-
-        <!-- Layouts -->
-        <service id="ekyna_cms.layout_factory" class="%ekyna_cms.layout_factory.class%" />
-        <service id="ekyna_cms.layout_registry" class="%ekyna_cms.layout_registry.class%">
-            <!-- Services with "ekyna_cms.layout" tag -->
-            <argument type="collection" />
+        <service id="ekyna_cms.block_subscriber" class="%ekyna_cms.block_subscriber.class%">
+            <argument type="service" id="ekyna_cms.editor.plugin_registry" />
+            <tag name="doctrine.event_subscriber" connection="default" />
         </service>
 
         <!-- Route provider -->
@@ -133,10 +129,31 @@
         <service id="ekyna_cms.twig.cms_extension" class="%ekyna_cms.twig.cms_extension.class%">
             <argument type="service" id="ekyna_cms.page.repository" />
             <argument type="service" id="request_stack" />
-            <argument type="service" id="twig" />
-            <argument>%ekyna_cms.default_template%</argument>
-            <argument>%ekyna_cms.content_enabled%</argument>
+            <argument type="service" id="security.context" />
+            <argument type="collection"></argument>
             <tag name="twig.extension" />
+        </service>
+
+        <!-- Web Editor listener -->
+        <service id="ekyna_cms.editor_listener" class="%ekyna_cms.editor_listener.class%">
+            <argument type="service" id="twig" />
+            <argument type="service" id="security.context" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <!-- Web Editor -->
+        <service id="ekyna_cms.editor.plugin_registry" class="Ekyna\Bundle\CmsBundle\Editor\PluginRegistry" />
+        <service id="ekyna_cms.editor" class="Ekyna\Bundle\CmsBundle\Editor\Editor">
+            <argument type="service" id="ekyna_cms.editor.plugin_registry" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+        </service>
+
+        <!-- Web Editor plugins -->
+        <service id="ekyna_cms.editor.plugin.tinymce" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\TinymcePlugin">
+            <tag name="ekyna_cms.editor.plugin" alias="tinymce" />
+        </service>
+        <service id="ekyna_cms.editor.plugin.image" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\ImagePlugin">
+            <tag name="ekyna_cms.editor.plugin" alias="image" />
         </service>
 
         <!-- Menus -->

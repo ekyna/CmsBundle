@@ -11,7 +11,7 @@
 	        <generator strategy="AUTO" />
 	    </id>
         <field name="version" type="integer" column="version" />
-        <one-to-many field="blocks" target-entity="Ekyna\Bundle\CmsBundle\Entity\Block" mapped-by="content">
+        <one-to-many field="blocks" target-entity="Ekyna\Bundle\CmsBundle\Entity\AbstractBlock" mapped-by="content">
             <cascade>
                 <cascade-all />
             </cascade>

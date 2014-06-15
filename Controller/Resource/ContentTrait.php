@@ -2,7 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Controller\Resource;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Entity\Content;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,8 +52,7 @@ trait ContentTrait
         // TODO: select version
         if (null === $content = $resource->getContent()) {
             $newContent = true;
-            // TODO: Test if generateDefaultContent method exists ? User abstract method definition ?
-            $content = $this->generateDefaultContent();
+            $content = new Content();
         }
         $form = $this->createForm('ekyna_cms_content', $content, array(
             'admin_mode' => true,
@@ -93,34 +91,5 @@ trait ContentTrait
                 'form' => $form->createView()
             ))
         );
-    }
-
-    protected function generateDefaultContent()
-    {
-        $layout = $this->container->get('ekyna_cms.layout_registry')->get('default');
-    
-        $blocks = new ArrayCollection();
-        foreach ($layout->getConfiguration() as $config) {
-            $key = sprintf('ekyna_cms.%s_block.class', $config['type']);
-            if(!$this->container->hasParameter($key)) {
-                throw new \InvalidArgumentException(sprintf('Unknown block type "%s".', $config['type']));
-            }
-            $class = $this->container->getParameter($key);
-            $block = new $class;
-            $block
-                ->setWidth($config['width'])
-                ->setRow($config['row'])
-                ->setColumn($config['column'])
-            ;
-            $blocks[] = $block;
-        }
-    
-        $content = new Content();
-        $content
-            ->setBlocks($blocks)
-            ->setVersion(1)
-        ;
-    
-        return $content;
     }
 }

@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
+use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 
 /**
  * Content
@@ -131,11 +132,11 @@ class Content implements ContentInterface
     /**
      * Add block
      *
-     * @param \Ekyna\Bundle\CmsBundle\Entity\Block $block
+     * @param \Ekyna\Bundle\CmsBundle\Model\BlockInterface $block
      * 
      * @return \Ekyna\Bundle\CmsBundle\Entity\Content
      */
-    public function addBlock(Block $block)
+    public function addBlock(BlockInterface $block)
     {
         $block->setContent($this);
         $this->blocks[] = $block;
@@ -162,11 +163,11 @@ class Content implements ContentInterface
     /**
      * Remove blocks
      *
-     * @param \Ekyna\Bundle\CmsBundle\Entity\Block $block
+     * @param \Ekyna\Bundle\CmsBundle\Model\BlockInterface $block
      * 
      * @return \Ekyna\Bundle\CmsBundle\Entity\Content
      */
-    public function removeBlock(Block $block)
+    public function removeBlock(BlockInterface $block)
     {
         $this->blocks->removeElement($block);
     }

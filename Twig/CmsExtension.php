@@ -7,9 +7,10 @@ use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+use Symfony\Component\Security\Core\SecurityContext;
 
 /**
- * CmsExtension
+ * CmsExtension.
  * 
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
@@ -26,19 +27,20 @@ class CmsExtension extends \Twig_Extension
     protected $requestStack;
 
     /**
-     * @var \Twig_Environment
+     * @var SecurityContext
      */
-    protected $environment;
+    protected $securityContext;
+
+    /**
+     * @var array
+     */
+    protected $config;
 
     /**
      * @var \Twig_Template
      */
-    protected $contentTemplate;
+    protected $template;
 
-    /**
-     * @var boolean
-     */
-    protected $contentEnabled;
 
     /**
      * Constructor
@@ -46,18 +48,15 @@ class CmsExtension extends \Twig_Extension
      * @param PageRepository $pageRepository
      * @param RequestStack   $requestStack
      */
-    public function __construct(
-        PageRepository $pageRepository,
-        RequestStack $requestStack,
-        \Twig_Environment $environment,
-        $template = 'EkynaCmsBundle:Cms:content.html.twig',
-        $contentEnabled = false
-    ) {
+    public function __construct(PageRepository $pageRepository, RequestStack $requestStack, SecurityContext $securityContext, array $config = array())
+    {
         $this->pageRepository = $pageRepository;
         $this->requestStack   = $requestStack;
-        $this->environment    = $environment;
-        $this->template       = $template;
-        $this->contentEnabled = $contentEnabled;
+        $this->securityContext = $securityContext;
+        $this->config = array_merge(array(
+        	'template' => 'EkynaCmsBundle:Cms:content.html.twig',
+            'enabled'  => true,
+        ), $config);
     }
 
     /**
@@ -75,12 +74,20 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
+     * {@inheritDoc}
+     */
+	public function initRuntime(\Twig_Environment $environment)
+	{
+        $this->template = $environment->loadTemplate($this->config['template']);
+	}
+
+    /**
      * {@inheritdoc}
      */
     public function getGlobals()
     {
         return array(
-            'cms_content_enabled' => $this->contentEnabled,
+            'cms_content_enabled' => $this->config['enabled'],
         );
     }
 
@@ -149,6 +156,8 @@ class CmsExtension extends \Twig_Extension
      * 
      * @param ContentInterface $content
      * 
+     * @throws \RuntimeException
+     * 
      * @return string
      */
     public function renderContent(ContentInterface $content = null)
@@ -163,15 +172,20 @@ class CmsExtension extends \Twig_Extension
             }
         }
 
-        if(null === $content) {
+        if (null === $content) {
             return '<p>Page en construction.</p>';
         }
 
-        if(!$this->template instanceOf \Twig_Template) {
-            $this->template = $this->environment->loadTemplate($this->template);
+        if (! $this->template->hasBlock('cms_block_content')) {
+            throw new \RuntimeException('Unable to find "cms_block_content" twig block.');
         }
 
-        return $this->template->renderBlock('cms_content', array('content' => $content));
+        $editable = $this->securityContext->isGranted('ROLE_ADMIN');
+        if ($editable && null !== $request = $this->requestStack->getCurrentRequest()) {
+            $request->headers->set('X-CmsEditor-Injection', true);
+        }
+
+        return $this->template->renderBlock('cms_block_content', array('content' => $content, 'editable' => $editable));
     }
 
     /**
@@ -179,13 +193,15 @@ class CmsExtension extends \Twig_Extension
      * 
      * @param BlockInterface $block
      * 
+     * @throws \RuntimeException
+     * 
      * @return string
      */
     public function renderBlock(BlockInterface $block)
     {
         $token = sprintf('cms_block_%s', $block->getType());
         if(!$this->template->hasBlock($token)) {
-            throw new \InvalidArgumentException('Unable to find "%s" twig block.', $token);
+            throw new \RuntimeException('Unable to find "%s" twig block.', $token);
         }
 
         return trim($this->template->renderBlock($token, array('block' => $block)));

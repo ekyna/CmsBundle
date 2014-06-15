@@ -9,6 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Routing\Route;
+use Ekyna\Bundle\CmsBundle\Entity\Content;
+use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
 
 /**
  * GeneratePagesCommand
@@ -183,19 +185,21 @@ class GeneratePagesCommand extends ContainerAwareCommand
                 $title = $definition->getPageName();
             }
 
+            // Seo
             $seo = new Seo();
             $seo
                 ->setTitle($title)
                 ->setDescription('') // empty to force edition in backend
             ;
 
+            // Page
             $page
                 ->setName($definition->getPageName())
                 ->setTitle($definition->getPageName())
                 ->setSeo($seo)
                 ->setRoute($definition->getRouteName())
                 ->setPath($definition->getPath())
-                ->setHtml(sprintf('<p>Page en cours de rédaction.</p>', $definition->getPageName()))
+                ->setHtml('<p>Page en cours de rédaction.</p>')
                 ->setStatic(true)
                 ->setLocked($definition->getLocked())
                 ->setMenu($definition->getMenu())
@@ -203,6 +207,21 @@ class GeneratePagesCommand extends ContainerAwareCommand
                 ->setParent($parentPage)
             ;
 
+            // Default content
+            $block = new TinymceBlock();
+            $block
+                ->setRow(1)
+                ->setColumn(1)
+                ->setWidth(12)
+                ->setHtml('<p>Page en cours de rédaction.</p>')
+            ;
+            $content = new Content();
+            $content
+                ->setVersion(1)
+                ->addBlock($block)
+            ;
+            $page->addContent($content);
+            
             $this->em->persist($page);
             $this->em->flush();
 

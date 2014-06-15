@@ -11,9 +11,6 @@
 
 {% block main %}
 <div class="actions">
-    {% if cms_content_enabled %}
-	{{ admin_resource_btn(page, 'show', {'label': 'ekyna_core.button.content_show', 'path': path('ekyna_cms_page_admin_content', identifiers|merge({'pageId': page.id})), 'icon': 'th-large'}) }}
-    {% endif %}
 	{{ admin_resource_btn(page, 'edit') }}
 	{{ admin_resource_btn(page, 'remove') }}
 </div>

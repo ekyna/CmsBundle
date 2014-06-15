@@ -3,11 +3,11 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 /**
- * Ekyna\Bundle\CmsBundle\Entity$TinymceBlock
+ * TinymceBlock.
  *
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class TinymceBlock extends Block
+class TinymceBlock extends AbstractBlock
 {
     /**
      * @var string

@@ -5,11 +5,11 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 
 /**
- * Block
+ * AbstractBlock.
  *
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-abstract class Block implements BlockInterface
+abstract class AbstractBlock implements BlockInterface
 {
     /**
      * @var integer
@@ -34,7 +34,7 @@ abstract class Block implements BlockInterface
     /**
      * @var integer
      */
-    protected $width;
+    protected $size;
 
 
     /**
@@ -117,25 +117,41 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * Set width
+     * Set size
      *
-     * @param integer $width
+     * @param integer $size
      * @return Block
      */
-    public function setWidth($width)
+    public function setSize($size)
     {
-        $this->width = $width;
+        $this->size = $size;
 
         return $this;
     }
 
     /**
-     * Get width
+     * Get size
      *
      * @return integer 
      */
-    public function getWidth()
+    public function getSize()
     {
-        return $this->width;
+        return $this->size;
+    }
+
+    /**
+     * Returns the init datas for JS editor.
+     * 
+     * @return array
+     */
+    public function getInitDatas()
+    {
+        return array(
+        	'id'     => $this->id,
+            'type'   => $this->getType(),
+        	'row'    => intval($this->row),
+        	'column' => intval($this->column),
+        	'size'   => intval($this->size)            
+        );
     }
 }

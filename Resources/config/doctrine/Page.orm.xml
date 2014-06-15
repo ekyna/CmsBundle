@@ -7,8 +7,8 @@
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <entity
-        name="Ekyna\Bundle\CmsBundle\Entity\Page" 
-        repository-class="Ekyna\Bundle\CmsBundle\Entity\PageRepository" 
+        name="Ekyna\Bundle\CmsBundle\Entity\Page"
+        repository-class="Ekyna\Bundle\CmsBundle\Entity\PageRepository"
         table="cms_page">
 
         <id name="id" type="integer" column="id">

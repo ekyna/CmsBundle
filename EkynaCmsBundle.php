@@ -3,9 +3,9 @@
 namespace Ekyna\Bundle\CmsBundle;
 
 use Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler\AdminMenuPass;
-use Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler\RegistryPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler\EditorPluginPass;
 
 /**
  * EkynaCmsBundle
@@ -18,6 +18,6 @@ class EkynaCmsBundle extends Bundle
     {
         parent::build($container);
         $container->addCompilerPass(new AdminMenuPass());
-        $container->addCompilerPass(new RegistryPass());
+        $container->addCompilerPass(new EditorPluginPass());
     }
 }
