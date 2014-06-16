@@ -130,6 +130,7 @@ class Page implements ContentSubjectInterface
         $this->setSeo(new Seo());
         $this->static = false;
         $this->locked = false;
+        $this->advanced = false;
     }
 
     /**

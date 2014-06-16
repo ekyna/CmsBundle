@@ -14,7 +14,9 @@ use Ekyna\Bundle\AdminBundle\Controller\Context;
  */
 class PageController extends ResourceController
 {
-    use NestedTrait;
+    use NestedTrait {
+        createNewFromParent as traitCreateNewFromParent;
+    }
     use TinymceTrait;
 
     /**
@@ -33,7 +35,7 @@ class PageController extends ResourceController
      */
     public function createNewFromParent(Context $context, $parent)
     {
-        $resource = parent::createNewFromParent($context, $parent);
+        $resource = $this->traitCreateNewFromParent($context, $parent);
         $resource->setController($this->container->getParameter('ekyna_cms.default_controller'));
         if ($parent->getAdvanced()) {
             $resource->setAdvanced(true);

@@ -18,7 +18,7 @@ class PageType extends AbstractType
 {
     protected $dataClass;
 
-    public function __construct($class, $contentEnabled)
+    public function __construct($class)
     {
         $this->dataClass = $class;
     }
