@@ -47,6 +47,11 @@ class RouteDefinition
     protected $footer;
 
     /**
+     * @var boolean
+     */
+    protected $advanced;
+
+    /**
      * @var integer
      */
     protected $position = 0;
@@ -82,6 +87,7 @@ class RouteDefinition
         $this->locked   = isset($options['locked'])   ? (bool) $options['locked']    : true;
         $this->menu     = isset($options['menu'])     ? (bool) $options['menu']      : false;
         $this->footer   = isset($options['footer'])   ? (bool) $options['footer']    : false;
+        $this->advanced = isset($options['advanced']) ? (bool) $options['advanced']  : false;
         $this->position = isset($options['position']) ? intval($options['position']) : 0;
 
         // TODO: other route attributes (methods, requirements ?)
@@ -198,6 +204,30 @@ class RouteDefinition
     public function setFooter($footer)
     {
         $this->footer = (bool) $footer;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether page has an advanced content
+     * 
+     * @return boolean
+     */
+    public function getAdvanced()
+    {
+        return $this->advanced;
+    }
+
+    /**
+     * Sets whether page has an advanced content
+     * 
+     * @return boolean
+     * 
+     * @return RouteDefinition
+     */
+    public function setAdvanced($advanced)
+    {
+        $this->advanced = (bool) $advanced;
 
         return $this;
     }

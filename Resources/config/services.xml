@@ -42,7 +42,6 @@
         <!-- Form Types -->
         <service id="ekyna_cms.page.form_type" class="%ekyna_cms.page.form_type.class%">
             <argument>%ekyna_cms.page.class%</argument>
-            <argument>%ekyna_cms.content_enabled%</argument>
             <tag name="form.type" alias="ekyna_cms_page" />
         </service>
         <service id="ekyna_cms.seo.form_type" class="%ekyna_cms.seo.form_type.class%">
@@ -58,7 +57,6 @@
 
         <!-- Doctrine subscriber -->
         <service id="ekyna_cms.content_subscriber" class="%ekyna_cms.content_subscriber.class%">
-            <argument>%ekyna_cms.content_enabled%</argument>
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
         <service id="ekyna_cms.block_subscriber" class="%ekyna_cms.block_subscriber.class%">
@@ -103,7 +101,7 @@
 
         <!-- Twig extensions -->
         <service id="ekyna_cms.twig.cms_extension" class="%ekyna_cms.twig.cms_extension.class%">
-            <argument type="service" id="ekyna_cms.page.repository" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="request_stack" />
             <argument type="service" id="security.context" />
             <argument type="collection"></argument>

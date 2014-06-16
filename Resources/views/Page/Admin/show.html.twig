@@ -32,7 +32,7 @@
                         {{ show_row(page.footer, 'checkbox', 'ekyna_cms.field.footer_menu', {'label_nb_col': 4}) }}
                     </div>
                 </div>
-                {% if not cms_content_enabled %}
+                {% if not page.advanced %}
                 {{ show_row(path('ekyna_cms_page_admin_tinymce', identifiers|merge({'pageId': page.id})), 'tinymce', 'ekyna_core.field.content') }}
                 {% endif %}
             </div>

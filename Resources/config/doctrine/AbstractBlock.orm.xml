@@ -8,13 +8,7 @@
     <entity name="Ekyna\Bundle\CmsBundle\Entity\AbstractBlock" table="cms_block" inheritance-type="JOINED">
 
         <discriminator-column name="type" type="string" />
-	    <discriminator-map>
-	        <!-- 
-	        <discriminator-mapping value="text" class="Ekyna\Bundle\CmsBundle\Entity\TextBlock" />
-	        <discriminator-mapping value="tinymce" class="Ekyna\Bundle\CmsBundle\Entity\TinymceBlock" />
-	        <discriminator-mapping value="image" class="Ekyna\Bundle\CmsBundle\Entity\ImageBlock" />
-	         -->
-	    </discriminator-map>
+	    <discriminator-map />
 
 	    <id name="id" type="integer" column="id">
 	        <generator strategy="AUTO" />

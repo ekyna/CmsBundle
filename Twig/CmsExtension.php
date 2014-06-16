@@ -2,12 +2,15 @@
 
 namespace Ekyna\Bundle\CmsBundle\Twig;
 
-use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
+use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
+use Ekyna\Bundle\CmsBundle\Entity\Content;
+use Ekyna\Bundle\CmsBundle\Entity\Page;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Symfony\Component\Security\Core\SecurityContext;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * CmsExtension.
@@ -17,9 +20,9 @@ use Symfony\Component\Security\Core\SecurityContext;
 class CmsExtension extends \Twig_Extension
 {
     /**
-     * @var PageRepository
+     * @var ObjectManager
      */
-    protected $pageRepository;
+    protected $manager;
 
     /**
      * @var RequestStack
@@ -48,14 +51,14 @@ class CmsExtension extends \Twig_Extension
      * @param PageRepository $pageRepository
      * @param RequestStack   $requestStack
      */
-    public function __construct(PageRepository $pageRepository, RequestStack $requestStack, SecurityContext $securityContext, array $config = array())
+    public function __construct(ObjectManager $manager, RequestStack $requestStack, SecurityContext $securityContext, array $config = array())
     {
-        $this->pageRepository = $pageRepository;
-        $this->requestStack   = $requestStack;
+        $this->manager         = $manager;
+        $this->requestStack    = $requestStack;
         $this->securityContext = $securityContext;
+
         $this->config = array_merge(array(
         	'template' => 'EkynaCmsBundle:Cms:content.html.twig',
-            'enabled'  => true,
         ), $config);
     }
 
@@ -82,16 +85,6 @@ class CmsExtension extends \Twig_Extension
 	}
 
     /**
-     * {@inheritdoc}
-     */
-    public function getGlobals()
-    {
-        return array(
-            'cms_content_enabled' => $this->config['enabled'],
-        );
-    }
-
-    /**
      * Returns the current page.
      * 
      * @return \Ekyna\Bundle\CmsBundle\Entity\Page
@@ -99,7 +92,8 @@ class CmsExtension extends \Twig_Extension
     private function getCurrentPage()
     {
         if (null !== $request = $this->requestStack->getCurrentRequest()) {
-            return $this->pageRepository->findOneBy(array('route' => $request->attributes->get('_route')));
+            $repo = $this->manager->getRepository('EkynaCmsBundle:Page');
+            return $repo->findOneBy(array('route' => $request->attributes->get('_route')));
         }
         return null;
     }
@@ -165,7 +159,13 @@ class CmsExtension extends \Twig_Extension
         if (null === $content) {
             if (null !== $page = $this->getCurrentPage()) {
                 if(null === $content = $page->getContent()) {
-                    if(0 < strlen($html = $page->getHtml())) {
+                    if ($page->getAdvanced()) {
+                        $content = $this->createDefaultContent($page);
+                        $page->addContent($content);
+
+                        $this->manager->persist($page);
+                        $this->manager->flush();
+                    } elseif(0 < strlen($html = $page->getHtml())) {
                         return $html;
                     }
                 }
@@ -186,6 +186,32 @@ class CmsExtension extends \Twig_Extension
         }
 
         return $this->template->renderBlock('cms_block_content', array('content' => $content, 'editable' => $editable));
+    }
+
+    /**
+     * Returns a "default" Content.
+     * 
+     * @param Page $page
+     * 
+     * @return \Ekyna\Bundle\CmsBundle\Entity\Content
+     */
+    private function createDefaultContent(Page $page)
+    {
+        $block = new TinymceBlock();
+        $block
+            ->setRow(1)
+            ->setColumn(1)
+            ->setSize(12)
+            ->setHtml('<p>Page en cours de rédaction.</p>')
+        ;
+
+        $content = new Content();
+        $content
+            ->setVersion(1)
+            ->addBlock($block)
+        ;
+
+        return $content;
     }
 
     /**

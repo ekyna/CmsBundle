@@ -24,7 +24,6 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('output_dir')->defaultValue('')->end()
-                ->booleanNode('enable_contents')->defaultFalse()->end()
                 ->arrayNode('defaults')
                     ->isRequired()
                     ->children()

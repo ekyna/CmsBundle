@@ -13,13 +13,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 interface ContentSubjectInterface
 {
     /**
-     * Returns the html
-     * 
-     * @return string
-     */
-    public function getHtml();
-
-    /**
      * Returns the current content (last version)
      * 
      * @return Content

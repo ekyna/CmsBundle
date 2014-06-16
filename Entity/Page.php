@@ -61,14 +61,9 @@ class Page implements ContentSubjectInterface
     protected $title;
 
     /**
-     * @var boolean
+     * @var string
      */
-    protected $menu;
-
-    /**
-     * @var boolean
-     */
-    protected $footer;
+    protected $html;
 
     /**
      * @var \Ekyna\Bundle\CmsBundle\Entity\Seo
@@ -99,6 +94,21 @@ class Page implements ContentSubjectInterface
      * @var string
      */
     protected $controller;
+
+    /**
+     * @var boolean
+     */
+    protected $menu;
+
+    /**
+     * @var boolean
+     */
+    protected $footer;
+
+    /**
+     * @var boolean
+     */
+    protected $advanced;
 
     /**
      * @var \DateTime
@@ -347,49 +357,26 @@ class Page implements ContentSubjectInterface
     }
 
     /**
-     * Set menu
+     * Set html
      *
-     * @param boolean $menu
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @param string $html
+     * @return ContentSubjectInterface
      */
-    public function setMenu($menu)
+    public function setHtml($html)
     {
-        $this->menu = (bool) $menu;
+        $this->html = $html;
 
         return $this;
     }
 
     /**
-     * Get menu
+     * Get html
      *
-     * @return boolean
+     * @return string
      */
-    public function getMenu()
+    public function getHtml()
     {
-        return $this->menu;
-    }
-
-    /**
-     * Set footer
-     *
-     * @param boolean $footer
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
-     */
-    public function setFooter($footer)
-    {
-        $this->footer = (bool) $footer;
-
-        return $this;
-    }
-
-    /**
-     * Get footer
-     *
-     * @return boolean
-     */
-    public function getFooter()
-    {
-        return $this->footer;
+        return $this->html;
     }
 
     /**
@@ -528,6 +515,75 @@ class Page implements ContentSubjectInterface
     public function getController()
     {
         return $this->controller;
+    }
+
+    /**
+     * Set menu
+     *
+     * @param boolean $menu
+     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     */
+    public function setMenu($menu)
+    {
+        $this->menu = (bool) $menu;
+
+        return $this;
+    }
+
+    /**
+     * Get menu
+     *
+     * @return boolean
+     */
+    public function getMenu()
+    {
+        return $this->menu;
+    }
+
+    /**
+     * Set footer
+     *
+     * @param boolean $footer
+     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     */
+    public function setFooter($footer)
+    {
+        $this->footer = (bool) $footer;
+
+        return $this;
+    }
+
+    /**
+     * Get footer
+     *
+     * @return boolean
+     */
+    public function getFooter()
+    {
+        return $this->footer;
+    }
+
+    /**
+     * Set advanced
+     *
+     * @param boolean $advanced
+     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     */
+    public function setAdvanced($advanced)
+    {
+        $this->advanced = (bool) $advanced;
+
+        return $this;
+    }
+
+    /**
+     * Get advanced
+     *
+     * @return boolean
+     */
+    public function getAdvanced()
+    {
+        return $this->advanced;
     }
 
     /**

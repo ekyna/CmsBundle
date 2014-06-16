@@ -9,8 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Routing\Route;
-use Ekyna\Bundle\CmsBundle\Entity\Content;
-use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
 
 /**
  * GeneratePagesCommand
@@ -204,23 +202,9 @@ class GeneratePagesCommand extends ContainerAwareCommand
                 ->setLocked($definition->getLocked())
                 ->setMenu($definition->getMenu())
                 ->setFooter($definition->getFooter())
+                ->setAdvanced($definition->getAdvanced())
                 ->setParent($parentPage)
             ;
-
-            // Default content
-            $block = new TinymceBlock();
-            $block
-                ->setRow(1)
-                ->setColumn(1)
-                ->setWidth(12)
-                ->setHtml('<p>Page en cours de rédaction.</p>')
-            ;
-            $content = new Content();
-            $content
-                ->setVersion(1)
-                ->addBlock($block)
-            ;
-            $page->addContent($content);
             
             $this->em->persist($page);
             $this->em->flush();

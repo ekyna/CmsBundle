@@ -17,12 +17,10 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class PageType extends AbstractType
 {
     protected $dataClass;
-    protected $contentEnabled;
 
     public function __construct($class, $contentEnabled)
     {
         $this->dataClass = $class;
-        $this->contentEnabled = $contentEnabled;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -46,21 +44,19 @@ class PageType extends AbstractType
             ))
         ;
 
-        if(!$this->contentEnabled) {
-            $builder
-                ->add('html', 'textarea', array(
-                    'label' => 'ekyna_core.field.content',
-                    'attr' => array(
-                	    'class' => 'tinymce',
-                        'data-theme' => 'advanced',
-                    )
-                ))
-            ;
-        }
-
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
             $page = $event->getData();
             $form = $event->getForm();
+
+            if (! $page->getAdvanced()) {
+                $form->add('html', 'textarea', array(
+                    'label' => 'ekyna_core.field.content',
+                    'attr' => array(
+                        'class' => 'tinymce',
+                        'data-theme' => 'advanced',
+                    )
+                ));
+            }
 
             if($page->getStatic()) {
                 $form->add('name', 'text', array(

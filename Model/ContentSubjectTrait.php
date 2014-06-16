@@ -13,37 +13,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 trait ContentSubjectTrait
 {
     /**
-     * @var string
-     */
-    protected $html;
-
-    /**
      * @var ArrayCollection
      */
     protected $contents;
-
-    /**
-     * Set html
-     *
-     * @param string $html
-     * @return ContentSubjectInterface
-     */
-    public function setHtml($html)
-    {
-        $this->html = $html;
-    
-        return $this;
-    }
-
-    /**
-     * Get html
-     *
-     * @return string
-     */
-    public function getHtml()
-    {
-        return $this->html;
-    }
 
     /**
      * Get content

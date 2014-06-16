@@ -18,27 +18,11 @@ class ContentSubjectSubscriber implements EventSubscriber
     const CONTENT_FQCN = 'Ekyna\Bundle\CmsBundle\Entity\Content';
     const SUBJECT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface';
 
-    protected $contentEnabled = false;
-
-    /**
-     * Constructor.
-     * 
-     * @param boolean $contentEnabled
-     */
-    public function __construct($contentEnabled)
-    {
-        $this->contentEnabled = (bool) $contentEnabled;
-    }
-
     /**
      * @param LoadClassMetadataEventArgs $eventArgs
      */
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
-        if(!$this->contentEnabled) {
-            return;
-        }
-
         $metadata = $eventArgs->getClassMetadata();
 
         if (!in_array(self::SUBJECT_INTERFACE, class_implements($metadata->getName()))) {
@@ -60,7 +44,7 @@ class ContentSubjectSubscriber implements EventSubscriber
                 'joinColumns' => array(
                     array(
                         'name'                  => $namingStrategy->joinKeyColumnName($metadata->getName()),
-                        'referencedColumnName'  => $namingStrategy->referenceColumnName(),
+                        //'referencedColumnName'  => $namingStrategy->referenceColumnName(),
                         'onDelete'  => 'CASCADE',
                         'onUpdate'  => 'CASCADE',
                     ),
@@ -68,7 +52,7 @@ class ContentSubjectSubscriber implements EventSubscriber
                 'inverseJoinColumns'    => array(
                     array(
                         'name'                  => 'content_id',
-                        'referencedColumnName'  => $namingStrategy->referenceColumnName(),
+                        //'referencedColumnName'  => $namingStrategy->referenceColumnName(),
                         'onDelete'  => 'CASCADE',
                         'onUpdate'  => 'CASCADE',
                     ),
