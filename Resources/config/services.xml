@@ -76,6 +76,7 @@
             <argument type="service" id="ekyna_cms.url_generator" />
             <argument>null</argument>
             <argument type="service" id="event_dispatcher" on-invalid="ignore"/>
+            <argument type="service" id="ekyna_cms.route_provider" />
             <tag name="router"></tag>
         </service>
 

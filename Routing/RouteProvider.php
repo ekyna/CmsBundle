@@ -4,11 +4,11 @@ namespace Ekyna\Bundle\CmsBundle\Routing;
 
 use Ekyna\Bundle\CmsBundle\Entity\Page;
 use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
-use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 
 /**
  * RouteProvider
@@ -45,7 +45,7 @@ class RouteProvider implements RouteProviderInterface
 
     public function getRoutesByNames($names, $parameters = array())
     {
-        $pages = $this->pageRepository->findBy(array('name' => $names));
+        $pages = $this->pageRepository->findBy(array('route' => $names));
 
         $routes = array();
         foreach($pages as $page) {
@@ -57,7 +57,7 @@ class RouteProvider implements RouteProviderInterface
 
     public function getRouteByName($name, $parameters = array())
     {
-        if(null !== $page = $this->pageRepository->findOneBy(array('name' => $name))) {
+        if(null !== $page = $this->pageRepository->findOneBy(array('route' => $name))) {
             return $this->routeFromPage($page);
         }
         throw new ResourceNotFoundException(sprintf('Unable to find route named "%s".', $name));
