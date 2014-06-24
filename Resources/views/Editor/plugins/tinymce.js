@@ -37,7 +37,7 @@
             external_plugins: {filemanager: "/bundles/ekynafilemanager/js/tinymce.plugin.js"},
             toolbar_items_size: 'small',
             toolbar1: "undo redo removeformat | styleselect | bold italic underline strikethrough | forecolor backcolor",
-            toolbar2: "alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+            toolbar2: "alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link image",
             setup : function(ed) {
                 ed.on('click', function(e) {
                     e.stopPropagation();

@@ -145,6 +145,14 @@
 	        <argument type="service" id="request" />
 	        <tag name="knp_menu.menu" alias="main" />
 	    </service>
+	    <service id="ekyna_cms.menu.footer"
+	        class="Knp\Menu\MenuItem"
+	        factory-service="ekyna_cms.menu_builder"
+	        factory-method="createFooterMenu"
+	        scope="request">
+	        <argument type="service" id="request" />
+	        <tag name="knp_menu.menu" alias="footer" />
+	    </service>
 	    <service id="ekyna_cms.menu.user"
 	        class="Knp\Menu\MenuItem"
 	        factory-service="ekyna_cms.menu_builder"

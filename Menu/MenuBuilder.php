@@ -85,7 +85,7 @@ class MenuBuilder
             if ($home->getMenu()) {
                 $menu->addChild($home->getName(), array('route' => $home->getRoute()));
             }
-            $this->appendChildren($menu, $home);
+            $this->appendMainMenuChildren($menu, $home);
         }
 
         return $menu;
@@ -97,7 +97,7 @@ class MenuBuilder
      * @param \Knp\Menu\ItemInterface $menu
      * @param \Ekyna\Bundle\CmsBundle\Entity\Page $parent
      */
-    public function appendChildren(ItemInterface $menu, Page $parent)
+    public function appendMainMenuChildren(ItemInterface $menu, Page $parent)
     {
         foreach ($parent->getChildren() as $page) {
             if (!$page->getMenu()) {
@@ -105,7 +105,47 @@ class MenuBuilder
             }
             $item = $menu->addChild($page->getName(), array('route' => $page->getRoute()));
             if ($page->hasChildren() && $page->getLevel() < 2) {
-                $this->appendChildren($item, $page);
+                $this->appendMainMenuChildren($item, $page);
+            }
+        }
+    }
+
+    /**
+     * Create footer page menu
+     * 
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * 
+     * @return \Knp\Menu\ItemInterface
+     */
+    public function createFooterMenu(Request $request)
+    {
+        $menu = $this->factory->createItem('root', array('style' => 'navbar'));
+
+        if (null !== $home = $this->pageRepository->findOneBy(array('route' => 'home'))) {
+            if ($home->getFooter()) {
+                $menu->addChild($home->getName(), array('route' => $home->getRoute()));
+            }
+            $this->appendFooterMenuChildren($menu, $home);
+        }
+
+        return $menu;
+    }
+
+    /**
+     * Creates menu items for given page's children
+     * 
+     * @param \Knp\Menu\ItemInterface $menu
+     * @param \Ekyna\Bundle\CmsBundle\Entity\Page $parent
+     */
+    public function appendFooterMenuChildren(ItemInterface $menu, Page $parent)
+    {
+        foreach ($parent->getChildren() as $page) {
+            if (!$page->getFooter()) {
+                continue;
+            }
+            $item = $menu->addChild($page->getName(), array('route' => $page->getRoute()));
+            if ($page->hasChildren() && $page->getLevel() < 2) {
+                $this->appendFooterMenuChildren($item, $page);
             }
         }
     }
