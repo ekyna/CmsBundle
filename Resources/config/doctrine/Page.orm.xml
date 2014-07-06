@@ -78,7 +78,7 @@
         </unique-constraints>
 
         <entity-listeners>
-            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\PageListener" />
+            <entity-listener class="Ekyna\Bundle\CmsBundle\EventListener\PageListener" />
         </entity-listeners>
 
     </entity>
