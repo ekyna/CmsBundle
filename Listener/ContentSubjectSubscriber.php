@@ -38,7 +38,7 @@ class ContentSubjectSubscriber implements EventSubscriber
         $metadata->mapManyToMany(array(
             'targetEntity'  => self::CONTENT_FQCN,
             'fieldName'     => 'contents',
-            'cascade'       => array('persist'),
+            'cascade'       => array('all'),
             'joinTable'     => array(
                 'name'        => sprintf('cms_%s_content', strtolower($namingStrategy->classToTableName($metadata->getName()))),
                 'joinColumns' => array(

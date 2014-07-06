@@ -51,7 +51,7 @@ class ImageBlock extends AbstractBlock implements ImageInterface
     /**
      * Update date
      *
-     * @var \Datetime
+     * @var \DateTime
      */
     protected $updatedAt;
 
@@ -256,7 +256,7 @@ class ImageBlock extends AbstractBlock implements ImageInterface
     /**
      * Get updatedAt
      *
-     * @return \Datetime
+     * @return \DateTime
      */
     public function getUpdatedAt()
     {
@@ -266,7 +266,7 @@ class ImageBlock extends AbstractBlock implements ImageInterface
     /**
      * Set updatedAt
      *
-     * @param \Datetime $updated
+     * @param \DateTime $updated
      * @return \Ekyna\Bundle\CmsBundle\Entity\ImageBlock
      */
     public function setUpdatedAt(\DateTime $updatedAt)

@@ -4,13 +4,13 @@ namespace Ekyna\Bundle\CmsBundle\Twig;
 
 use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
 use Ekyna\Bundle\CmsBundle\Entity\Content;
-use Ekyna\Bundle\CmsBundle\Entity\Page;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Symfony\Component\Security\Core\SecurityContext;
 use Doctrine\Common\Persistence\ObjectManager;
+use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 
 /**
  * CmsExtension.
@@ -148,34 +148,36 @@ class CmsExtension extends \Twig_Extension
     /**
      * Generates html from given Content.
      * 
-     * @param ContentInterface $content
+     * @param mixed $content
      * 
      * @throws \RuntimeException
      * 
      * @return string
      */
-    public function renderContent(ContentInterface $content = null)
+    public function renderContent($subject = null)
     {
-        if (null === $content) {
+        $content = null;
+
+        if ($subject instanceOf ContentInterface) {
+            $content = $subject;
+        } elseif ($subject instanceof ContentSubjectInterface) {
+            if (null === $content = $subject->getContent()) {
+                $content = $this->createDefaultContent($subject);
+            }
+        } elseif (null === $subject) {
             if (null !== $page = $this->getCurrentPage()) {
-                if(null === $content = $page->getContent()) {
+                if (null === $content = $page->getContent()) {
                     if ($page->getAdvanced()) {
                         $content = $this->createDefaultContent($page);
-                        $page->addContent($content);
-
-                        $this->manager->persist($page);
-                        $this->manager->flush();
-                    } elseif(0 < strlen($html = $page->getHtml())) {
+                    } elseif (0 < strlen($html = $page->getHtml())) {
                         return $html;
+                    } else {
+                        return '<p>Page en construction.</p>';
                     }
                 }
             }
         }
-
-        if (null === $content) {
-            return '<p>Page en construction.</p>';
-        }
-
+        
         if (! $this->template->hasBlock('cms_block_content')) {
             throw new \RuntimeException('Unable to find "cms_block_content" twig block.');
         }
@@ -189,13 +191,13 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
-     * Returns a "default" Content.
+     * Creates and returns a "default" Content for the given subject.
      * 
-     * @param Page $page
+     * @param ContentSubjectInterface $subject
      * 
      * @return \Ekyna\Bundle\CmsBundle\Entity\Content
      */
-    private function createDefaultContent(Page $page)
+    private function createDefaultContent(ContentSubjectInterface $subject)
     {
         $block = new TinymceBlock();
         $block
@@ -210,6 +212,12 @@ class CmsExtension extends \Twig_Extension
             ->setVersion(1)
             ->addBlock($block)
         ;
+
+        $subject->addContent($content);
+
+        $this->manager->persist($content);
+        $this->manager->persist($subject);
+        $this->manager->flush();
 
         return $content;
     }
