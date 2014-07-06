@@ -1,6 +1,6 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Listener;
+namespace Ekyna\Bundle\CmsBundle\EventListener;
 
 use Ekyna\Bundle\CmsBundle\Editor\PluginRegistry;
 use Doctrine\Common\EventSubscriber;
