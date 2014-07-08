@@ -177,7 +177,11 @@ class CmsExtension extends \Twig_Extension
                 }
             }
         }
-        
+
+        if (null === $content) {
+            throw new \RuntimeException('Undefined content.');
+        }
+
         if (! $this->template->hasBlock('cms_block_content')) {
             throw new \RuntimeException('Unable to find "cms_block_content" twig block.');
         }
