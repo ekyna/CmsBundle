@@ -1,6 +1,6 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\EventListener;
+namespace Ekyna\Bundle\CmsBundle\Listener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Ekyna\Bundle\CmsBundle\Entity\Page;

@@ -11,10 +11,10 @@
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
 
         <parameter key="ekyna_cms.page.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>
-        <parameter key="ekyna_cms.page.listener.class">Ekyna\Bundle\CmsBundle\EventListener\PageListener</parameter>
+        <parameter key="ekyna_cms.page.listener.class">Ekyna\Bundle\CmsBundle\Listener\PageListener</parameter>
         
-        <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\EventListener\ContentSubjectSubscriber</parameter>
-        <parameter key="ekyna_cms.block_subscriber.class">Ekyna\Bundle\CmsBundle\EventListener\BlockSubscriber</parameter>
+        <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>
+        <parameter key="ekyna_cms.block_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\BlockSubscriber</parameter>
         
         <parameter key="ekyna_cms.text_block.class">Ekyna\Bundle\CmsBundle\Entity\TextBlock</parameter>
         <parameter key="ekyna_cms.tinymce_block.class">Ekyna\Bundle\CmsBundle\Entity\TinymceBlock</parameter>

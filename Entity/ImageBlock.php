@@ -87,7 +87,7 @@ class ImageBlock extends AbstractBlock implements ImageInterface
      * @param \Symfony\Component\HttpFoundation\File\UploadedFile $file
      * @return \Ekyna\Bundle\CmsBundle\Entity\ImageBlock
      */
-    public function setFile(UploadedFile $file)
+    public function setFile(UploadedFile $file = null)
     {
         $this->file = $file;
         $this->updatedAt = new \DateTime();
