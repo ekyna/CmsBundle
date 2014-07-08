@@ -1,36 +1,36 @@
 {
-    "name" : "ekyna/cms-bundle",
-    "description" : "Content management",
-    "type" : "symfony-bundle",
-    "authors" : [{
-            "name" : "Etienne Dauvergne",
-            "homepage" : "http://ekyna.com"
-        }
-    ],
-    "keywords" : [
-        "symfony2",
-        "content",
-        "bundle"
-    ],
-    "homepage" : "https://github.com/ekyna/CmsBundle",
-    "license" : [
-        "MIT"
-    ],
-    "require" : {
-        "php" : ">=5.4.0",
-        "symfony/framework-bundle" : "~2.3",
-        "ekyna/admin-bundle" : "0.1.*@dev",
-        "ekyna/file-manager-bundle" : "0.1.*@dev"
-    },
-    "autoload" : {
-        "psr-0" : {
-            "Ekyna\\Bundle\\CmsBundle" : ""
-        }
-    },
-    "target-dir" : "Ekyna/Bundle/CmsBundle",
-    "extra" : {
-        "branch-alias" : {
-            "dev-master" : "0.1.x-dev"
-        }
-    }
+	"name" : "ekyna/cms-bundle",
+	"description" : "Content management",
+	"type" : "symfony-bundle",
+	"authors" : [{
+			"name" : "Etienne Dauvergne",
+			"homepage" : "http://ekyna.com"
+		}
+	],
+	"keywords" : [
+		"symfony2",
+		"content",
+		"bundle"
+	],
+	"homepage" : "https://github.com/ekyna/CmsBundle",
+	"license" : [
+		"MIT"
+	],
+	"require" : {
+		"php" : ">=5.4.0",
+		"symfony/framework-bundle" : "~2.3",
+		"ekyna/admin-bundle" : "0.1.*@dev",
+		"ekyna/file-manager-bundle" : "0.1.*@dev"
+	},
+	"autoload" : {
+		"psr-0" : {
+			"Ekyna\\Bundle\\CmsBundle" : ""
+		}
+	},
+	"target-dir" : "Ekyna/Bundle/CmsBundle",
+	"extra" : {
+		"branch-alias" : {
+			"dev-master" : "0.1.x-dev"
+		}
+	}
 }

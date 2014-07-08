@@ -2,15 +2,15 @@
 
 namespace Ekyna\Bundle\CmsBundle\Twig;
 
-use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
-use Ekyna\Bundle\CmsBundle\Entity\Content;
-use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
-use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
-use Symfony\Component\Security\Core\SecurityContext;
 use Doctrine\Common\Persistence\ObjectManager;
+use Ekyna\Bundle\CmsBundle\Entity\Content;
+use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
+use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
+use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\SecurityContext;
 
 /**
  * CmsExtension.
