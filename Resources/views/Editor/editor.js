@@ -1,9 +1,5 @@
 ;(function(win, $) {
     "use strict";
-
-    var Editor = {
-    	test: null	
-    };
     
     function CmsEditor() {
     	var updatedColumns = {},
@@ -87,10 +83,11 @@
             /* If the event bubbles in CmsEditor */
             if ($(e.target).parents('.cms-editor').length > 0) {
                 /* Column lookup */
+                var column;
                 if ($(e.target).is(self.config.columnSelector)) {
-                    var column = $(e.target);
+                    column = $(e.target);
                 } else {
-                    var column = $(e.target).parents(self.config.columnSelector);
+                    column = $(e.target).parents(self.config.columnSelector);
                 }
                 /* Update column selection */
                 if (column.length == 1) {
@@ -119,7 +116,7 @@
         /* Prevent exit if unsaved modifications */
         .on('beforeunload', function(){
         	if (self.hasUpdatedColumns() || (self.current !== null && self.current.plugin.isUpdated())) {
-        		return "CMS : Des modifications n'ont pas été enregistrées !"
+        		return "CMS : Des modifications n'ont pas été enregistrées !";
         	}
         })
         .on('resize', function() {
@@ -354,7 +351,7 @@
 			self.clearUpdatedColumns();
 		})
     	.fail(function() {
-    		this.log('An error occured.');
+    		self.log('An error occured.');
     	})
 		.always(function() {
 			self.setBusy(false);
@@ -883,14 +880,14 @@
     };
     
     /* Fix the rows positions indexes */
-    CmsEditor.prototype.fixRowsIndexes = function() {
+    /*CmsEditor.prototype.fixRowsIndexes = function() {
     	var self = this;
     	self.$container.find(this.config.rowSelector).each(function(ri, row) {
     		var $row = $(row);
     		$row.data('num', ri + 1);
     		self.fixColumnsIndexes($row);
     	});
-    };
+    };*/
     
     /* Fix the columns positions indexes for the given row */
     CmsEditor.prototype.fixColumnsIndexes = function($row) {
@@ -956,18 +953,17 @@
                     editor.setColumnSize($col, parseInt($col.data('size')) + avg);
                     delta -= avg;
                 }
-            });;
+            });
         }
     };
     
     /* Returns wether the current row's columns can be resized */
     CmsEditor.prototype.isRowResizeable = function() {
-        if (this.current !== null 
+        return (
+            this.current !== null
             && this.current.$row.find(this.config.columnSelector).length > 1 
-            && this.current.$row.find(this.config.columnSelector).length < 12) {
-            return true;
-        }
-        return false;
+            && this.current.$row.find(this.config.columnSelector).length < 12
+        );
     };
     
     /* Returns wether the current columns can be grown */
@@ -983,10 +979,7 @@
     /* Returns wether the current columns can be reduced */
     CmsEditor.prototype.isColumnReduceable = function() {
         if (! this.isRowResizeable()) return false;
-        if (this.current.$column.data('size') > 1) {
-            return true;
-        }
-        return false;
+        return this.current.$column.data('size') > 1;
     };
     
     /* Returns a reduceable column sibling of the current one. */
@@ -1017,7 +1010,7 @@
             return this.current.$column.prev(this.config.columnSelector)
         } else {
             return this.current.$column.next(this.config.columnSelector);
-        };
+        }
     };
     
     win.cmsEditor = new CmsEditor();
@@ -1031,10 +1024,10 @@
         
         this.setUpdated = function(bool) {
         	updated = bool;
-        }
+        };
         this.isUpdated = function() {
         	return updated;
-        }
+        };
     }
     CmsPlugin.title = 'none';
     CmsPlugin.prototype.init = function() {

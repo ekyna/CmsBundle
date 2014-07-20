@@ -105,6 +105,7 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="request_stack" />
             <argument type="service" id="security.context" />
+            <argument type="service" id="ekyna_cms.editor.plugin_registry" />
             <argument type="collection"></argument>
             <tag name="twig.extension" />
         </service>

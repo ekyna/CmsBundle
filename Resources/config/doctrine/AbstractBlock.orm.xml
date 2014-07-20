@@ -15,9 +15,10 @@
 	    </id>
 
         <many-to-one field="content" target-entity="Ekyna\Bundle\CmsBundle\Entity\Content" inversed-by="blocks">
-            <join-column name="content_id" referenced-column-name="id" on-delete="CASCADE" />
+            <join-column name="content_id" referenced-column-name="id" on-delete="CASCADE" nullable="true" />
         </many-to-one>
 
+        <field name="name" type="string" column="name"  nullable="true" />
 	    <field name="row" type="integer" column="row_num" />
 	    <field name="column" type="integer" column="col_num" />
 	    <field name="size" type="integer" column="size" />

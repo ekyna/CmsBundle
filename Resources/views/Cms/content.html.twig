@@ -1,11 +1,11 @@
 {% block cms_block_content %}
 {% spaceless %}
-{% if editable %}<div class="cms-editor" data-config='{"contentId":{{ content.id }}}'>{% endif %}
+{% if editable %}<div class="cms-editor content" data-config='{"contentId":{{ content.id }}}'>{% endif %}
 {% set sizeTotal = 0 %}
 {% for block in content.blocks %}
     {% if sizeTotal % 12 == 0 %}<div class="row" data-init='{"num":{{ block.row }}}'>{% endif %}
     <div class="col-sm-{{ block.size }}"{% if editable %} data-init='{{ block.initDatas|json_encode() }}'{% endif %}>
-	    {{ cms_block(block) }}
+	    {{ cms_content_block(block) }}
 	</div>
 	{% set sizeTotal = sizeTotal + block.size %}
 	{% if sizeTotal % 12 == 0 %}</div>{% endif %}
@@ -13,6 +13,12 @@
 {% if editable %}</div>{% endif %}
 {% endspaceless %}
 {% endblock cms_block_content %}
+
+{% block cms_block %}
+{% if editable %}<div class="cms-editor block" data-config='{"blockId":{{ block.id }}}'>{% endif %}
+    {{ cms_content_block(block) }}
+{% if editable %}</div>{% endif %}
+{% endblock cms_block %}
 
 {% block cms_block_text %}
     <h1>{{ block.text|raw }}</h1>

@@ -24,21 +24,23 @@ interface PluginInterface
      * Updates a block.
      * 
      * @param BlockInterface $block
-     * @param array $datas
+     * @param array          $datas
      */
     public function update(BlockInterface $block, array $datas = array());
 
     /**
      * Removes a block.
      *
-     * @param BlockInterface
+     * @param BlockInterface $block
      */
     public function remove(BlockInterface $block);
 
     /**
      * Returns whether the block is supported.
      * 
-     * @return string
+     * @param BlockInterface $block
+     *
+     * @return boolean
      */
     public function supports(BlockInterface $block);
 
@@ -50,7 +52,7 @@ interface PluginInterface
      * @return string
      */
     public function getInnerHtml(BlockInterface $block);
-    
+
     /**
      * Returns the supported block fqcn.
      * 

@@ -3,8 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CoreBundle\Model\ImageInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Gedmo\Sluggable\Util\Urlizer;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * ImageBlock.
@@ -55,15 +55,6 @@ class ImageBlock extends AbstractBlock implements ImageInterface
      */
     protected $updatedAt;
 
-    /**
-     * Get id
-     * 
-     * @return number
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * {@inheritdoc}

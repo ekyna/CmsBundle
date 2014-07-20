@@ -52,4 +52,25 @@
         </property>
     </class>
 
+    <class name="Ekyna\Bundle\CmsBundle\Entity\AbstractBlock">
+        <constraint name="Callback">validate</constraint>
+        <property name="row">
+            <constraint name="GreaterThanOrEqual">
+                <option name="value">1</option>
+            </constraint>
+        </property>
+        <property name="column">
+            <constraint name="Range">
+                <option name="min">1</option>
+                <option name="max">12</option>
+            </constraint>
+        </property>
+        <property name="size">
+            <constraint name="Range">
+                <option name="min">1</option>
+                <option name="max">12</option>
+            </constraint>
+        </property>
+    </class>
+
 </constraint-mapping>

@@ -3,6 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
+use Symfony\Component\Validator\ExecutionContext;
 
 /**
  * AbstractBlock.
@@ -22,19 +24,24 @@ abstract class AbstractBlock implements BlockInterface
     protected $content;
 
     /**
-     * @var integer
+     * @var string
      */
-    protected $row;
+    protected $name;
 
     /**
      * @var integer
      */
-    protected $column;
+    protected $row = 1;
 
     /**
      * @var integer
      */
-    protected $size;
+    protected $column = 1;
+
+    /**
+     * @var integer
+     */
+    protected $size = 12;
 
 
     /**
@@ -48,12 +55,9 @@ abstract class AbstractBlock implements BlockInterface
     }
 
     /**
-     * Set content
-     *
-     * @param \Ekyna\Bundle\CmsBundle\Entity\Content $content
-     * @return Block
+     * {@inheritdoc}
      */
-    public function setContent(Content $content = null)
+    public function setContent(ContentInterface $content = null)
     {
         $this->content = $content;
 
@@ -61,9 +65,7 @@ abstract class AbstractBlock implements BlockInterface
     }
 
     /**
-     * Get content
-     *
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Content
+     * {@inheritdoc}
      */
     public function getContent()
     {
@@ -71,10 +73,25 @@ abstract class AbstractBlock implements BlockInterface
     }
 
     /**
-     * Set row
-     *
-     * @param integer $row
-     * @return Block
+     * {@inheritdoc}
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function setRow($row)
     {
@@ -84,9 +101,7 @@ abstract class AbstractBlock implements BlockInterface
     }
 
     /**
-     * Get row
-     *
-     * @return integer 
+     * {@inheritdoc}
      */
     public function getRow()
     {
@@ -94,10 +109,7 @@ abstract class AbstractBlock implements BlockInterface
     }
 
     /**
-     * Set column
-     *
-     * @param integer $column
-     * @return Block
+     * {@inheritdoc}
      */
     public function setColumn($column)
     {
@@ -107,9 +119,7 @@ abstract class AbstractBlock implements BlockInterface
     }
 
     /**
-     * Get column
-     *
-     * @return integer 
+     * {@inheritdoc}
      */
     public function getColumn()
     {
@@ -117,10 +127,7 @@ abstract class AbstractBlock implements BlockInterface
     }
 
     /**
-     * Set size
-     *
-     * @param integer $size
-     * @return Block
+     * {@inheritdoc}
      */
     public function setSize($size)
     {
@@ -130,9 +137,7 @@ abstract class AbstractBlock implements BlockInterface
     }
 
     /**
-     * Get size
-     *
-     * @return integer 
+     * {@inheritdoc}
      */
     public function getSize()
     {
@@ -140,9 +145,7 @@ abstract class AbstractBlock implements BlockInterface
     }
 
     /**
-     * Returns the init datas for JS editor.
-     * 
-     * @return array
+     * {@inheritdoc}
      */
     public function getInitDatas()
     {
@@ -153,5 +156,18 @@ abstract class AbstractBlock implements BlockInterface
         	'column' => intval($this->column),
         	'size'   => intval($this->size)            
         );
+    }
+
+    /**
+     * Validates the block (content or key have to be set, but not both).
+     *
+     * @param ExecutionContext $context
+     * @return bool
+     */
+    public function validate(ExecutionContext $context)
+    {
+        if (($this->content === null && 0 < strlen($this->key)) || (null !== $this->content && null === $this->key)) {
+            $context->addViolation('Content or key must be defined, but not both.');
+        }
     }
 }

@@ -44,17 +44,15 @@ class ContentSubjectSubscriber implements EventSubscriber
                 'joinColumns' => array(
                     array(
                         'name'                  => $namingStrategy->joinKeyColumnName($metadata->getName()),
-                        //'referencedColumnName'  => $namingStrategy->referenceColumnName(),
-                        'onDelete'  => 'CASCADE',
-                        'onUpdate'  => 'CASCADE',
+                        'referencedColumnName'  => $namingStrategy->referenceColumnName(),
+                        'onDelete'              => 'CASCADE',
                     ),
                 ),
                 'inverseJoinColumns'    => array(
                     array(
                         'name'                  => 'content_id',
-                        //'referencedColumnName'  => $namingStrategy->referenceColumnName(),
-                        'onDelete'  => 'CASCADE',
-                        'onUpdate'  => 'CASCADE',
+                        'referencedColumnName'  => $namingStrategy->referenceColumnName(),
+                        'onDelete'              => 'CASCADE',
                     ),
                 )
             )

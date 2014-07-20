@@ -67,6 +67,7 @@ class Editor
         if (! array_key_exists('type', $datas)) {
             throw new \InvalidArgumentException('"type" field is mandatory.');
         }
+
         $plugin = $this->registry->get($datas['type']);
         $block = $plugin->create($datas);
 
@@ -187,8 +188,9 @@ class Editor
         $block = $this->manager
             ->getRepository('EkynaCmsBundle:AbstractBlock')
             ->findOneBy(array(
-                'content' => $this->content, 
-                'id' => $blockId
+                'content' => $this->content,
+                'name'    => null,
+                'id'      => $blockId
             ));
         if (null === $block) {
             throw new \RuntimeException('Block not found.');

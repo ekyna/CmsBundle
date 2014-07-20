@@ -55,6 +55,8 @@ class PluginRegistry
      * @param PluginInterface $name
      * 
      * @throws \InvalidArgumentException
+     *
+     * @return PluginInterface
      */
     public function get($name)
     {

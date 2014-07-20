@@ -9,6 +9,7 @@ use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+use Ekyna\Bundle\CmsBundle\Editor\PluginRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\SecurityContext;
 
@@ -35,6 +36,11 @@ class CmsExtension extends \Twig_Extension
     protected $securityContext;
 
     /**
+     * @var PluginRegistry
+     */
+    protected $pluginRegistry;
+
+    /**
      * @var array
      */
     protected $config;
@@ -46,19 +52,29 @@ class CmsExtension extends \Twig_Extension
 
 
     /**
-     * Constructor
+     * Constructor.
      * 
-     * @param PageRepository $pageRepository
-     * @param RequestStack   $requestStack
+     * @param PageRepository  $pageRepository
+     * @param RequestStack    $requestStack
+     * @param SecurityContext $securityContext
+     * @param PluginRegistry  $pluginRegistry
+     * @param array           $config
      */
-    public function __construct(ObjectManager $manager, RequestStack $requestStack, SecurityContext $securityContext, array $config = array())
-    {
+    public function __construct(
+        ObjectManager $manager,
+        RequestStack $requestStack,
+        SecurityContext $securityContext,
+        PluginRegistry $pluginRegistry,
+        array $config = array()
+    ) {
         $this->manager         = $manager;
         $this->requestStack    = $requestStack;
         $this->securityContext = $securityContext;
+        $this->pluginRegistry  = $pluginRegistry;
 
         $this->config = array_merge(array(
         	'template' => 'EkynaCmsBundle:Cms:content.html.twig',
+            'default_block_type' => 'tinymce',
         ), $config);
     }
 
@@ -68,11 +84,24 @@ class CmsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'cms_metas'   => new \Twig_Function_Method($this, 'renderMetas',   array('is_safe' => array('html'))),
-            'cms_meta'    => new \Twig_Function_Method($this, 'renderMeta',    array('is_safe' => array('html'))),
-            'cms_title'   => new \Twig_Function_Method($this, 'renderTitle',   array('is_safe' => array('html'))),
-            'cms_content' => new \Twig_Function_Method($this, 'renderContent', array('is_safe' => array('html'))),
-            'cms_block'   => new \Twig_Function_Method($this, 'renderBlock',   array('is_safe' => array('html'))),
+            'cms_metas' => new \Twig_Function_Method(
+                $this, 'renderMetas', array('is_safe' => array('html'))
+            ),
+            'cms_meta' => new \Twig_Function_Method(
+                $this, 'renderMeta', array('is_safe' => array('html'))
+            ),
+            'cms_title' => new \Twig_Function_Method(
+                $this, 'renderTitle', array('is_safe' => array('html'))
+            ),
+            'cms_content' => new \Twig_Function_Method(
+                $this, 'renderContent', array('is_safe' => array('html'))
+            ),
+            'cms_content_block' => new \Twig_Function_Method(
+                $this, 'renderContentBlock', array('is_safe' => array('html'))
+            ),
+            'cms_block' => new \Twig_Function_Method(
+                $this, 'renderBlock', array('is_safe' => array('html'))
+            ),
         );
     }
 
@@ -96,6 +125,21 @@ class CmsExtension extends \Twig_Extension
             return $repo->findOneBy(array('route' => $request->attributes->get('_route')));
         }
         return null;
+    }
+
+    /**
+     * Returns whether the current user is allowed edit content and blocks or not.
+     *
+     * @return bool
+     */
+    private function isEditable()
+    {
+        if ($this->securityContext->isGranted('ROLE_ADMIN')
+            && null !== $request = $this->requestStack->getCurrentRequest()) {
+            $request->headers->set('X-CmsEditor-Injection', true);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -186,12 +230,10 @@ class CmsExtension extends \Twig_Extension
             throw new \RuntimeException('Unable to find "cms_block_content" twig block.');
         }
 
-        $editable = $this->securityContext->isGranted('ROLE_ADMIN');
-        if ($editable && null !== $request = $this->requestStack->getCurrentRequest()) {
-            $request->headers->set('X-CmsEditor-Injection', true);
-        }
-
-        return $this->template->renderBlock('cms_block_content', array('content' => $content, 'editable' => $editable));
+        return $this->template->renderBlock('cms_block_content', array(
+            'content' => $content,
+            'editable' => $this->isEditable()
+        ));
     }
 
     /**
@@ -203,13 +245,7 @@ class CmsExtension extends \Twig_Extension
      */
     private function createDefaultContent(ContentSubjectInterface $subject)
     {
-        $block = new TinymceBlock();
-        $block
-            ->setRow(1)
-            ->setColumn(1)
-            ->setSize(12)
-            ->setHtml('<p>Page en cours de rédaction.</p>')
-        ;
+        $block = $this->createDefautBlock($this->config['default_block_type']);
 
         $content = new Content();
         $content
@@ -227,7 +263,22 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
-     * Generates html from given Block.
+     * Creates a default block.
+     *
+     * @param string $type
+     * @param array  $datas
+     *
+     * @return BlockInterface
+     */
+    private function createDefautBlock($type, array $datas = array())
+    {
+        $plugin = $this->pluginRegistry->get($type);
+
+        return $plugin->create($datas);
+    }
+
+    /**
+     * Generates html from given Content Block.
      * 
      * @param BlockInterface $block
      * 
@@ -235,7 +286,7 @@ class CmsExtension extends \Twig_Extension
      * 
      * @return string
      */
-    public function renderBlock(BlockInterface $block)
+    public function renderContentBlock(BlockInterface $block)
     {
         $token = sprintf('cms_block_%s', $block->getType());
         if(!$this->template->hasBlock($token)) {
@@ -243,6 +294,40 @@ class CmsExtension extends \Twig_Extension
         }
 
         return trim($this->template->renderBlock($token, array('block' => $block)));
+    }
+
+    /**
+     * Generates html from given Block.
+     *
+     * @param string $name  the block name
+     * @param string $type  the block type
+     * @param array  $datas the block datas
+     *
+     * @throws \RuntimeException
+     *
+     * @return string
+     */
+    public function renderBlock($name, $type = null, array $datas = array())
+    {
+        if (null === $type) {
+            $type = $this->config['default_block_type'];
+        }
+
+        $repository = $this->manager->getRepository('Ekyna\Bundle\CmsBundle\Entity\AbstractBlock');
+        if (null !== $block = $repository->findOneBy(array('name' => $name, 'content' => null))) {
+            /* @TODO test block type ? */
+        } else {
+            $block = $this->createDefautBlock($type, $datas);
+            $block->setName($name);
+
+            $this->manager->persist($block);
+            $this->manager->flush();
+        }
+
+        return $this->template->renderBlock('cms_block', array(
+            'block' => $block,
+            'editable' => $this->isEditable()
+        ));
     }
 
     /**
