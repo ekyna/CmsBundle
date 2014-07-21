@@ -27,7 +27,11 @@ class EditorController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $editor = $this->get('ekyna_cms.editor')->initContent($request->attributes->get('contentId'));
+        $editor = $this->get('ekyna_cms.editor');
+        if (0 < $contentId = intval($request->request->get('contentId', 0))) {
+            $editor->initContent($contentId);
+        }
+
         $responseDatas = array();
 
         // Update layout

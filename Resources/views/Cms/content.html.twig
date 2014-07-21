@@ -1,10 +1,10 @@
 {% block cms_block_content %}
 {% spaceless %}
-{% if editable %}<div class="cms-editor content" data-config='{"contentId":{{ content.id }}}'>{% endif %}
+{% if editable %}<div class="cms-editor-content" data-init='{"id":{{ content.id }}}'>{% endif %}
 {% set sizeTotal = 0 %}
 {% for block in content.blocks %}
-    {% if sizeTotal % 12 == 0 %}<div class="row" data-init='{"num":{{ block.row }}}'>{% endif %}
-    <div class="col-sm-{{ block.size }}"{% if editable %} data-init='{{ block.initDatas|json_encode() }}'{% endif %}>
+    {% if sizeTotal % 12 == 0 %}<div class="row{% if editable %} cms-editor-row{% endif %}" data-init='{"num":{{ block.row }}}'>{% endif %}
+    <div class="col-sm-{{ block.size }}{% if editable %} cms-editor-block" data-init='{{ block.initDatas|json_encode() }}'{% else %}"{% endif %}>
 	    {{ cms_content_block(block) }}
 	</div>
 	{% set sizeTotal = sizeTotal + block.size %}
@@ -15,7 +15,7 @@
 {% endblock cms_block_content %}
 
 {% block cms_block %}
-{% if editable %}<div class="cms-editor block" data-config='{"blockId":{{ block.id }}}'>{% endif %}
+{% if editable %}<div class="cms-editor-block" data-init='{{ block.initDatas|json_encode() }}'>{% endif %}
     {{ cms_content_block(block) }}
 {% if editable %}</div>{% endif %}
 {% endblock cms_block %}

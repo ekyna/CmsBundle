@@ -1,63 +1,16 @@
-.cms-editor.enabled .col-xs-1, 
-.cms-editor.enabled .col-sm-1, 
-.cms-editor.enabled .col-md-1, 
-.cms-editor.enabled .col-lg-1, 
-.cms-editor.enabled .col-xs-2, 
-.cms-editor.enabled .col-sm-2, 
-.cms-editor.enabled .col-md-2, 
-.cms-editor.enabled .col-lg-2, 
-.cms-editor.enabled .col-xs-3, 
-.cms-editor.enabled .col-sm-3, 
-.cms-editor.enabled .col-md-3, 
-.cms-editor.enabled .col-lg-3, 
-.cms-editor.enabled .col-xs-4, 
-.cms-editor.enabled .col-sm-4, 
-.cms-editor.enabled .col-md-4, 
-.cms-editor.enabled .col-lg-4, 
-.cms-editor.enabled .col-xs-5,
-.cms-editor.enabled .col-sm-5,
-.cms-editor.enabled .col-md-5,
-.cms-editor.enabled .col-lg-5,
-.cms-editor.enabled .col-xs-6,
-.cms-editor.enabled .col-sm-6,
-.cms-editor.enabled .col-md-6,
-.cms-editor.enabled .col-lg-6,
-.cms-editor.enabled .col-xs-7,
-.cms-editor.enabled .col-sm-7,
-.cms-editor.enabled .col-md-7,
-.cms-editor.enabled .col-lg-7,
-.cms-editor.enabled .col-xs-8,
-.cms-editor.enabled .col-sm-8,
-.cms-editor.enabled .col-md-8,
-.cms-editor.enabled .col-lg-8,
-.cms-editor.enabled .col-xs-9,
-.cms-editor.enabled .col-sm-9,
-.cms-editor.enabled .col-md-9,
-.cms-editor.enabled .col-lg-9,
-.cms-editor.enabled .col-xs-10,
-.cms-editor.enabled .col-sm-10,
-.cms-editor.enabled .col-md-10,
-.cms-editor.enabled .col-lg-10,
-.cms-editor.enabled .col-xs-11,
-.cms-editor.enabled .col-sm-11,
-.cms-editor.enabled .col-md-11,
-.cms-editor.enabled .col-lg-11,
-.cms-editor.enabled .col-xs-12,
-.cms-editor.enabled .col-sm-12,
-.cms-editor.enabled .col-md-12,
-.cms-editor.enabled .col-lg-12 {
+.cms-editor-enabled .cms-editor-block {
     min-height: 36px;
     border: 1px dotted #ddd;
 }
 
 /*
- * ------------ HIGHLIGHT ------------ 
+ * ------------ HIGHLIGHT ------------
  */
 .cms-editor-selected-row {
     border: 1px dotted #6dcff6 !important;
 }
 
-.cms-editor-selected-column {
+.cms-editor-selected-block {
     border: 1px dotted #f68e56 !important;
 }
 
@@ -65,7 +18,7 @@
  * ------------ BOX ------------
  */
 .cms-editor-box {
-    position: absolute;
+    position: fixed;
     top: 80px;
     right: 20px;
     z-index: 9999;
@@ -80,7 +33,7 @@
     border-radius: 7px 0 0 7px;
 }
 
-.cms-editor-box.enabled {
+.cms-editor-enabled .cms-editor-box {
     width: 210px;
 }
 
@@ -100,7 +53,7 @@
     border-bottom: none;
 }
 
-.cms-editor-box.enabled .cms-editor-group {
+.cms-editor-enabled .cms-editor-group {
     display: block;
 }
 
@@ -188,11 +141,11 @@
     border-radius: 7px 0 0 7px;
 }
 
-.cms-editor-box.enabled .cms-editor-head {
+.cms-editor-enabled .cms-editor-head {
     border-radius: 7px 7px 0 0;
 }
 
-.cms-editor-box.enabled.pinned .cms-editor-head {
+.cms-editor-enabled .cms-editor-box.pinned .cms-editor-head {
     border-radius: 7px 0 0 0;
 }
 
@@ -260,7 +213,7 @@
 .cms-editor-head .cms-editor-pin:before { background-position: -48px -120px; opacity: 1; }
 .cms-editor-box.pinned .cms-editor-pin:before { opacity: .4; }
 .cms-editor-head .cms-editor-enable:before { background-position: -72px -120px; opacity: .4; }
-.cms-editor-box.enabled .cms-editor-enable:before { opacity: 1; }
+.cms-editor-enabled .cms-editor-box .cms-editor-enable:before { opacity: 1; }
 
 .cms-editor-head .btn:hover:before,
 .cms-editor-head .btn:focus:before,
@@ -272,10 +225,13 @@
  * ------------ PLUGINS ------------
  */
 #tinymce-plugin-editor {
-    margin: -1px -15px;
-    padding: 0 14px;
     overflow: hidden;
 }
+.cms-editor-content #tinymce-plugin-editor {
+    margin: -1px -15px;
+    padding: 0 14px;
+}
+
 
 
 

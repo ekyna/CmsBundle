@@ -64,6 +64,9 @@ class Editor
      */
     public function createBlock(array $datas = array())
     {
+        if (null === $this->content) {
+            throw new \InvalidArgumentException('No Content selected.');
+        }
         if (! array_key_exists('type', $datas)) {
             throw new \InvalidArgumentException('"type" field is mandatory.');
         }
@@ -97,7 +100,9 @@ class Editor
         $plugin = $this->registry->get($block->getType());
         $plugin->update($block, $datas);
 
-        $this->updateBlockCoords($block, $datas);
+        if (null !== $this->content) {
+            $this->updateBlockCoords($block, $datas);
+        }
 
         $this->manager->persist($block);
         $this->manager->flush();
@@ -117,6 +122,9 @@ class Editor
      */
     public function removeBlocks(array $datas = array())
     {
+        if (null === $this->content) {
+            throw new \InvalidArgumentException('No Content selected.');
+        }
         $removedIds = array();
         foreach($datas as $blockDatas) {
             $block = $this->findBlock($blockDatas);
@@ -143,6 +151,9 @@ class Editor
      */
     public function updateLayout(array $datas = array())
     {
+        if (null === $this->content) {
+            throw new \InvalidArgumentException('No Content selected.');
+        }
         foreach($datas as $coords) {
             $block = $this->findBlock($coords);
             $this->updateBlockCoords($block, $coords);
@@ -179,19 +190,17 @@ class Editor
      */
     private function findBlock(array $datas = array())
     {
-        if (null === $this->content) {
-            throw new \InvalidArgumentException('No Content selected.');
-        }
         if (! array_key_exists('id', $datas) || 0 >= ($blockId = intval($datas['id']))) {
             throw new \InvalidArgumentException('Block "id" is mandatory.');
         }
+        $parameters = array('id' => $blockId);
+        if (null !== $this->content) {
+            $parameters['content'] = $this->content;
+        }
         $block = $this->manager
             ->getRepository('EkynaCmsBundle:AbstractBlock')
-            ->findOneBy(array(
-                'content' => $this->content,
-                'name'    => null,
-                'id'      => $blockId
-            ));
+            ->findOneBy($parameters)
+        ;
         if (null === $block) {
             throw new \RuntimeException('Block not found.');
         }

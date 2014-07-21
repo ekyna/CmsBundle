@@ -1,10 +1,9 @@
 # Creates a new {type} block
 ekyna_cms_editor_request:
-    path: /content/{contentId}/request
+    path: /request
     defaults: { _controller: "EkynaCmsBundle:Editor:request" }
     requirements:
         _method: POST
-        contentId: \d+
     options:
         expose: true
         

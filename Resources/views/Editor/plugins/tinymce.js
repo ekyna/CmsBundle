@@ -11,7 +11,7 @@
         CmsPlugin.prototype.init.apply(this, arguments);
 
         if (typeof win.tinymce == 'undefined') {
-        	if (CmsEditor.debug) console.log('Tinymce is not available.');
+        	if (win.CmsEditor.debug) console.log('Tinymce is not available.');
             return;
         }
 
@@ -115,7 +115,7 @@
     };
     
     $(win.document).ready(function() {
-		win.cmsEditor.registerPlugin('tinymce', TinymceCmsPlugin);
+        CmsEditor.registerPlugin('tinymce', TinymceCmsPlugin);
     });
     
 })(window, jQuery);

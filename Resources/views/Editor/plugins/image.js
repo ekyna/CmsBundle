@@ -21,7 +21,7 @@
     };*/
     
     $(win.document).ready(function() {
-		win.cmsEditor.registerPlugin('image', ImageCmsPlugin);
+		win.CmsEditor.registerPlugin('image', ImageCmsPlugin);
     });
     
 })(window, jQuery);
