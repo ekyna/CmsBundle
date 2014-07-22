@@ -5,22 +5,24 @@
     var Editor = {
         enabled: false,
         busy: false,
-        debug: true,
         dragging: false,
         dragOffsetX: 0,
         dragOffsetY: 0,
         $box: null,
         config: {
-            blockSelector: ".cms-editor-block",
-            containerSelector: 'div.cms-editor',
+            debug: true,
+            autosave: true,
+            blockSelector: '.cms-editor-block',
+            blockSelectedClass: 'cms-editor-selected-block',
             contentSelector: '.cms-editor-content',
             rowSelector: '.cms-editor-row',
+            rowSelectedClass: 'cms-editor-selected-row',
             rowCreateHtml: '<div class="row cms-editor-row"></div>',
             rowDefaultData: {num: 1},
             columnSelector: 'div[class^="col-"]',
-            columnSizeRegex: /col-\w{2}-\d+/,
             columnCreateHtml: '<div class="col-md-12 cms-editor-block"></div>',
-            columnDefaultData: {id: null, row: 1, column: 1, size: 12, type: null}
+            columnDefaultData: {id: null, row: 1, column: 1, size: 12, type: null},
+            columnSizeRegex: /col-\w{2}-\d+/
         },
         plugingRegistry: {},
         updatedBlocks: {},
@@ -42,6 +44,9 @@
     };
     Editor.hasUpdatedBlocks = function () {
         var size = 0;
+        if (this.current.plugin !== null && this.current.plugin.isUpdated()) {
+            return true;
+        }
         for (var key in this.updatedBlocks) {
             if (this.updatedBlocks.hasOwnProperty(key)) size++;
         }
@@ -54,10 +59,10 @@
     /* Clear the block selection */
     Editor.clearCurrent = function () {
         if (this.current.$row !== null) {
-            this.current.$row.removeClass('cms-editor-selected-row');
+            this.current.$row.removeClass(this.config.rowSelectedClass);
         }
         if (this.current.$block !== null) {
-            this.current.$block.removeClass('cms-editor-selected-block');
+            this.current.$block.removeClass(this.config.blockSelectedClass);
         }
         if (this.current.plugin !== null) {
             this.current.plugin.destroy();
@@ -98,7 +103,9 @@
         var pressedBlock = null;
 
         $(win).on('mousedown', function(e) {
-            pressedBlock = Editor.getMouseEventTarget(e);
+            if (Editor.enabled) {
+                pressedBlock = Editor.getMouseEventTarget(e);
+            }
         })
         .on('mouseup', function (e) {
             /* Stop dragging box */
@@ -107,11 +114,13 @@
             Editor.dragOffsetY = 0;
 
             /* Watch for block selection */
-            if (false === pressedBlock) {
-                Editor.selectBlock(null);
-            } else if(null !== pressedBlock && pressedBlock.is(Editor.getMouseEventTarget(e))) {
-                if (Editor.current.$block === null || !(Editor.current.$block !== null && Editor.current.$block.is(pressedBlock))) {
-                    Editor.selectBlock(pressedBlock);
+            if (Editor.enabled) {
+                if (false === pressedBlock) {
+                    Editor.selectBlock(null);
+                } else if(null !== pressedBlock && pressedBlock.is(Editor.getMouseEventTarget(e))) {
+                    if (Editor.current.$block === null || !(Editor.current.$block !== null && Editor.current.$block.is(pressedBlock))) {
+                        Editor.selectBlock(pressedBlock);
+                    }
                 }
             }
             pressedBlock = null;
@@ -127,7 +136,7 @@
         })
         .on('beforeunload', function () {
             /* Prevent exit if unsaved modifications */
-            if (Editor.hasUpdatedBlocks() || (Editor.current.plugin !== null && Editor.current.plugin.isUpdated())) {
+            if (Editor.hasUpdatedBlocks()) {
                 return "CMS : Des modifications n'ont pas été enregistrées !";
             }
         })
@@ -205,9 +214,7 @@
         });
         this.$box.find('.cms-editor-save').on('click', function (e) {
             if (Editor.isBusy()) return;
-            if (Editor.hasUpdatedBlocks()) {
-                Editor.request();
-            }
+            Editor.save(true);
         });
         this.$box.find('.cms-editor-head').on('mousedown', function (e) {
             if (e.target == e.delegateTarget && !(Editor.$box.hasClass('pinned'))) {
@@ -245,6 +252,12 @@
     /* Disables the editor. */
     Editor.disable = function () {
         if (this.isBusy()) return;
+        if (this.save()) {
+            $('body').one('cms_editor_request_succeed', function() {
+                Editor.disable();
+            });
+            return;
+        }
         this.selectBlock(null);
         this.enabled = false;
         $('body').removeClass('cms-editor-enabled');
@@ -375,28 +388,42 @@
         });
     };
 
+    /* Log messages */
     Editor.log = function (msg) {
-        if (this.debug) console.log(msg);
+        if (this.config.debug) console.log(msg);
     };
 
-    /* Selects a column */
-    Editor.selectBlock = function ($block) {
-        if (this.isBusy()) return;
-        if (this.current.$block !== null) {
-            if (this.current.plugin.isUpdated()) {
-                if (confirm('Enregistrer les modifications ?')) {
+    /* Watch for updated blocks and returns true if save requested */
+    Editor.save = function(force) {
+        force = force === "undefined" ? false : force;
+        if (this.hasUpdatedBlocks()) {
+            if (this.config.autosave || force || confirm('Enregistrer les modifications ?')) {
+                if (this.current.$block !== null) {
                     var plugin = this.current.plugin;
                     this.request({
                         updateBlock: $.extend(this.current.$block.data(), this.current.plugin.getDatas())
                     }, function (data) {
                         plugin.setUpdated(false);
-                        Editor.selectBlock($block);
                     });
                 } else {
-                    this.current.plugin.focus();
-                    return;
+                    this.request();
                 }
+                return true;
+            } else if(this.current.$block !== null) {
+                this.current.plugin.focus();
             }
+        }
+        return false;
+    };
+
+    /* Selects a block */
+    Editor.selectBlock = function ($block) {
+        if (this.isBusy()) return;
+        if (this.save()) {
+            $('body').one('cms_editor_request_succeed', function() {
+                Editor.selectBlock($block);
+            });
+            return;
         }
 
         this.clearCurrent();
@@ -406,13 +433,12 @@
             if (type in this.plugingRegistry) {
                 this.$box.find('#cms-editor-plugin-type').val(type);
                 this.current.plugin = new this.plugingRegistry[type]($block);
-                this.current.$block = $block.addClass('cms-editor-selected-block');
+                this.current.$block = $block.addClass(this.config.blockSelectedClass);
                 var $content = this.current.$block.parents(this.config.contentSelector);
                 if ($content.length > 0) {
                     this.current.$content = $content;
-                    this.current.$row = $block.parents(this.config.rowSelector).eq(0).addClass('cms-editor-selected-row');
+                    this.current.$row = $block.parents(this.config.rowSelector).eq(0).addClass(this.config.rowSelectedClass);
                 }
-                this.log($block.data());
                 this.current.plugin.init();
             } else {
                 this.log('"' + type + '" plugin is not registered.');
@@ -507,8 +533,8 @@
         rowDatas = typeof rowDatas === "object" ? rowDatas : {};
         colDatas = typeof colDatas === "object" ? colDatas : {}; //this.config.columnDefaultData;
 
-        rowDatas = $.extend(this.config.rowDefaultData, rowDatas);
-        colDatas = $.extend(this.config.columnDefaultData, colDatas, {row: rowDatas.num});
+        rowDatas = $.extend({}, this.config.rowDefaultData, rowDatas);
+        colDatas = $.extend({}, this.config.columnDefaultData, colDatas, {row: rowDatas.num});
 
         var $newRow = $(this.config.rowCreateHtml).data(rowDatas);
         $newRow.append(this.createNewColumn(colDatas));
@@ -517,13 +543,14 @@
 
     /* Creates a new column */
     Editor.createNewColumn = function (colDatas) {
+
         var colType = this.$box.find('#cms-editor-plugin-type').val();
         if (!(colType in this.plugingRegistry)) {
             this.log('Undefined type.');
             return false;
         }
         colDatas = typeof colDatas === "object" ? colDatas : {};
-        colDatas = $.extend(this.config.columnDefaultData, colDatas, {type: colType});
+        colDatas = $.extend({}, this.config.columnDefaultData, colDatas, {type: colType});
 
         var $newColumn = $(this.config.columnCreateHtml).data(colDatas);
         this.setColumnSize($newColumn, colDatas.size, true);
@@ -796,6 +823,8 @@
 
         /* Move columns */
         $prevCol.before(this.current.$block);
+
+        this.current.plugin.focus();
         this.updateControlsStates();
     };
 
@@ -816,6 +845,8 @@
 
         /* Move columns */
         $nextCol.after(this.current.$block);
+
+        this.current.plugin.focus();
         this.updateControlsStates();
     };
 
@@ -827,15 +858,21 @@
         var $prevRow = this.current.$row.prev(this.config.rowSelector);
         this.current.$block.detach().appendTo($prevRow);
 
-        this.fixColumnSize($prevRow);
-        this.fixColumnSize(this.current.$row);
-        this.fixColumnsIndexes($prevRow);
-        this.fixColumnsIndexes(this.current.$row);
+        if (this.current.$row.find(this.config.columnSelector).length > 0) {
+            this.fixColumnSize(this.current.$row);
+            this.fixColumnsIndexes(this.current.$row);
+            this.current.$row.removeClass(this.config.rowSelectedClass);
+        } else {
+            this.current.$row.remove();
+        }
 
-        this.current.$row.removeClass('cms-editor-selected-row');
-        $prevRow.addClass('cms-editor-selected-row');
+        this.fixColumnSize($prevRow);
+        this.fixColumnsIndexes($prevRow);
+        $prevRow.addClass(this.config.rowSelectedClass);
 
         this.current.$row = $prevRow;
+
+        this.current.plugin.focus();
         this.updateControlsStates();
     };
 
@@ -847,18 +884,26 @@
         var $nextRow = this.current.$row.next(this.config.rowSelector);
         this.current.$block.detach().appendTo($nextRow);
 
+        if (this.current.$row.find(this.config.columnSelector).length > 0) {
+            this.fixColumnSize(this.current.$row);
+            this.fixColumnsIndexes(this.current.$row);
+            this.current.$row.removeClass(this.config.rowSelectedClass);
+        } else {
+            this.current.$row.remove();
+        }
+
         this.fixColumnSize($nextRow);
-        this.fixColumnSize(this.current.$row);
         this.fixColumnsIndexes($nextRow);
-        this.fixColumnsIndexes(this.current.$row);
+        $nextRow.addClass(this.config.rowSelectedClass);
 
         this.current.$row = $nextRow;
+
+        this.current.plugin.focus();
         this.updateControlsStates();
     };
 
     /* Grows up the current column */
     Editor.growUpColumn = function () {
-        this.log('Grow up column');
         if (!this.isColumnGrowable()) return;
         var $sibling = this.getReduceableSibling();
         if ($sibling !== null) {
@@ -871,7 +916,6 @@
 
     /* Reduces the current column */
     Editor.reduceColumn = function () {
-        this.log('Reduce column');
         if (!this.isColumnReduceable()) return;
         var $sibling = this.getGrowableSibling();
         if ($sibling !== null) {
@@ -926,7 +970,6 @@
 
         if (delta > 0) {
             /* Reduce widests */
-            this.log('Reducing widests.');
             $columns.sort(function (a, b) {
                 return $(a).data('size') == $(b).data('size') ? 0 : $(a).data('size') < $(b).data('size');
             }).each(function (i, column) {
@@ -943,7 +986,6 @@
         } else {
             delta = -delta;
             /* Grow smallests */
-            this.log('Growing smallests.');
             $columns.sort(function (a, b) {
                 return $(a).data('size') == $(b).data('size') ? 0 : $(a).data('size') > $(b).data('size');
             }).each(function (i, column) {
@@ -986,17 +1028,19 @@
     Editor.getReduceableSibling = function () {
         var $sibling = null;
         if (this.isRowResizeable()) {
+            $sibling = this.current.$block;
             if (this.current.$block.is(':last-child')) {
                 do {
-                    $sibling = this.current.$block.prev(this.config.columnSelector);
+                    $sibling = $sibling.prev(this.config.columnSelector);
                 } while (1 == $sibling.length && 1 == $sibling.data('size'));
             } else {
                 do {
-                    $sibling = this.current.$block.next(this.config.columnSelector);
+                    $sibling = $sibling.next(this.config.columnSelector);
                 } while (1 == $sibling.length && 1 == $sibling.data('size'));
                 if (0 == $sibling.length || 1 == $sibling.data('size')) {
+                    $sibling = this.current.$block;
                     do {
-                        $sibling = this.current.$block.prev(this.config.columnSelector);
+                        $sibling = $sibling.prev(this.config.columnSelector);
                     } while (1 == $sibling.length && 1 == $sibling.data('size'));
                 }
             }
@@ -1032,13 +1076,13 @@
 
     CmsPlugin.title = 'none';
     CmsPlugin.prototype.init = function () {
-        if (Editor.debug) console.log(this.name + ' :: init');
+        Editor.log(this.name + ' :: init');
     };
     CmsPlugin.prototype.destroy = function () {
-        if (Editor.debug) console.log(this.name + ' :: destroy');
+        Editor.log(this.name + ' :: destroy');
     };
     CmsPlugin.prototype.focus = function () {
-        if (Editor.debug) console.log(this.name + ' :: focus');
+        Editor.log(this.name + ' :: focus');
     };
     CmsPlugin.prototype.getDatas = function () {
         return {};
