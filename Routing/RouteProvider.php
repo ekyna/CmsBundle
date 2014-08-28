@@ -60,7 +60,8 @@ class RouteProvider implements RouteProviderInterface
         if(null !== $page = $this->pageRepository->findOneBy(array('route' => $name))) {
             return $this->routeFromPage($page);
         }
-        throw new ResourceNotFoundException(sprintf('Unable to find route named "%s".', $name));
+        //throw new ResourceNotFoundException(sprintf('Unable to find route named "%s".', $name));
+        return null;
     }
 
     protected function routeFromPage(Page $page)
