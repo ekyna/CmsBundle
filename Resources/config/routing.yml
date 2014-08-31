@@ -2,6 +2,10 @@ ekyna_cms_page_admin:
     resource: "routing/admin/page.yml"
     prefix:   /admin/cms/pages
 
+ekyna_cms_image_admin:
+    resource: "routing/admin/image.yml"
+    prefix:   /admin/cms/images
+
 ekyna_cms_editor:
     resource: "routing/editor.yml"
     prefix:   /cms/editor

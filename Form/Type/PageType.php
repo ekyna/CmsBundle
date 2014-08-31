@@ -23,6 +23,9 @@ class PageType extends AbstractType
         $this->dataClass = $class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -112,6 +115,9 @@ class PageType extends AbstractType
         });
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(

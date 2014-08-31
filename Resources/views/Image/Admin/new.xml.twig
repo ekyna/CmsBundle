@@ -1,0 +1,11 @@
+{% extends 'EkynaAdminBundle::base.xml.twig' %}
+
+{% block response %}
+<title>{{ 'ekyna_cms.image.header.new'|trans|raw }}</title>
+<form><![CDATA[
+<form action="{{ path('ekyna_cms_image_admin_new', identifiers) }}" {{ form_enctype(form) }} method="post" class="form-horizontal form-with-tabs">
+    {% include "EkynaCmsBundle:Image/Admin:_form.html.twig" %}
+    {{ ui_form_footer(form) }}
+</form>
+]]></form>
+{% endblock %}

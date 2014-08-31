@@ -1,0 +1,12 @@
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#general" data-toggle="tab">Général</a></li>
+</ul>
+<div class="panel-body form-body">
+    {{ bootstrap_set_style('horizontal') }}
+    <div class="tab-content">
+	    <div class="tab-pane active" id="general">
+	        {{ form_widget(form) }}
+	    </div>
+    </div>
+    {{ form_rest(form) }}
+</div>
