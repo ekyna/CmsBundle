@@ -2,23 +2,17 @@
 
 namespace Ekyna\Bundle\CmsBundle\Table\Type;
 
+use Ekyna\Bundle\AdminBundle\Table\Type\ResourceTableType;
 use Ekyna\Component\Table\TableBuilderInterface;
-use Ekyna\Component\Table\AbstractTableType;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * PageType
- * 
+ * Class PageType
+ * @package Ekyna\Bundle\CmsBundle\Table\Type
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class PageType extends AbstractTableType
+class PageType extends ResourceTableType
 {
-    protected $entityClass;
-
-    public function __construct($class)
-    {
-        $this->entityClass = $class;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -73,17 +67,20 @@ class PageType extends AbstractTableType
                     ),
                 ),
             ))
-            ->setDefaultSort('left')
-            ->setMaxPerPage(50)
         ;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getEntityClass()
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        return $this->entityClass;
+        parent::setDefaultOptions($resolver);
+
+        $resolver->setDefaults(array(
+            'default_sort' => array('id', 'asc'),
+            'max_per_page'  => 100,
+        ));
     }
 
     /**

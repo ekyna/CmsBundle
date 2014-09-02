@@ -1,7 +1,8 @@
 <?php
 
 namespace Ekyna\Bundle\CmsBundle\Table\Type;
-use Ekyna\Component\Table\AbstractTableType;
+
+use Ekyna\Bundle\AdminBundle\Table\Type\ResourceTableType;
 use Ekyna\Component\Table\TableBuilderInterface;
 
 /**
@@ -9,15 +10,8 @@ use Ekyna\Component\Table\TableBuilderInterface;
  * @package Ekyna\Bundle\CmsBundle\Table\Type
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class ImageType extends AbstractTableType
+class ImageType extends ResourceTableType
 {
-    protected $entityClass;
-
-    public function __construct($class)
-    {
-        $this->entityClass = $class;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -76,14 +70,6 @@ class ImageType extends AbstractTableType
                 'label' => 'ekyna_core.field.alt'
             ))
         ;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEntityClass()
-    {
-        return $this->entityClass;
     }
 
     /**
