@@ -2,8 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Ekyna\Bundle\AdminBundle\Form\Type\ResourceFormType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -11,15 +10,8 @@ use Symfony\Component\Form\FormBuilderInterface;
  *
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class SeoType extends AbstractType
+class SeoType extends ResourceFormType
 {
-    protected $dataClass;
-
-    public function __construct($class)
-    {
-        $this->dataClass = $class;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -46,13 +38,6 @@ class SeoType extends AbstractType
                 'required' => true
             ))
         ;
-    }
-
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(array(
-            'data_class' => $this->dataClass,
-        ));
     }
 
     public function getName()

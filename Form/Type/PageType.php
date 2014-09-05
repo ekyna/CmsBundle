@@ -3,26 +3,18 @@
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Form\AbstractType;
+use Ekyna\Bundle\AdminBundle\Form\Type\ResourceFormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * PageType
  *
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class PageType extends AbstractType
+class PageType extends ResourceFormType
 {
-    protected $dataClass;
-
-    public function __construct($class)
-    {
-        $this->dataClass = $class;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -113,16 +105,6 @@ class PageType extends AbstractType
                 }
             }
         });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(array(
-            'data_class' => $this->dataClass,
-        ));
     }
 
     /**

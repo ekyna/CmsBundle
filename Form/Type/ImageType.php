@@ -2,30 +2,15 @@
 
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Ekyna\Bundle\AdminBundle\Form\Type\ResourceFormType;
 
 /**
  * Class ImageType
  * @package Ekyna\Bundle\CmsBundle\Form\Type
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class ImageType extends AbstractType
+class ImageType extends ResourceFormType
 {
-    protected $dataClass;
-
-    public function __construct($class)
-    {
-        $this->dataClass = $class;
-    }
-
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(array(
-            'data_class' => $this->dataClass,
-        ));
-    }
-
     public function getParent()
     {
         return 'ekyna_core_image';
