@@ -5,8 +5,8 @@ namespace Ekyna\Bundle\CmsBundle\Command\Route;
 use Symfony\Component\Routing\Route;
 
 /**
- * RouteDefinition
- *
+ * Class RouteDefinition
+ * @package Ekyna\Bundle\CmsBundle\Command\Route
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class RouteDefinition
@@ -64,10 +64,11 @@ class RouteDefinition
     /**
      * Constructor
      * 
-     * @param string $name
+     * @param string $routeName
      * @param Route  $route
      * 
      * @throws \InvalidArgumentException
+     * @throws \Exception
      */
     public function __construct($routeName, Route $route)
     {
@@ -173,7 +174,7 @@ class RouteDefinition
     /**
      * Sets whether page should be displayed in main menu
      * 
-     * @return boolean
+     * @param boolean $menu
      * 
      * @return RouteDefinition
      */
@@ -197,7 +198,7 @@ class RouteDefinition
     /**
      * Sets whether page should be displayed in the footer menu
      * 
-     * @return boolean
+     * @param boolean $footer
      * 
      * @return RouteDefinition
      */
@@ -221,7 +222,7 @@ class RouteDefinition
     /**
      * Sets whether page has an advanced content
      * 
-     * @return boolean
+     * @param boolean $advanced
      * 
      * @return RouteDefinition
      */

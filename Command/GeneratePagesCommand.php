@@ -11,8 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Routing\Route;
 
 /**
- * GeneratePagesCommand
- *
+ * Class GeneratePagesCommand
+ * @package Ekyna\Bundle\CmsBundle\Command
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class GeneratePagesCommand extends ContainerAwareCommand
@@ -95,7 +95,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
     /**
      * Creates a route definition
      * 
-     * @param string                           $name
+     * @param string                           $routeName
      * @param \Symfony\Component\Routing\Route $route
      * 
      * @return RouteDefinition
@@ -155,7 +155,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
      * 
      * @param string $routeName
      * 
-     * @return \Ekyna\Module\Cms\Entity\Page|NULL
+     * @return \Ekyna\Bundle\CmsBundle\Entity\Page|NULL
      */
     private function findPageByRouteName($routeName)
     {
@@ -165,8 +165,9 @@ class GeneratePagesCommand extends ContainerAwareCommand
     /**
      * Creates a Page from given Route
      * 
-     * @param \Ekyna\Bundle\CmsBundle\Command\Route\RouteDefinition $definition
-     * @param \Symfony\Component\Console\Output\OutputInterface     $output
+     * @param RouteDefinition $definition
+     * @param OutputInterface $output
+     * @param Page            $parentPage
      * 
      * @throws \InvalidArgumentException
      */
