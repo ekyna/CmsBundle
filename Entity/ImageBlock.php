@@ -4,7 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CoreBundle\Model\ImageInterface;
 use Gedmo\Sluggable\Util\Urlizer;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * ImageBlock.
@@ -16,7 +16,7 @@ class ImageBlock extends AbstractBlock implements ImageInterface
     /**
      * File uploaded
      * 
-     * @var \Symfony\Component\HttpFoundation\File\UploadedFile
+     * @var \Symfony\Component\HttpFoundation\File\File
      */
     protected $file;
 
@@ -75,10 +75,10 @@ class ImageBlock extends AbstractBlock implements ImageInterface
     /**
      * Set file
      * 
-     * @param \Symfony\Component\HttpFoundation\File\UploadedFile $file
+     * @param \Symfony\Component\HttpFoundation\File\File $file
      * @return \Ekyna\Bundle\CmsBundle\Entity\ImageBlock
      */
-    public function setFile(UploadedFile $file = null)
+    public function setFile(File $file = null)
     {
         $this->file = $file;
         $this->updatedAt = new \DateTime();
