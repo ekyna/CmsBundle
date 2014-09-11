@@ -104,7 +104,7 @@
     width: 24px;
     height: 24px;
     content: "";
-    background: url(/bundles/ekynacms/img/cms-editor-icons.png) no-repeat 0 0 scroll;
+    background: url('/bundles/ekynacms/img/cms-editor-icons.png') no-repeat 0 0 scroll;
 }
 
 /* Row controls icons */
@@ -206,7 +206,7 @@
     width: 20px;
     height: 20px;
     content: "";
-    background: url(/bundles/ekynacms/img/cms-editor-icons.png) no-repeat 0px -120px scroll;
+    background: url('/bundles/ekynacms/img/cms-editor-icons.png') no-repeat 0px -120px scroll;
 }
 
 .cms-editor-head .cms-editor-save:before { background-position: -24px -120px; }

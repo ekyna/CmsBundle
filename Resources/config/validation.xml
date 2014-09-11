@@ -27,14 +27,14 @@
         <property name="title">
             <constraint name="NotBlank" />
             <constraint name="Length">
-                <option name="min">16</option>
+                <option name="min">2</option>
                 <option name="max">255</option>
             </constraint>
         </property>
         <property name="description">
             <constraint name="NotBlank" />
             <constraint name="Length">
-                <option name="min">16</option>
+                <option name="min">2</option>
                 <option name="max">255</option>
             </constraint>
         </property>

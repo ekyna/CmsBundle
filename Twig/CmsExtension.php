@@ -54,7 +54,7 @@ class CmsExtension extends \Twig_Extension
     /**
      * Constructor.
      * 
-     * @param PageRepository  $pageRepository
+     * @param ObjectManager $manager
      * @param RequestStack    $requestStack
      * @param SecurityContext $securityContext
      * @param PluginRegistry  $pluginRegistry
@@ -144,7 +144,8 @@ class CmsExtension extends \Twig_Extension
 
     /**
      * Generates document title and metas tags from the given Seo object or regarding to the current page.
-     * 
+     *
+     * @param SeoInterface $seo
      * @return string
      */
     public function renderMetas(SeoInterface $seo = null)
@@ -162,7 +163,10 @@ class CmsExtension extends \Twig_Extension
 
     /**
      * Generates a meta tag.
-     * 
+     *
+     * @param string $name
+     * @param string $content
+     *
      * @return string
      */
     public function renderMeta($name, $content)
@@ -192,7 +196,7 @@ class CmsExtension extends \Twig_Extension
     /**
      * Generates html from given Content.
      * 
-     * @param mixed $content
+     * @param mixed $subject
      * 
      * @throws \RuntimeException
      * 
