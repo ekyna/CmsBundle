@@ -23,6 +23,7 @@ class ContentSubjectSubscriber implements EventSubscriber
      */
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
+        /** @var \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata */
         $metadata = $eventArgs->getClassMetadata();
 
         if (!in_array(self::SUBJECT_INTERFACE, class_implements($metadata->getName()))) {
@@ -36,8 +37,8 @@ class ContentSubjectSubscriber implements EventSubscriber
         ;
 
         $metadata->mapManyToMany(array(
-            'targetEntity'  => self::CONTENT_FQCN,
             'fieldName'     => 'contents',
+            'targetEntity'  => self::CONTENT_FQCN,
             'cascade'       => array('all'),
             'joinTable'     => array(
                 'name'        => sprintf('cms_%s_content', strtolower($namingStrategy->classToTableName($metadata->getName()))),
@@ -54,8 +55,8 @@ class ContentSubjectSubscriber implements EventSubscriber
                         'referencedColumnName'  => $namingStrategy->referenceColumnName(),
                         'onDelete'              => 'CASCADE',
                     ),
-                )
-            )
+                ),
+            ),
         ));
     }
 

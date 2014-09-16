@@ -65,38 +65,23 @@ class RouteDefinition
      * Constructor
      * 
      * @param string $routeName
-     * @param Route  $route
+     * @param array  $options
      * 
      * @throws \InvalidArgumentException
      * @throws \Exception
      */
-    public function __construct($routeName, Route $route)
+    public function __construct($routeName, array $options)
     {
-        if(null === $options = $route->getDefault('_cms')) {
-            throw new \InvalidArgumentException(sprintf('Route "%s" does not have "_cms" defaults attributes.', $routeName));
-        }
-        if(!is_array($options) || !isset($options['name'])) {
-            throw new \InvalidArgumentException(sprintf('"cms:name" must be specified for route named "%s".', $routeName));
-        }
-
         $this->routeName = $routeName;
-        $this->parentRouteName = isset($options['parent']) ? (string) $options['parent'] : null;
+        $this->parentRouteName = $options['parent'];
 
         $this->pageName = $options['name'];
-        $this->path = $route->getPath();
-
-        $this->locked   = isset($options['locked'])   ? (bool) $options['locked']    : true;
-        $this->menu     = isset($options['menu'])     ? (bool) $options['menu']      : false;
-        $this->footer   = isset($options['footer'])   ? (bool) $options['footer']    : false;
-        $this->advanced = isset($options['advanced']) ? (bool) $options['advanced']  : false;
-        $this->position = isset($options['position']) ? intval($options['position']) : 0;
-
-        // TODO: other route attributes (methods, requirements ?)
-
-        // Route with dynamic path ({parameter}) must be locked to disallow children (in backend)
-        if(preg_match('#\{.*\}#', $this->path) && !$this->locked) {
-            throw new \Exception('Routes with dynamic path/pattern should be locked.');
-        }
+        $this->path     = $options['path'];
+        $this->locked   = $options['locked'];
+        $this->menu     = $options['menu'];
+        $this->footer   = $options['footer'];
+        $this->advanced = $options['advanced'];
+        $this->position = $options['position'];
 
         $this->children = array();
     }
@@ -310,6 +295,7 @@ class RouteDefinition
             if(isset($this->children[$routeName])) {
                 return $this->children[$routeName];
             }
+            /** @var RouteDefinition $definition */
             foreach($this->children as $definition) {
                 if(null !== $child = $definition->findChildByRouteName($routeName)) {
                     return $child;
@@ -325,10 +311,13 @@ class RouteDefinition
     public function sortChildren()
     {
         if($this->hasChildren()) {
+            /** @var RouteDefinition $definition */
             foreach($this->children as $definition) {
                 $definition->sortChildren();
             }
             usort($this->children, function($a, $b) {
+                /** @var RouteDefinition $a */
+                /** @var RouteDefinition $b */
             	if ($a->getPosition() > $b->getPosition()) {
             	    return 1;
             	} elseif ($a->getPosition() < $b->getPosition()) {

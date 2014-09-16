@@ -18,6 +18,13 @@
         </property>
     </class>
 
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Image">
+        <constraint name="Ekyna\Bundle\CoreBundle\Validator\Constraints\AbstractImage" />
+        <property name="file">
+            <constraint name="Image" />
+        </property>
+    </class>
+
     <class name="Ekyna\Bundle\CmsBundle\Entity\Seo">
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
             <option name="fields">title</option>

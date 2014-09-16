@@ -5,15 +5,18 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectTrait;
+use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
+use Ekyna\Bundle\CmsBundle\Model\SeoSubjectTrait;
 
 /**
  * Page
  *
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class Page implements ContentSubjectInterface
+class Page implements ContentSubjectInterface, SeoSubjectInterface
 {
     use ContentSubjectTrait;
+    use SeoSubjectTrait;
 
     /**
      * @var integer
@@ -64,11 +67,6 @@ class Page implements ContentSubjectInterface
      * @var string
      */
     protected $html;
-
-    /**
-     * @var \Ekyna\Bundle\CmsBundle\Entity\Seo
-     */
-    protected $seo;
 
     /**
      * @var string
@@ -130,6 +128,8 @@ class Page implements ContentSubjectInterface
         $this->setSeo(new Seo());
         $this->static = false;
         $this->locked = false;
+        $this->menu = false;
+        $this->footer = false;
         $this->advanced = false;
     }
 
@@ -378,29 +378,6 @@ class Page implements ContentSubjectInterface
     public function getHtml()
     {
         return $this->html;
-    }
-
-    /**
-     * Set seo
-     *
-     * @param \Ekyna\Bundle\CmsBundle\Entity\Seo $seo
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
-     */
-    public function setSeo(Seo $seo)
-    {
-        $this->seo = $seo;
-
-        return $this;
-    }
-
-    /**
-     * Get seo
-     *
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Seo
-     */
-    public function getSeo()
-    {
-        return $this->seo;
     }
 
     /**

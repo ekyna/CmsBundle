@@ -11,61 +11,6 @@
         repository-class="Ekyna\Bundle\CmsBundle\Entity\PageRepository"
         table="cms_page">
 
-        <id name="id" type="integer" column="id">
-            <generator strategy="AUTO" />
-        </id>
-
-	    <field name="left" column="lft" type="integer">
-            <gedmo:tree-left />
-        </field>
-        <field name="right" column="rgt" type="integer">
-            <gedmo:tree-right />
-        </field>
-        <field name="root" type="integer" nullable="true">
-            <gedmo:tree-root />
-        </field>
-        <field name="level" column="lvl" type="integer">
-            <gedmo:tree-level />
-        </field>
-
-        <many-to-one field="parent" target-entity="Ekyna\Bundle\CmsBundle\Entity\Page" inversed-by="children">
-            <join-column name="parent_id" referenced-column-name="id" on-delete="CASCADE" />
-            <gedmo:tree-parent/>
-        </many-to-one>
-
-        <one-to-many field="children" target-entity="Ekyna\Bundle\CmsBundle\Entity\Page" mapped-by="parent">
-            <order-by>
-                <order-by-field name="left" direction="ASC" />
-            </order-by>
-        </one-to-many>
-
-        <gedmo:tree type="nested"/>
-
-	    <field name="name" column="name" type="string" length="64" />
-	    <field name="title" column="title" type="string" length="255" />
-	    <field name="html" column="html" type="text" nullable="true" />
-
-        <one-to-one field="seo" target-entity="Ekyna\Bundle\CmsBundle\Entity\Seo">
-            <cascade><cascade-all /></cascade>
-            <join-column name="seo_id" referenced-column-name="id" />
-        </one-to-one>
-
-        <field name="route" column="route" type="string" length="64" />
-        <field name="path" column="path" type="string" length="255" nullable="true" />
-        <field name="static" column="static" type="boolean" />
-        <field name="locked" column="locked" type="boolean" />
-        <field name="controller" column="controller" type="string" length="64" nullable="true" />
-        <field name="menu" column="menu" type="boolean" />
-        <field name="footer" column="footer" type="boolean" />
-        <field name="advanced" column="advanced" type="boolean" />
-
-        <field name="createdAt" column="created_at" type="datetime">
-            <gedmo:timestampable on="create" />
-        </field>
-        <field name="updatedAt" column="updated_at" type="datetime">
-            <gedmo:timestampable on="update" />
-        </field>
-
         <indexes>
             <index name="idx_path" columns="path" />
             <index name="idx_name" columns="name" />
@@ -80,6 +25,54 @@
         <entity-listeners>
             <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\PageListener" />
         </entity-listeners>
+
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO" />
+        </id>
+
+        <field name="name" column="name" type="string" length="64" />
+        <field name="title" column="title" type="string" length="255" />
+        <field name="html" column="html" type="text" nullable="true" />
+        <field name="route" column="route" type="string" length="64" />
+        <field name="path" column="path" type="string" length="255" nullable="true" />
+        <field name="static" column="static" type="boolean" />
+        <field name="locked" column="locked" type="boolean" />
+        <field name="controller" column="controller" type="string" length="64" nullable="true" />
+        <field name="menu" column="menu" type="boolean" />
+        <field name="footer" column="footer" type="boolean" />
+        <field name="advanced" column="advanced" type="boolean" />
+        <field name="left" column="lft" type="integer">
+            <gedmo:tree-left />
+        </field>
+        <field name="right" column="rgt" type="integer">
+            <gedmo:tree-right />
+        </field>
+        <field name="root" type="integer" nullable="true">
+            <gedmo:tree-root />
+        </field>
+        <field name="level" column="lvl" type="integer">
+            <gedmo:tree-level />
+        </field>
+
+        <field name="createdAt" column="created_at" type="datetime">
+            <gedmo:timestampable on="create" />
+        </field>
+        <field name="updatedAt" column="updated_at" type="datetime">
+            <gedmo:timestampable on="update" />
+        </field>
+
+        <one-to-many field="children" target-entity="Ekyna\Bundle\CmsBundle\Entity\Page" mapped-by="parent">
+            <order-by>
+                <order-by-field name="left" direction="ASC" />
+            </order-by>
+        </one-to-many>
+
+        <many-to-one field="parent" target-entity="Ekyna\Bundle\CmsBundle\Entity\Page" inversed-by="children">
+            <join-column name="parent_id" referenced-column-name="id" on-delete="CASCADE" />
+            <gedmo:tree-parent/>
+        </many-to-one>
+
+        <gedmo:tree type="nested"/>
 
     </entity>
 

@@ -14,6 +14,7 @@
         <parameter key="ekyna_cms.page.listener.class">Ekyna\Bundle\CmsBundle\Listener\PageListener</parameter>
         
         <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>
+        <parameter key="ekyna_cms.seo_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber</parameter>
         <parameter key="ekyna_cms.block_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\BlockSubscriber</parameter>
         
         <parameter key="ekyna_cms.text_block.class">Ekyna\Bundle\CmsBundle\Entity\TextBlock</parameter>
@@ -59,6 +60,9 @@
         <service id="ekyna_cms.content_subscriber" class="%ekyna_cms.content_subscriber.class%">
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
+        <service id="ekyna_cms.seo_subscriber" class="%ekyna_cms.seo_subscriber.class%">
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
         <service id="ekyna_cms.block_subscriber" class="%ekyna_cms.block_subscriber.class%">
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
             <tag name="doctrine.event_subscriber" connection="default" />
@@ -77,7 +81,7 @@
             <argument>null</argument>
             <argument type="service" id="event_dispatcher" on-invalid="ignore"/>
             <argument type="service" id="ekyna_cms.route_provider" />
-            <tag name="router"></tag>
+            <tag name="router" />
         </service>
 
         <!-- Nested Matcher -->
@@ -106,7 +110,7 @@
             <argument type="service" id="request_stack" />
             <argument type="service" id="security.context" />
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
-            <argument type="collection"></argument>
+            <argument type="collection" />
             <tag name="twig.extension" />
         </service>
 
