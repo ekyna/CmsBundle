@@ -3,8 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 /**
- * BlockInterface.
- *
+ * Interface BlockInterface
+ * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 interface BlockInterface
@@ -14,7 +14,7 @@ interface BlockInterface
      *
      * @param ContentInterface $content
      *
-     * @return BlockInterface
+     * @return BlockInterface|$this
      */
     public function setContent(ContentInterface $content = null);
 
@@ -30,7 +30,7 @@ interface BlockInterface
      *
      * @param string $name
      *
-     * @return BlockInterface
+     * @return BlockInterface|$this
      */
     public function setName($name);
 
@@ -46,7 +46,7 @@ interface BlockInterface
      *
      * @param integer $row
      * 
-     * @return BlockInterface
+     * @return BlockInterface|$this
      */
     public function setRow($row);
 
@@ -62,7 +62,7 @@ interface BlockInterface
      *
      * @param integer $column
      * 
-     * @return BlockInterface
+     * @return BlockInterface|$this
      */
     public function setColumn($column);
 
@@ -78,7 +78,7 @@ interface BlockInterface
      *
      * @param integer $size
      * 
-     * @return BlockInterface
+     * @return BlockInterface|$this
      */
     public function setSize($size);
 

@@ -14,7 +14,7 @@ interface SeoSubjectInterface
     /**
      * Returns the seo.
      *
-     * @return mixed
+     * @return Seo
      */
     public function getSeo();
 
@@ -22,7 +22,7 @@ interface SeoSubjectInterface
      * Sets the seo.
      *
      * @param Seo $seo
-     * @return SeoSubjectInterface
+     * @return SeoSubjectInterface|$this
      */
     public function setSeo(Seo $seo);
 }

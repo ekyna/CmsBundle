@@ -19,7 +19,7 @@ trait SeoSubjectTrait
     /**
      * Returns the seo.
      *
-     * @return mixed
+     * @return Seo
      */
     public function getSeo()
     {
@@ -30,7 +30,7 @@ trait SeoSubjectTrait
      * Sets the seo.
      *
      * @param Seo $seo
-     * @return SeoSubjectInterface
+     * @return SeoSubjectInterface|$this
      */
     public function setSeo(Seo $seo)
     {
