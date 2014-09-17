@@ -169,7 +169,7 @@ class ImageBlock extends AbstractBlock implements ImageInterface
 
         // Filename
         $filename = null;
-        if($this->hasName()) {
+        if($this->hasRename()) {
             $filename = Urlizer::transliterate(pathinfo($this->name, PATHINFO_FILENAME));
         }elseif($this->hasFile()) {
             $filename = pathinfo($this->file->getFilename(), PATHINFO_FILENAME);
@@ -189,7 +189,7 @@ class ImageBlock extends AbstractBlock implements ImageInterface
      * 
      * @return boolean
      */
-    public function hasName()
+    public function hasRename()
     {
         return 0 < strlen($this->name);
         //return (bool) (1 === preg_match('/^[a-z0-9-]+\.(jpg|jpeg|gif|png)$/', $this->name));
@@ -202,7 +202,7 @@ class ImageBlock extends AbstractBlock implements ImageInterface
      */
     public function getName()
     {
-        return $this->hasName() ? $this->name : $this->guessFilename();
+        return $this->hasRename() ? $this->name : $this->guessFilename();
     }
 
     /**
