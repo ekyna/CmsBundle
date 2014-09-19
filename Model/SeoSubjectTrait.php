@@ -30,7 +30,7 @@ trait SeoSubjectTrait
      * Sets the seo.
      *
      * @param Seo $seo
-     * @return SeoSubjectInterface|$this
+     * @return SeoSubjectTrait|$this
      */
     public function setSeo(Seo $seo)
     {
