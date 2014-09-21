@@ -77,6 +77,8 @@ class Editor
         $this->updateBlockCoords($block, $datas);
         $this->content->addBlock($block);
 
+        // TODO content validation
+
         $this->manager->persist($this->content);
         $this->manager->flush();
 
@@ -103,6 +105,8 @@ class Editor
         if (null !== $this->content) {
             $this->updateBlockCoords($block, $datas);
         }
+
+        // TODO content validation
 
         $this->manager->persist($block);
         $this->manager->flush();
@@ -136,6 +140,9 @@ class Editor
             $this->content->removeBlock($block);
             $this->manager->remove($block);
         }
+
+        // TODO content validation
+
         $this->manager->persist($this->content);
         $this->manager->flush();
 
@@ -159,6 +166,9 @@ class Editor
             $this->updateBlockCoords($block, $coords);
             $this->manager->persist($block);
         }
+
+        // TODO content validation
+
         $this->manager->flush();
     }
 

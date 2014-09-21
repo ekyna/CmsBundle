@@ -78,7 +78,7 @@ class PageType extends ResourceTableType
         parent::setDefaultOptions($resolver);
 
         $resolver->setDefaults(array(
-            'default_sort' => array('id', 'asc'),
+            'default_sort' => array('left', 'asc'),
             'max_per_page'  => 100,
         ));
     }

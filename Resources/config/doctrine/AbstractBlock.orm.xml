@@ -14,14 +14,14 @@
 	        <generator strategy="AUTO" />
 	    </id>
 
+        <field name="name" type="string" column="name"  nullable="true" />
+        <field name="row" type="smallint" column="row_num" />
+        <field name="column" type="smallint" column="col_num" />
+        <field name="size" type="smallint" column="size" />
+
         <many-to-one field="content" target-entity="Ekyna\Bundle\CmsBundle\Entity\Content" inversed-by="blocks">
             <join-column name="content_id" referenced-column-name="id" on-delete="CASCADE" nullable="true" />
         </many-to-one>
-
-        <field name="name" type="string" column="name"  nullable="true" />
-	    <field name="row" type="integer" column="row_num" />
-	    <field name="column" type="integer" column="col_num" />
-	    <field name="size" type="integer" column="size" />
 
     </entity>
 

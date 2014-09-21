@@ -3,12 +3,12 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 
 /**
- * Content
- *
+ * Class Content
+ * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class Content implements ContentInterface
@@ -34,7 +34,7 @@ class Content implements ContentInterface
     protected $updatedAt;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var ArrayCollection|BlockInterface[]
      */
     protected $blocks;
 
@@ -44,7 +44,7 @@ class Content implements ContentInterface
      */
     public function __construct()
     {
-        $this->blocks = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->blocks = new ArrayCollection();
     }
 
     /**
@@ -62,7 +62,7 @@ class Content implements ContentInterface
      *
      * @param integer $version
      * 
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Content
+     * @return Content
      */
     public function setVersion($version)
     {
@@ -86,7 +86,7 @@ class Content implements ContentInterface
      *
      * @param \DateTime $createdAt
      * 
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Content
+     * @return Content
      */
     public function setCreatedAt($createdAt)
     {
@@ -110,7 +110,7 @@ class Content implements ContentInterface
      *
      * @param \DateTime $updatedAt
      * 
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Content
+     * @return Content
      */
     public function setUpdatedAt($updatedAt)
     {
@@ -132,9 +132,9 @@ class Content implements ContentInterface
     /**
      * Add block
      *
-     * @param \Ekyna\Bundle\CmsBundle\Model\BlockInterface $block
+     * @param BlockInterface $block
      * 
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Content
+     * @return Content
      */
     public function addBlock(BlockInterface $block)
     {
@@ -147,9 +147,9 @@ class Content implements ContentInterface
     /**
      * Set blocks
      *
-     * @param \Doctrine\Common\Collections\ArrayCollection $blocks
+     * @param ArrayCollection|BlockInterface[] $blocks
      * 
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Content
+     * @return Content
      */
     public function setBlocks(ArrayCollection $blocks)
     {
@@ -163,9 +163,9 @@ class Content implements ContentInterface
     /**
      * Remove blocks
      *
-     * @param \Ekyna\Bundle\CmsBundle\Model\BlockInterface $block
+     * @param BlockInterface $block
      * 
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Content
+     * @return Content
      */
     public function removeBlock(BlockInterface $block)
     {
@@ -175,7 +175,7 @@ class Content implements ContentInterface
     /**
      * Get blocks
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection|BlockInterface[]
      */
     public function getBlocks()
     {

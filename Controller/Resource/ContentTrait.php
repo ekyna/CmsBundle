@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
  * ContentTrait
  *
  * @author Étienne Dauvergne <contact@ekyna.com>
+ * @deprecated No need in admin as Editor do the job in front.
  */
 trait ContentTrait
 {

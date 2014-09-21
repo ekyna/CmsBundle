@@ -80,4 +80,14 @@
         </property>
     </class>
 
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Content">
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\ContentGrid" />
+        <property name="version">
+            <constraint name="NotNull" />
+        </property>
+        <property name="blocks">
+            <constraint name="Valid" />
+        </property>
+    </class>
+
 </constraint-mapping>
