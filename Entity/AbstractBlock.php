@@ -166,8 +166,8 @@ abstract class AbstractBlock implements BlockInterface
      */
     public function validate(ExecutionContextInterface $context)
     {
-        if (($this->content === null && 0 < strlen($this->key)) || (null !== $this->content && null === $this->key)) {
-            $context->addViolation('Content or key must be defined, but not both.');
+        if (($this->content === null && 0 < strlen($this->name)) || (null !== $this->content && null === $this->name)) {
+            $context->addViolation('Content or name must be defined, but not both.');
         }
     }
 }
