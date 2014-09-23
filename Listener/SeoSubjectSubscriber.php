@@ -39,6 +39,7 @@ class SeoSubjectSubscriber implements EventSubscriber
                     'name'                  => 'seo_id',
                     'referencedColumnName'  => 'id',
                     'onDelete'              => 'RESTRICT',
+                    'nullable'              => false,
                 ),
             ),
         ));
