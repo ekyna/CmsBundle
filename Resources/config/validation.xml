@@ -60,7 +60,7 @@
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\AbstractBlock">
-        <constraint name="Callback">validate</constraint>
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\BlockIdentity" />
         <property name="row">
             <constraint name="GreaterThanOrEqual">
                 <option name="value">1</option>

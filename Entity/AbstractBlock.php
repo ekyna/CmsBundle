@@ -7,8 +7,8 @@ use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * AbstractBlock.
- *
+ * Class AbstractBlock
+ * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 abstract class AbstractBlock implements BlockInterface
@@ -45,9 +45,7 @@ abstract class AbstractBlock implements BlockInterface
 
 
     /**
-     * Get id
-     *
-     * @return integer
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -156,18 +154,5 @@ abstract class AbstractBlock implements BlockInterface
         	'column' => intval($this->column),
         	'size'   => intval($this->size)            
         );
-    }
-
-    /**
-     * Validates the block (content or key have to be set, but not both).
-     *
-     * @param ExecutionContextInterface $context
-     * @return bool
-     */
-    public function validate(ExecutionContextInterface $context)
-    {
-        if (($this->content === null && 0 < strlen($this->name)) || (null !== $this->content && null === $this->name)) {
-            $context->addViolation('Content or name must be defined, but not both.');
-        }
     }
 }

@@ -10,10 +10,16 @@ namespace Ekyna\Bundle\CmsBundle\Model;
 interface BlockInterface
 {
     /**
+     * Returns the id.
+     *
+     * @return int
+     */
+    public function getId();
+
+    /**
      * Set content
      *
      * @param ContentInterface $content
-     *
      * @return BlockInterface|$this
      */
     public function setContent(ContentInterface $content = null);
@@ -29,7 +35,6 @@ interface BlockInterface
      * Sets the name
      *
      * @param string $name
-     *
      * @return BlockInterface|$this
      */
     public function setName($name);
@@ -45,7 +50,6 @@ interface BlockInterface
      * Set row
      *
      * @param integer $row
-     * 
      * @return BlockInterface|$this
      */
     public function setRow($row);
@@ -61,7 +65,6 @@ interface BlockInterface
      * Set column
      *
      * @param integer $column
-     * 
      * @return BlockInterface|$this
      */
     public function setColumn($column);
@@ -77,7 +80,6 @@ interface BlockInterface
      * Set size
      *
      * @param integer $size
-     * 
      * @return BlockInterface|$this
      */
     public function setSize($size);

@@ -4,3 +4,5 @@ ekyna_cms:
         columns_overlap: Chevauchement de colonnes.
         row_too_large: La ligne est trop large.
         block_too_small: Le dernier block est trop petit.
+    block:
+        identity: L'identité du block n'est pas correctement définie.

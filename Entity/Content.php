@@ -61,13 +61,12 @@ class Content implements ContentInterface
      * Set version
      *
      * @param integer $version
-     * 
      * @return Content
      */
     public function setVersion($version)
     {
         $this->version = $version;
-    
+
         return $this;
     }
 
@@ -85,13 +84,12 @@ class Content implements ContentInterface
      * Set createdAt
      *
      * @param \DateTime $createdAt
-     * 
      * @return Content
      */
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
-    
+
         return $this;
     }
 
@@ -109,7 +107,6 @@ class Content implements ContentInterface
      * Set updatedAt
      *
      * @param \DateTime $updatedAt
-     * 
      * @return Content
      */
     public function setUpdatedAt($updatedAt)
@@ -130,11 +127,7 @@ class Content implements ContentInterface
     }
 
     /**
-     * Add block
-     *
-     * @param BlockInterface $block
-     * 
-     * @return Content
+     * {@inheritdoc}
      */
     public function addBlock(BlockInterface $block)
     {
@@ -148,7 +141,6 @@ class Content implements ContentInterface
      * Set blocks
      *
      * @param ArrayCollection|BlockInterface[] $blocks
-     * 
      * @return Content
      */
     public function setBlocks(ArrayCollection $blocks)
@@ -161,21 +153,17 @@ class Content implements ContentInterface
     }
 
     /**
-     * Remove blocks
-     *
-     * @param BlockInterface $block
-     * 
-     * @return Content
+     * {@inheritdoc}
      */
     public function removeBlock(BlockInterface $block)
     {
         $this->blocks->removeElement($block);
+
+        return $this;
     }
 
     /**
-     * Get blocks
-     *
-     * @return ArrayCollection|BlockInterface[]
+     * {@inheritdoc}
      */
     public function getBlocks()
     {

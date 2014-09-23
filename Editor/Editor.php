@@ -2,13 +2,14 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor;
 
-use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Ekyna\Bundle\CmsBundle\Entity\Content;
+use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * Editor.
- *
+ * Class Editor
+ * @package Ekyna\Bundle\CmsBundle\Editor
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class Editor
@@ -24,7 +25,12 @@ class Editor
     private $manager;
 
     /**
-     * @var Content
+     * @var ValidatorInterface
+     */
+    private $validator;
+
+    /**
+     * @var ContentInterface
      */
     private $content;
 
@@ -32,17 +38,22 @@ class Editor
      * Constructor.
      * 
      * @param PluginRegistry $registry
+     * @param ObjectManager $manager
+     * @param ValidatorInterface $validator
      */
-    public function __construct(PluginRegistry $registry, ObjectManager $manager)
+    public function __construct(PluginRegistry $registry, ObjectManager $manager, ValidatorInterface $validator)
     {
         $this->registry = $registry;
         $this->manager  = $manager;
+        $this->validator = $validator;
     }
 
     /**
      * Initializes the content.
      * 
      * @param integer $id
+     * @throws \InvalidArgumentException
+     * @return Editor
      */
     public function initContent($id)
     {
@@ -59,8 +70,8 @@ class Editor
      * Creates a block.
      * 
      * @param array $datas
-     * 
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function createBlock(array $datas = array())
     {
@@ -77,8 +88,6 @@ class Editor
         $this->updateBlockCoords($block, $datas);
         $this->content->addBlock($block);
 
-        // TODO content validation
-
         $this->manager->persist($this->content);
         $this->manager->flush();
 
@@ -92,7 +101,6 @@ class Editor
      * Updates a block.
      * 
      * @param array $datas
-     * 
      * @return array
      */
     public function updateBlock(array $datas = array())
@@ -121,8 +129,8 @@ class Editor
      * Removes blocks.
      * 
      * @param array $datas
-     * 
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function removeBlocks(array $datas = array())
     {
@@ -155,6 +163,7 @@ class Editor
      * Updates the layout.
      * 
      * @param array $datas
+     * @throws \InvalidArgumentException
      */
     public function updateLayout(array $datas = array())
     {
@@ -195,8 +204,9 @@ class Editor
      * Finds a block.
      * 
      * @param array $datas
-     * 
      * @return BlockInterface
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     private function findBlock(array $datas = array())
     {

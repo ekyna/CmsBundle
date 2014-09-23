@@ -18,8 +18,8 @@ class EditorController extends Controller
      * Handles an editor request.
      * 
      * @param Request $request
-     * 
      * @return JsonResponse
+     * @throws NotFoundHttpException
      */
     public function requestAction(Request $request)
     {

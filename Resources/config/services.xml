@@ -126,6 +126,7 @@
         <service id="ekyna_cms.editor" class="Ekyna\Bundle\CmsBundle\Editor\Editor">
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
             <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="validator" />
         </service>
 
         <!-- Web Editor plugins -->
