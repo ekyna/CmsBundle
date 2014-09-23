@@ -4,7 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
-use Symfony\Component\Validator\ExecutionContext;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * AbstractBlock.
@@ -161,10 +161,10 @@ abstract class AbstractBlock implements BlockInterface
     /**
      * Validates the block (content or key have to be set, but not both).
      *
-     * @param ExecutionContext $context
+     * @param ExecutionContextInterface $context
      * @return bool
      */
-    public function validate(ExecutionContext $context)
+    public function validate(ExecutionContextInterface $context)
     {
         if (($this->content === null && 0 < strlen($this->key)) || (null !== $this->content && null === $this->key)) {
             $context->addViolation('Content or key must be defined, but not both.');
