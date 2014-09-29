@@ -24,7 +24,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     protected $id;
 
     /**
-     * @var \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @var Page
      */
     protected $parent;
 
@@ -156,8 +156,8 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     /**
      * Set parent
      *
-     * @param \Ekyna\Bundle\CmsBundle\Entity\Page $parent
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @param Page $parent
+     * @return Page
      */
     public function setParent(Page $parent = null)
     {
@@ -169,7 +169,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     /**
      * Get parent
      *
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function getParent()
     {
@@ -180,7 +180,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set left
      *
      * @param integer $left
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setLeft($left)
     {
@@ -203,7 +203,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set right
      *
      * @param integer $right
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setRight($right)
     {
@@ -226,7 +226,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set root
      *
      * @param integer $root
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setRoot($root = null)
     {
@@ -249,7 +249,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set level
      *
      * @param integer $level
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setLevel($level)
     {
@@ -271,8 +271,8 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     /**
      * Add children
      *
-     * @param \Ekyna\Bundle\CmsBundle\Entity\Page $children
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @param Page $children
+     * @return Page
      */
     public function addChild(Page $children)
     {
@@ -284,7 +284,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     /**
      * Remove children
      *
-     * @param \Ekyna\Bundle\CmsBundle\Entity\Page $children
+     * @param Page $children
      */
     public function removeChild(Page $children)
     {
@@ -304,7 +304,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     /**
      * Get children
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection|Page[]
      */
     public function getChildren()
     {
@@ -315,7 +315,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set name
      *
      * @param string $name
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setName($name)
     {
@@ -338,7 +338,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set title
      *
      * @param string $title
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setTitle($title)
     {
@@ -384,7 +384,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set route
      *
      * @param string $route
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setRoute($route = null)
     {
@@ -407,7 +407,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set path
      *
      * @param string $path
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setPath($path)
     {
@@ -430,7 +430,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set static
      *
      * @param boolean $static
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setStatic($static)
     {
@@ -453,7 +453,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set locked
      *
      * @param boolean $locked
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setLocked($locked)
     {
@@ -476,7 +476,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set controller
      *
      * @param string $controller
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setController($controller = null)
     {
@@ -499,7 +499,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set menu
      *
      * @param boolean $menu
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setMenu($menu)
     {
@@ -522,7 +522,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set footer
      *
      * @param boolean $footer
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setFooter($footer)
     {
@@ -545,7 +545,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set advanced
      *
      * @param boolean $advanced
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setAdvanced($advanced)
     {
@@ -568,7 +568,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set createdAt
      *
      * @param \DateTime $createdAt
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
@@ -591,7 +591,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
      * Set updatedAt
      *
      * @param \DateTime $updatedAt
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return Page
      */
     public function setUpdatedAt(\DateTime  $updatedAt)
     {

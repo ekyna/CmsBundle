@@ -318,9 +318,9 @@ class RouteDefinition
             usort($this->children, function($a, $b) {
                 /** @var RouteDefinition $a */
                 /** @var RouteDefinition $b */
-            	if ($a->getPosition() > $b->getPosition()) {
+            	if ($a->getPosition() < $b->getPosition()) {
             	    return 1;
-            	} elseif ($a->getPosition() < $b->getPosition()) {
+            	} elseif ($a->getPosition() > $b->getPosition()) {
             	    return -1;
             	} else {
             	    return 0;
