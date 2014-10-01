@@ -6,3 +6,5 @@ ekyna_cms:
         block_too_small: Le dernier block est trop petit.
     block:
         identity: L'identité du block n'est pas correctement définie.
+    seo:
+        unique_title: Une page est déjà définie avec ce titre.

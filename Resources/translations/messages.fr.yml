@@ -5,7 +5,7 @@ ekyna_cms:
             plural: Pages
         header:
             list: Pages <small>Liste des pages</small>
-            show: Detail de la page <small>%name%</small>
+            show: Détail de la page <small>%name%</small>
             content_show: Contenu de la page <small>%name%</small>
             new: Créer une nouvelle page
             new_child: Créer une nouvelle page sous <small>%name%</small>
@@ -14,35 +14,32 @@ ekyna_cms:
             remove: Supprimer la page <small>%name%</small>
         button:
             list: Liste des pages
-            show: Detail de la page
+            show: Détail de la page
             new: Nouvelle page
             edit: Modifier la page
             remove: Supprimer la page
         alert:
             no_page: Aucune page configuré
-    field:
-        main_menu: Menu principal
-        footer_menu: Menu pied de page
-        show_main_menu: Afficher dans le menu principal
-        show_footer_menu: Afficher dans le menu du pied de page
-    validation:
-        seo:
-            unique_title: Une page est déjà définie avec ce titre.
     image:
         label:
             singular: Image
             plural: Images
         header:
             list: Images <small>Liste des images</small>
-            show: Detail de l'image
+            show: Détail de l'image
             new: Créer une nouvelle image
             edit: Modifier l'image
             remove: Supprimer l'image
         button:
             list: Liste des images
-            show: Detail de l'image
+            show: Détail de l'image
             new: Nouvelle image
             edit: Modifier l'image
             remove: Supprimer l'image
         alert:
             no_image: Aucune image configuré
+    field:
+        main_menu: Menu principal
+        footer_menu: Menu pied de page
+        show_main_menu: Afficher dans le menu principal
+        show_footer_menu: Afficher dans le menu du pied de page
