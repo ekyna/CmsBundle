@@ -22,20 +22,20 @@ class PageType extends ResourceFormType
     {
         $builder
             ->add('title', 'text', array(
-                'label' => 'ekyna_core.field.title'
+                'label' => 'ekyna_core.field.title',
             ))
             ->add('seo', 'ekyna_cms_seo', array(
-                'label' => false
+                'label' => false,
             ))
             ->add('menu', 'checkbox', array(
                 'label' => 'ekyna_cms.field.show_main_menu',
                 'required' => false,
-                'attr' => array('align_with_widget' => true)
+                'attr' => array('align_with_widget' => true),
             ))
             ->add('footer', 'checkbox', array(
                 'label' => 'ekyna_cms.field.show_footer_menu',
                 'required' => false,
-                'attr' => array('align_with_widget' => true)
+                'attr' => array('align_with_widget' => true),
             ))
         ;
 

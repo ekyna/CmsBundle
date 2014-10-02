@@ -63,10 +63,10 @@ class RouteDefinition
 
     /**
      * Constructor
-     * 
+     *
      * @param string $routeName
-     * @param array  $options
-     * 
+     * @param array $options
+     *
      * @throws \InvalidArgumentException
      * @throws \Exception
      */
@@ -76,10 +76,10 @@ class RouteDefinition
         $this->parentRouteName = $options['parent'];
 
         $this->pageName = $options['name'];
-        $this->path     = $options['path'];
-        $this->locked   = $options['locked'];
-        $this->menu     = $options['menu'];
-        $this->footer   = $options['footer'];
+        $this->path = $options['path'];
+        $this->locked = $options['locked'];
+        $this->menu = $options['menu'];
+        $this->footer = $options['footer'];
         $this->advanced = $options['advanced'];
         $this->position = $options['position'];
 
@@ -96,7 +96,7 @@ class RouteDefinition
 
     /**
      * Returns the parent route name
-     * 
+     *
      * @return string
      */
     public function getParentRouteName()
@@ -106,9 +106,9 @@ class RouteDefinition
 
     /**
      * Sets the parent route name
-     * 
+     *
      * @param string
-     * 
+     *
      * @return RouteDefinition
      */
     public function setParentRouteName($name)
@@ -128,7 +128,7 @@ class RouteDefinition
 
     /**
      * Returns the route path
-     * 
+     *
      * @return string
      */
     public function getPath()
@@ -138,7 +138,7 @@ class RouteDefinition
 
     /**
      * Returns whether page should be locked
-     * 
+     *
      * @return boolean
      */
     public function getLocked()
@@ -148,7 +148,7 @@ class RouteDefinition
 
     /**
      * Returns whether page should be displayed in main menu
-     * 
+     *
      * @return boolean
      */
     public function getMenu()
@@ -158,21 +158,21 @@ class RouteDefinition
 
     /**
      * Sets whether page should be displayed in main menu
-     * 
+     *
      * @param boolean $menu
-     * 
+     *
      * @return RouteDefinition
      */
     public function setMenu($menu)
     {
-        $this->menu = (bool) $menu;
+        $this->menu = (bool)$menu;
 
         return $this;
     }
 
     /**
      * Returns whether page should be displayed in the footer menu
-     * 
+     *
      * @return boolean
      */
     public function getFooter()
@@ -182,21 +182,21 @@ class RouteDefinition
 
     /**
      * Sets whether page should be displayed in the footer menu
-     * 
+     *
      * @param boolean $footer
-     * 
+     *
      * @return RouteDefinition
      */
     public function setFooter($footer)
     {
-        $this->footer = (bool) $footer;
+        $this->footer = (bool)$footer;
 
         return $this;
     }
 
     /**
      * Returns whether page has an advanced content
-     * 
+     *
      * @return boolean
      */
     public function getAdvanced()
@@ -206,21 +206,21 @@ class RouteDefinition
 
     /**
      * Sets whether page has an advanced content
-     * 
+     *
      * @param boolean $advanced
-     * 
+     *
      * @return RouteDefinition
      */
     public function setAdvanced($advanced)
     {
-        $this->advanced = (bool) $advanced;
+        $this->advanced = (bool)$advanced;
 
         return $this;
     }
 
     /**
      * Returns the position
-     * 
+     *
      * @return integer
      */
     public function getPosition()
@@ -230,9 +230,9 @@ class RouteDefinition
 
     /**
      * Sets the position
-     * 
+     *
      * @param integer
-     * 
+     *
      * @return RouteDefinition
      */
     public function setPosition($position)
@@ -244,17 +244,17 @@ class RouteDefinition
 
     /**
      * Adds a child route definition
-     *  
+     *
      * @param RouteDefinition $routeDefinition
-     * 
+     *
      * @return RouteDefinition
      */
     public function appendChild(RouteDefinition $routeDefinition)
     {
-        if($routeDefinition->getPosition() == 0) {
+        if ($routeDefinition->getPosition() == 0) {
             $routeDefinition->setPosition(count($this->children));
         }
-        if(!$this->menu && $routeDefinition->getMenu()) {
+        if (!$this->menu && $routeDefinition->getMenu()) {
             $routeDefinition->setMenu(false);
         }
         $this->children[$routeDefinition->getRouteName()] = $routeDefinition;
@@ -264,7 +264,7 @@ class RouteDefinition
 
     /**
      * Returns children routes
-     * 
+     *
      * @return array
      */
     public function getChildren()
@@ -274,7 +274,7 @@ class RouteDefinition
 
     /**
      * Returns whether the definition has children definitions
-     * 
+     *
      * @return boolean
      */
     public function hasChildren()
@@ -284,20 +284,20 @@ class RouteDefinition
 
     /**
      * Returns a child definition
-     * 
+     *
      * @param string $routeName
-     * 
+     *
      * @return RouteDefinition|NULL
      */
     public function findChildByRouteName($routeName)
     {
-        if($this->hasChildren()) {
-            if(isset($this->children[$routeName])) {
+        if ($this->hasChildren()) {
+            if (isset($this->children[$routeName])) {
                 return $this->children[$routeName];
             }
             /** @var RouteDefinition $definition */
-            foreach($this->children as $definition) {
-                if(null !== $child = $definition->findChildByRouteName($routeName)) {
+            foreach ($this->children as $definition) {
+                if (null !== $child = $definition->findChildByRouteName($routeName)) {
                     return $child;
                 }
             }
@@ -310,21 +310,18 @@ class RouteDefinition
      */
     public function sortChildren()
     {
-        if($this->hasChildren()) {
+        if ($this->hasChildren()) {
             /** @var RouteDefinition $definition */
-            foreach($this->children as $definition) {
+            foreach ($this->children as $definition) {
                 $definition->sortChildren();
             }
-            usort($this->children, function($a, $b) {
+            usort($this->children, function ($a, $b) {
                 /** @var RouteDefinition $a */
                 /** @var RouteDefinition $b */
-            	if ($a->getPosition() < $b->getPosition()) {
-            	    return 1;
-            	} elseif ($a->getPosition() > $b->getPosition()) {
-            	    return -1;
-            	} else {
-            	    return 0;
-            	}
+                if ($a->getPosition() == $b->getPosition()) {
+                    return 0;
+                }
+                return $a->getPosition() < $b->getPosition() ? -1 : 1;
             });
         }
     }

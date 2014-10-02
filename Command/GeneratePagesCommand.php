@@ -179,13 +179,14 @@ class GeneratePagesCommand extends ContainerAwareCommand
      * Resolve route options.
      *
      * @param Route $route
+     * @param string $routeName
      * @return array
      * @throws \InvalidArgumentException
      */
-    private function resolveRouteOptions(Route $route)
+    private function resolveRouteOptions(Route $route, $routeName)
     {
         if (null === $cmsOptions = $route->getDefault('_cms')) {
-            throw new \InvalidArgumentException(sprintf('Route "%s" does not have "_cms" defaults attributes.', $this->homeRouteName));
+            throw new \InvalidArgumentException(sprintf('Route "%s" does not have "_cms" defaults attributes.', $routeName));
         }
         return $this->optionResolver->resolve(array_merge($cmsOptions, array('path' => $route->getPath())));
     }
@@ -198,7 +199,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
     private function gatherRoutesDefinitions()
     {
         $route = $this->findRouteByName($this->homeRouteName);
-        $this->homeDefinition = new RouteDefinition($this->homeRouteName, $this->resolveRouteOptions($route));
+        $this->homeDefinition = new RouteDefinition($this->homeRouteName, $this->resolveRouteOptions($route, $this->homeRouteName));
 
         /** @var Route $route */
         foreach ($this->routes as $name => $route) {
@@ -221,7 +222,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
     private function createRouteDefinition($routeName, Route $route)
     {
         if (null === $definition = $this->findRouteDefinitionByRouteName($routeName)) {
-            $definition = new RouteDefinition($routeName, $this->resolveRouteOptions($route));
+            $definition = new RouteDefinition($routeName, $this->resolveRouteOptions($route, $routeName));
             if (null === $parentRouteName = $definition->getParentRouteName()) {
                 // If parent route name is null => home page child
                 $definition->setParentRouteName($this->homeRouteName);
