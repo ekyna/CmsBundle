@@ -82,17 +82,20 @@ class MenuBuilder
     {
         $menu = $this->factory->createItem('root');
 
-        if ($this->securityContext->isGranted('IS_AUTHENTICATED_FULLY') || $this->securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-            $user = $this->securityContext->getToken()->getUser();
-            $item = $menu->addChild($user->getEmail(), array('uri' => '#'));
-            $item->addChild('Mon profil', array('route' => 'fos_user_profile_show')); // TODO: use FOSUser translations
-            if ($this->securityContext->isGranted('ROLE_ADMIN')) {
-                $item->addChild('Administration', array('route' => 'ekyna_admin'));
+        if (null !== $this->securityContext->getToken()) {
+            if ($this->securityContext->isGranted('IS_AUTHENTICATED_FULLY') || $this->securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+                $user = $this->securityContext->getToken()->getUser();
+                $item = $menu->addChild($user->getEmail(), array('uri' => '#'));
+                $item->addChild('Mon profil', array('route' => 'fos_user_profile_show')); // TODO: use FOSUser translations
+                if ($this->securityContext->isGranted('ROLE_ADMIN')) {
+                    $item->addChild('Administration', array('route' => 'ekyna_admin'));
+                }
+                $item->addChild('Se déconnecter', array('route' => 'fos_user_security_logout'));
+                return $menu;
             }
-            $item->addChild('Se déconnecter', array('route' => 'fos_user_security_logout'));
-        } else {
-            $menu->addChild('Connection', array('route' => 'fos_user_security_login'));
         }
+
+        $menu->addChild('Connection', array('route' => 'fos_user_security_login'));
 
         return $menu;
     }

@@ -134,7 +134,7 @@ class CmsExtension extends \Twig_Extension
      */
     private function isEditable()
     {
-        if ($this->securityContext->isGranted('ROLE_ADMIN')
+        if (null !== $this->securityContext->getToken() && $this->securityContext->isGranted('ROLE_ADMIN')
             && null !== $request = $this->requestStack->getCurrentRequest()) {
             $request->headers->set('X-CmsEditor-Injection', true);
             return true;
