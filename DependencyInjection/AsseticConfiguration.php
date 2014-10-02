@@ -60,7 +60,7 @@ class AsseticConfiguration
         $inputs = array(
             '@EkynaCmsBundle/Resources/asset/editor/editor.js',
             '@EkynaCmsBundle/Resources/asset/editor/plugin/tinymce.js',
-            '@EkynaCmsBundle/Resources/asset/editor/Plugin/image.js',
+            '@EkynaCmsBundle/Resources/asset/editor/plugin/image.js',
         );
 
         return array(
