@@ -7,8 +7,8 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
- * Configuration
- *
+ * Class Configuration
+ * @package Ekyna\Bundle\CmsBundle\DependencyInjection
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class Configuration implements ConfigurationInterface
@@ -25,11 +25,11 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('output_dir')->defaultValue('')->end()
                 ->arrayNode('defaults')
-                    ->isRequired()
+                    ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('home_route')->end()
-                        ->scalarNode('template')->end()
-                        ->scalarNode('controller')->end()
+                        ->scalarNode('home_route')->defaultValue('home')->end()
+                        ->scalarNode('template')->defaultValue('EkynaCmsBundle:Cms:default.html.twig')->end()
+                        ->scalarNode('controller')->defaultValue('EkynaCmsBundle:Cms:default')->end()
                     ->end()
                 ->end()
             ->end()

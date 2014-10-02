@@ -1,9 +1,5 @@
 {% spaceless %}
-<style>
-<!--
-{% include '@EkynaCms/Editor/editor.css' %}
--->
-</style>
+<link href="/css/cms-editor.css" rel="stylesheet" type="text/css" />
 <div class="cms-editor-box pinned">
     <div class="cms-editor-head">
         <button class="btn cms-editor-enable" title="Activer"></button>
@@ -36,9 +32,5 @@
         <div id="cms-editor-plugin-controls"></div>
     </div>
 </div>
-<script>/*<![CDATA[*/
-{% include '@EkynaCms/Editor/editor.js' %}
-{% include '@EkynaCms/Editor/Plugins/tinymce.js' %}
-{% include '@EkynaCms/Editor/Plugins/image.js' %}
-/*]]>*/</script>
+<script type="text/javascript" src="/js/cms-editor.js"></script>
 {% endspaceless %}

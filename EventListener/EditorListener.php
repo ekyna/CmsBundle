@@ -76,14 +76,7 @@ class EditorListener implements EventSubscriberInterface
         $pos = $posrFunction($content, '</body>');
 
         if (false !== $pos) {
-            $editor = $this->twig->render('@EkynaCms/Editor/editor.html.twig');
-            //$editor = str_replace("\n", '', $editor);
-
-            /*$editor = $this->twig->render('@EkynaCms/Editor/editor.html.twig');
-            $editor = preg_replace("/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/", "", $editor);
-            $editor = str_replace(array("\r\n","\r","\t","\n",'  ','    ','     '), '', $$editor);
-            $editor = "\n".preg_replace(array('(( )+\))','(\)( )+)'), ')', $editor)."\n";*/
-            
+            $editor = $this->twig->render('EkynaCmsBundle:Editor:editor.html.twig');
             $content = $substrFunction($content, 0, $pos)."\n".$editor."\n".$substrFunction($content, $pos);
             $response->setContent($content);
         }

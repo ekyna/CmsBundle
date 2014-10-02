@@ -30,13 +30,26 @@ class EkynaCmsExtension extends AbstractExtension implements PrependExtensionInt
      */
     public function prepend(ContainerBuilder $container)
     {
-        $config = array(
-            'defaults' => array(
-        	    'home_route' => 'home',
-        	    'template'   => 'EkynaCmsBundle:Cms:default.html.twig',
-        	    'controller' => 'EkynaCmsBundle:Cms:default',
-            ),
-        );
-        $container->prependExtensionConfig('ekyna_cms', $config);
+        $bundles = $container->getParameter('kernel.bundles');
+        $configs = $container->getExtensionConfig($this->getAlias());
+        $config = $this->processConfiguration(new Configuration(), $configs);
+
+        if (array_key_exists('AsseticBundle', $bundles)) {
+            $this->configureAsseticBundle($container, $config);
+        }
+    }
+
+    /**
+     * Configures the AsseticBundle.
+     *
+     * @param ContainerBuilder $container
+     * @param array            $config
+     */
+    protected function configureAsseticBundle(ContainerBuilder $container, array $config)
+    {
+        $asseticConfig = new AsseticConfiguration;
+        $container->prependExtensionConfig('assetic', array(
+            'assets' => $asseticConfig->build($config),
+        ));
     }
 }
