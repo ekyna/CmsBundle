@@ -117,6 +117,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
             $count++;
         }
         $this->em->flush();
+        $this->em->clear();
 
         $class = $this->getContainer()->getParameter('ekyna_cms.page.class');
         $cmd = $this->em->getClassMetadata($class);
