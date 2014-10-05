@@ -5,8 +5,8 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 
 /**
- * ImagePlugin.
- *
+ * Class ImagePlugin
+ * @package Ekyna\Bundle\CmsBundle\Editor\Plugin
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class ImagePlugin extends AbstractPlugin

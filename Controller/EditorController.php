@@ -2,14 +2,14 @@
 
 namespace Ekyna\Bundle\CmsBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Ekyna\Bundle\CoreBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * EditorController.
- *
+ * Class EditorController
+ * @package Ekyna\Bundle\CmsBundle\Controller
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class EditorController extends Controller

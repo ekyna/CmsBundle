@@ -6,8 +6,8 @@ use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
 
 /**
- * TinymcePlugin.
- *
+ * Class TinymcePlugin
+ * @package Ekyna\Bundle\CmsBundle\Editor\Plugin
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class TinymcePlugin extends AbstractPlugin

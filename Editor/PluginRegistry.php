@@ -5,8 +5,8 @@ namespace Ekyna\Bundle\CmsBundle\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginInterface;
 
 /**
- * PluginRegistry.
- *
+ * Class PluginRegistry
+ * @package Ekyna\Bundle\CmsBundle\Editor
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class PluginRegistry
@@ -52,7 +52,7 @@ class PluginRegistry
     /**
      * Returns a plugin.
      * 
-     * @param PluginInterface $name
+     * @param string $name
      * 
      * @throws \InvalidArgumentException
      *
@@ -69,7 +69,7 @@ class PluginRegistry
     /**
      * Returns the registered plugins.
      * 
-     * @return array
+     * @return PluginInterface[]
      */
     public function getPlugins()
     {

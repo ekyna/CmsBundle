@@ -2,12 +2,12 @@
 
 namespace Ekyna\Bundle\CmsBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Ekyna\Bundle\CoreBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * CmsController.
- *
+ * Class CmsController
+ * @package Ekyna\Bundle\CmsBundle\Controller
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class CmsController extends Controller

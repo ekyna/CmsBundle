@@ -5,8 +5,8 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 
 /**
- * PluginInterface.
- *
+ * Interface PluginInterface
+ * @package Ekyna\Bundle\CmsBundle\Editor\Plugin
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 interface PluginInterface

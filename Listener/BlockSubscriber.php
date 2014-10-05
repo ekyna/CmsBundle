@@ -8,14 +8,17 @@ use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 
 /**
- * BlockSubscriber.
- *
+ * Class BlockSubscriber
+ * @package Ekyna\Bundle\CmsBundle\Listener
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class BlockSubscriber implements EventSubscriber
 {
     const BLOCK_FQCN = 'Ekyna\Bundle\CmsBundle\Entity\AbstractBlock';
 
+    /**
+     * @var PluginRegistry
+     */
     protected $registry;
 
     /**
@@ -33,6 +36,7 @@ class BlockSubscriber implements EventSubscriber
      */
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
+        /** @var \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata */
         $metadata = $eventArgs->getClassMetadata();
 
         if ($metadata->getName() !== self::BLOCK_FQCN) {
@@ -40,7 +44,6 @@ class BlockSubscriber implements EventSubscriber
         }
 
         foreach($this->registry->getPlugins() as $name => $plugins) {
-            /** @see \Doctrine\ORM\Mapping\ClassMetadataInfo::addDiscriminatorMapClass() */
             $metadata->addDiscriminatorMapClass($name, $plugins->getClass());
         }
     }

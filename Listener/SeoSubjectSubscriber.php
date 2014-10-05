@@ -10,7 +10,6 @@ use Doctrine\ORM\Events;
  * Class SeoSubjectSubscriber
  * @package Ekyna\Bundle\CmsBundle\Listener
  * @author Étienne Dauvergne <contact@ekyna.com>
- * @see http://www.theodo.fr/blog/2013/11/dynamic-mapping-in-doctrine-and-symfony-how-to-extend-entities/
  */
 class SeoSubjectSubscriber implements EventSubscriber
 {
