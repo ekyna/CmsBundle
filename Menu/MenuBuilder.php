@@ -6,13 +6,11 @@ use Ekyna\Bundle\CmsBundle\Entity\Page;
 use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
- * MenuBuilder
- *
+ * Class MenuBuilder
+ * @package Ekyna\Bundle\CmsBundle\Menu
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class MenuBuilder
@@ -26,11 +24,6 @@ class MenuBuilder
      * @var \Ekyna\Bundle\CmsBundle\Entity\PageRepository
      */
     protected $pageRepository;
-
-    /**
-     * @var \Symfony\Component\Security\Core\SecurityContext
-     */
-    protected $securityContext;
 
     /**
      * @var \Symfony\Component\HttpFoundation\RequestStack
@@ -54,60 +47,26 @@ class MenuBuilder
      * @param \Knp\Menu\FactoryInterface                                $factory
      * @param \Ekyna\Bundle\CmsBundle\Entity\PageRepository             $pageRepository
      * @param \Symfony\Component\HttpFoundation\RequestStack            $requestStack
-     * @param \Symfony\Component\Security\Core\SecurityContextInterface $securityContext
      * @param string $homeRouteName
      */
     public function __construct(
         FactoryInterface         $factory, 
         PageRepository           $pageRepository,
         RequestStack             $requestStack,
-        SecurityContextInterface $securityContext,
         $homeRouteName         = 'home'
     ) {
         $this->factory         = $factory;
         $this->pageRepository  = $pageRepository;
         $this->requestStack    = $requestStack;
-        $this->securityContext = $securityContext;
         $this->homeRouteName   = $homeRouteName;
     }
 
     /**
      * Create main menu
-     * 
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * 
+     *
      * @return \Knp\Menu\ItemInterface
      */
-    public function createUserMenu(Request $request)
-    {
-        $menu = $this->factory->createItem('root');
-
-        if (null !== $this->securityContext->getToken()) {
-            if ($this->securityContext->isGranted('IS_AUTHENTICATED_FULLY') || $this->securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-                $user = $this->securityContext->getToken()->getUser();
-                $item = $menu->addChild($user->getEmail(), array('uri' => '#'));
-                $item->addChild('Mon profil', array('route' => 'fos_user_profile_show')); // TODO: use FOSUser translations
-                if ($this->securityContext->isGranted('ROLE_ADMIN')) {
-                    $item->addChild('Administration', array('route' => 'ekyna_admin'));
-                }
-                $item->addChild('Se déconnecter', array('route' => 'fos_user_security_logout'));
-                return $menu;
-            }
-        }
-
-        $menu->addChild('Connection', array('route' => 'fos_user_security_login'));
-
-        return $menu;
-    }
-
-    /**
-     * Create main menu
-     * 
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * 
-     * @return \Knp\Menu\ItemInterface
-     */
-    public function createMainMenu(Request $request)
+    public function createMainMenu()
     {
         $menu = $this->factory->createItem('root');
 
@@ -142,12 +101,10 @@ class MenuBuilder
 
     /**
      * Create footer page menu
-     * 
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * 
+     *
      * @return \Knp\Menu\ItemInterface
      */
-    public function createFooterMenu(Request $request)
+    public function createFooterMenu()
     {
         $menu = $this->factory->createItem('root');
 
@@ -244,6 +201,7 @@ class MenuBuilder
                 $pages = array_reverse($pages);
 
                 // Fill the menu
+                /** @var Page[] $pages */
                 for ($i = 0; $i < count($pages); $i++) {
                     $page = $pages[$i];
                     if (($i === count($pages) - 1) || preg_match('#\{[\w]+\}#', $page->getPath())) {

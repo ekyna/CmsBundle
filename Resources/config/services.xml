@@ -142,7 +142,6 @@
 	        <argument type="service" id="knp_menu.factory" />
 	        <argument type="service" id="ekyna_cms.page.repository" />
 	        <argument type="service" id="request_stack" />
-	        <argument type="service" id="security.context" />
 	        <argument>%ekyna_cms.home_route_name%</argument>
 	    </service>
 	    <service id="ekyna_cms.menu.main"
@@ -160,14 +159,6 @@
 	        scope="request">
 	        <argument type="service" id="request" />
 	        <tag name="knp_menu.menu" alias="footer" />
-	    </service>
-	    <service id="ekyna_cms.menu.user"
-	        class="Knp\Menu\MenuItem"
-	        factory-service="ekyna_cms.menu_builder"
-	        factory-method="createUserMenu"
-	        scope="request">
-	        <argument type="service" id="request" />
-	        <tag name="knp_menu.menu" alias="user" />
 	    </service>
 	    <service id="ekyna_cms.breadcrumb"
 	        class="Knp\Menu\MenuItem"
