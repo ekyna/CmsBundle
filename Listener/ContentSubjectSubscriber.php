@@ -24,6 +24,11 @@ class ContentSubjectSubscriber implements EventSubscriber
         /** @var \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata */
         $metadata = $eventArgs->getClassMetadata();
 
+        // Prevent doctrine:generate:entities bug
+        if (!class_exists($metadata->getName())) {
+            return;
+        }
+
         if (!in_array(self::SUBJECT_INTERFACE, class_implements($metadata->getName()))) {
             return;
         }
