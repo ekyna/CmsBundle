@@ -4,7 +4,6 @@ namespace Ekyna\Bundle\CmsBundle\Twig;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Ekyna\Bundle\CmsBundle\Entity\Content;
-use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
@@ -14,8 +13,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\SecurityContext;
 
 /**
- * CmsExtension.
- * 
+ * Class CmsExtension
+ * @package Ekyna\Bundle\CmsBundle\Twig
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class CmsExtension extends \Twig_Extension
@@ -53,12 +52,12 @@ class CmsExtension extends \Twig_Extension
 
     /**
      * Constructor.
-     * 
+     *
      * @param ObjectManager $manager
-     * @param RequestStack    $requestStack
+     * @param RequestStack $requestStack
      * @param SecurityContext $securityContext
-     * @param PluginRegistry  $pluginRegistry
-     * @param array           $config
+     * @param PluginRegistry $pluginRegistry
+     * @param array $config
      */
     public function __construct(
         ObjectManager $manager,
@@ -66,14 +65,15 @@ class CmsExtension extends \Twig_Extension
         SecurityContext $securityContext,
         PluginRegistry $pluginRegistry,
         array $config = array()
-    ) {
-        $this->manager         = $manager;
-        $this->requestStack    = $requestStack;
+    )
+    {
+        $this->manager = $manager;
+        $this->requestStack = $requestStack;
         $this->securityContext = $securityContext;
-        $this->pluginRegistry  = $pluginRegistry;
+        $this->pluginRegistry = $pluginRegistry;
 
         $this->config = array_merge(array(
-        	'template' => 'EkynaCmsBundle:Cms:content.html.twig',
+            'template' => 'EkynaCmsBundle:Cms:content.html.twig',
             'default_block_type' => 'tinymce',
         ), $config);
     }
@@ -84,38 +84,26 @@ class CmsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'cms_metas' => new \Twig_Function_Method(
-                $this, 'renderMetas', array('is_safe' => array('html'))
-            ),
-            'cms_meta' => new \Twig_Function_Method(
-                $this, 'renderMeta', array('is_safe' => array('html'))
-            ),
-            'cms_title' => new \Twig_Function_Method(
-                $this, 'renderTitle', array('is_safe' => array('html'))
-            ),
-            'cms_content' => new \Twig_Function_Method(
-                $this, 'renderContent', array('is_safe' => array('html'))
-            ),
-            'cms_content_block' => new \Twig_Function_Method(
-                $this, 'renderContentBlock', array('is_safe' => array('html'))
-            ),
-            'cms_block' => new \Twig_Function_Method(
-                $this, 'renderBlock', array('is_safe' => array('html'))
-            ),
+            new \Twig_SimpleFunction('cms_metas', array($this, 'renderMetas'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_meta', array($this, 'renderMeta'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_title', array($this, 'renderTitle'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_content', array($this, 'renderContent'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_content_block', array($this, 'renderContentBlock'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_block', array($this, 'renderBlock'), array('is_safe' => array('html'))),
         );
     }
 
     /**
      * {@inheritDoc}
      */
-	public function initRuntime(\Twig_Environment $environment)
-	{
-        $this->template = $environment->loadTemplate($this->config['template']);
-	}
+    public function initRuntime(\Twig_Environment $twig)
+    {
+        $this->template = $twig->loadTemplate($this->config['template']);
+    }
 
     /**
      * Returns the current page.
-     * 
+     *
      * @return \Ekyna\Bundle\CmsBundle\Entity\Page
      */
     private function getCurrentPage()
@@ -134,8 +122,11 @@ class CmsExtension extends \Twig_Extension
      */
     private function isEditable()
     {
-        if (null !== $this->securityContext->getToken() && $this->securityContext->isGranted('ROLE_ADMIN')
-            && null !== $request = $this->requestStack->getCurrentRequest()) {
+        if (
+            null !== $this->securityContext->getToken()
+            && $this->securityContext->isGranted('ROLE_ADMIN')
+            && null !== $request = $this->requestStack->getCurrentRequest()
+        ) {
             $request->headers->set('X-CmsEditor-Injection', true);
             return true;
         }
@@ -176,10 +167,10 @@ class CmsExtension extends \Twig_Extension
 
     /**
      * Returns current page's title.
-     * 
+     *
      * @param string $tag
      * @param string $content
-     * 
+     *
      * @return string
      */
     public function renderTitle($tag = 'h1', $content = null)
@@ -195,11 +186,11 @@ class CmsExtension extends \Twig_Extension
 
     /**
      * Generates html from given Content.
-     * 
+     *
      * @param mixed $subject
-     * 
+     *
      * @throws \RuntimeException
-     * 
+     *
      * @return string
      */
     public function renderContent($subject = null)
@@ -230,7 +221,7 @@ class CmsExtension extends \Twig_Extension
             throw new \RuntimeException('Undefined content.');
         }
 
-        if (! $this->template->hasBlock('cms_block_content')) {
+        if (!$this->template->hasBlock('cms_block_content')) {
             throw new \RuntimeException('Unable to find "cms_block_content" twig block.');
         }
 
@@ -242,20 +233,19 @@ class CmsExtension extends \Twig_Extension
 
     /**
      * Creates and returns a "default" Content for the given subject.
-     * 
+     *
      * @param ContentSubjectInterface $subject
-     * 
+     *
      * @return \Ekyna\Bundle\CmsBundle\Entity\Content
      */
     private function createDefaultContent(ContentSubjectInterface $subject)
     {
-        $block = $this->createDefautBlock($this->config['default_block_type']);
+        $block = $this->createDefaultBlock($this->config['default_block_type']);
 
         $content = new Content();
         $content
             ->setVersion(1)
-            ->addBlock($block)
-        ;
+            ->addBlock($block);
 
         $subject->addContent($content);
 
@@ -270,11 +260,11 @@ class CmsExtension extends \Twig_Extension
      * Creates a default block.
      *
      * @param string $type
-     * @param array  $datas
+     * @param array $datas
      *
      * @return BlockInterface
      */
-    private function createDefautBlock($type, array $datas = array())
+    private function createDefaultBlock($type, array $datas = array())
     {
         $plugin = $this->pluginRegistry->get($type);
 
@@ -283,17 +273,17 @@ class CmsExtension extends \Twig_Extension
 
     /**
      * Generates html from given Content Block.
-     * 
+     *
      * @param BlockInterface $block
-     * 
+     *
      * @throws \RuntimeException
-     * 
+     *
      * @return string
      */
     public function renderContentBlock(BlockInterface $block)
     {
         $token = sprintf('cms_block_%s', $block->getType());
-        if(!$this->template->hasBlock($token)) {
+        if (!$this->template->hasBlock($token)) {
             throw new \RuntimeException('Unable to find "%s" twig block.', $token);
         }
 
@@ -303,9 +293,9 @@ class CmsExtension extends \Twig_Extension
     /**
      * Generates html from given Block.
      *
-     * @param string $name  the block name
-     * @param string $type  the block type
-     * @param array  $datas the block datas
+     * @param string $name the block name
+     * @param string $type the block type
+     * @param array $datas the block datas
      *
      * @throws \RuntimeException
      *
@@ -321,7 +311,7 @@ class CmsExtension extends \Twig_Extension
         if (null !== $block = $repository->findOneBy(array('name' => $name, 'content' => null))) {
             /* @TODO test block type ? */
         } else {
-            $block = $this->createDefautBlock($type, $datas);
+            $block = $this->createDefaultBlock($type, $datas);
             $block->setName($name);
 
             $this->manager->persist($block);
@@ -339,6 +329,6 @@ class CmsExtension extends \Twig_Extension
      */
     public function getName()
     {
-    	return 'ekyna_cms';
+        return 'ekyna_cms';
     }
 }
