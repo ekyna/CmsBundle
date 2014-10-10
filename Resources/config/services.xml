@@ -11,7 +11,7 @@
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
 
         <parameter key="ekyna_cms.page.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>
-        <parameter key="ekyna_cms.page.listener.class">Ekyna\Bundle\CmsBundle\Listener\PageListener</parameter>
+        <parameter key="ekyna_cms.page.listener.class">Ekyna\Bundle\CmsBundle\EventListener\PageListener</parameter>
         
         <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>
         <parameter key="ekyna_cms.seo_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber</parameter>
@@ -50,10 +50,10 @@
             <tag name="form.type" alias="ekyna_cms_seo" />
         </service>
 
-        <!-- Entity listeners -->
+        <!-- Event listeners -->
         <service id="ekyna_cms.page.listener" class="%ekyna_cms.page.listener.class%">
             <argument>%ekyna_cms.default_controller%</argument>
-            <tag name="doctrine.entity_listener" />
+            <tag name="kernel.event_subscriber" />
         </service>
 
         <!-- Doctrine subscriber -->

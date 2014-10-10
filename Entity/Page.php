@@ -5,15 +5,16 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectTrait;
+use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectTrait;
 
 /**
- * Page
- *
+ * Class Page
+ * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class Page implements ContentSubjectInterface, SeoSubjectInterface
+class Page implements PageInterface, ContentSubjectInterface, SeoSubjectInterface
 {
     use ContentSubjectTrait;
     use SeoSubjectTrait;
@@ -142,11 +143,9 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     {
         return (string) $this->getName();
     }
-    
+
     /**
-     * Get id
-     *
-     * @return integer
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -154,12 +153,9 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set parent
-     *
-     * @param Page $parent
-     * @return Page
+     * {@inheritdoc}
      */
-    public function setParent(Page $parent = null)
+    public function setParent(PageInterface $parent = null)
     {
         $this->parent = $parent;
 
@@ -167,9 +163,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get parent
-     *
-     * @return Page
+     * {@inheritdoc}
      */
     public function getParent()
     {
@@ -177,10 +171,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set left
-     *
-     * @param integer $left
-     * @return Page
+     * {@inheritdoc}
      */
     public function setLeft($left)
     {
@@ -190,9 +181,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get left
-     *
-     * @return integer 
+     * {@inheritdoc}
      */
     public function getLeft()
     {
@@ -200,10 +189,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set right
-     *
-     * @param integer $right
-     * @return Page
+     * {@inheritdoc}
      */
     public function setRight($right)
     {
@@ -213,9 +199,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get right
-     *
-     * @return integer 
+     * {@inheritdoc}
      */
     public function getRight()
     {
@@ -223,10 +207,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set root
-     *
-     * @param integer $root
-     * @return Page
+     * {@inheritdoc}
      */
     public function setRoot($root = null)
     {
@@ -236,9 +217,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get root
-     *
-     * @return integer 
+     * {@inheritdoc}
      */
     public function getRoot()
     {
@@ -246,10 +225,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set level
-     *
-     * @param integer $level
-     * @return Page
+     * {@inheritdoc}
      */
     public function setLevel($level)
     {
@@ -259,9 +235,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get level
-     *
-     * @return integer 
+     * {@inheritdoc}
      */
     public function getLevel()
     {
@@ -269,12 +243,9 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Add children
-     *
-     * @param Page $children
-     * @return Page
+     * {@inheritdoc}
      */
-    public function addChild(Page $children)
+    public function addChild(PageInterface $children)
     {
         $this->children[] = $children;
 
@@ -282,19 +253,15 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Remove children
-     *
-     * @param Page $children
+     * {@inheritdoc}
      */
-    public function removeChild(Page $children)
+    public function removeChild(PageInterface $children)
     {
         $this->children->removeElement($children);
     }
 
     /**
-     * Has children
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
     public function hasChildren()
     {
@@ -302,9 +269,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get children
-     *
-     * @return ArrayCollection|Page[]
+     * {@inheritdoc}
      */
     public function getChildren()
     {
@@ -312,10 +277,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     * @return Page
+     * {@inheritdoc}
      */
     public function setName($name)
     {
@@ -325,9 +287,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get name
-     *
-     * @return string 
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -335,10 +295,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set title
-     *
-     * @param string $title
-     * @return Page
+     * {@inheritdoc}
      */
     public function setTitle($title)
     {
@@ -348,9 +305,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get title
-     *
-     * @return string 
+     * {@inheritdoc}
      */
     public function getTitle()
     {
@@ -358,10 +313,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set html
-     *
-     * @param string $html
-     * @return ContentSubjectInterface
+     * {@inheritdoc}
      */
     public function setHtml($html)
     {
@@ -371,9 +323,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get html
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getHtml()
     {
@@ -381,10 +331,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set route
-     *
-     * @param string $route
-     * @return Page
+     * {@inheritdoc}
      */
     public function setRoute($route = null)
     {
@@ -394,9 +341,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get route
-     *
-     * @return string 
+     * {@inheritdoc}
      */
     public function getRoute()
     {
@@ -404,10 +349,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set path
-     *
-     * @param string $path
-     * @return Page
+     * {@inheritdoc}
      */
     public function setPath($path)
     {
@@ -417,9 +359,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get path
-     *
-     * @return string 
+     * {@inheritdoc}
      */
     public function getPath()
     {
@@ -427,10 +367,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set static
-     *
-     * @param boolean $static
-     * @return Page
+     * {@inheritdoc}
      */
     public function setStatic($static)
     {
@@ -440,9 +377,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get static
-     *
-     * @return boolean 
+     * {@inheritdoc}
      */
     public function getStatic()
     {
@@ -450,10 +385,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set locked
-     *
-     * @param boolean $locked
-     * @return Page
+     * {@inheritdoc}
      */
     public function setLocked($locked)
     {
@@ -463,9 +395,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get locked
-     *
-     * @return boolean 
+     * {@inheritdoc}
      */
     public function getLocked()
     {
@@ -473,10 +403,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set controller
-     *
-     * @param string $controller
-     * @return Page
+     * {@inheritdoc}
      */
     public function setController($controller = null)
     {
@@ -486,9 +413,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get controller
-     *
-     * @return string 
+     * {@inheritdoc}
      */
     public function getController()
     {
@@ -496,10 +421,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set menu
-     *
-     * @param boolean $menu
-     * @return Page
+     * {@inheritdoc}
      */
     public function setMenu($menu)
     {
@@ -509,9 +431,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get menu
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
     public function getMenu()
     {
@@ -519,10 +439,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set footer
-     *
-     * @param boolean $footer
-     * @return Page
+     * {@inheritdoc}
      */
     public function setFooter($footer)
     {
@@ -532,9 +449,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get footer
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
     public function getFooter()
     {
@@ -542,10 +457,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set advanced
-     *
-     * @param boolean $advanced
-     * @return Page
+     * {@inheritdoc}
      */
     public function setAdvanced($advanced)
     {
@@ -555,9 +467,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get advanced
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
     public function getAdvanced()
     {
@@ -565,10 +475,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     * @return Page
+     * {@inheritdoc}
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
@@ -578,9 +485,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get createdAt
-     *
-     * @return \DateTime
+     * {@inheritdoc}
      */
     public function getCreatedAt()
     {
@@ -588,10 +493,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Set updatedAt
-     *
-     * @param \DateTime $updatedAt
-     * @return Page
+     * {@inheritdoc}
      */
     public function setUpdatedAt(\DateTime  $updatedAt)
     {
@@ -601,9 +503,7 @@ class Page implements ContentSubjectInterface, SeoSubjectInterface
     }
 
     /**
-     * Get updatedAt
-     *
-     * @return \DateTime
+     * {@inheritdoc}
      */
     public function getUpdatedAt()
     {
