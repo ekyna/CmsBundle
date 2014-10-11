@@ -15,7 +15,7 @@ class ContentGridValidator extends ConstraintValidator
     public function validate($content, Constraint $constraint)
     {
         /**
-         * @var \Ekyna\Bundle\CmsBundle\Entity\Content $content
+         * @var \Ekyna\Bundle\CmsBundle\Model\ContentInterface $content
          * @var \Ekyna\Bundle\CmsBundle\Validator\ContentGrid $constraint
          */
         $currentColumn = 1;

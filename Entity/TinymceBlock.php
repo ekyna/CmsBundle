@@ -3,8 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 /**
- * TinymceBlock.
- *
+ * Class TinymceBlock
+ * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class TinymceBlock extends AbstractBlock
@@ -19,7 +19,7 @@ class TinymceBlock extends AbstractBlock
      * Set html
      *
      * @param string $html
-     * @return Text
+     * @return TinymceBlock
      */
     public function setHtml($html)
     {

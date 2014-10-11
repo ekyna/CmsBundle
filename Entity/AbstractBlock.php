@@ -19,7 +19,7 @@ abstract class AbstractBlock implements BlockInterface
     protected $id;
 
     /**
-     * @var \Ekyna\Bundle\CmsBundle\Entity\Content
+     * @var ContentInterface
      */
     protected $content;
 

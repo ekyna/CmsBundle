@@ -48,9 +48,7 @@ class Content implements ContentInterface
     }
 
     /**
-     * Get id
-     *
-     * @return integer
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -58,10 +56,7 @@ class Content implements ContentInterface
     }
 
     /**
-     * Set version
-     *
-     * @param integer $version
-     * @return Content
+     * {@inheritdoc}
      */
     public function setVersion($version)
     {
@@ -71,9 +66,7 @@ class Content implements ContentInterface
     }
 
     /**
-     * Get version
-     *
-     * @return integer
+     * {@inheritdoc}
      */
     public function getVersion()
     {
@@ -81,12 +74,9 @@ class Content implements ContentInterface
     }
 
     /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     * @return Content
+     * {@inheritdoc}
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
 
@@ -94,9 +84,7 @@ class Content implements ContentInterface
     }
 
     /**
-     * Get createdAt
-     *
-     * @return \DateTime
+     * {@inheritdoc}
      */
     public function getCreatedAt()
     {
@@ -104,12 +92,9 @@ class Content implements ContentInterface
     }
 
     /**
-     * Set updatedAt
-     *
-     * @param \DateTime $updatedAt
-     * @return Content
+     * {@inheritdoc}
      */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt(\DateTime $updatedAt = null)
     {
         $this->updatedAt = $updatedAt;
     
@@ -117,9 +102,7 @@ class Content implements ContentInterface
     }
 
     /**
-     * Get updatedAt
-     *
-     * @return \DateTime
+     * {@inheritdoc}
      */
     public function getUpdatedAt()
     {
@@ -138,10 +121,7 @@ class Content implements ContentInterface
     }
 
     /**
-     * Set blocks
-     *
-     * @param ArrayCollection|BlockInterface[] $blocks
-     * @return Content
+     * {@inheritdoc}
      */
     public function setBlocks(ArrayCollection $blocks)
     {

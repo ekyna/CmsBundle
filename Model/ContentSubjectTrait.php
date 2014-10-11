@@ -3,7 +3,6 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Entity\Content;
 
 /**
  * Class ContentSubjectTrait
@@ -13,14 +12,14 @@ use Ekyna\Bundle\CmsBundle\Entity\Content;
 trait ContentSubjectTrait
 {
     /**
-     * @var ArrayCollection
+     * @var ArrayCollection|ContentInterface[]
      */
     protected $contents;
 
     /**
      * Returns the content (last version).
      *
-     * @return Content|null
+     * @return ContentInterface|null
      */
     public function getContent()
     {
@@ -34,6 +33,7 @@ trait ContentSubjectTrait
      * Sets the contents.
      *
      * @param ArrayCollection $contents
+     *
      * @return ContentSubjectInterface|$this
      */
     public function setContents(ArrayCollection $contents)
@@ -46,10 +46,11 @@ trait ContentSubjectTrait
     /**
      * Adds the content.
      *
-     * @param Content $content
+     * @param ContentInterface $content
+     *
      * @return ContentSubjectInterface|$this
      */
-    public function addContent(Content $content)
+    public function addContent(ContentInterface $content)
     {
         $this->contents->add($content);
     
@@ -59,10 +60,11 @@ trait ContentSubjectTrait
     /**
      * Removes the content.
      *
-     * @param Content $content
+     * @param ContentInterface $content
+     *
      * @return ContentSubjectInterface|$this
      */
-    public function removeContent(Content $content)
+    public function removeContent(ContentInterface $content)
     {
         $this->contents->removeElement($content);
 
@@ -72,7 +74,7 @@ trait ContentSubjectTrait
     /**
      * Returns the contents.
      *
-     * @return ArrayCollection|Content[]
+     * @return ArrayCollection|ContentInterface[]
      */
     public function getContents()
     {

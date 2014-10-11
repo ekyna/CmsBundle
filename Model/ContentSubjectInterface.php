@@ -3,11 +3,10 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Entity\Content;
 
 /**
- * ContentSubjectInterface.
- *
+ * Interface ContentSubjectInterface
+ * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 interface ContentSubjectInterface
@@ -15,7 +14,7 @@ interface ContentSubjectInterface
     /**
      * Returns the current content (last version).
      * 
-     * @return Content
+     * @return ContentInterface|null
      */
     public function getContent();
 
@@ -30,23 +29,23 @@ interface ContentSubjectInterface
     /**
      * Adds the content.
      * 
-     * @param Content $content
+     * @param ContentInterface $content
      * @return ContentSubjectInterface|$this
      */
-    public function addContent(Content $content);
+    public function addContent(ContentInterface $content);
 
     /**
      * Remove the content
      * 
-     * @param Content $content
+     * @param ContentInterface $content
      * @return ContentSubjectInterface|$this
      */
-    public function removeContent(Content $content);
+    public function removeContent(ContentInterface $content);
 
     /**
      * Returns all contents
      *
-     * @return ArrayCollection|Content[]
+     * @return ArrayCollection|ContentInterface[]
      */
     public function getContents();
 }

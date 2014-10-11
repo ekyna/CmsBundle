@@ -2,8 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Ekyna\Bundle\CmsBundle\Entity\Seo;
-
 /**
  * Class SeoSubjectInterface
  * @package Ekyna\Bundle\CmsBundle\Model
@@ -14,15 +12,15 @@ interface SeoSubjectInterface
     /**
      * Returns the seo.
      *
-     * @return Seo
+     * @return SeoInterface
      */
     public function getSeo();
 
     /**
      * Sets the seo.
      *
-     * @param Seo $seo
+     * @param SeoInterface $seo
      * @return SeoSubjectInterface|$this
      */
-    public function setSeo(Seo $seo);
+    public function setSeo(SeoInterface $seo);
 }

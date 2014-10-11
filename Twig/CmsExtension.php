@@ -104,7 +104,7 @@ class CmsExtension extends \Twig_Extension
     /**
      * Returns the current page.
      *
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page
+     * @return \Ekyna\Bundle\CmsBundle\Model\PageInterface
      */
     private function getCurrentPage()
     {
@@ -236,7 +236,7 @@ class CmsExtension extends \Twig_Extension
      *
      * @param ContentSubjectInterface $subject
      *
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Content
+     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface
      */
     private function createDefaultContent(ContentSubjectInterface $subject)
     {

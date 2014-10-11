@@ -3,10 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectTrait;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
-use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectTrait;
 
 /**
@@ -14,7 +12,7 @@ use Ekyna\Bundle\CmsBundle\Model\SeoSubjectTrait;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class Page implements PageInterface, ContentSubjectInterface, SeoSubjectInterface
+class Page implements PageInterface
 {
     use ContentSubjectTrait;
     use SeoSubjectTrait;
@@ -126,11 +124,12 @@ class Page implements PageInterface, ContentSubjectInterface, SeoSubjectInterfac
     {
         $this->children = new ArrayCollection();
         $this->contents = new ArrayCollection();
-        $this->setSeo(new Seo());
-        $this->static = false;
-        $this->locked = false;
-        $this->menu = false;
-        $this->footer = false;
+        $this->seo      = new Seo();
+
+        $this->static   = false;
+        $this->locked   = false;
+        $this->menu     = false;
+        $this->footer   = false;
         $this->advanced = false;
     }
 

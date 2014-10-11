@@ -5,8 +5,8 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 
 /**
- * Ekyna\Bundle\CmsBundle\Entity$Seo
- *
+ * Class Seo
+ * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class Seo implements SeoInterface
@@ -47,9 +47,7 @@ class Seo implements SeoInterface
     }
 
     /**
-     * Get id
-     *
-     * @return integer 
+     * {@inheritDoc}
      */
     public function getId()
     {
@@ -57,10 +55,7 @@ class Seo implements SeoInterface
     }
 
     /**
-     * Set title
-     *
-     * @param string $title
-     * @return Seo
+     * {@inheritDoc}
      */
     public function setTitle($title)
     {
@@ -78,10 +73,7 @@ class Seo implements SeoInterface
     }
 
     /**
-     * Set description
-     *
-     * @param string $description
-     * @return Seo
+     * {@inheritDoc}
      */
     public function setDescription($description)
     {
@@ -99,10 +91,7 @@ class Seo implements SeoInterface
     }
 
     /**
-     * Set changefreq
-     *
-     * @param string $changefreq
-     * @return Seo
+     * {@inheritDoc}
      */
     public function setChangefreq($changefreq)
     {
@@ -120,10 +109,7 @@ class Seo implements SeoInterface
     }
 
     /**
-     * Set priority
-     *
-     * @param string $priority
-     * @return Seo
+     * {@inheritDoc}
      */
     public function setPriority($priority)
     {

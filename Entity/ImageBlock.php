@@ -6,8 +6,8 @@ use Ekyna\Bundle\CoreBundle\Model\ImageInterface;
 use Ekyna\Bundle\CoreBundle\Model\ImageTrait;
 
 /**
- * ImageBlock.
- *
+ * Class ImageBlock
+ * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class ImageBlock extends AbstractBlock implements ImageInterface

@@ -7,7 +7,7 @@ namespace Ekyna\Bundle\CmsBundle\Model;
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-interface PageInterface
+interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface
 {
     /**
      * Get id
@@ -116,7 +116,7 @@ interface PageInterface
     /**
      * Get children
      *
-     * @return ArrayCollection|PageInterface[]
+     * @return \Doctrine\Common\Collections\ArrayCollection|PageInterface[]
      */
     public function getChildren();
 
@@ -149,6 +149,22 @@ interface PageInterface
      * @return string
      */
     public function getTitle();
+
+    /**
+     * Set html
+     *
+     * @param string $html
+     *
+     * @return PageInterface|$this
+     */
+    public function setHtml($html);
+
+    /**
+     * Return html
+     *
+     * @return string
+     */
+    public function getHtml();
 
     /**
      * Set route

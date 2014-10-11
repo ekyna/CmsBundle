@@ -3,8 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 /**
- * TextBlock.
- *
+ * Class TextBlock
+ * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class TextBlock extends AbstractBlock
@@ -19,7 +19,7 @@ class TextBlock extends AbstractBlock
      * Set text
      *
      * @param string $text
-     * @return Text
+     * @return TextBlock
      */
     public function setText($text)
     {

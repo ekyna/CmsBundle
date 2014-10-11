@@ -2,8 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Ekyna\Bundle\CmsBundle\Entity\Seo;
-
 /**
  * Trait SeoSubjectTrait
  * @package Ekyna\Bundle\CmsBundle\Model
@@ -12,14 +10,14 @@ use Ekyna\Bundle\CmsBundle\Entity\Seo;
 trait SeoSubjectTrait
 {
     /**
-     * @var Seo
+     * @var SeoInterface
      */
     protected $seo;
 
     /**
      * Returns the seo.
      *
-     * @return Seo
+     * @return SeoInterface
      */
     public function getSeo()
     {
@@ -29,10 +27,10 @@ trait SeoSubjectTrait
     /**
      * Sets the seo.
      *
-     * @param Seo $seo
+     * @param SeoInterface $seo
      * @return SeoSubjectTrait|$this
      */
-    public function setSeo(Seo $seo)
+    public function setSeo(SeoInterface $seo)
     {
         $this->seo = $seo;
 

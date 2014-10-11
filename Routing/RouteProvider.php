@@ -2,19 +2,18 @@
 
 namespace Ekyna\Bundle\CmsBundle\Routing;
 
-use Ekyna\Bundle\CmsBundle\Entity\Page;
 use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
+use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 
 /**
- * RouteProvider
- * 
- * @see http://symfony.com/doc/master/cmf/components/routing/nested_matcher.html#the-routeprovider
+ * Class RouteProvider
+ * @package Ekyna\Bundle\CmsBundle\Routing
  * @author Étienne Dauvergne <contact@ekyna.com>
+ * @see http://symfony.com/doc/master/cmf/components/routing/nested_matcher.html#the-routeprovider
  */
 class RouteProvider implements RouteProviderInterface
 {
@@ -23,13 +22,26 @@ class RouteProvider implements RouteProviderInterface
      */
     protected $pageRepository;
 
+    /**
+     * Constructor.
+     *
+     * @param PageRepository $pageRepository
+     */
     public function __construct(PageRepository $pageRepository)
     {
         $this->pageRepository = $pageRepository;
     }
 
+    /**
+     * Finds Routes that match the given request.
+     *
+     * @param Request $request
+     *
+     * @return RouteCollection
+     */
     public function getRouteCollectionForRequest(Request $request)
     {
+        /** @var PageInterface[] $pages */
         $pages = $this->pageRepository->findBy(array(
             'path' => rawurldecode($request->getPathInfo()),
             'static' => false
@@ -43,6 +55,14 @@ class RouteProvider implements RouteProviderInterface
         return $collection;
     }
 
+    /**
+     * Find Routes by name.
+     *
+     * @param array|null $names
+     * @param array $parameters
+     *
+     * @return array|\Symfony\Component\Routing\Route[]
+     */
     public function getRoutesByNames($names, $parameters = array())
     {
         $pages = $this->pageRepository->findBy(array('route' => $names));
@@ -55,16 +75,30 @@ class RouteProvider implements RouteProviderInterface
         return $routes;
     }
 
+    /**
+     * Finds a Route by name.
+     *
+     * @param string $name
+     * @param array $parameters
+     *
+     * @return null|Route
+     */
     public function getRouteByName($name, $parameters = array())
     {
         if(null !== $page = $this->pageRepository->findOneBy(array('route' => $name))) {
             return $this->routeFromPage($page);
         }
-        //throw new ResourceNotFoundException(sprintf('Unable to find route named "%s".', $name));
         return null;
     }
 
-    protected function routeFromPage(Page $page)
+    /**
+     * Creates a Route form the given Page.
+     *
+     * @param PageInterface $page
+     *
+     * @return Route
+     */
+    protected function routeFromPage(PageInterface $page)
     {
         $route = new Route($page->getPath());
 

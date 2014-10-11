@@ -3,8 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Command;
 
 use Ekyna\Bundle\CmsBundle\Command\Route\RouteDefinition;
-use Ekyna\Bundle\CmsBundle\Entity\Page;
 use Ekyna\Bundle\CmsBundle\Entity\Seo;
+use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -275,7 +275,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
      *
      * @param string $routeName
      *
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Page|NULL
+     * @return PageInterface|NULL
      */
     private function findPageByRouteName($routeName)
     {
@@ -287,11 +287,11 @@ class GeneratePagesCommand extends ContainerAwareCommand
      *
      * @param RouteDefinition $definition
      * @param OutputInterface $output
-     * @param Page $parentPage
+     * @param PageInterface $parentPage
      *
      * @throws \InvalidArgumentException
      */
-    private function createPage(RouteDefinition $definition, OutputInterface $output, Page $parentPage = null)
+    private function createPage(RouteDefinition $definition, OutputInterface $output, PageInterface $parentPage = null)
     {
         if (null !== $page = $this->findPageByRouteName($definition->getRouteName())) {
             $output->writeln(sprintf('- "<info>%s</info>" page allready exists.', $page->getName()));

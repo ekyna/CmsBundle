@@ -27,7 +27,7 @@ interface BlockInterface
     /**
      * Get content
      *
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Content
+     * @return ContentInterface
      */
     public function getContent();
 

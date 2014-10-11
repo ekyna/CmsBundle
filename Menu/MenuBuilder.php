@@ -2,8 +2,8 @@
 
 namespace Ekyna\Bundle\CmsBundle\Menu;
 
-use Ekyna\Bundle\CmsBundle\Entity\Page;
 use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
+use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -84,9 +84,9 @@ class MenuBuilder
      * Creates menu items for given page's children
      * 
      * @param \Knp\Menu\ItemInterface $menu
-     * @param \Ekyna\Bundle\CmsBundle\Entity\Page $parent
+     * @param PageInterface $parent
      */
-    public function appendMainMenuChildren(ItemInterface $menu, Page $parent)
+    public function appendMainMenuChildren(ItemInterface $menu, PageInterface $parent)
     {
         foreach ($parent->getChildren() as $page) {
             if (!$page->getMenu()) {
@@ -122,9 +122,9 @@ class MenuBuilder
      * Creates menu items for given page's children
      * 
      * @param \Knp\Menu\ItemInterface $menu
-     * @param \Ekyna\Bundle\CmsBundle\Entity\Page $parent
+     * @param PageInterface $parent
      */
-    public function appendFooterMenuChildren(ItemInterface $menu, Page $parent)
+    public function appendFooterMenuChildren(ItemInterface $menu, PageInterface $parent)
     {
         foreach ($parent->getChildren() as $page) {
             if (!$page->getFooter()) {
@@ -201,7 +201,7 @@ class MenuBuilder
                 $pages = array_reverse($pages);
 
                 // Fill the menu
-                /** @var Page[] $pages */
+                /** @var PageInterface[] $pages */
                 for ($i = 0; $i < count($pages); $i++) {
                     $page = $pages[$i];
                     if (($i === count($pages) - 1) || preg_match('#\{[\w]+\}#', $page->getPath())) {
