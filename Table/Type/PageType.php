@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Table\Type;
 
+use Doctrine\ORM\QueryBuilder;
 use Ekyna\Bundle\AdminBundle\Table\Type\ResourceTableType;
 use Ekyna\Component\Table\TableBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -80,6 +81,10 @@ class PageType extends ResourceTableType
         $resolver->setDefaults(array(
             'default_sort' => array('left', 'asc'),
             'max_per_page'  => 100,
+            'customize_qb' => function(QueryBuilder $qb, $alias) {
+                $qb->select(array($alias, 's'))
+                    ->innerJoin($alias.'.seo', 's');
+            },
         ));
     }
 

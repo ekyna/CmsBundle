@@ -309,7 +309,7 @@ class CmsExtension extends \Twig_Extension
 
         $repository = $this->manager->getRepository('Ekyna\Bundle\CmsBundle\Entity\AbstractBlock');
         if (null !== $block = $repository->findOneBy(array('name' => $name, 'content' => null))) {
-            /* @TODO test block type ? */
+            // TODO test block type ?
         } else {
             $block = $this->createDefaultBlock($type, $datas);
             $block->setName($name);
