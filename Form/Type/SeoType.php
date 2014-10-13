@@ -6,12 +6,15 @@ use Ekyna\Bundle\AdminBundle\Form\Type\ResourceFormType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
- * SeoType
- *
+ * Class SeoType
+ * @package Ekyna\Bundle\CmsBundle\Form\Type
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class SeoType extends ResourceFormType
 {
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -40,6 +43,9 @@ class SeoType extends ResourceFormType
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
     	return 'ekyna_cms_seo';

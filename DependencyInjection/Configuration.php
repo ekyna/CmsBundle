@@ -55,7 +55,15 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('page')
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('templates')->defaultValue('EkynaCmsBundle:Page/Admin')->end()
+                                ->variableNode('templates')->defaultValue(array(
+                                    '_form.html'     => 'EkynaCmsBundle:Page/Admin:_form.html',
+                                    'list.html'      => 'EkynaCmsBundle:Page/Admin:list.html',
+                                    'new.html'       => 'EkynaCmsBundle:Page/Admin:new.html',
+                                    'new_child.html' => 'EkynaCmsBundle:Page/Admin:new_child.html',
+                                    'show.html'      => 'EkynaCmsBundle:Page/Admin:show.html',
+                                    'edit.html'      => 'EkynaCmsBundle:Page/Admin:edit.html',
+                                    'remove.html'    => 'EkynaCmsBundle:Page/Admin:remove.html',
+                                ))->end()
                                 ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Page')->end()
                                 ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\PageController')->end()
                                 ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\PageRepository')->end()
@@ -68,12 +76,26 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('image')
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('templates')->defaultValue('EkynaCmsBundle:Image/Admin')->end()
+                                ->variableNode('templates')->defaultValue(array(
+                                    'show.html'  => 'EkynaCmsBundle:Image/Admin:show.html',
+                                ))->end()
                                 ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Image')->end()
                                 ->scalarNode('controller')->end()
                                 ->scalarNode('repository')->end()
                                 ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\ImageType')->end()
                                 ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\ImageType')->end()
+                                ->scalarNode('parent')->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('tag')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->variableNode('templates')->defaultNull()->end()
+                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Tag')->end()
+                                ->scalarNode('controller')->end()
+                                ->scalarNode('repository')->end()
+                                ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\TagType')->end()
+                                ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\TagType')->end()
                                 ->scalarNode('parent')->end()
                             ->end()
                         ->end()

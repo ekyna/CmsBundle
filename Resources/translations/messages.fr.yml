@@ -38,6 +38,24 @@ ekyna_cms:
             remove: Supprimer l'image
         alert:
             no_image: Aucune image configuré
+    tag:
+        label:
+            singular: Tag
+            plural: Tags
+        header:
+            list: Tags <small>Liste des tags</small>
+            show: Détail du tag <small>%name%</small>
+            new: Créer un nouveau tag
+            edit: Modifier le tag <small>%name%</small>
+            remove: Supprimer le tag <small>%name%</small>
+        button:
+            list: Liste des tags
+            show: Détail du tag
+            new: Nouveau tag
+            edit: Modifier le tag
+            remove: Supprimer le tag
+        alert:
+            no_tag: Aucun tag configuré
     field:
         main_menu: Menu principal
         footer_menu: Menu pied de page

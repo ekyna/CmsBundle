@@ -1,0 +1,38 @@
+ekyna_cms_tag_admin_home:
+    path: /
+    defaults: { _controller: "ekyna_cms.tag.controller:homeAction" }
+    requirements:
+        _method: GET
+
+ekyna_cms_tag_admin_list:
+    path: /list
+    defaults: { _controller: "ekyna_cms.tag.controller:listAction" }
+    requirements:
+        _method: GET|POST
+
+ekyna_cms_tag_admin_new:
+    path: /new
+    defaults: { _controller: "ekyna_cms.tag.controller:newAction" }
+    requirements:
+        _method: GET|POST
+
+ekyna_cms_tag_admin_show:
+    path: /{tagId}/show
+    defaults: { _controller: "ekyna_cms.tag.controller:showAction" }
+    requirements:
+        _method: GET
+        tagId:  \d+
+
+ekyna_cms_tag_admin_edit:
+    path: /{tagId}/edit
+    defaults: { _controller: "ekyna_cms.tag.controller:editAction" }
+    requirements:
+        _method: GET|POST
+        tagId:  \d+
+
+ekyna_cms_tag_admin_remove:
+    path: /{tagId}/remove
+    defaults: { _controller: "ekyna_cms.tag.controller:removeAction" }
+    requirements:
+        _method: GET|POST
+        tagId:  \d+

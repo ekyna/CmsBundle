@@ -11,6 +11,9 @@ use Ekyna\Bundle\AdminBundle\Form\Type\ResourceFormType;
  */
 class ImageType extends ResourceFormType
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getParent()
     {
         return 'ekyna_core_image';

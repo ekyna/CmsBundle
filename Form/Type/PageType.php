@@ -9,8 +9,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 
 /**
- * PageType
- *
+ * Class PageType
+ * @package Ekyna\Bundle\CmsBundle\Form\Type
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class PageType extends ResourceFormType

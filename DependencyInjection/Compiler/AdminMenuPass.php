@@ -6,8 +6,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
 /**
- * AdminMenuPass.
- *
+ * Class AdminMenuPass
+ * @package Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class AdminMenuPass implements CompilerPassInterface
@@ -37,6 +37,12 @@ class AdminMenuPass implements CompilerPassInterface
             'route'    => 'ekyna_cms_image_admin_home',
             'label'    => 'ekyna_cms.image.label.plural',
             'resource' => 'ekyna_cms_image',
+        )));
+        $pool->addMethodCall('createEntry', array('content', array(
+            'name'     => 'tags',
+            'route'    => 'ekyna_cms_tag_admin_home',
+            'label'    => 'ekyna_cms.tag.label.plural',
+            'resource' => 'ekyna_cms_tag',
         )));
     }
 }

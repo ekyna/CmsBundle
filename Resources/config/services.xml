@@ -10,7 +10,7 @@
         <parameter key="ekyna_cms.seo.class">Ekyna\Bundle\CmsBundle\Entity\Seo</parameter>
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
 
-        <parameter key="ekyna_cms.page.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>
+        <!--<parameter key="ekyna_cms.page.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>-->
         <parameter key="ekyna_cms.page.listener.class">Ekyna\Bundle\CmsBundle\EventListener\PageListener</parameter>
         
         <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>
@@ -41,10 +41,10 @@
         </service>
 
         <!-- Form Types -->
-        <service id="ekyna_cms.page.form_type" class="%ekyna_cms.page.form_type.class%">
+        <!--<service id="ekyna_cms.page.form_type" class="%ekyna_cms.page.form_type.class%">
             <argument>%ekyna_cms.page.class%</argument>
             <tag name="form.type" alias="ekyna_cms_page" />
-        </service>
+        </service>-->
         <service id="ekyna_cms.seo.form_type" class="%ekyna_cms.seo.form_type.class%">
             <argument>%ekyna_cms.seo.class%</argument>
             <tag name="form.type" alias="ekyna_cms_seo" />

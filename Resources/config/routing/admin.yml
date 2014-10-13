@@ -1,0 +1,11 @@
+ekyna_cms_page_admin:
+    resource: "admin/page.yml"
+    prefix:   /pages
+
+ekyna_cms_image_admin:
+    resource: "admin/image.yml"
+    prefix:   /images
+
+ekyna_cms_tag_admin:
+    resource: "admin/tag.yml"
+    prefix:   /tags
