@@ -110,7 +110,10 @@
             <argument type="service" id="request_stack" />
             <argument type="service" id="security.context" />
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
-            <argument type="collection" />
+            <argument type="collection">
+                <argument key="seo_no_follow">%ekyna_cms.seo.no_follow%</argument>
+                <argument key="seo_no_index">%ekyna_cms.seo.no_index%</argument>
+            </argument>
             <tag name="twig.extension" />
         </service>
 

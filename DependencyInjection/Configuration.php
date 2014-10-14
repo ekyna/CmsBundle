@@ -24,6 +24,13 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('output_dir')->defaultValue('')->end()
+                ->arrayNode('seo')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('no_follow')->defaultFalse()->end()
+                        ->booleanNode('no_index')->defaultFalse()->end()
+                    ->end()
+                ->end()
                 ->arrayNode('defaults')
                     ->addDefaultsIfNotSet()
                     ->children()

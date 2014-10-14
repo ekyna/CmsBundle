@@ -32,10 +32,17 @@
         </constraint>
 
         <property name="title">
-            <constraint name="NotBlank" />
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>generator</value>
+                </option>
+            </constraint>
             <constraint name="Length">
                 <option name="min">2</option>
                 <option name="max">255</option>
+                <option name="groups">
+                    <value>generator</value>
+                </option>
             </constraint>
         </property>
         <property name="description">
@@ -48,13 +55,49 @@
 	    <property name="changefreq">
 	        <constraint name="Choice">
 	            <option name="callback">getChangefreqs</option>
+                <option name="groups">
+                    <value>generator</value>
+                </option>
 	        </constraint>
 	    </property>
         <property name="priority">
-            <constraint name="NotBlank" />
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>generator</value>
+                </option>
+            </constraint>
             <constraint name="Range">
                 <option name="min">0</option>
                 <option name="max">1</option>
+                <option name="groups">
+                    <value>generator</value>
+                </option>
+            </constraint>
+        </property>
+        <property name="follow">
+            <constraint name="NotNull">
+                <option name="groups">
+                    <value>generator</value>
+                </option>
+            </constraint>
+            <constraint name="Type">
+                <option name="type">bool</option>
+                <option name="groups">
+                    <value>generator</value>
+                </option>
+            </constraint>
+        </property>
+        <property name="index">
+            <constraint name="NotNull">
+                <option name="groups">
+                    <value>generator</value>
+                </option>
+            </constraint>
+            <constraint name="Type">
+                <option name="type">bool</option>
+                <option name="groups">
+                    <value>generator</value>
+                </option>
             </constraint>
         </property>
     </class>

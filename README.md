@@ -17,3 +17,6 @@ TODO
 
 ## Creating layouts
 TODO
+
+## TODOs
+- Disallow locked pages removal.

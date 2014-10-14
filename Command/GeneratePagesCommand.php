@@ -11,7 +11,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -27,6 +26,11 @@ class GeneratePagesCommand extends ContainerAwareCommand
     private $em;
 
     /**
+     * @var \Symfony\Component\Validator\Validator\ValidatorInterface
+     */
+    private $validator;
+
+    /**
      * @var \Ekyna\Bundle\CmsBundle\Entity\PageRepository
      */
     private $repository;
@@ -37,9 +41,9 @@ class GeneratePagesCommand extends ContainerAwareCommand
     private $routes;
 
     /**
-     * @var \Symfony\Component\OptionsResolver\OptionsResolverInterface
+     * @var OptionsResolver
      */
-    private $optionResolver;
+    private $optionsResolver;
 
     /**
      * @var string
@@ -47,7 +51,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
     private $homeRouteName;
 
     /**
-     * @var \Ekyna\Bundle\CmsBundle\Command\Route\RouteDefinition
+     * @var RouteDefinition
      */
     private $homeDefinition;
 
@@ -86,6 +90,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
         $this->homeRouteName = $this->getContainer()->getParameter('ekyna_cms.home_route_name');
 
         $this->em = $this->getContainer()->get('ekyna_cms.page.manager');
+        $this->validator = $this->getContainer()->get('validator');
         $this->repository = $this->getContainer()->get('ekyna_cms.page.repository');
 
         if ($truncate) {
@@ -94,11 +99,12 @@ class GeneratePagesCommand extends ContainerAwareCommand
 
         $output->writeln('Generating pages based and routing configuration :');
 
-        $this->configureOptionResolver();
+        $this->configureOptionsResolver();
         $this->gatherRoutesDefinitions();
-        $this->createPage($this->homeDefinition, $output);
 
-        $output->writeln('Done.');
+        if ($this->createPage($this->homeDefinition, $output)) {
+            $output->writeln('Done.');
+        }
     }
 
     /**
@@ -138,11 +144,44 @@ class GeneratePagesCommand extends ContainerAwareCommand
         $output->writeln(sprintf('<info>%s</info> pages removed.', $count));
     }
 
-    private function configureOptionResolver()
+    private function configureOptionsResolver()
     {
-        $this->optionResolver = new OptionsResolver();
+        $seoOptionResolver = new OptionsResolver();
 
-        $this->optionResolver
+        $seoOptionResolver
+            ->setDefaults(array(
+                'changefreq' => 'monthly',
+                'priority'   => 0.5,
+                'follow'     => true,
+                'index'      => true,
+                'canonical'  => null,
+            ))
+            ->setAllowedTypes(array(
+                'changefreq' => 'string',
+                'priority'   => 'float',
+                'follow'     => 'bool',
+                'index'      => 'bool',
+                'canonical'  => array('string', 'null'),
+            ))
+            ->setAllowedValues(array(
+                'changefreq' => Seo::getChangefreqs(),
+            ))
+            ->setNormalizers(array(
+                'priority' => function (Options $options, $value) {
+                    if (0 > $value) {
+                        return 0;
+                    }
+                    if (1 < $value) {
+                        return 1;
+                    }
+                    return $value;
+                },
+            ))
+        ;
+
+        $this->optionsResolver = new OptionsResolver();
+
+        $this->optionsResolver
             ->setDefaults(array(
                 'name' => null,
                 'path' => null,
@@ -151,6 +190,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
                 'menu' => false,
                 'footer' => false,
                 'advanced' => false,
+                'seo' => null,
                 'position' => 0,
             ))
             ->setAllowedTypes(array(
@@ -161,6 +201,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
                 'menu' => 'bool',
                 'footer' => 'bool',
                 'advanced' => 'bool',
+                'seo' => array('null', 'array'),
                 'position' => 'int',
             ))
             ->setRequired(array('name', 'path'))
@@ -171,6 +212,9 @@ class GeneratePagesCommand extends ContainerAwareCommand
                         return true;
                     }
                     return $value;
+                },
+                'seo' => function (Options $options, $value) use ($seoOptionResolver) {
+                    return $seoOptionResolver->resolve((array) $value);
                 },
             ))
         ;
@@ -189,7 +233,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
         if (null === $cmsOptions = $route->getDefault('_cms')) {
             throw new \InvalidArgumentException(sprintf('Route "%s" does not have "_cms" defaults attributes.', $routeName));
         }
-        return $this->optionResolver->resolve(array_merge($cmsOptions, array('path' => $route->getPath())));
+        return $this->optionsResolver->resolve(array_merge($cmsOptions, array('path' => $route->getPath())));
     }
 
     /**
@@ -290,6 +334,8 @@ class GeneratePagesCommand extends ContainerAwareCommand
      * @param PageInterface $parentPage
      *
      * @throws \InvalidArgumentException
+     *
+     * @return boolean
      */
     private function createPage(RouteDefinition $definition, OutputInterface $output, PageInterface $parentPage = null)
     {
@@ -305,10 +351,16 @@ class GeneratePagesCommand extends ContainerAwareCommand
             }
 
             // Seo
+            $seoDefinition = $definition->getSeo();
             $seo = new Seo();
             $seo
                 ->setTitle($title)
                 ->setDescription('') // empty to force edition in backend
+                ->setChangefreq($seoDefinition['changefreq'])
+                ->setPriority($seoDefinition['priority'])
+                ->setFollow($seoDefinition['follow'])
+                ->setIndex($seoDefinition['index'])
+                ->setCanonical($seoDefinition['canonical'])
             ;
 
             $page
@@ -326,6 +378,16 @@ class GeneratePagesCommand extends ContainerAwareCommand
                 ->setHtml('<p>Page en cours de rédaction.</p>');
             // Page
 
+            $violationList = $this->validator->validate($page, null, array('generator'));
+            if (0 < $violationList->count()) {
+                $output->writeln('<error>Invalid page</error>');
+                /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
+                foreach($violationList as $violation) {
+                    $output->writeln(sprintf('<error>%s : %s</error>', $violation->getPropertyPath(), $violation->getMessage()));
+                }
+                return false;
+            }
+
             $this->em->persist($page);
             $this->em->flush();
 
@@ -334,7 +396,11 @@ class GeneratePagesCommand extends ContainerAwareCommand
 
         // Creates children pages
         foreach ($definition->getChildren() as $child) {
-            $this->createPage($child, $output, $page);
+            if (!$this->createPage($child, $output, $page)) {
+                return false;
+            }
         }
+
+        return true;
     }
 }

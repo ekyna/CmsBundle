@@ -37,7 +37,8 @@
                 {% endif %}
             </div>
             <div class="tab-pane" id="seo">
-                {{ show_row(page.seo.title, 'text', 'ekyna_core.field.title') }}
+                {{ show_row(page.seo, 'seo') }}
+                {#{ show_row(page.seo.title, 'text', 'ekyna_core.field.title') }}
                 {{ show_row(page.seo.description, 'text', 'ekyna_core.field.description') }}
                 {{ show_row(page.path, 'url', 'ekyna_core.field.url') }}
                 <div class="row">
@@ -48,6 +49,7 @@
                         {{ show_row(page.seo.priority, 'text', 'ekyna_core.field.priority', {'label_nb_col': 4}) }}
                     </div>
                 </div>
+                #}
             </div>
         </div>
     </div>

@@ -86,4 +86,50 @@ interface SeoInterface
      * @return string
      */
     public function getPriority();
+
+
+    /**
+     * Returns the follow.
+     *
+     * @return boolean
+     */
+    public function getFollow();
+
+    /**
+     * Sets the follow.
+     *
+     * @param boolean $follow
+     * @return SeoInterface|$this
+     */
+    public function setFollow($follow);
+
+    /**
+     * Returns the index.
+     *
+     * @return boolean
+     */
+    public function getIndex();
+
+    /**
+     * Sets the index.
+     *
+     * @param boolean $index
+     * @return SeoInterface|$this
+     */
+    public function setIndex($index);
+
+    /**
+     * Returns the canonical.
+     *
+     * @return string
+     */
+    public function getCanonical();
+
+    /**
+     * Sets the canonical.
+     *
+     * @param string $canonical
+     * @return SeoInterface|$this
+     */
+    public function setCanonical($canonical);
 }

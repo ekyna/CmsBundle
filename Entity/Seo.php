@@ -36,6 +36,20 @@ class Seo implements SeoInterface
      */
     protected $priority;
 
+    /**
+     * @var boolean
+     */
+    protected $follow;
+
+    /**
+     * @var boolean
+     */
+    protected $index;
+
+    /**
+     * @var string
+     */
+    protected $canonical;
 
     /**
      * Constructor
@@ -44,6 +58,8 @@ class Seo implements SeoInterface
     {
         $this->changefreq = 'monthly';
         $this->priority = 0.5;
+        $this->follow = true;
+        $this->index = true;
     }
 
     /**
@@ -124,6 +140,57 @@ class Seo implements SeoInterface
     public function getPriority()
     {
         return $this->priority;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFollow()
+    {
+        return $this->follow;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setFollow($follow)
+    {
+        $this->follow = (bool)$follow;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIndex()
+    {
+        return $this->index;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setIndex($index)
+    {
+        $this->index = (bool)$index;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCanonical()
+    {
+        return $this->canonical;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCanonical($canonical)
+    {
+        $this->canonical = $canonical;
+        return $this;
     }
 
     /**

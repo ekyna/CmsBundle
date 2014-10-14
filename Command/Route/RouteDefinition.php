@@ -2,8 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Command\Route;
 
-use Symfony\Component\Routing\Route;
-
 /**
  * Class RouteDefinition
  * @package Ekyna\Bundle\CmsBundle\Command\Route
@@ -52,6 +50,11 @@ class RouteDefinition
     protected $advanced;
 
     /**
+     * @var array
+     */
+    protected $seo;
+
+    /**
      * @var integer
      */
     protected $position = 0;
@@ -76,12 +79,13 @@ class RouteDefinition
         $this->parentRouteName = $options['parent'];
 
         $this->pageName = $options['name'];
-        $this->path = $options['path'];
-        $this->locked = $options['locked'];
-        $this->menu = $options['menu'];
-        $this->footer = $options['footer'];
+        $this->path     = $options['path'];
+        $this->locked   = $options['locked'];
+        $this->menu     = $options['menu'];
+        $this->footer   = $options['footer'];
         $this->advanced = $options['advanced'];
         $this->position = $options['position'];
+        $this->seo      = $options['seo'];
 
         $this->children = array();
     }
@@ -219,6 +223,28 @@ class RouteDefinition
     }
 
     /**
+     * Returns the seo.
+     *
+     * @return array
+     */
+    public function getSeo()
+    {
+        return $this->seo;
+    }
+
+    /**
+     * Sets the seo.
+     *
+     * @param array $seo
+     * @return RouteDefinition
+     */
+    public function setSeo(array $seo)
+    {
+        $this->seo = $seo;
+        return $this;
+    }
+
+    /**
      * Returns the position
      *
      * @return integer
@@ -256,6 +282,15 @@ class RouteDefinition
         }
         if (!$this->menu && $routeDefinition->getMenu()) {
             $routeDefinition->setMenu(false);
+        }
+        $seo = $routeDefinition->getSeo();
+        if (!$this->seo['follow'] && $seo['follow']) {
+            $seo['follow'] = false;
+            $routeDefinition->setSeo($seo);
+        }
+        if (!$this->seo['index'] && $seo['index']) {
+            $seo['index'] = false;
+            $routeDefinition->setSeo($seo);
         }
         $this->children[$routeDefinition->getRouteName()] = $routeDefinition;
 

@@ -19,13 +19,8 @@
 	        {% endif %}
 	    </div>
 	    <div class="tab-pane" id="seo">
-	        {{ form_row(form.seo.title) }}
-	        {{ form_row(form.seo.description) }}
-	        {{ form_row(form.path) }}
-	        <div class="row">
-	            <div class="col-md-6">{{ form_row(form.seo.changefreq, {'label_col': 4, 'widget_col': 8}) }}</div>
-	            <div class="col-md-6">{{ form_row(form.seo.priority, {'label_col': 4, 'widget_col': 8}) }}</div>
-	        </div>
+            {{ form_row(form.path) }}
+	        {{ form_row(form.seo) }}
 	    </div>
     </div>
     {{ form_rest(form) }}

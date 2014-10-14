@@ -23,6 +23,9 @@ class EkynaCmsExtension extends AbstractExtension implements PrependExtensionInt
         $container->setParameter('ekyna_cms.home_route_name', $config['defaults']['home_route']);
         $container->setParameter('ekyna_cms.default_template', $config['defaults']['template']);
         $container->setParameter('ekyna_cms.default_controller', $config['defaults']['controller']);
+
+        $container->setParameter('ekyna_cms.seo.no_follow', $config['seo']['no_follow']);
+        $container->setParameter('ekyna_cms.seo.no_index', $config['seo']['no_index']);
     }
 
     /**
@@ -34,9 +37,24 @@ class EkynaCmsExtension extends AbstractExtension implements PrependExtensionInt
         $configs = $container->getExtensionConfig($this->getAlias());
         $config = $this->processConfiguration(new Configuration(), $configs);
 
+        if (array_key_exists('TwigBundle', $bundles)) {
+            $this->configureTwigBundle($container);
+        }
         if (array_key_exists('AsseticBundle', $bundles)) {
             $this->configureAsseticBundle($container, $config);
         }
+    }
+
+    /**
+     * Configures the TwigBundle.
+     *
+     * @param ContainerBuilder $container
+     */
+    private function configureTwigBundle(ContainerBuilder $container)
+    {
+        $container->prependExtensionConfig('twig', array(
+            'form' => array('resources' => array('EkynaCmsBundle:Form:form_div_layout.html.twig')),
+        ));
     }
 
     /**

@@ -75,7 +75,17 @@ class CmsExtension extends \Twig_Extension
         $this->config = array_merge(array(
             'template' => 'EkynaCmsBundle:Cms:content.html.twig',
             'default_block_type' => 'tinymce',
+            'seo_no_follow' => true,
+            'seo_no_index' => true,
         ), $config);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function initRuntime(\Twig_Environment $twig)
+    {
+        $this->template = $twig->loadTemplate($this->config['template']);
     }
 
     /**
@@ -91,14 +101,6 @@ class CmsExtension extends \Twig_Extension
             new \Twig_SimpleFunction('cms_content_block', array($this, 'renderContentBlock'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_block', array($this, 'renderBlock'), array('is_safe' => array('html'))),
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function initRuntime(\Twig_Environment $twig)
-    {
-        $this->template = $twig->loadTemplate($this->config['template']);
     }
 
     /**
@@ -146,10 +148,27 @@ class CmsExtension extends \Twig_Extension
                 $seo = $page->getSeo();
             }
         }
+
         if (null !== $seo) {
-            return $this->renderTitle('title', $seo->getTitle()) . $this->renderMeta('description', $seo->getDescription());
+            $follow = !$this->config['seo_no_follow'] ? ($seo->getFollow() ? 'follow' : 'nofollow') : 'nofollow';
+            $index = !$this->config['seo_no_index'] ? ($seo->getIndex() ?  'index'  : 'noindex') : 'noindex';
+            $robots = sprintf('%s,%s', $follow, $index);
+            $metas =
+                $this->renderTitle('title', $seo->getTitle()) . "\n" .
+                $this->renderMeta('description', $seo->getDescription()) . "\n" .
+                $this->renderMeta('robots', $robots)
+            ;
+            if (0 < strlen($canonical = $seo->getCanonical())) {
+                $metas .= "\n" .$this->renderTag('link', null, array(
+                    'rel' => 'canonical',
+                    'href' => $canonical,
+                ));
+            }
+        } else {
+            $metas = '<title>Undefined</title>' . $this->renderMeta('robots', 'follow,noindex');
         }
-        return '<title>Undefined</title>';
+
+        return $metas;
     }
 
     /**
@@ -162,7 +181,29 @@ class CmsExtension extends \Twig_Extension
      */
     public function renderMeta($name, $content)
     {
-        return sprintf('<meta name="%s" content="%s">', $name, $content);
+        return $this->renderTag('meta', null, array('name' => $name, 'content' => $content));
+    }
+
+    /**
+     * Renders the html tag.
+     *
+     * @param $tag
+     * @param string $content
+     * @param array $attributes
+     *
+     * @return string
+     */
+    private function renderTag($tag, $content = null, array $attributes = array())
+    {
+        $attr = [];
+        foreach($attributes as $key => $value) {
+            $attr[] = sprintf(' %s="%s"', $key, $value);
+        }
+        if (0 < strlen($content)) {
+            return sprintf('<%s%s>%s</%s>', $tag, implode('', $attr), $content, $tag);
+        } else {
+            return sprintf('<%s%s />', $tag, implode('', $attr));
+        }
     }
 
     /**
