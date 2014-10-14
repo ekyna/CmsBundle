@@ -38,7 +38,7 @@ class ImageType extends ResourceTableType
             ))
             ->addColumn('updatedAt', 'datetime', array(
                 'sortable' => true,
-                'label' => 'ekyna_core.field.update_date',
+                'label' => 'ekyna_core.field.updated_at',
             ))
             ->addColumn('actions', 'admin_actions', array(
                 'buttons' => array(

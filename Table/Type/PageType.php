@@ -34,7 +34,7 @@ class PageType extends ResourceTableType
                 'label' => 'ekyna_core.field.url',
             ))
             ->addColumn('updatedAt', 'datetime', array(
-                'label' => 'ekyna_core.field.update_date',
+                'label' => 'ekyna_core.field.updated_at',
             ))
             ->addColumn('actions', 'admin_nested_actions', array(
                 'disable_property_path' => 'locked',
