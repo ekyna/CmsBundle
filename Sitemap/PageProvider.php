@@ -18,7 +18,7 @@ class PageProvider extends AbstractProvider
     /**
      * @var PageRepository
      */
-    private $pageRepository;
+    private $repository;
 
     /**
      * @var UrlGeneratorInterface
@@ -33,7 +33,7 @@ class PageProvider extends AbstractProvider
      */
     public function __construct(PageRepository $repository, UrlGeneratorInterface $urlGenerator)
     {
-        $this->pageRepository = $repository;
+        $this->repository = $repository;
         $this->urlGenerator = $urlGenerator;
     }
 
@@ -42,7 +42,7 @@ class PageProvider extends AbstractProvider
      */
     public function getLastUpdateDate()
     {
-        $row = $this->pageRepository->createQueryBuilder('p')
+        $row = $this->repository->createQueryBuilder('p')
             ->select('MAX(p.updatedAt) AS last_date')
             ->getQuery()
             ->getOneOrNullResult(Query::HYDRATE_ARRAY)
@@ -56,10 +56,10 @@ class PageProvider extends AbstractProvider
      */
     public function getUrls()
     {
-        $qb = $this->pageRepository->createQueryBuilder('p');
+        $qb = $this->repository->createQueryBuilder('p');
         $pages = $qb
             ->innerJoin('p.seo', 's')
-            ->where($qb->expr()->eq('s.index', true))
+            ->andWhere($qb->expr()->eq('s.index', true))
             ->orderBy('p.left', 'ASC')
             ->getQuery()
             ->getResult()
