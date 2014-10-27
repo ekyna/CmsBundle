@@ -81,6 +81,7 @@ class SeoType extends ResourceFormType
 
         $resolver
             ->setDefaults(array(
+                'label' => false,
                 'attr' => array('widget_col' => 12),
                 'advanced' => true,
                 'validation_groups' => array($this->dataClass),

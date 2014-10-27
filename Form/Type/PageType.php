@@ -24,9 +24,7 @@ class PageType extends ResourceFormType
             ->add('title', 'text', array(
                 'label' => 'ekyna_core.field.title',
             ))
-            ->add('seo', 'ekyna_cms_seo', array(
-                'label' => false,
-            ))
+            ->add('seo', 'ekyna_cms_seo')
             ->add('menu', 'checkbox', array(
                 'label' => 'ekyna_cms.field.show_main_menu',
                 'required' => false,

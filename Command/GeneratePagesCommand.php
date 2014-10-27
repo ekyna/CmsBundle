@@ -79,8 +79,8 @@ class GeneratePagesCommand extends ContainerAwareCommand
         $dialog = $this->getHelperSet()->get('dialog');
         if (!$dialog->askConfirmation(
             $output,
-            '<question>Do you want to continue ? (y/n)</question>',
-            false
+            '<question>Do you want to continue ? (y/n)[Y]</question>',
+            true
         )
         ) {
             return;

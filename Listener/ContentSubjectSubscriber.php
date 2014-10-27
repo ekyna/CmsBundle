@@ -24,7 +24,7 @@ class ContentSubjectSubscriber implements EventSubscriber
         /** @var \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata */
         $metadata = $eventArgs->getClassMetadata();
 
-        // Prevent doctrine:generate:entities bug
+        // Prevent doctrine:generate:entities command bug
         if (!class_exists($metadata->getName())) {
             return;
         }
@@ -44,7 +44,8 @@ class ContentSubjectSubscriber implements EventSubscriber
             'targetEntity'  => self::CONTENT_FQCN,
             'cascade'       => array('all'),
             'joinTable'     => array(
-                'name'        => sprintf('cms_%s_content', strtolower($namingStrategy->classToTableName($metadata->getName()))),
+                //'name'        => sprintf('cms_%s_content', strtolower($namingStrategy->classToTableName($metadata->getName()))),
+                'name'        => sprintf('%s_content', strtolower($metadata->getTableName())),
                 'joinColumns' => array(
                     array(
                         'name'                  => $namingStrategy->joinKeyColumnName($metadata->getName()),
