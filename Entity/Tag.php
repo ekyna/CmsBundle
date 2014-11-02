@@ -2,12 +2,14 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use Ekyna\Bundle\CmsBundle\Model\TagInterface;
+
 /**
  * Class Tag
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class Tag
+class Tag implements TagInterface
 {
     /**
      * @var integer
@@ -31,9 +33,7 @@ class Tag
     }
 
     /**
-     * Returns the id.
-     *
-     * @return integer 
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -41,10 +41,7 @@ class Tag
     }
 
     /**
-     * Sets the name.
-     *
-     * @param string $name
-     * @return Tag
+     * {@inheritdoc}
      */
     public function setName($name)
     {
@@ -54,9 +51,7 @@ class Tag
     }
 
     /**
-     * Returns the name.
-     *
-     * @return string 
+     * {@inheritdoc}
      */
     public function getName()
     {

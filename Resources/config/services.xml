@@ -16,6 +16,7 @@
         
         <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>
         <parameter key="ekyna_cms.seo_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber</parameter>
+        <parameter key="ekyna_cms.tag_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\TagSubjectSubscriber</parameter>
         <parameter key="ekyna_cms.block_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\BlockSubscriber</parameter>
         
         <parameter key="ekyna_cms.text_block.class">Ekyna\Bundle\CmsBundle\Entity\TextBlock</parameter>
@@ -61,13 +62,16 @@
         </service>
 
         <!-- Doctrine subscriber -->
-        <service id="ekyna_cms.content_subscriber" class="%ekyna_cms.content_subscriber.class%">
+        <service id="ekyna_cms.content_subscriber" class="%ekyna_cms.content_subscriber.class%" public="false">
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
-        <service id="ekyna_cms.seo_subscriber" class="%ekyna_cms.seo_subscriber.class%">
+        <service id="ekyna_cms.seo_subscriber" class="%ekyna_cms.seo_subscriber.class%" public="false">
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
-        <service id="ekyna_cms.block_subscriber" class="%ekyna_cms.block_subscriber.class%">
+        <service id="ekyna_cms.tag_subscriber" class="%ekyna_cms.tag_subscriber.class%" public="false">
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+        <service id="ekyna_cms.block_subscriber" class="%ekyna_cms.block_subscriber.class%" public="false">
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>

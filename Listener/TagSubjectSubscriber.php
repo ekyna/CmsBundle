@@ -7,14 +7,14 @@ use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 
 /**
- * Class ContentSubjectSubscriber
+ * Class TagSubjectSubscriber
  * @package Ekyna\Bundle\CmsBundle\Listener
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class ContentSubjectSubscriber implements EventSubscriber
+class TagSubjectSubscriber implements EventSubscriber
 {
-    const CONTENT_FQCN = 'Ekyna\Bundle\CmsBundle\Entity\Content';
-    const SUBJECT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface';
+    const TAG_FQCN = 'Ekyna\Bundle\CmsBundle\Entity\Tag';
+    const SUBJECT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\TagSubjectInterface';
 
     /**
      * @param LoadClassMetadataEventArgs $eventArgs
@@ -40,11 +40,11 @@ class ContentSubjectSubscriber implements EventSubscriber
         ;
 
         $metadata->mapManyToMany(array(
-            'fieldName'     => 'contents',
-            'targetEntity'  => self::CONTENT_FQCN,
-            'cascade'       => array('all'),
+            'fieldName'     => 'tags',
+            'targetEntity'  => self::TAG_FQCN,
+            'cascade'       => array('persist'),
             'joinTable'     => array(
-                'name'        => sprintf('%s_content', strtolower($metadata->getTableName())),
+                'name'        => sprintf('%s_tag', strtolower($metadata->getTableName())),
                 'joinColumns' => array(
                     array(
                         'name'                  => $namingStrategy->joinKeyColumnName($metadata->getName()),
@@ -54,7 +54,7 @@ class ContentSubjectSubscriber implements EventSubscriber
                 ),
                 'inverseJoinColumns'    => array(
                     array(
-                        'name'                  => 'content_id',
+                        'name'                  => 'tag_id',
                         'referencedColumnName'  => $namingStrategy->referenceColumnName(),
                         'onDelete'              => 'CASCADE',
                     ),
