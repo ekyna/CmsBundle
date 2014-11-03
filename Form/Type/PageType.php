@@ -23,15 +23,18 @@ class PageType extends ResourceFormType
         $builder
             ->add('title', 'text', array(
                 'label' => 'ekyna_core.field.title',
+                'admin_helper' => 'PAGE_TITLE',
             ))
             ->add('seo', 'ekyna_cms_seo')
             ->add('menu', 'checkbox', array(
                 'label' => 'ekyna_cms.field.show_main_menu',
+                'admin_helper' => 'PAGE_MENU',
                 'required' => false,
                 'attr' => array('align_with_widget' => true),
             ))
             ->add('footer', 'checkbox', array(
                 'label' => 'ekyna_cms.field.show_footer_menu',
+                'admin_helper' => 'PAGE_FOOTER',
                 'required' => false,
                 'attr' => array('align_with_widget' => true),
             ))
@@ -92,6 +95,7 @@ class PageType extends ResourceFormType
                 if(null === $page->getId()) {
                     $form->add('path', 'text', array(
                         'label' => 'ekyna_core.field.url',
+                        'admin_helper' => 'PAGE_PATH',
                         'required' => false,
                         'attr' => array('input_group' => array('prepend' => $page->getParent()->getPath().'/')),
                     ));

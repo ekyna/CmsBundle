@@ -29,6 +29,7 @@ class SeoType extends ResourceFormType
             ->add('description', 'textarea', array(
                 'label' => 'ekyna_core.field.description',
                 'required' => true,
+                'admin_helper' => 'SEO_DESCRIPTION',
             ))
         ;
         if ($options['advanced']) {
@@ -41,25 +42,30 @@ class SeoType extends ResourceFormType
                         'yearly' => 'ekyna_core.changefreq.yearly',
                     ),
                     'required' => true,
+                    'admin_helper' => 'SEO_CHANGEFREQ',
                 ))
                 ->add('priority', 'number', array(
                     'label' => 'ekyna_core.field.priority',
                     'precision' => 1,
                     'required' => true,
+                    'admin_helper' => 'SEO_PRIORITY',
                 ))
                 ->add('follow', 'checkbox', array(
                     'label' => 'ekyna_core.field.follow',
                     'required' => false,
                     'attr' => array('align_with_widget' => true),
+                    'admin_helper' => 'SEO_FOLLOW',
                 ))
                 ->add('index', 'checkbox', array(
                     'label' => 'ekyna_core.field.index',
                     'required' => false,
                     'attr' => array('align_with_widget' => true),
+                    'admin_helper' => 'SEO_INDEX',
                 ))
                 ->add('canonical', 'url', array(
                     'label' => 'ekyna_core.field.canonical_url',
                     'required' => false,
+                    'admin_helper' => 'SEO_CANONICAL',
                 ))
             ;
         }
