@@ -24,6 +24,7 @@ class SeoType extends ResourceFormType
             ->add('title', 'text', array(
                 'label' => 'ekyna_core.field.title',
                 'required' => true,
+                'admin_helper' => 'SEO_TITLE',
             ))
             ->add('description', 'textarea', array(
                 'label' => 'ekyna_core.field.description',
