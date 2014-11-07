@@ -35,6 +35,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('home_route')->defaultValue('home')->end()
+                        ->integerNode('max_age')->defaultValue(600)->end()
                         ->scalarNode('template')->defaultValue('EkynaCmsBundle:Cms:default.html.twig')->end()
                         ->scalarNode('controller')->defaultValue('EkynaCmsBundle:Cms:default')->end()
                     ->end()
