@@ -78,13 +78,15 @@ class EditorListener implements EventSubscriberInterface
         if (false !== $pos) {
             $editor = $this->twig->render('EkynaCmsBundle:Editor:editor.html.twig');
             $content = $substrFunction($content, 0, $pos)."\n".$editor."\n".$substrFunction($content, $pos);
-            $response
-                ->setContent($content)
-                ->setPrivate()
-                ->setMaxAge(0)
-                ->setSharedMaxAge(0)
-                ->setLastModified(null)
-            ;
+            $response->setContent($content);
+            $response->headers->remove('Last-Modified');
+            $response->headers->remove('Etag');
+            $response->headers->remove('Expires');
+            $response->headers->removeCacheControlDirective('max-age');
+            $response->headers->removeCacheControlDirective('s-maxage');
+            $response->headers->removeCacheControlDirective('public');
+            $response->headers->addCacheControlDirective('private');
+            $response->headers->addCacheControlDirective('no-store');
         }
     }
 
