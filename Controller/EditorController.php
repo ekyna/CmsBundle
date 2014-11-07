@@ -27,6 +27,11 @@ class EditorController extends Controller
             throw new NotFoundHttpException();
         }
 
+        // TODO improve security with acls
+        if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            throw new NotFoundHttpException();
+        }
+
         $editor = $this->get('ekyna_cms.editor');
         if (0 < $contentId = intval($request->request->get('contentId', 0))) {
             $editor->initContent($contentId);
