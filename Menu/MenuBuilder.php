@@ -70,7 +70,7 @@ class MenuBuilder
     {
         $menu = $this->factory->createItem('root');
 
-        if (null !== $home = $this->pageRepository->findOneBy(array('route' => 'home'))) {
+        if (null !== $home = $this->pageRepository->findOneByRoute($this->homeRouteName)) {
             if ($home->getMenu()) {
                 $menu->addChild($home->getName(), array('route' => $home->getRoute()));
             }
@@ -108,7 +108,7 @@ class MenuBuilder
     {
         $menu = $this->factory->createItem('root');
 
-        if (null !== $home = $this->pageRepository->findOneBy(array('route' => 'home'))) {
+        if (null !== $home = $this->pageRepository->findOneByRoute($this->homeRouteName)) {
             if ($home->getFooter()) {
                 $menu->addChild($home->getName(), array('route' => $home->getRoute()));
             }
@@ -150,7 +150,7 @@ class MenuBuilder
     public function breadcrumbAppend($name, $label, $route = null, array $parameters = array())
     {
         if (null === $this->breadcrumb) {
-            if (null === $home = $this->pageRepository->findOneBy(array('route' => $this->homeRouteName))) {
+            if (null === $home = $this->pageRepository->findOneByRoute($this->homeRouteName)) {
                 throw new \RuntimeException('Home page not found.');
             }
             $this->createBreadcrumbRoot();
@@ -190,7 +190,7 @@ class MenuBuilder
             // Retrieve the current page.
             $currentPage = null;
             if (null !== $request = $this->requestStack->getCurrentRequest()) {
-                $currentPage = $this->pageRepository->findOneBy(array('route' => $request->attributes->get('_route')));
+                $currentPage = $this->pageRepository->findOneByRequest($request);
             }
             if (null !== $currentPage) {
                 // Loop through parents

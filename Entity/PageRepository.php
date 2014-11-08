@@ -30,8 +30,48 @@ class PageRepository extends NestedTreeRepository implements ResourceRepositoryI
      * @param Request $request
      * @return null|\Ekyna\Bundle\CmsBundle\Model\PageInterface
      */
-    public function findByRequest(Request $request)
+    public function findOneByRequest(Request $request)
     {
-        return $this->findOneBy(array('route' => $request->attributes->get('_route')));
+        if (null !== $routeName = $request->attributes->get('_route', null)) {
+            return $this->findOneByRoute($routeName);
+        }
+        return null;
+    }
+
+    /**
+     * Finds a page by request.
+     *
+     * @param string $routeName
+     * @return null|\Ekyna\Bundle\CmsBundle\Model\PageInterface
+     */
+    public function findByRoute($routeName)
+    {
+
+        $qb = $this->createQueryBuilder('p');
+        $query = $qb
+            ->andWhere($qb->expr()->eq('p.route', $qb->expr()->literal($routeName)))
+            ->getQuery()
+            ->useResultCache(true, 3600, 'page:route['.$routeName.']')
+        ;
+        return $query->getOneOrNullResult();
+    }
+
+    /**
+     * Finds a page by request.
+     *
+     * @param string $routeName
+     * @return null|\Ekyna\Bundle\CmsBundle\Model\PageInterface
+     */
+    public function findOneByRoute($routeName)
+    {
+
+        $qb = $this->createQueryBuilder('p');
+        $query = $qb
+            ->andWhere($qb->expr()->eq('p.route', $qb->expr()->literal($routeName)))
+            ->setMaxResults(1)
+            ->getQuery()
+            ->useResultCache(true, 3600, 'page:route['.$routeName.']')
+        ;
+        return $query->getOneOrNullResult();
     }
 }

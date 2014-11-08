@@ -112,7 +112,7 @@ class CmsExtension extends \Twig_Extension
     {
         if (null !== $request = $this->requestStack->getCurrentRequest()) {
             $repo = $this->manager->getRepository('EkynaCmsBundle:Page');
-            return $repo->findByRequest($request);
+            return $repo->findOneByRequest($request);
         }
         return null;
     }

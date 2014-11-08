@@ -65,6 +65,7 @@ class RouteProvider implements RouteProviderInterface
      */
     public function getRoutesByNames($names, $parameters = array())
     {
+        // TODO optimize by querying only required fields
         $pages = $this->pageRepository->findBy(array('route' => $names));
 
         $routes = array();
@@ -85,7 +86,8 @@ class RouteProvider implements RouteProviderInterface
      */
     public function getRouteByName($name, $parameters = array())
     {
-        if(null !== $page = $this->pageRepository->findOneBy(array('route' => $name))) {
+        // TODO optimize by querying only required fields
+        if (null !== $page = $this->pageRepository->findOneByRoute($name)) {
             return $this->routeFromPage($page);
         }
         return null;
