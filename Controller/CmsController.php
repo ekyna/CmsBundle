@@ -31,8 +31,11 @@ class CmsController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function menuAction()
+    public function menuAction(array $options = array('style' => 'navbar'))
     {
-        return $this->render('EkynaCmsBundle:Cms:menu.html.twig')->setSharedMaxAge(3600);
+        return $this
+            ->render('EkynaCmsBundle:Cms:menu.html.twig', array('options' => $options))
+            ->setSharedMaxAge(3600)
+        ;
     }
 }
