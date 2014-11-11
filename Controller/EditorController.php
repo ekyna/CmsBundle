@@ -22,23 +22,11 @@ class EditorController extends Controller
      */
     public function toolbarAction()
     {
-        $response = new Response('');
-        $response
-            ->setMaxAge(0)
-            ->setSharedMaxAge(0)
-            ->setPrivate()
-        ;
+        $response = new Response();
 
         $editor = $this->get('ekyna_cms.editor');
-
-        if (null !== $request = $this->get('request_stack')->getCurrentRequest()) {
-            if ($editor->isEnabled() && $editor->hasRenderedBlocks()) {
-                $response->setContent($this->renderView('EkynaCmsBundle:Editor:editor.html.twig'));
-            } else {
-                echo 'no editor';
-            }
-        } else {
-            echo 'no request';
+        if ($editor->isEnabled() && $editor->hasRenderedBlocks()) {
+            $response->setContent($this->renderView('EkynaCmsBundle:Editor:editor.html.twig'));
         }
 
         return $response;
