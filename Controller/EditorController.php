@@ -18,10 +18,9 @@ class EditorController extends Controller
     /**
      * Toolbar action (front).
      *
-     * @param Request $request
      * @return Response
      */
-    public function toolbarAction(Request $request)
+    public function toolbarAction()
     {
         $response = new Response('');
         $response
@@ -30,11 +29,16 @@ class EditorController extends Controller
             ->setPrivate()
         ;
 
-        if (!$request->isXmlHttpRequest()
-            && $request->headers->get('X-CmsEditor-Injection', false)
-            && $this->get('security.context')->isGranted('ROLE_ADMIN')
-        ) {
-            $response->setContent($this->renderView('EkynaCmsBundle:Editor:editor.html.twig'));
+        $editor = $this->get('ekyna_cms.editor');
+
+        if (null !== $request = $this->get('request_stack')->getCurrentRequest()) {
+            if ($editor->isEnabled() && $editor->hasRenderedBlocks()) {
+                $response->setContent($this->renderView('EkynaCmsBundle:Editor:editor.html.twig'));
+            } else {
+                echo 'no editor';
+            }
+        } else {
+            echo 'no request';
         }
 
         return $response;

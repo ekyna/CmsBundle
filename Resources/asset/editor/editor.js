@@ -1,5 +1,5 @@
 ;
-(function (win, $) {
+(function (win, $, router) {
     "use strict";
 
     var Editor = {
@@ -371,7 +371,7 @@
         if (this.current.$content !== null) {
             datas.contentId = this.current.$content.data('id');
         }
-        $.ajax(Routing.generate('ekyna_cms_editor_request'), {
+        $.ajax(router.generate('ekyna_cms_editor_request'), {
             data: datas,
             dataType: 'json',
             type: 'POST'
@@ -1095,4 +1095,4 @@
         CmsEditor.init();
     });
 
-})(window, jQuery);
+})(window, jQuery, Routing);

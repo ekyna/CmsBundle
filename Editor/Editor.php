@@ -3,8 +3,13 @@
 namespace Ekyna\Bundle\CmsBundle\Editor;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Ekyna\Bundle\CmsBundle\Entity\Content;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
+use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
+use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -30,22 +35,161 @@ class Editor
     private $validator;
 
     /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    /**
+     * @var SecurityContext
+     */
+    private $securityContext;
+
+    /**
+     * @var string
+     */
+    private $defaultBlockType;
+
+    /**
      * @var ContentInterface
      */
     private $content;
 
     /**
+     * @var PageInterface
+     */
+    private $currentPage = false;
+
+    /**
+     * @var bool
+     */
+    private $enabled;
+
+    /**
+     * @var bool
+     */
+    private $blocksRendered = false;
+
+    /**
      * Constructor.
      * 
-     * @param PluginRegistry $registry
-     * @param ObjectManager $manager
+     * @param PluginRegistry     $registry
+     * @param ObjectManager      $manager
      * @param ValidatorInterface $validator
+     * @param RequestStack       $requestStack
+     * @param SecurityContext    $securityContext
+     * @param string             $defaultBlockType
      */
-    public function __construct(PluginRegistry $registry, ObjectManager $manager, ValidatorInterface $validator)
+    public function __construct(
+        PluginRegistry     $registry,
+        ObjectManager      $manager,
+        ValidatorInterface $validator,
+        RequestStack       $requestStack,
+        SecurityContext    $securityContext,
+        $defaultBlockType  = 'tinymce'
+    ) {
+        $this->registry        = $registry;
+        $this->manager         = $manager;
+        $this->validator       = $validator;
+        $this->requestStack    = $requestStack;
+        $this->securityContext = $securityContext;
+
+        $this->defaultBlockType = $defaultBlockType;
+    }
+
+
+    /**
+     * Returns the current page.
+     *
+     * @return PageInterface|null
+     */
+    public function getCurrentPage()
     {
-        $this->registry = $registry;
-        $this->manager  = $manager;
-        $this->validator = $validator;
+        if (false === $this->currentPage) {
+            $this->currentPage = null;
+            if (null !== $request = $this->requestStack->getCurrentRequest()) {
+                $repo = $this->manager->getRepository('EkynaCmsBundle:Page');
+                $this->currentPage = $repo->findOneByRequest($request);
+            }
+        }
+        return $this->currentPage;
+    }
+
+    /**
+     * Returns whether the current user is allowed edit content and blocks or not.
+     *
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        if (null === $this->enabled) {
+            if (null !== $this->requestStack->getCurrentRequest() && $this->securityContext->isGranted('ROLE_ADMIN')) {
+                $this->enabled = true;
+            } else {
+                $this->enabled = false;
+            }
+        }
+        return $this->enabled;
+    }
+
+    /**
+     * Returns the displayToolbar.
+     *
+     * @return boolean
+     */
+    public function hasRenderedBlocks()
+    {
+        return $this->blocksRendered;
+    }
+
+    /**
+     * Sets rendered blocks flag to true.
+     *
+     * @return Editor
+     */
+    public function setRenderedBlocks()
+    {
+        $this->blocksRendered = true;
+        return $this;
+    }
+
+    /**
+     * Creates and returns a "default" Content for the given subject.
+     *
+     * @param ContentSubjectInterface $subject
+     *
+     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface
+     */
+    public function createDefaultContent(ContentSubjectInterface $subject)
+    {
+        $block = $this->createDefaultBlock($this->defaultBlockType);
+
+        $content = new Content();
+        $content
+            ->setVersion(1)
+            ->addBlock($block);
+
+        $subject->addContent($content);
+
+        $this->manager->persist($content);
+        $this->manager->persist($subject);
+        $this->manager->flush();
+
+        return $content;
+    }
+
+    /**
+     * Creates a default block.
+     *
+     * @param string $type
+     * @param array $datas
+     *
+     * @return BlockInterface
+     */
+    private function createDefaultBlock($type, array $datas = array())
+    {
+        $plugin = $this->registry->get($type);
+
+        return $plugin->create($datas);
     }
 
     /**
@@ -182,7 +326,7 @@ class Editor
     }
 
     /**
-     * Updates coords of the given block.
+     * Updates coordinates of the given block.
      * 
      * @param BlockInterface $block
      * @param array          $datas
@@ -224,6 +368,35 @@ class Editor
         if (null === $block) {
             throw new \RuntimeException('Block not found.');
         }
+        return $block;
+    }
+
+    /**
+     * Finds a block by name or creates if not exists.
+     *
+     * @param string $name the block name
+     * @param string $type the block type
+     * @param array $datas the block datas
+     *
+     * @return BlockInterface
+     */
+    public function findBlockByName($name, $type = null, array $datas = array())
+    {
+        if (null === $type) {
+            $type = $this->defaultBlockType;
+        }
+
+        $repository = $this->manager->getRepository('Ekyna\Bundle\CmsBundle\Entity\AbstractBlock');
+        if (null === $block = $repository->findOneBy(array('name' => $name, 'content' => null))) {
+            $block = $this->createDefaultBlock($type, $datas);
+            $block->setName($name);
+
+            $this->manager->persist($block);
+            $this->manager->flush();
+        } else {
+            // TODO test block type ?
+        }
+
         return $block;
     }
 }

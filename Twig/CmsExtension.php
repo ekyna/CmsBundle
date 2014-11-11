@@ -2,15 +2,11 @@
 
 namespace Ekyna\Bundle\CmsBundle\Twig;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Ekyna\Bundle\CmsBundle\Entity\Content;
+use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
-use Ekyna\Bundle\CmsBundle\Editor\PluginRegistry;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\SecurityContext;
 
 /**
  * Class CmsExtension
@@ -20,24 +16,9 @@ use Symfony\Component\Security\Core\SecurityContext;
 class CmsExtension extends \Twig_Extension
 {
     /**
-     * @var ObjectManager
+     * @var Editor
      */
-    protected $manager;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @var SecurityContext
-     */
-    protected $securityContext;
-
-    /**
-     * @var PluginRegistry
-     */
-    protected $pluginRegistry;
+    protected $editor;
 
     /**
      * @var array
@@ -53,28 +34,15 @@ class CmsExtension extends \Twig_Extension
     /**
      * Constructor.
      *
-     * @param ObjectManager $manager
-     * @param RequestStack $requestStack
-     * @param SecurityContext $securityContext
-     * @param PluginRegistry $pluginRegistry
+     * @param Editor $editor
      * @param array $config
      */
-    public function __construct(
-        ObjectManager $manager,
-        RequestStack $requestStack,
-        SecurityContext $securityContext,
-        PluginRegistry $pluginRegistry,
-        array $config = array()
-    )
+    public function __construct(Editor $editor, array $config = array())
     {
-        $this->manager = $manager;
-        $this->requestStack = $requestStack;
-        $this->securityContext = $securityContext;
-        $this->pluginRegistry = $pluginRegistry;
+        $this->editor = $editor;
 
         $this->config = array_merge(array(
-            'template' => 'EkynaCmsBundle:Cms:content.html.twig',
-            'default_block_type' => 'tinymce',
+            'template' => 'EkynaCmsBundle:Editor:content.html.twig',
             'seo_no_follow' => true,
             'seo_no_index' => true,
         ), $config);
@@ -104,38 +72,6 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
-     * Returns the current page.
-     *
-     * @return \Ekyna\Bundle\CmsBundle\Model\PageInterface
-     */
-    private function getCurrentPage()
-    {
-        if (null !== $request = $this->requestStack->getCurrentRequest()) {
-            $repo = $this->manager->getRepository('EkynaCmsBundle:Page');
-            return $repo->findOneByRequest($request);
-        }
-        return null;
-    }
-
-    /**
-     * Returns whether the current user is allowed edit content and blocks or not.
-     *
-     * @return bool
-     */
-    private function isEditable()
-    {
-        if (
-            null !== $this->securityContext->getToken()
-            && $this->securityContext->isGranted('ROLE_ADMIN')
-            && null !== $request = $this->requestStack->getCurrentRequest()
-        ) {
-            $request->headers->set('X-CmsEditor-Injection', true);
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Generates document title and metas tags from the given Seo object or regarding to the current page.
      *
      * @param SeoInterface $seo
@@ -144,7 +80,7 @@ class CmsExtension extends \Twig_Extension
     public function renderMetas(SeoInterface $seo = null)
     {
         if (null === $seo) {
-            if (null !== $page = $this->getCurrentPage()) {
+            if (null !== $page = $this->editor->getCurrentPage()) {
                 $seo = $page->getSeo();
             }
         }
@@ -216,7 +152,7 @@ class CmsExtension extends \Twig_Extension
      */
     public function renderTitle($tag = 'h1', $content = null)
     {
-        if (null === $content && null !== $page = $this->getCurrentPage()) {
+        if (null === $content && null !== $page = $this->editor->getCurrentPage()) {
             $content = $page->getTitle();
         }
         if (0 == strlen($content)) {
@@ -242,13 +178,13 @@ class CmsExtension extends \Twig_Extension
             $content = $subject;
         } elseif ($subject instanceof ContentSubjectInterface) {
             if (null === $content = $subject->getContent()) {
-                $content = $this->createDefaultContent($subject);
+                $content = $this->editor->createDefaultContent($subject);
             }
         } elseif (null === $subject) {
-            if (null !== $page = $this->getCurrentPage()) {
+            if (null !== $page = $this->editor->getCurrentPage()) {
                 if (null === $content = $page->getContent()) {
                     if ($page->getAdvanced()) {
-                        $content = $this->createDefaultContent($page);
+                        $content = $this->editor->createDefaultContent($page);
                     } elseif (0 < strlen($html = $page->getHtml())) {
                         return $html;
                     } else {
@@ -262,54 +198,15 @@ class CmsExtension extends \Twig_Extension
             throw new \RuntimeException('Undefined content.');
         }
 
+        // TODO fix : no template inheritance with this method.
         if (!$this->template->hasBlock('cms_block_content')) {
             throw new \RuntimeException('Unable to find "cms_block_content" twig block.');
         }
 
         return $this->template->renderBlock('cms_block_content', array(
             'content' => $content,
-            'editable' => $this->isEditable()
+            'editable' => $this->editor->isEnabled()
         ));
-    }
-
-    /**
-     * Creates and returns a "default" Content for the given subject.
-     *
-     * @param ContentSubjectInterface $subject
-     *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface
-     */
-    private function createDefaultContent(ContentSubjectInterface $subject)
-    {
-        $block = $this->createDefaultBlock($this->config['default_block_type']);
-
-        $content = new Content();
-        $content
-            ->setVersion(1)
-            ->addBlock($block);
-
-        $subject->addContent($content);
-
-        $this->manager->persist($content);
-        $this->manager->persist($subject);
-        $this->manager->flush();
-
-        return $content;
-    }
-
-    /**
-     * Creates a default block.
-     *
-     * @param string $type
-     * @param array $datas
-     *
-     * @return BlockInterface
-     */
-    private function createDefaultBlock($type, array $datas = array())
-    {
-        $plugin = $this->pluginRegistry->get($type);
-
-        return $plugin->create($datas);
     }
 
     /**
@@ -323,12 +220,12 @@ class CmsExtension extends \Twig_Extension
      */
     public function renderContentBlock(BlockInterface $block)
     {
-        $token = sprintf('cms_block_%s', $block->getType());
-        if (!$this->template->hasBlock($token)) {
-            throw new \RuntimeException('Unable to find "%s" twig block.', $token);
+        $blockName = sprintf('cms_block_%s', $block->getType());
+        if (!$this->template->hasBlock($blockName)) {
+            throw new \RuntimeException('Unable to find "%s" twig block.', $blockName);
         }
-
-        return trim($this->template->renderBlock($token, array('block' => $block)));
+        $this->editor->setRenderedBlocks();
+        return trim($this->template->renderBlock($blockName, array('block' => $block)));
     }
 
     /**
@@ -344,24 +241,11 @@ class CmsExtension extends \Twig_Extension
      */
     public function renderBlock($name, $type = null, array $datas = array())
     {
-        if (null === $type) {
-            $type = $this->config['default_block_type'];
-        }
-
-        $repository = $this->manager->getRepository('Ekyna\Bundle\CmsBundle\Entity\AbstractBlock');
-        if (null !== $block = $repository->findOneBy(array('name' => $name, 'content' => null))) {
-            // TODO test block type ?
-        } else {
-            $block = $this->createDefaultBlock($type, $datas);
-            $block->setName($name);
-
-            $this->manager->persist($block);
-            $this->manager->flush();
-        }
-
+        $block = $this->editor->findBlockByName($name, $type, $datas);
+        $this->editor->setRenderedBlocks();
         return $this->template->renderBlock('cms_block', array(
             'block' => $block,
-            'editable' => $this->isEditable()
+            'editable' => $this->editor->isEnabled()
         ));
     }
 

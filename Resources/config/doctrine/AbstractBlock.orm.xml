@@ -5,7 +5,11 @@
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Ekyna\Bundle\CmsBundle\Entity\AbstractBlock" table="cms_block" inheritance-type="JOINED">
+    <entity
+            name="Ekyna\Bundle\CmsBundle\Entity\AbstractBlock"
+            repository-class="Ekyna\Bundle\CmsBundle\Entity\BlockRepository"
+            table="cms_block"
+            inheritance-type="JOINED">
 
         <discriminator-column name="type" type="string" />
 	    <discriminator-map />

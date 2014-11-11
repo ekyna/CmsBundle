@@ -20,3 +20,4 @@ TODO
 
 ## TODOs
 - Disallow locked pages removal.
+- Configurable editor content template.
