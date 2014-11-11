@@ -1,8 +1,9 @@
-<?xml version="1.0" ?>
-
-<container xmlns="http://symfony.com/schema/dic/services"
+<?xml version="1.0" encoding="UTF-8" ?>
+<container
+    xmlns="http://symfony.com/schema/dic/services"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    xsi:schemaLocation="http://symfony.com/schema/dic/services
+                        http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
         <parameter key="ekyna_cms.settings.class">Ekyna\Bundle\CmsBundle\Settings\CmsSettingsSchema</parameter>
@@ -11,7 +12,6 @@
         <parameter key="ekyna_cms.seo.class">Ekyna\Bundle\CmsBundle\Entity\Seo</parameter>
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
 
-        <!--<parameter key="ekyna_cms.page.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>-->
         <parameter key="ekyna_cms.page.listener.class">Ekyna\Bundle\CmsBundle\EventListener\PageListener</parameter>
         
         <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>
@@ -28,7 +28,6 @@
         <parameter key="ekyna_cms.final_matcher.class">Ekyna\Bundle\CmsBundle\Routing\FinalMatcher</parameter>
         <parameter key="ekyna_cms.url_generator.class">Ekyna\Bundle\CmsBundle\Routing\UrlGenerator</parameter>
 
-        <parameter key="ekyna_cms.editor_listener.class">Ekyna\Bundle\CmsBundle\EventListener\EditorListener</parameter>
         <parameter key="ekyna_cms.twig.cms_extension.class">Ekyna\Bundle\CmsBundle\Twig\CmsExtension</parameter>
         <parameter key="ekyna_cms.menu_builder.class">Ekyna\Bundle\CmsBundle\Menu\MenuBuilder</parameter>
     </parameters>
@@ -123,13 +122,6 @@
                 <argument key="seo_no_index">%ekyna_cms.seo.no_index%</argument>
             </argument>
             <tag name="twig.extension" />
-        </service>
-
-        <!-- Web Editor listener -->
-        <service id="ekyna_cms.editor_listener" class="%ekyna_cms.editor_listener.class%">
-            <argument type="service" id="twig" />
-            <argument type="service" id="security.context" />
-            <tag name="kernel.event_subscriber" />
         </service>
 
         <!-- Web Editor -->

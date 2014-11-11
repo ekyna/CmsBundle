@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Controller;
 use Ekyna\Bundle\CoreBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -14,6 +15,31 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class EditorController extends Controller
 {
+    /**
+     * Toolbar action (front).
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function toolbarAction(Request $request)
+    {
+        $response = new Response('');
+        $response
+            ->setMaxAge(0)
+            ->setSharedMaxAge(0)
+            ->setPrivate()
+        ;
+
+        if (!$request->isXmlHttpRequest()
+            && $request->headers->get('X-CmsEditor-Injection', false)
+            && $this->get('security.context')->isGranted('ROLE_ADMIN')
+        ) {
+            $response->setContent($this->renderView('EkynaCmsBundle:Editor:editor.html.twig'));
+        }
+
+        return $response;
+    }
+
     /**
      * Handles an editor request.
      * 
