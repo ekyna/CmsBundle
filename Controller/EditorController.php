@@ -18,14 +18,21 @@ class EditorController extends Controller
     /**
      * Toolbar action (front).
      *
+     * @param Request $request
      * @return Response
      */
-    public function toolbarAction()
+    public function initAction(Request $request)
     {
-        $response = new Response();
+        if (!$request->isXmlHttpRequest()) {
+            throw new NotFoundHttpException();
+        }
 
         $editor = $this->get('ekyna_cms.editor');
-        if ($editor->isEnabled() && $editor->hasRenderedBlocks()) {
+
+        $response = new Response();
+        $response->setPrivate();
+
+        if($editor->isEnabled()) {
             $response->setContent($this->renderView('EkynaCmsBundle:Editor:editor.html.twig'));
         }
 
@@ -41,7 +48,7 @@ class EditorController extends Controller
      */
     public function requestAction(Request $request)
     {
-        if (! $request->isXmlHttpRequest()) {
+        if (!$request->isXmlHttpRequest()) {
             throw new NotFoundHttpException();
         }
 

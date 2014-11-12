@@ -1,4 +1,11 @@
-# Creates a new {type} block
+ekyna_cms_editor_init:
+    path: /init
+    defaults: { _controller: "EkynaCmsBundle:Editor:init" }
+    requirements:
+        _method: GET
+    options:
+        expose: true
+
 ekyna_cms_editor_request:
     path: /request
     defaults: { _controller: "EkynaCmsBundle:Editor:request" }
