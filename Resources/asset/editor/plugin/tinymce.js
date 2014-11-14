@@ -115,7 +115,12 @@
     };
     
     $(win.document).ready(function() {
-        CmsEditor.registerPlugin('tinymce', TinymceCmsPlugin);
+        // TODO configurable tinymce url
+        $.getScript('/js/tinymce/tinymce.min.js', function () {
+            tinymce.baseURL = '/js/tinymce';
+            tinymce.suffix = '.min';
+            CmsEditor.registerPlugin('tinymce', TinymceCmsPlugin);
+        });
     });
     
 })(window, jQuery);

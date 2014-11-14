@@ -7,11 +7,7 @@
                 dataType: 'html'
             })
             .done(function(html) {
-                console.log('done');
                 $(html).appendTo('body');
-            })
-            .fail(function() {
-                console.log('fail');
             });
         }
     });
