@@ -30,11 +30,17 @@ class PageType extends ResourceTableType
             ->addColumn('seo.title', 'text', array(
                 'label' => 'ekyna_core.field.title',
             ))
-            ->addColumn('path', 'text', array(
-                'label' => 'ekyna_core.field.url',
+            ->addColumn('menu', 'boolean', array(
+                'label' => 'ekyna_cms.field.main_menu',
+                'route_name' => 'ekyna_cms_page_admin_toggle',
+                'route_parameters' => array('field' => 'menu'),
+                'route_parameters_map' => array('pageId' => 'id'),
             ))
-            ->addColumn('updatedAt', 'datetime', array(
-                'label' => 'ekyna_core.field.updated_at',
+            ->addColumn('footer', 'boolean', array(
+                'label' => 'ekyna_cms.field.footer_menu',
+                'route_name' => 'ekyna_cms_page_admin_toggle',
+                'route_parameters' => array('field' => 'footer'),
+                'route_parameters_map' => array('pageId' => 'id'),
             ))
             ->addColumn('actions', 'admin_nested_actions', array(
                 'disable_property_path' => 'locked',

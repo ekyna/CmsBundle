@@ -58,6 +58,14 @@ ekyna_cms_page_admin_move_down:
         _method: GET
         pageId:  \d+
 
+ekyna_cms_page_admin_toggle:
+    path: /{pageId}/toggle/{field}
+    defaults: { _controller: "ekyna_cms.page.controller:toggleAction", field: "menu" }
+    requirements:
+        _method: GET
+        pageId:  \d+
+        field:  \w+
+
 ekyna_cms_page_admin_remove:
     path: /{pageId}/remove
     defaults: { _controller: "ekyna_cms.page.controller:removeAction" }
