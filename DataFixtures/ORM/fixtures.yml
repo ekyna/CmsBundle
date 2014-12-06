@@ -1,0 +1,3 @@
+Ekyna\Bundle\CmsBundle\Entity\Tag:
+    "tag{1..25}":
+        name: <word()>
