@@ -26,18 +26,6 @@ class PageType extends ResourceFormType
                 'admin_helper' => 'PAGE_TITLE',
             ))
             ->add('seo', 'ekyna_cms_seo')
-            ->add('menu', 'checkbox', array(
-                'label' => 'ekyna_cms.field.show_main_menu',
-                'admin_helper' => 'PAGE_MENU',
-                'required' => false,
-                'attr' => array('align_with_widget' => true),
-            ))
-            ->add('footer', 'checkbox', array(
-                'label' => 'ekyna_cms.field.show_footer_menu',
-                'admin_helper' => 'PAGE_FOOTER',
-                'required' => false,
-                'attr' => array('align_with_widget' => true),
-            ))
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {

@@ -48,7 +48,7 @@ class Page implements PageInterface
     protected $level;
 
     /**
-     * @var \Doctrine\Common\Collections\ArrayCollection
+     * @var ArrayCollection|Page[]
      */
     protected $children;
 
@@ -95,16 +95,6 @@ class Page implements PageInterface
     /**
      * @var boolean
      */
-    protected $menu;
-
-    /**
-     * @var boolean
-     */
-    protected $footer;
-
-    /**
-     * @var boolean
-     */
     protected $advanced;
 
     /**
@@ -128,8 +118,6 @@ class Page implements PageInterface
 
         $this->static   = false;
         $this->locked   = false;
-        $this->menu     = false;
-        $this->footer   = false;
         $this->advanced = false;
     }
 
@@ -257,6 +245,8 @@ class Page implements PageInterface
     public function removeChild(PageInterface $children)
     {
         $this->children->removeElement($children);
+
+        return $this;
     }
 
     /**
@@ -417,42 +407,6 @@ class Page implements PageInterface
     public function getController()
     {
         return $this->controller;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setMenu($menu)
-    {
-        $this->menu = (bool) $menu;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMenu()
-    {
-        return $this->menu;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setFooter($footer)
-    {
-        $this->footer = (bool) $footer;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFooter()
-    {
-        return $this->footer;
     }
 
     /**

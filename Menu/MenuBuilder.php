@@ -5,7 +5,6 @@ namespace Ekyna\Bundle\CmsBundle\Menu;
 use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Knp\Menu\FactoryInterface;
-use Knp\Menu\ItemInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -62,82 +61,6 @@ class MenuBuilder
     }
 
     /**
-     * Create main menu
-     *
-     * @return \Knp\Menu\ItemInterface
-     */
-    public function createMainMenu()
-    {
-        $menu = $this->factory->createItem('root');
-
-        if (null !== $home = $this->pageRepository->findOneByRoute($this->homeRouteName)) {
-            if ($home->getMenu()) {
-                $menu->addChild($home->getName(), array('route' => $home->getRoute()));
-            }
-            $this->appendMainMenuChildren($menu, $home);
-        }
-
-        return $menu;
-    }
-
-    /**
-     * Creates menu items for given page's children
-     * 
-     * @param \Knp\Menu\ItemInterface $menu
-     * @param PageInterface $parent
-     */
-    public function appendMainMenuChildren(ItemInterface $menu, PageInterface $parent)
-    {
-        foreach ($parent->getChildren() as $page) {
-            if (!$page->getMenu()) {
-                continue;
-            }
-            $item = $menu->addChild($page->getName(), array('route' => $page->getRoute()));
-            if ($page->hasChildren() && $page->getLevel() < 2) {
-                $this->appendMainMenuChildren($item, $page);
-            }
-        }
-    }
-
-    /**
-     * Create footer page menu
-     *
-     * @return \Knp\Menu\ItemInterface
-     */
-    public function createFooterMenu()
-    {
-        $menu = $this->factory->createItem('root');
-
-        if (null !== $home = $this->pageRepository->findOneByRoute($this->homeRouteName)) {
-            if ($home->getFooter()) {
-                $menu->addChild($home->getName(), array('route' => $home->getRoute()));
-            }
-            $this->appendFooterMenuChildren($menu, $home);
-        }
-
-        return $menu;
-    }
-
-    /**
-     * Creates menu items for given page's children
-     * 
-     * @param \Knp\Menu\ItemInterface $menu
-     * @param PageInterface $parent
-     */
-    public function appendFooterMenuChildren(ItemInterface $menu, PageInterface $parent)
-    {
-        foreach ($parent->getChildren() as $page) {
-            if (!$page->getFooter()) {
-                continue;
-            }
-            $item = $menu->addChild($page->getName(), array('route' => $page->getRoute()));
-            if ($page->hasChildren() && $page->getLevel() < 2) {
-                $this->appendFooterMenuChildren($item, $page);
-            }
-        }
-    }
-
-    /**
      * Appends an item to the breadcrumb.
      *
      * @param string $name
@@ -172,19 +95,6 @@ class MenuBuilder
     public function createBreadcrumb()
     {
         if (null === $this->breadcrumb) {
-            $this->generateBreadcrumb();
-        }
-        return $this->breadcrumb;
-    }
-
-    /**
-     * Generates the breadcrumb from the current page.
-     * 
-     * @throws \RuntimeException
-     */
-    private function generateBreadcrumb()
-    {
-        if (null === $this->breadcrumb) {
             $this->createBreadcrumbRoot();
 
             // Retrieve the current page.
@@ -213,6 +123,7 @@ class MenuBuilder
                 }
             }
         }
+        return $this->breadcrumb;
     }
 
     /**

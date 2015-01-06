@@ -2,16 +2,11 @@
 
 namespace Ekyna\Bundle\CmsBundle\Command;
 
-use Ekyna\Bundle\CmsBundle\Command\Route\RouteDefinition;
-use Ekyna\Bundle\CmsBundle\Entity\Seo;
-use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\CmsBundle\Install\Generator\PageGenerator;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Routing\Route;
 
 /**
  * Class GeneratePagesCommand
@@ -20,41 +15,6 @@ use Symfony\Component\Routing\Route;
  */
 class GeneratePagesCommand extends ContainerAwareCommand
 {
-    /**
-     * @var \Doctrine\ORM\EntityManager
-     */
-    private $em;
-
-    /**
-     * @var \Symfony\Component\Validator\Validator\ValidatorInterface
-     */
-    private $validator;
-
-    /**
-     * @var \Ekyna\Bundle\CmsBundle\Entity\PageRepository
-     */
-    private $repository;
-
-    /**
-     * @var \Symfony\Component\Routing\RouteCollection
-     */
-    private $routes;
-
-    /**
-     * @var OptionsResolver
-     */
-    private $optionsResolver;
-
-    /**
-     * @var string
-     */
-    private $homeRouteName;
-
-    /**
-     * @var RouteDefinition
-     */
-    private $homeDefinition;
-
     /**
      * {@inheritdoc}
      */
@@ -86,25 +46,14 @@ class GeneratePagesCommand extends ContainerAwareCommand
             return;
         }
 
-        $this->routes = $this->getContainer()->get('router')->getRouteCollection();
-        $this->homeRouteName = $this->getContainer()->getParameter('ekyna_cms.home_route_name');
-
-        $this->em = $this->getContainer()->get('ekyna_cms.page.manager');
-        $this->validator = $this->getContainer()->get('validator');
-        $this->repository = $this->getContainer()->get('ekyna_cms.page.repository');
-
         if ($truncate) {
             $this->truncate($output);
         }
 
         $output->writeln('Generating pages based and routing configuration :');
 
-        $this->configureOptionsResolver();
-        $this->gatherRoutesDefinitions();
-
-        if ($this->createPage($this->homeDefinition, $output)) {
-            $output->writeln('Done.');
-        }
+        $generator = new PageGenerator($this->getContainer(), $output);
+        $generator->generatePages();
     }
 
     /**
@@ -116,18 +65,21 @@ class GeneratePagesCommand extends ContainerAwareCommand
     {
         $output->writeln('Removing pages ...');
 
+        $em = $this->getContainer()->get('ekyna_cms.page.manager');
+        $repository = $this->getContainer()->get('ekyna_cms.page.repository');
+
         $count = 0;
-        $pages = $this->repository->findAll();
+        $pages = $repository->findAll();
         foreach ($pages as $page) {
-            $this->em->remove($page);
+            $em->remove($page);
             $count++;
         }
-        $this->em->flush();
-        $this->em->clear();
+        $em->flush();
+        $em->clear();
 
         $class = $this->getContainer()->getParameter('ekyna_cms.page.class');
-        $cmd = $this->em->getClassMetadata($class);
-        $connection = $this->em->getConnection();
+        $cmd = $em->getClassMetadata($class);
+        $connection = $em->getConnection();
         $dbPlatform = $connection->getDatabasePlatform();
         $connection->beginTransaction();
         try {
@@ -142,265 +94,5 @@ class GeneratePagesCommand extends ContainerAwareCommand
         }
 
         $output->writeln(sprintf('<info>%s</info> pages removed.', $count));
-    }
-
-    private function configureOptionsResolver()
-    {
-        $seoOptionResolver = new OptionsResolver();
-
-        $seoOptionResolver
-            ->setDefaults(array(
-                'changefreq' => 'monthly',
-                'priority'   => 0.5,
-                'follow'     => true,
-                'index'      => true,
-                'canonical'  => null,
-            ))
-            ->setAllowedTypes(array(
-                'changefreq' => 'string',
-                'priority'   => 'float',
-                'follow'     => 'bool',
-                'index'      => 'bool',
-                'canonical'  => array('string', 'null'),
-            ))
-            ->setAllowedValues(array(
-                'changefreq' => Seo::getChangefreqs(),
-            ))
-            ->setNormalizers(array(
-                'priority' => function (Options $options, $value) {
-                    if (0 > $value) {
-                        return 0;
-                    }
-                    if (1 < $value) {
-                        return 1;
-                    }
-                    return $value;
-                },
-            ))
-        ;
-
-        $this->optionsResolver = new OptionsResolver();
-
-        $this->optionsResolver
-            ->setDefaults(array(
-                'name' => null,
-                'path' => null,
-                'parent' => null,
-                'locked' => true,
-                'menu' => false,
-                'footer' => false,
-                'advanced' => false,
-                'seo' => null,
-                'position' => 0,
-            ))
-            ->setAllowedTypes(array(
-                'name' => 'string',
-                'path' => 'string',
-                'parent' => array('string', 'null'),
-                'locked' => 'bool',
-                'menu' => 'bool',
-                'footer' => 'bool',
-                'advanced' => 'bool',
-                'seo' => array('null', 'array'),
-                'position' => 'int',
-            ))
-            ->setRequired(array('name', 'path'))
-            ->setNormalizers(array(
-                'locked' => function (Options $options, $value) {
-                    // Lock pages with parameters in path
-                    if (preg_match('#\{.*\}#', $options['path'])) {
-                        return true;
-                    }
-                    return $value;
-                },
-                'seo' => function (Options $options, $value) use ($seoOptionResolver) {
-                    return $seoOptionResolver->resolve((array) $value);
-                },
-            ))
-        ;
-    }
-
-    /**
-     * Resolve route options.
-     *
-     * @param Route $route
-     * @param string $routeName
-     * @return array
-     * @throws \InvalidArgumentException
-     */
-    private function resolveRouteOptions(Route $route, $routeName)
-    {
-        if (null === $cmsOptions = $route->getDefault('_cms')) {
-            throw new \InvalidArgumentException(sprintf('Route "%s" does not have "_cms" defaults attributes.', $routeName));
-        }
-        return $this->optionsResolver->resolve(array_merge($cmsOptions, array('path' => $route->getPath())));
-    }
-
-    /**
-     * Creates a tree of RouteDefinition
-     *
-     * @throws \RuntimeException
-     */
-    private function gatherRoutesDefinitions()
-    {
-        $route = $this->findRouteByName($this->homeRouteName);
-        $this->homeDefinition = new RouteDefinition($this->homeRouteName, $this->resolveRouteOptions($route, $this->homeRouteName));
-
-        /** @var Route $route */
-        foreach ($this->routes as $name => $route) {
-            if ($this->homeRouteName !== $name && null !== $cms = $route->getDefault('_cms')) {
-                $this->createRouteDefinition($name, $route);
-            }
-        }
-
-        $this->homeDefinition->sortChildren();
-    }
-
-    /**
-     * Creates a route definition
-     *
-     * @param string $routeName
-     * @param \Symfony\Component\Routing\Route $route
-     *
-     * @return RouteDefinition
-     */
-    private function createRouteDefinition($routeName, Route $route)
-    {
-        if (null === $definition = $this->findRouteDefinitionByRouteName($routeName)) {
-            $definition = new RouteDefinition($routeName, $this->resolveRouteOptions($route, $routeName));
-            if (null === $parentRouteName = $definition->getParentRouteName()) {
-                // If parent route name is null => home page child
-                $definition->setParentRouteName($this->homeRouteName);
-                $this->homeDefinition->appendChild($definition);
-            } else {
-                // Creates parent route definition if needed 
-                $parentRoute = $this->findRouteByName($parentRouteName);
-                $parentDefinition = $this->createRouteDefinition($parentRouteName, $parentRoute);
-                $parentDefinition->appendChild($definition);
-            }
-        }
-        return $definition;
-    }
-
-    /**
-     * Finds a route by name
-     *
-     * @param string $name
-     *
-     * @throws \RuntimeException
-     *
-     * @return \Symfony\Component\Routing\Route|NULL
-     */
-    private function findRouteByName($name)
-    {
-        if (null === $route = $this->routes->get($name)) {
-            throw new \RuntimeException(sprintf('"%s" route can\'t be found.', $name));
-        }
-        return $route;
-    }
-
-    /**
-     * Finds a RouteDefinition by route name
-     *
-     * @param string $routeName
-     *
-     * @return \Ekyna\Bundle\CmsBundle\Command\Route\RouteDefinition
-     */
-    private function findRouteDefinitionByRouteName($routeName)
-    {
-        if ($routeName === $this->homeRouteName) {
-            return $this->homeDefinition;
-        }
-        return $this->homeDefinition->findChildByRouteName($routeName);
-    }
-
-    /**
-     * Finds a page by route
-     *
-     * @param string $routeName
-     *
-     * @return PageInterface|NULL
-     */
-    private function findPageByRouteName($routeName)
-    {
-        return $this->repository->findOneBy(array('route' => $routeName));
-    }
-
-    /**
-     * Creates a Page from given Route
-     *
-     * @param RouteDefinition $definition
-     * @param OutputInterface $output
-     * @param PageInterface $parentPage
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return boolean
-     */
-    private function createPage(RouteDefinition $definition, OutputInterface $output, PageInterface $parentPage = null)
-    {
-        if (null !== $page = $this->findPageByRouteName($definition->getRouteName())) {
-            $output->writeln(sprintf('- "<info>%s</info>" page allready exists.', $page->getName()));
-        } else {
-            $page = $this->repository->createNew();
-
-            if (null !== $parentPage && $parentPage->getRoute() !== $this->homeRouteName) {
-                $title = sprintf('%s - %s', $parentPage->getSeo()->getTitle(), $definition->getPageName());
-            } else {
-                $title = $definition->getPageName();
-            }
-
-            // Seo
-            $seoDefinition = $definition->getSeo();
-            $seo = new Seo();
-            $seo
-                ->setTitle($title)
-                ->setDescription('') // empty to force edition in backend
-                ->setChangefreq($seoDefinition['changefreq'])
-                ->setPriority($seoDefinition['priority'])
-                ->setFollow($seoDefinition['follow'])
-                ->setIndex($seoDefinition['index'])
-                ->setCanonical($seoDefinition['canonical'])
-            ;
-
-            $page
-                ->setName($definition->getPageName())
-                ->setTitle($definition->getPageName())
-                ->setRoute($definition->getRouteName())
-                ->setPath($definition->getPath())
-                ->setStatic(true)
-                ->setLocked($definition->getLocked())
-                ->setMenu($definition->getMenu())
-                ->setFooter($definition->getFooter())
-                ->setAdvanced($definition->getAdvanced())
-                ->setParent($parentPage)
-                ->setSeo($seo)
-                ->setHtml('<p>Page en cours de rédaction.</p>');
-            // Page
-
-            $violationList = $this->validator->validate($page, null, array('generator'));
-            if (0 < $violationList->count()) {
-                $output->writeln('<error>Invalid page</error>');
-                /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
-                foreach($violationList as $violation) {
-                    $output->writeln(sprintf('<error>%s : %s</error>', $violation->getPropertyPath(), $violation->getMessage()));
-                }
-                return false;
-            }
-
-            $this->em->persist($page);
-            $this->em->flush();
-
-            $output->writeln(sprintf('- "<info>%s</info>" page created for "%s" route.', $page->getName(), $page->getRoute()));
-        }
-
-        // Creates children pages
-        foreach ($definition->getChildren() as $child) {
-            if (!$this->createPage($child, $output, $page)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

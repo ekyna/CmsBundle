@@ -24,32 +24,12 @@
             <div class="tab-pane active" id="general">
                 {{ show_row(page.name, 'text', 'ekyna_core.field.name') }}
                 {{ show_row(page.title, 'text', 'ekyna_core.field.title') }}
-                <div class="row">
-                    <div class="col-md-6">
-                        {{ show_row(page.menu, 'checkbox', 'ekyna_cms.field.main_menu', {'label_nb_col': 4}) }}
-                    </div>
-                    <div class="col-md-6">
-                        {{ show_row(page.footer, 'checkbox', 'ekyna_cms.field.footer_menu', {'label_nb_col': 4}) }}
-                    </div>
-                </div>
                 {% if not page.advanced %}
                 {{ show_row(path('ekyna_cms_page_admin_tinymce', identifiers|merge({'pageId': page.id})), 'tinymce', 'ekyna_core.field.content') }}
                 {% endif %}
             </div>
             <div class="tab-pane" id="seo">
                 {{ show_row(page.seo, 'seo') }}
-                {#{ show_row(page.seo.title, 'text', 'ekyna_core.field.title') }}
-                {{ show_row(page.seo.description, 'text', 'ekyna_core.field.description') }}
-                {{ show_row(page.path, 'url', 'ekyna_core.field.url') }}
-                <div class="row">
-                    <div class="col-md-6">
-                        {{ show_row(page.seo.changefreq, 'text', 'ekyna_core.field.changefreq', {'label_nb_col': 4}) }}
-                    </div>
-                    <div class="col-md-6">
-                        {{ show_row(page.seo.priority, 'text', 'ekyna_core.field.priority', {'label_nb_col': 4}) }}
-                    </div>
-                </div>
-                #}
             </div>
         </div>
     </div>

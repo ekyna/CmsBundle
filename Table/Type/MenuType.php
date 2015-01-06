@@ -8,11 +8,11 @@ use Ekyna\Component\Table\TableBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class PageType
+ * Class MenuType
  * @package Ekyna\Bundle\CmsBundle\Table\Type
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class PageType extends ResourceTableType
+class MenuType extends ResourceTableType
 {
     /**
      * {@inheritdoc}
@@ -22,30 +22,32 @@ class PageType extends ResourceTableType
         $tableBuilder
             ->addColumn('name', 'nested_anchor', array(
                 'label' => 'ekyna_core.field.name',
-                'route_name' => 'ekyna_cms_page_admin_show',
+                'sortable' => true,
+                'route_name' => 'ekyna_cms_menu_admin_show',
                 'route_parameters_map' => array(
-                    'pageId' => 'id'
+                    'menuId' => 'id'
                 ),
             ))
-            ->addColumn('seo.title', 'text', array(
+            ->addColumn('title', 'text', array(
                 'label' => 'ekyna_core.field.title',
+                'sortable' => true,
             ))
             ->addColumn('actions', 'admin_nested_actions', array(
                 'disable_property_path' => 'locked',
-                'new_child_route' => 'ekyna_cms_page_admin_new_child',
-                'move_up_route' => 'ekyna_cms_page_admin_move_up',
-                'move_down_route' => 'ekyna_cms_page_admin_move_down',
+                'new_child_route' => 'ekyna_cms_menu_admin_new_child',
+                'move_up_route' => 'ekyna_cms_menu_admin_move_up',
+                'move_down_route' => 'ekyna_cms_menu_admin_move_down',
                 'routes_parameters_map' => array(
-                    'pageId' => 'id'
+                    'menuId' => 'id'
                 ),
                 'buttons' => array(
                     array(
                         'label' => 'ekyna_core.button.edit',
                         'icon' => 'pencil',
                         'class' => 'warning',
-                        'route_name' => 'ekyna_cms_page_admin_edit',
+                        'route_name' => 'ekyna_cms_menu_admin_edit',
                         'route_parameters_map' => array(
-                            'pageId' => 'id'
+                            'menuId' => 'id'
                         ),
                         'permission' => 'edit',
                     ),
@@ -53,11 +55,11 @@ class PageType extends ResourceTableType
                         'label' => 'ekyna_core.button.remove',
                         'icon' => 'trash',
                         'class' => 'danger',
-                        'route_name' => 'ekyna_cms_page_admin_remove',
+                        'route_name' => 'ekyna_cms_menu_admin_remove',
                         'route_parameters_map' => array(
-                            'pageId' => 'id'
+                            'menuId' => 'id'
                         ),
-                        'disable_property_path' => 'static',
+                        'disable_property_path' => 'locked',
                         'permission' => 'delete',
                     ),
                 ),
@@ -73,12 +75,8 @@ class PageType extends ResourceTableType
         parent::setDefaultOptions($resolver);
 
         $resolver->setDefaults(array(
-            'default_sorts' => array('left asc'),
+            'default_sorts' => array('root asc', 'left asc'),
             'max_per_page'  => 100,
-            'customize_qb' => function(QueryBuilder $qb, $alias) {
-                $qb->select(array($alias, 's'))
-                    ->innerJoin($alias.'.seo', 's');
-            },
         ));
     }
 
@@ -87,6 +85,6 @@ class PageType extends ResourceTableType
      */
     public function getName()
     {
-        return 'ekyna_cms_page';
+        return 'ekyna_cms_menu';
     }
 }

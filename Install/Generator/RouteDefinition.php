@@ -1,10 +1,10 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Command\Route;
+namespace Ekyna\Bundle\CmsBundle\Install\Generator;
 
 /**
  * Class RouteDefinition
- * @package Ekyna\Bundle\CmsBundle\Command\Route
+ * @package Ekyna\Bundle\CmsBundle\Install\Generator
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class RouteDefinition
@@ -35,14 +35,9 @@ class RouteDefinition
     protected $locked;
 
     /**
-     * @var boolean
+     * @var array
      */
-    protected $menu;
-
-    /**
-     * @var boolean
-     */
-    protected $footer;
+    protected $menus;
 
     /**
      * @var boolean
@@ -81,8 +76,7 @@ class RouteDefinition
         $this->pageName = $options['name'];
         $this->path     = $options['path'];
         $this->locked   = $options['locked'];
-        $this->menu     = $options['menu'];
-        $this->footer   = $options['footer'];
+        $this->menus    = $options['menus'];
         $this->advanced = $options['advanced'];
         $this->position = $options['position'];
         $this->seo      = $options['seo'];
@@ -151,50 +145,24 @@ class RouteDefinition
     }
 
     /**
-     * Returns whether page should be displayed in main menu
+     * Returns the menus.
      *
-     * @return boolean
+     * @return array
      */
-    public function getMenu()
+    public function getMenus()
     {
-        return $this->menu;
+        return $this->menus;
     }
 
     /**
-     * Sets whether page should be displayed in main menu
+     * Sets the menus.
      *
-     * @param boolean $menu
-     *
+     * @param array $menus
      * @return RouteDefinition
      */
-    public function setMenu($menu)
+    public function setMenus(array $menus = array())
     {
-        $this->menu = (bool)$menu;
-
-        return $this;
-    }
-
-    /**
-     * Returns whether page should be displayed in the footer menu
-     *
-     * @return boolean
-     */
-    public function getFooter()
-    {
-        return $this->footer;
-    }
-
-    /**
-     * Sets whether page should be displayed in the footer menu
-     *
-     * @param boolean $footer
-     *
-     * @return RouteDefinition
-     */
-    public function setFooter($footer)
-    {
-        $this->footer = (bool)$footer;
-
+        $this->menus = $menus;
         return $this;
     }
 
@@ -279,9 +247,6 @@ class RouteDefinition
     {
         if ($routeDefinition->getPosition() == 0) {
             $routeDefinition->setPosition(count($this->children));
-        }
-        if (!$this->menu && $routeDefinition->getMenu()) {
-            $routeDefinition->setMenu(false);
         }
         $seo = $routeDefinition->getSeo();
         if (!$this->seo['follow'] && $seo['follow']) {

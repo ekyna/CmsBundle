@@ -1,6 +1,5 @@
 <ul class="nav nav-tabs">
     <li class="active"><a href="#general" data-toggle="tab">{{ 'ekyna_core.field.general'|trans }}</a></li>
-    <li><a href="#seo" data-toggle="tab">{{ 'ekyna_core.field.seo'|trans }}</a></li>
 </ul>
 <div class="panel-body form-body">
     {{ bootstrap_set_style('horizontal') }}
@@ -8,16 +7,14 @@
     <div class="tab-content">
 	    <div class="tab-pane active" id="general">
 	        {{ form_row(form.name) }}
-	        {{ form_row(form.title) }}
-	        {{ form_row(form.parent) }}
-	        {% if form.html is defined %}
-	            {{ form_row(form.html) }}
-	        {% endif %}
-	    </div>
-	    <div class="tab-pane" id="seo">
-            {{ form_row(form.path) }}
-	        {{ form_row(form.seo) }}
-	    </div>
+            {{ form_row(form.parent) }}
+            <hr>
+            {{ form_row(form.title) }}
+	        {{ form_row(form.description) }}
+            <hr>
+	        {{ form_row(form.path) }}
+	        {{ form_row(form.route) }}
+		</div>
     </div>
     {{ form_rest(form) }}
 </div>

@@ -35,6 +35,8 @@ class CmsController extends Controller
     {
         return $this
             ->render('EkynaCmsBundle:Cms:menu.html.twig', array('options' => $options))
+            ->setPublic()
+            ->setMaxAge(3600)
             ->setSharedMaxAge(3600)
         ;
     }

@@ -103,6 +103,7 @@ interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface
      * Remove children
      *
      * @param PageInterface $children
+     * @return PageInterface|$this
      */
     public function removeChild(PageInterface $children);
 
@@ -240,36 +241,6 @@ interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface
      * @return string
      */
     public function getController();
-
-    /**
-     * Set menu
-     *
-     * @param boolean $menu
-     * @return PageInterface|$this
-     */
-    public function setMenu($menu);
-
-    /**
-     * Get menu
-     *
-     * @return boolean
-     */
-    public function getMenu();
-
-    /**
-     * Set footer
-     *
-     * @param boolean $footer
-     * @return PageInterface|$this
-     */
-    public function setFooter($footer);
-
-    /**
-     * Get footer
-     *
-     * @return boolean
-     */
-    public function getFooter();
 
     /**
      * Set advanced

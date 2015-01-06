@@ -9,3 +9,7 @@ ekyna_cms_image_admin:
 ekyna_cms_tag_admin:
     resource: "admin/tag.yml"
     prefix:   /tags
+
+ekyna_cms_menu_admin:
+    resource: "admin/menu.yml"
+    prefix:   /menus

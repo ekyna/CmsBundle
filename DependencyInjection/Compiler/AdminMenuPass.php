@@ -33,6 +33,12 @@ class AdminMenuPass implements CompilerPassInterface
             'resource' => 'ekyna_cms_page',
         )));
         $pool->addMethodCall('createEntry', array('content', array(
+            'name'     => 'menus',
+            'route'    => 'ekyna_cms_menu_admin_home',
+            'label'    => 'ekyna_cms.menu.label.plural',
+            'resource' => 'ekyna_cms_menu',
+        )));
+        $pool->addMethodCall('createEntry', array('content', array(
             'name'     => 'images',
             'route'    => 'ekyna_cms_image_admin_home',
             'label'    => 'ekyna_cms.image.label.plural',

@@ -13,7 +13,7 @@
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
 
         <parameter key="ekyna_cms.page.listener.class">Ekyna\Bundle\CmsBundle\EventListener\PageListener</parameter>
-        
+
         <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>
         <parameter key="ekyna_cms.seo_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber</parameter>
         <parameter key="ekyna_cms.tag_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\TagSubjectSubscriber</parameter>
@@ -29,7 +29,9 @@
         <parameter key="ekyna_cms.url_generator.class">Ekyna\Bundle\CmsBundle\Routing\UrlGenerator</parameter>
 
         <parameter key="ekyna_cms.twig.cms_extension.class">Ekyna\Bundle\CmsBundle\Twig\CmsExtension</parameter>
+
         <parameter key="ekyna_cms.menu_builder.class">Ekyna\Bundle\CmsBundle\Menu\MenuBuilder</parameter>
+        <parameter key="ekyna_cms.menu.provider.class">Ekyna\Bundle\CmsBundle\Menu\MenuProvider</parameter>
     </parameters>
 
     <services>
@@ -140,27 +142,18 @@
         </service>
 
         <!-- Menus -->
+        <service id="ekyna_cms.menu.provider" class="%ekyna_cms.menu.provider.class%">
+	        <argument type="service" id="knp_menu.factory" />
+	        <argument type="service" id="ekyna_cms.menu.repository" />
+	        <argument type="service" id="request_stack" />
+            <tag name="knp_menu.provider" />
+	    </service>
+
         <service id="ekyna_cms.menu_builder" class="%ekyna_cms.menu_builder.class%">
 	        <argument type="service" id="knp_menu.factory" />
 	        <argument type="service" id="ekyna_cms.page.repository" />
 	        <argument type="service" id="request_stack" />
 	        <argument>%ekyna_cms.home_route_name%</argument>
-	    </service>
-	    <service id="ekyna_cms.menu.main"
-	        class="Knp\Menu\MenuItem"
-	        factory-service="ekyna_cms.menu_builder"
-	        factory-method="createMainMenu"
-	        scope="request">
-	        <argument type="service" id="request" />
-	        <tag name="knp_menu.menu" alias="main" />
-	    </service>
-	    <service id="ekyna_cms.menu.footer"
-	        class="Knp\Menu\MenuItem"
-	        factory-service="ekyna_cms.menu_builder"
-	        factory-method="createFooterMenu"
-	        scope="request">
-	        <argument type="service" id="request" />
-	        <tag name="knp_menu.menu" alias="footer" />
 	    </service>
 	    <service id="ekyna_cms.breadcrumb"
 	        class="Knp\Menu\MenuItem"

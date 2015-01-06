@@ -27,6 +27,8 @@ class EkynaCmsExtension extends AbstractExtension implements PrependExtensionInt
 
         $container->setParameter('ekyna_cms.seo.no_follow', $config['seo']['no_follow']);
         $container->setParameter('ekyna_cms.seo.no_index', $config['seo']['no_index']);
+
+        $container->setParameter('ekyna_cms.menus', $config['menus']);
     }
 
     /**

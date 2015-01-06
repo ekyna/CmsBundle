@@ -1,0 +1,20 @@
+{% extends "EkynaAdminBundle:Entity:sided.html.twig" %}
+
+{% block title %}
+<h1>{{ 'ekyna_cms.menu.header.edit'|trans({'%name%': menu.name})|raw }}</h1>
+{% endblock %}
+
+{% block actions %}
+{{ admin_resource_btn(menu, 'list') }}
+{#{ admin_resource_btn(menu, 'new') }#}
+{% endblock %}
+
+{% block main %}
+<form action="{{ path('ekyna_cms_menu_admin_edit', {'menuId': menu.id}) }}" {{ form_enctype(form) }} method="post" class="form-horizontal form-with-tabs">
+    {% include "EkynaCmsBundle:Menu/Admin:_form.html.twig" %}
+    {{ ui_form_footer(form) }}
+</form>
+{% endblock %}
+
+{% block side %}
+{% endblock %}

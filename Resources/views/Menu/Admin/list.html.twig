@@ -1,0 +1,13 @@
+{% extends "EkynaAdminBundle:Entity:layout.html.twig" %}
+
+{% block title %}
+<h1>{{ 'ekyna_cms.menu.header.list'|trans|raw }}</h1>
+{% endblock %}
+
+{% block actions %}
+{#{ admin_resource_btn('ekyna_cms.menu', 'new') }#}
+{% endblock %}
+
+{% block main %}
+{{ ekyna_table_render(menus, {'class': 'table-nested'}) }}
+{% endblock %}

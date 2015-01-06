@@ -34,8 +34,6 @@
         <field name="static" column="static" type="boolean" />
         <field name="locked" column="locked" type="boolean" />
         <field name="controller" column="controller" type="string" length="64" nullable="true" />
-        <field name="menu" column="menu" type="boolean" />
-        <field name="footer" column="footer" type="boolean" />
         <field name="advanced" column="advanced" type="boolean" />
         <field name="left" column="lft" type="integer">
             <gedmo:tree-left />
