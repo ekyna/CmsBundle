@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Controller;
 
 use Ekyna\Bundle\CoreBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class CmsController
@@ -20,24 +21,27 @@ class CmsController extends Controller
      */
     public function defaultAction(Request $request)
     {
+        if (null === $page = $this->getDoctrine()->getRepository('EkynaCmsBundle:Page')->findOneByRequest($request)) {
+            throw new NotFoundHttpException('Page not found');
+        }
+
         return $this
             ->render('EkynaCmsBundle:Cms:default.html.twig')
+            ->setPublic()
             ->setSharedMaxAge($this->container->getParameter('ekyna_cms.default_max_age'))
         ;
     }
 
     /**
-     * Menu action.
+     * Renders the flash.
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function menuAction(array $options = array('style' => 'navbar'))
+    public function flashesAction()
     {
         return $this
-            ->render('EkynaCmsBundle:Cms:menu.html.twig', array('options' => $options))
-            ->setPublic()
-            ->setMaxAge(3600)
-            ->setSharedMaxAge(3600)
+            ->render('EkynaCmsBundle:Cms:flashes.html.twig')
+            ->setPrivate()
         ;
     }
 }

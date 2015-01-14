@@ -3,14 +3,14 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Knp\Menu\NodeInterface;
+use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
 
 /**
  * Class Menu
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class Menu implements NodeInterface
+class Menu implements MenuInterface
 {
     /**
      * @var integer
@@ -109,9 +109,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Get id
-     *
-     * @return integer 
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -119,9 +117,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Returns the parent.
-     *
-     * @return Menu
+     * {@inheritdoc}
      */
     public function getParent()
     {
@@ -129,21 +125,16 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Sets the parent.
-     *
-     * @param Menu $parent
-     * @return Menu
+     * {@inheritdoc}
      */
-    public function setParent(Menu $parent = null)
+    public function setParent(MenuInterface $parent = null)
     {
         $this->parent = $parent;
         return $this;
     }
 
     /**
-     * Returns the left.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getLeft()
     {
@@ -151,10 +142,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Sets the left.
-     *
-     * @param int $left
-     * @return Menu
+     * {@inheritdoc}
      */
     public function setLeft($left)
     {
@@ -163,9 +151,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Returns the right.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getRight()
     {
@@ -173,10 +159,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Sets the right.
-     *
-     * @param int $right
-     * @return Menu
+     * {@inheritdoc}
      */
     public function setRight($right)
     {
@@ -185,9 +168,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Returns the root.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getRoot()
     {
@@ -195,10 +176,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Sets the root.
-     *
-     * @param int $root
-     * @return Menu
+     * {@inheritdoc}
      */
     public function setRoot($root)
     {
@@ -207,9 +185,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Returns the level.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getLevel()
     {
@@ -217,10 +193,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Sets the level.
-     *
-     * @param int $level
-     * @return Menu
+     * {@inheritdoc}
      */
     public function setLevel($level)
     {
@@ -229,9 +202,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Returns the children.
-     *
-     * @return ArrayCollection|Menu[]
+     * {@inheritdoc}
      */
     public function getChildren()
     {
@@ -239,12 +210,9 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Adds the child menu.
-     *
-     * @param Menu $menu
-     * @return Menu
+     * {@inheritdoc}
      */
-    public function addChild(Menu $menu)
+    public function addChild(MenuInterface $menu)
     {
         $this->children[] = $menu;
 
@@ -252,12 +220,9 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Removes the child menu.
-     *
-     * @param Menu $menu
-     * @return Menu
+     * {@inheritdoc}
      */
-    public function removeChild(Menu $menu)
+    public function removeChild(MenuInterface $menu)
     {
         $this->children->removeElement($menu);
 
@@ -265,9 +230,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Returns whether the menu has children or not.
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
     public function hasChildren()
     {
@@ -275,10 +238,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Sets the children.
-     *
-     * @param ArrayCollection|Menu[] $children
-     * @return Menu
+     * {@inheritdoc}
      */
     public function setChildren(ArrayCollection $children)
     {
@@ -287,9 +247,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Get name
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -297,10 +255,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     * @return Menu
+     * {@inheritdoc}
      */
     public function setName($name)
     {
@@ -310,9 +265,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Get title
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getTitle()
     {
@@ -320,10 +273,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Set title
-     *
-     * @param string $title
-     * @return Menu
+     * {@inheritdoc}
      */
     public function setTitle($title)
     {
@@ -333,9 +283,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Get description
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDescription()
     {
@@ -343,10 +291,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Set description
-     *
-     * @param string $description
-     * @return Menu
+     * {@inheritdoc}
      */
     public function setDescription($description)
     {
@@ -356,9 +301,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Returns the path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getPath()
     {
@@ -366,10 +309,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Sets the path.
-     *
-     * @param string $path
-     * @return Menu
+     * {@inheritdoc}
      */
     public function setPath($path)
     {
@@ -378,9 +318,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Returns the route.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getRoute()
     {
@@ -388,10 +326,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Sets the route.
-     *
-     * @param string $route
-     * @return Menu
+     * {@inheritdoc}
      */
     public function setRoute($route)
     {
@@ -400,9 +335,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Returns the parameters.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getParameters()
     {
@@ -410,10 +343,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Sets the parameters.
-     *
-     * @param array $parameters
-     * @return Menu
+     * {@inheritdoc}
      */
     public function setParameters(array $parameters = array())
     {
@@ -422,9 +352,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Returns the locked.
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
     public function getLocked()
     {
@@ -432,10 +360,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Sets the locked.
-     *
-     * @param boolean $locked
-     * @return Menu
+     * {@inheritdoc}
      */
     public function setLocked($locked)
     {
@@ -464,10 +389,7 @@ class Menu implements NodeInterface
     }
 
     /**
-     * Adds the options.
-     *
-     * @param array $options
-     * @return $this
+     * {@inheritdoc}
      */
     public function addOptions(array $options)
     {

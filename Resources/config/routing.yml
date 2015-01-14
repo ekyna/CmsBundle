@@ -5,3 +5,11 @@ ekyna_cms_admin:
 ekyna_cms_editor:
     resource: "routing/editor.yml"
     prefix:   /cms/editor
+
+ekyna_cms_flashes:
+    path: /cms/flashes
+    defaults: { _controller: "EkynaCmsBundle:Cms:flashes" }
+    requirements:
+        _method: GET
+    options:
+        expose: true

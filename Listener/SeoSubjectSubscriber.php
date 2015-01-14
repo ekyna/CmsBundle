@@ -46,6 +46,7 @@ class SeoSubjectSubscriber implements EventSubscriber
                     'nullable'              => false,
                 ),
             ),
+            // TODO fetch => EAGER
         ));
     }
 

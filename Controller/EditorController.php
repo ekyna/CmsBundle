@@ -27,12 +27,10 @@ class EditorController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $editor = $this->get('ekyna_cms.editor');
-
         $response = new Response();
         $response->setPrivate();
 
-        if($editor->isEnabled()) {
+        if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
             $response->setContent($this->renderView('EkynaCmsBundle:Editor:editor.html.twig'));
         }
 

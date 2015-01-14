@@ -64,10 +64,6 @@ class Editor
      */
     private $enabled;
 
-    /**
-     * @var bool
-     */
-    private $blocksRendered = false;
 
     /**
      * Constructor.
@@ -96,7 +92,6 @@ class Editor
         $this->defaultBlockType = $defaultBlockType;
     }
 
-
     /**
      * Returns the current page.
      *
@@ -115,40 +110,24 @@ class Editor
     }
 
     /**
-     * Returns whether the current user is allowed edit content and blocks or not.
+     * Returns the enabled.
      *
-     * @return bool
+     * @return boolean
      */
-    public function isEnabled()
+    public function getEnabled()
     {
-        if (null === $this->enabled) {
-            if (null !== $this->requestStack->getCurrentRequest() && $this->securityContext->isGranted('ROLE_ADMIN')) {
-                $this->enabled = true;
-            } else {
-                $this->enabled = false;
-            }
-        }
         return $this->enabled;
     }
 
     /**
-     * Returns the displayToolbar.
+     * Sets the enabled.
      *
-     * @return boolean
-     */
-    public function hasRenderedBlocks()
-    {
-        return $this->blocksRendered;
-    }
-
-    /**
-     * Sets rendered blocks flag to true.
-     *
+     * @param boolean $enabled
      * @return Editor
      */
-    public function setRenderedBlocks()
+    public function setEnabled($enabled)
     {
-        $this->blocksRendered = true;
+        $this->enabled = $enabled;
         return $this;
     }
 

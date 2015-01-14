@@ -60,6 +60,7 @@ class ContentSubjectSubscriber implements EventSubscriber
                     ),
                 ),
             ),
+            // TODO fetch => EXTRA_LAZY
         ));
     }
 

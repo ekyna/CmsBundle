@@ -8,6 +8,10 @@
 
     <entity name="Ekyna\Bundle\CmsBundle\Entity\Content" table="cms_content">
 
+        <entity-listeners>
+            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\ContentListener" />
+        </entity-listeners>
+
 	    <id name="id" type="integer" column="id">
 	        <generator strategy="AUTO" />
 	    </id>
@@ -20,7 +24,7 @@
             <gedmo:timestampable on="update" />
         </field>
 
-        <one-to-many field="blocks" target-entity="Ekyna\Bundle\CmsBundle\Entity\AbstractBlock" mapped-by="content">
+        <one-to-many field="blocks" target-entity="Ekyna\Bundle\CmsBundle\Entity\AbstractBlock" mapped-by="content" fetch="EXTRA_LAZY">
             <cascade>
                 <cascade-all />
             </cascade>

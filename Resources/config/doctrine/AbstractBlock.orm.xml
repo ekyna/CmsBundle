@@ -11,6 +11,10 @@
             table="cms_block"
             inheritance-type="JOINED">
 
+        <entity-listeners>
+            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\BlockListener" />
+        </entity-listeners>
+
         <discriminator-column name="type" type="string" />
 	    <discriminator-map />
 

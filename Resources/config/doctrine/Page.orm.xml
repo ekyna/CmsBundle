@@ -11,6 +11,10 @@
         repository-class="Ekyna\Bundle\CmsBundle\Entity\PageRepository"
         table="cms_page">
 
+        <entity-listeners>
+            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\PageListener" />
+        </entity-listeners>
+
         <indexes>
             <index name="idx_path" columns="path" />
             <index name="idx_name" columns="name" />

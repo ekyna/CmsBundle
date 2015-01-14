@@ -46,6 +46,7 @@ class RouteProvider implements RouteProviderInterface
             'path' => rawurldecode($request->getPathInfo()),
             'static' => false
         ));
+        // TODO doctrine cache
 
         $collection = new RouteCollection();
         foreach($pages as $page) {
@@ -66,6 +67,7 @@ class RouteProvider implements RouteProviderInterface
     public function getRoutesByNames($names, $parameters = array())
     {
         // TODO optimize by querying only required fields
+        // TODO doctrine cache
         $pages = $this->pageRepository->findBy(array('route' => $names));
 
         $routes = array();
@@ -87,6 +89,7 @@ class RouteProvider implements RouteProviderInterface
     public function getRouteByName($name, $parameters = array())
     {
         // TODO optimize by querying only required fields
+        // TODO doctrine cache
         if (null !== $page = $this->pageRepository->findOneByRoute($name)) {
             return $this->routeFromPage($page);
         }

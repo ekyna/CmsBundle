@@ -21,4 +21,4 @@ TODO
 ## TODOs
 - Disallow locked pages removal.
 - Configurable editor content template.
-- allow super admin to rename pages ou create a menu-label field.
+- route provider / doctrine cache

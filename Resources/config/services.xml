@@ -6,37 +6,76 @@
                         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="ekyna_cms.settings.class">Ekyna\Bundle\CmsBundle\Settings\CmsSettingsSchema</parameter>
-        <parameter key="ekyna_cms.page.sitemap_provider.class">Ekyna\Bundle\CmsBundle\Sitemap\PageProvider</parameter>
-
         <parameter key="ekyna_cms.seo.class">Ekyna\Bundle\CmsBundle\Entity\Seo</parameter>
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
-
-        <parameter key="ekyna_cms.page.listener.class">Ekyna\Bundle\CmsBundle\EventListener\PageListener</parameter>
-
-        <parameter key="ekyna_cms.content_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber</parameter>
-        <parameter key="ekyna_cms.seo_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber</parameter>
-        <parameter key="ekyna_cms.tag_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\TagSubjectSubscriber</parameter>
-        <parameter key="ekyna_cms.block_subscriber.class">Ekyna\Bundle\CmsBundle\Listener\BlockSubscriber</parameter>
-        
-        <parameter key="ekyna_cms.text_block.class">Ekyna\Bundle\CmsBundle\Entity\TextBlock</parameter>
-        <parameter key="ekyna_cms.tinymce_block.class">Ekyna\Bundle\CmsBundle\Entity\TinymceBlock</parameter>
-        <parameter key="ekyna_cms.image_block.class">Ekyna\Bundle\CmsBundle\Entity\ImageBlock</parameter>
-
-        <parameter key="ekyna_cms.route_provider.class">Ekyna\Bundle\CmsBundle\Routing\RouteProvider</parameter>
-        <parameter key="ekyna_cms.nested_matcher.class">Ekyna\Bundle\CmsBundle\Routing\NestedMatcher</parameter>
-        <parameter key="ekyna_cms.final_matcher.class">Ekyna\Bundle\CmsBundle\Routing\FinalMatcher</parameter>
-        <parameter key="ekyna_cms.url_generator.class">Ekyna\Bundle\CmsBundle\Routing\UrlGenerator</parameter>
-
-        <parameter key="ekyna_cms.twig.cms_extension.class">Ekyna\Bundle\CmsBundle\Twig\CmsExtension</parameter>
-
-        <parameter key="ekyna_cms.menu_builder.class">Ekyna\Bundle\CmsBundle\Menu\MenuBuilder</parameter>
-        <parameter key="ekyna_cms.menu.provider.class">Ekyna\Bundle\CmsBundle\Menu\MenuProvider</parameter>
     </parameters>
 
     <services>
+        <!-- Form Types -->
+        <service id="ekyna_cms.seo.form_type" class="%ekyna_cms.seo.form_type.class%">
+            <argument>%ekyna_cms.seo.class%</argument>
+            <tag name="form.type" alias="ekyna_cms_seo" />
+        </service>
+
+        <!-- Repositories -->
+        <service id="ekyna_cms.seo.repository"
+                 class="Ekyna\Bundle\CmsBundle\Entity\SeoRepository"
+                 factory-service="doctrine.orm.default_entity_manager"
+                 factory-method="getRepository">
+            <argument>Ekyna\Bundle\CmsBundle\Entity\Seo</argument>
+        </service>
+        <service id="ekyna_cms.content.repository"
+                 class="Ekyna\Bundle\CmsBundle\Entity\ContentRepository"
+                 factory-service="doctrine.orm.default_entity_manager"
+                 factory-method="getRepository">
+            <argument>Ekyna\Bundle\CmsBundle\Entity\Content</argument>
+        </service>
+
+        <!-- Event listeners -->
+        <service id="ekyna_cms.page.event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\PageEventListener">
+            <argument>%ekyna_cms.default_controller%</argument>
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <!-- Doctrine entity listeners -->
+        <service id="ekyna_core.block.listener" class="Ekyna\Bundle\CmsBundle\Listener\BlockListener">
+            <argument type="service" id="event_dispatcher" />
+            <tag name="doctrine.entity_listener" />
+        </service>
+        <service id="ekyna_core.content.listener" class="Ekyna\Bundle\CmsBundle\Listener\ContentListener">
+            <argument type="service" id="event_dispatcher" />
+            <tag name="doctrine.entity_listener" />
+        </service>
+        <service id="ekyna_core.seo.listener" class="Ekyna\Bundle\CmsBundle\Listener\SeoListener">
+            <argument type="service" id="event_dispatcher" />
+            <tag name="doctrine.entity_listener" />
+        </service>
+        <service id="ekyna_core.page.listener" class="Ekyna\Bundle\CmsBundle\Listener\PageListener">
+            <argument type="service" id="event_dispatcher" />
+            <tag name="doctrine.entity_listener" />
+        </service>
+        <service id="ekyna_core.menu.listener" class="Ekyna\Bundle\CmsBundle\Listener\MenuListener">
+            <argument type="service" id="event_dispatcher" />
+            <tag name="doctrine.entity_listener" />
+        </service>
+
+        <!-- Doctrine subscriber -->
+        <service id="ekyna_cms.content.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber" public="false">
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+        <service id="ekyna_cms.seo.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber" public="false">
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+        <service id="ekyna_cms.tag.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\TagSubjectSubscriber" public="false">
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+        <service id="ekyna_cms.abstract_block.subscriber" class="Ekyna\Bundle\CmsBundle\Listener\AbstractBlockSubscriber" public="false">
+            <argument type="service" id="ekyna_cms.editor.plugin_registry" />
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+
         <!-- Settings Schema -->
-        <service id="ekyna_cms.settings" class="%ekyna_cms.settings.class%" public="false">
+        <service id="ekyna_cms.settings" class="Ekyna\Bundle\CmsBundle\Settings\CmsSettingsSchema" public="false">
             <argument type="collection">
                 <argument key="locale">%locale%</argument>
             </argument>
@@ -44,41 +83,14 @@
         </service>
 
         <!-- Sitemap providers -->
-        <service id="ekyna_cms.page.sitemap_provider" class="%ekyna_cms.page.sitemap_provider.class%" public="false">
+        <service id="ekyna_cms.page.sitemap_provider" class="Ekyna\Bundle\CmsBundle\Sitemap\PageProvider" public="false">
             <argument type="service" id="ekyna_cms.page.repository" />
             <argument type="service" id="router" />
             <tag name="ekyna_sitemap.provider" />
         </service>
 
-        <!-- Form Types -->
-        <service id="ekyna_cms.seo.form_type" class="%ekyna_cms.seo.form_type.class%">
-            <argument>%ekyna_cms.seo.class%</argument>
-            <tag name="form.type" alias="ekyna_cms_seo" />
-        </service>
-
-        <!-- Event listeners -->
-        <service id="ekyna_cms.page.listener" class="%ekyna_cms.page.listener.class%">
-            <argument>%ekyna_cms.default_controller%</argument>
-            <tag name="kernel.event_subscriber" />
-        </service>
-
-        <!-- Doctrine subscriber -->
-        <service id="ekyna_cms.content_subscriber" class="%ekyna_cms.content_subscriber.class%" public="false">
-            <tag name="doctrine.event_subscriber" connection="default" />
-        </service>
-        <service id="ekyna_cms.seo_subscriber" class="%ekyna_cms.seo_subscriber.class%" public="false">
-            <tag name="doctrine.event_subscriber" connection="default" />
-        </service>
-        <service id="ekyna_cms.tag_subscriber" class="%ekyna_cms.tag_subscriber.class%" public="false">
-            <tag name="doctrine.event_subscriber" connection="default" />
-        </service>
-        <service id="ekyna_cms.block_subscriber" class="%ekyna_cms.block_subscriber.class%" public="false">
-            <argument type="service" id="ekyna_cms.editor.plugin_registry" />
-            <tag name="doctrine.event_subscriber" connection="default" />
-        </service>
-
         <!-- Route provider -->
-        <service id="ekyna_cms.route_provider" class="%ekyna_cms.route_provider.class%">
+        <service id="ekyna_cms.route_provider" class="Ekyna\Bundle\CmsBundle\Routing\RouteProvider">
             <argument type="service" id="ekyna_cms.page.repository" />
         </service>
 
@@ -94,13 +106,13 @@
         </service>
 
         <!-- Nested Matcher -->
-        <service id="ekyna_cms.nested_matcher" class="%ekyna_cms.nested_matcher.class%">
+        <service id="ekyna_cms.nested_matcher" class="Ekyna\Bundle\CmsBundle\Routing\NestedMatcher">
             <argument type="service" id="ekyna_cms.route_provider" />
             <argument type="service" id="ekyna_cms.final_matcher"/>
         </service>
 
         <!-- Final Matcher -->
-        <service id="ekyna_cms.final_matcher" class="%ekyna_cms.final_matcher.class%">
+        <service id="ekyna_cms.final_matcher" class="Ekyna\Bundle\CmsBundle\Routing\FinalMatcher">
             <argument type="service" id="ekyna_cms.matcher.dummy_collection" />
             <argument type="service" id="ekyna_cms.matcher.dummy_context" />
         </service>
@@ -108,7 +120,7 @@
         <service id="ekyna_cms.matcher.dummy_context" class="Symfony\Component\Routing\RequestContext" public="false"/>
 
         <!-- Url Generator -->
-        <service id="ekyna_cms.url_generator" class="%ekyna_cms.url_generator.class%">
+        <service id="ekyna_cms.url_generator" class="Ekyna\Bundle\CmsBundle\Routing\UrlGenerator">
             <argument type="service" id="ekyna_cms.route_provider" />
             <argument type="service" id="logger" on-invalid="ignore" />
         </service>
@@ -132,8 +144,9 @@
         </service>
 
         <!-- Twig extensions -->
-        <service id="ekyna_cms.twig.cms_extension" class="%ekyna_cms.twig.cms_extension.class%">
+        <service id="ekyna_cms.twig.cms_extension" class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
             <argument type="service" id="ekyna_cms.editor" />
+            <argument type="service" id="event_dispatcher" />
             <argument type="collection">
                 <argument key="seo_no_follow">%ekyna_cms.seo.no_follow%</argument>
                 <argument key="seo_no_index">%ekyna_cms.seo.no_index%</argument>
@@ -142,14 +155,13 @@
         </service>
 
         <!-- Menus -->
-        <service id="ekyna_cms.menu.provider" class="%ekyna_cms.menu.provider.class%">
+        <service id="ekyna_cms.menu.provider" class="Ekyna\Bundle\CmsBundle\Menu\MenuProvider">
 	        <argument type="service" id="knp_menu.factory" />
 	        <argument type="service" id="ekyna_cms.menu.repository" />
 	        <argument type="service" id="request_stack" />
             <tag name="knp_menu.provider" />
 	    </service>
-
-        <service id="ekyna_cms.menu_builder" class="%ekyna_cms.menu_builder.class%">
+        <service id="ekyna_cms.menu.builder" class="Ekyna\Bundle\CmsBundle\Menu\MenuBuilder">
 	        <argument type="service" id="knp_menu.factory" />
 	        <argument type="service" id="ekyna_cms.page.repository" />
 	        <argument type="service" id="request_stack" />
@@ -157,7 +169,7 @@
 	    </service>
 	    <service id="ekyna_cms.breadcrumb"
 	        class="Knp\Menu\MenuItem"
-	        factory-service="ekyna_cms.menu_builder"
+	        factory-service="ekyna_cms.menu.builder"
 	        factory-method="createBreadcrumb"
 	        scope="request">
 	        <argument type="service" id="request" />

@@ -7,6 +7,9 @@ use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvent;
+use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvents;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class CmsExtension
@@ -19,6 +22,11 @@ class CmsExtension extends \Twig_Extension
      * @var Editor
      */
     protected $editor;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * @var array
@@ -37,9 +45,10 @@ class CmsExtension extends \Twig_Extension
      * @param Editor $editor
      * @param array $config
      */
-    public function __construct(Editor $editor, array $config = array())
+    public function __construct(Editor $editor, EventDispatcherInterface $eventDispatcher, array $config = array())
     {
         $this->editor = $editor;
+        $this->eventDispatcher = $eventDispatcher;
 
         $this->config = array_merge(array(
             'template' => 'EkynaCmsBundle:Editor:content.html.twig',
@@ -63,6 +72,7 @@ class CmsExtension extends \Twig_Extension
     {
         return array(
             new \Twig_SimpleFunction('cms_metas', array($this, 'renderMetas'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_seo', array($this, 'renderSeo'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_meta', array($this, 'renderMeta'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_title', array($this, 'renderTitle'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_content', array($this, 'renderContent'), array('is_safe' => array('html'))),
@@ -72,34 +82,51 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
-     * Generates document title and metas tags from the given Seo object or regarding to the current page.
+     * Generates document title and metas tags from the given Seo object or form the current page.
+     *
+     * @param SeoInterface $seo
+     * @return string
+     * @deprecated use renderSeo()
+     */
+    public function renderMetas(SeoInterface $seo = null)
+    {
+        return $this->renderSeo($seo);
+    }
+
+    /**
+     * Generates document title and metas tags from the given Seo object or form the current page.
      *
      * @param SeoInterface $seo
      * @return string
      */
-    public function renderMetas(SeoInterface $seo = null)
+    public function renderSeo(SeoInterface $seo = null)
     {
-        if (null === $seo) {
-            if (null !== $page = $this->editor->getCurrentPage()) {
-                $seo = $page->getSeo();
-            }
+        if (null === $seo && null !== $page = $this->editor->getCurrentPage()) {
+            $seo = $page->getSeo();
         }
 
         if (null !== $seo) {
             $follow = !$this->config['seo_no_follow'] ? ($seo->getFollow() ? 'follow' : 'nofollow') : 'nofollow';
             $index = !$this->config['seo_no_index'] ? ($seo->getIndex() ?  'index'  : 'noindex') : 'noindex';
-            $robots = sprintf('%s,%s', $follow, $index);
+
             $metas =
                 $this->renderTitle('title', $seo->getTitle()) . "\n" .
                 $this->renderMeta('description', $seo->getDescription()) . "\n" .
-                $this->renderMeta('robots', $robots)
+                $this->renderMeta('robots', $follow.','.$index)
             ;
+
             if (0 < strlen($canonical = $seo->getCanonical())) {
                 $metas .= "\n" .$this->renderTag('link', null, array(
                     'rel' => 'canonical',
                     'href' => $canonical,
                 ));
             }
+
+            // Tags the response as Seo relative
+            $this->eventDispatcher->dispatch(
+                HttpCacheEvents::TAG_RESPONSE,
+                new HttpCacheEvent('ekyna_cms.seo[id:'.$seo->getId().']')
+            );
         } else {
             $metas = '<title>Undefined</title>' . $this->renderMeta('robots', 'follow,noindex');
         }
@@ -121,28 +148,6 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
-     * Renders the html tag.
-     *
-     * @param $tag
-     * @param string $content
-     * @param array $attributes
-     *
-     * @return string
-     */
-    private function renderTag($tag, $content = null, array $attributes = array())
-    {
-        $attr = [];
-        foreach($attributes as $key => $value) {
-            $attr[] = sprintf(' %s="%s"', $key, $value);
-        }
-        if (0 < strlen($content)) {
-            return sprintf('<%s%s>%s</%s>', $tag, implode('', $attr), $content, $tag);
-        } else {
-            return sprintf('<%s%s />', $tag, implode('', $attr));
-        }
-    }
-
-    /**
      * Returns current page's title.
      *
      * @param string $tag
@@ -154,11 +159,43 @@ class CmsExtension extends \Twig_Extension
     {
         if (null === $content && null !== $page = $this->editor->getCurrentPage()) {
             $content = $page->getTitle();
+
+            // Tags the response as Page relative
+            $this->eventDispatcher->dispatch(
+                HttpCacheEvents::TAG_RESPONSE,
+                new HttpCacheEvent('ekyna_cms.page[id:'.$page->getId().']')
+            );
         }
+
         if (0 == strlen($content)) {
             $content = 'Undefined title';
         }
-        return sprintf('<%s>%s</%s>', $tag, $content, $tag);
+
+        return $this->renderTag($tag, $content);
+    }
+
+    /**
+     * Renders the html tag.
+     *
+     * @param $tag
+     * @param string $content
+     * @param array $attributes
+     *
+     * @return string
+     */
+    private function renderTag($tag, $content = null, array $attributes = array())
+    {
+        $attr = [];
+
+        foreach($attributes as $key => $value) {
+            $attr[] = sprintf(' %s="%s"', $key, $value);
+        }
+
+        if (0 < strlen($content)) {
+            return sprintf('<%s%s>%s</%s>', $tag, implode('', $attr), $content, $tag);
+        } else {
+            return sprintf('<%s%s />', $tag, implode('', $attr));
+        }
     }
 
     /**
@@ -198,14 +235,22 @@ class CmsExtension extends \Twig_Extension
             throw new \RuntimeException('Undefined content.');
         }
 
-        // TODO fix : no template inheritance with this method.
+        // TODO : hasBlock() does not use template inheritance.
         if (!$this->template->hasBlock('cms_block_content')) {
             throw new \RuntimeException('Unable to find "cms_block_content" twig block.');
         }
 
+        $this->editor->setEnabled(true);
+
+        // Tag response as Content relative
+        $this->eventDispatcher->dispatch(
+            HttpCacheEvents::TAG_RESPONSE,
+            new HttpCacheEvent('ekyna_cms.content[id:'.$content->getId().']')
+        );
+
         return $this->template->renderBlock('cms_block_content', array(
             'content' => $content,
-            'editable' => $this->editor->isEnabled()
+            'editable' => $this->editor->getEnabled()
         ));
     }
 
@@ -221,10 +266,11 @@ class CmsExtension extends \Twig_Extension
     public function renderContentBlock(BlockInterface $block)
     {
         $blockName = sprintf('cms_block_%s', $block->getType());
+
         if (!$this->template->hasBlock($blockName)) {
             throw new \RuntimeException('Unable to find "%s" twig block.', $blockName);
         }
-        $this->editor->setRenderedBlocks();
+
         return trim($this->template->renderBlock($blockName, array('block' => $block)));
     }
 
@@ -242,10 +288,18 @@ class CmsExtension extends \Twig_Extension
     public function renderBlock($name, $type = null, array $datas = array())
     {
         $block = $this->editor->findBlockByName($name, $type, $datas);
-        $this->editor->setRenderedBlocks();
+
+        $this->editor->setEnabled(true);
+
+        // Tags the response as Block relative
+        $this->eventDispatcher->dispatch(
+            HttpCacheEvents::TAG_RESPONSE,
+            new HttpCacheEvent('ekyna_cms.block[id:'.$block->getId().']')
+        );
+
         return $this->template->renderBlock('cms_block', array(
             'block' => $block,
-            'editable' => $this->editor->isEnabled()
+            'editable' => $this->editor->getEnabled()
         ));
     }
 

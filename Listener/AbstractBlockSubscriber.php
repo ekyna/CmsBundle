@@ -8,11 +8,11 @@ use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 
 /**
- * Class BlockSubscriber
+ * Class AbstractBlockSubscriber
  * @package Ekyna\Bundle\CmsBundle\Listener
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class BlockSubscriber implements EventSubscriber
+class AbstractBlockSubscriber implements EventSubscriber
 {
     const BLOCK_FQCN = 'Ekyna\Bundle\CmsBundle\Entity\AbstractBlock';
 
@@ -20,6 +20,7 @@ class BlockSubscriber implements EventSubscriber
      * @var PluginRegistry
      */
     protected $registry;
+
 
     /**
      * Constructor.

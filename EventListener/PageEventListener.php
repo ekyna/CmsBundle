@@ -9,11 +9,11 @@ use Gedmo\Sluggable\Util\Urlizer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Class PageListener
+ * Class PageEventListener
  * @package Ekyna\Bundle\CmsBundle\EventListener
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class PageListener implements EventSubscriberInterface
+class PageEventListener implements EventSubscriberInterface
 {
     /**
      * @var string

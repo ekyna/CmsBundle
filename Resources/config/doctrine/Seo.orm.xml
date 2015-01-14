@@ -5,7 +5,14 @@
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Ekyna\Bundle\CmsBundle\Entity\Seo" table="cms_seo">
+    <entity
+			name="Ekyna\Bundle\CmsBundle\Entity\Seo"
+			repository-class="Ekyna\Bundle\CmsBundle\Entity\SeoRepository"
+			table="cms_seo">
+
+		<entity-listeners>
+			<entity-listener class="Ekyna\Bundle\CmsBundle\Listener\SeoListener" />
+		</entity-listeners>
 
 	    <id name="id" type="integer" column="id">
 	        <generator strategy="AUTO" />

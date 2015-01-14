@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use Doctrine\ORM\QueryBuilder;
 use Ekyna\Bundle\AdminBundle\Doctrine\ORM\ResourceRepositoryInterface;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +26,19 @@ class PageRepository extends NestedTreeRepository implements ResourceRepositoryI
     }
 
     /**
+     * Creates a new QueryBuilder instance.
+     *
+     * @param string $alias
+     *
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder($alias)
+    {
+        return parent::createQueryBuilder($alias)
+            ->innerJoin($alias.'.seo', 'seo');
+    }
+
+    /**
      * Finds a page by request.
      *
      * @param Request $request
@@ -44,14 +58,14 @@ class PageRepository extends NestedTreeRepository implements ResourceRepositoryI
      * @param string $routeName
      * @return null|\Ekyna\Bundle\CmsBundle\Model\PageInterface
      */
-    public function findByRoute($routeName)
+    public function findOneByRoute($routeName)
     {
-
         $qb = $this->createQueryBuilder('p');
         $query = $qb
             ->andWhere($qb->expr()->eq('p.route', $qb->expr()->literal($routeName)))
+            ->setMaxResults(1)
             ->getQuery()
-            ->useResultCache(true, 3600, 'page:route['.$routeName.']')
+            ->useResultCache(true, 3600, 'ekyna_cms.page[route:'.$routeName.']')
         ;
         return $query->getOneOrNullResult();
     }
@@ -59,18 +73,17 @@ class PageRepository extends NestedTreeRepository implements ResourceRepositoryI
     /**
      * Finds a page by request.
      *
-     * @param string $routeName
+     * @param integer $pageId
      * @return null|\Ekyna\Bundle\CmsBundle\Model\PageInterface
      */
-    public function findOneByRoute($routeName)
+    public function findOneById($pageId)
     {
-
         $qb = $this->createQueryBuilder('p');
         $query = $qb
-            ->andWhere($qb->expr()->eq('p.route', $qb->expr()->literal($routeName)))
+            ->andWhere($qb->expr()->eq('p.id', $pageId))
             ->setMaxResults(1)
             ->getQuery()
-            ->useResultCache(true, 3600, 'page:route['.$routeName.']')
+            ->useResultCache(true, 3600, 'ekyna_cms.page[id:'.$pageId.']')
         ;
         return $query->getOneOrNullResult();
     }
