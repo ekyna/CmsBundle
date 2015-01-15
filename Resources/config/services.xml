@@ -146,6 +146,8 @@
         <!-- Twig extensions -->
         <service id="ekyna_cms.twig.cms_extension" class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
             <argument type="service" id="ekyna_cms.editor" />
+            <argument type="service" id="ekyna_cms.menu.repository" />
+            <argument type="service" id="knp_menu.helper" />
             <argument type="service" id="event_dispatcher" />
             <argument type="collection">
                 <argument key="seo_no_follow">%ekyna_cms.seo.no_follow%</argument>

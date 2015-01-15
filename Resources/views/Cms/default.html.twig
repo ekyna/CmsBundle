@@ -1,6 +1,15 @@
-{% extends "::base.html.twig" %}
+{% extends "EkynaCmsBundle::base.html.twig" %}
+
+{% block metas %}
+    {{ cms_metas() }}
+{% endblock metas %}
 
 {% block body %}
-{{ cms_title() }}
-{{ cms_content() }}
-{% endblock %}
+    <div class="container">
+        {{ cms_flashes() }}
+        {{ cms_breadcrumb() }}
+
+        {{ cms_title() }}
+        {{ cms_content() }}
+    </div>
+{% endblock body %}

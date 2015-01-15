@@ -23,7 +23,7 @@ interface MenuInterface extends NodeInterface
     /**
      * Returns the parent.
      *
-     * @return MenuInterface|$this
+     * @return MenuInterface|null
      */
     public function getParent();
 

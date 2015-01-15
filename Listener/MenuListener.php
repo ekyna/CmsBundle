@@ -59,9 +59,14 @@ class MenuListener
      */
     private function invalidateTag(MenuInterface $menu)
     {
+        $tags = ['ekyna_cms.menu[id:'.$menu->getId().']'];
+        while (null !== $menu = $menu->getParent()) {
+            $tags[] = 'ekyna_cms.menu[id:'.$menu->getId().']';
+        }
+
         $this->eventDispatcher->dispatch(
             HttpCacheEvents::INVALIDATE_TAG,
-            new HttpCacheEvent('ekyna_cms.menu[id:'.$menu->getId().']')
+            new HttpCacheEvent($tags)
         );
     }
 }

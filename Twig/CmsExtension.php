@@ -3,12 +3,15 @@
 namespace Ekyna\Bundle\CmsBundle\Twig;
 
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
+use Ekyna\Bundle\CmsBundle\Entity\MenuRepository;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
+use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvent;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvents;
+use Knp\Menu\Twig\Helper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -22,6 +25,16 @@ class CmsExtension extends \Twig_Extension
      * @var Editor
      */
     protected $editor;
+
+    /**
+     * @var MenuRepository
+     */
+    protected $menuRepository;
+
+    /**
+     * @var Helper
+     */
+    protected $helper;
 
     /**
      * @var EventDispatcherInterface
@@ -43,11 +56,21 @@ class CmsExtension extends \Twig_Extension
      * Constructor.
      *
      * @param Editor $editor
+     * @param MenuRepository $menuRepository
+     * @param Helper $helper
+     * @param EventDispatcherInterface $eventDispatcher
      * @param array $config
      */
-    public function __construct(Editor $editor, EventDispatcherInterface $eventDispatcher, array $config = array())
-    {
+    public function __construct(
+        Editor $editor,
+        MenuRepository $menuRepository,
+        Helper $helper,
+        EventDispatcherInterface $eventDispatcher,
+        array $config = array()
+    ) {
         $this->editor = $editor;
+        $this->menuRepository = $menuRepository;
+        $this->helper = $helper;
         $this->eventDispatcher = $eventDispatcher;
 
         $this->config = array_merge(array(
@@ -78,6 +101,9 @@ class CmsExtension extends \Twig_Extension
             new \Twig_SimpleFunction('cms_content', array($this, 'renderContent'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_content_block', array($this, 'renderContentBlock'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_block', array($this, 'renderBlock'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_menu', array($this, 'renderMenu'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_breadcrumb', array($this, 'renderBreadcrumb'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_flashes', array($this, 'renderFlashes'), array('is_safe' => array('html'))),
         );
     }
 
@@ -301,6 +327,60 @@ class CmsExtension extends \Twig_Extension
             'block' => $block,
             'editable' => $this->editor->getEnabled()
         ));
+    }
+
+    /**
+     * Renders the menu by his name.
+     *
+     * @param MenuInterface|string $name
+     * @param array  $options
+     * @param string $renderer
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string
+     */
+    public function renderMenu($name, array $options = array(), $renderer = null)
+    {
+        if (null === $menu = $this->menuRepository->findOneBy(array('name' => $name))) {
+            throw new \InvalidArgumentException(sprintf('Menu named "%s" not found.', $name));
+        }
+
+        // Tags the response as Block relative
+        $this->eventDispatcher->dispatch(
+            HttpCacheEvents::TAG_RESPONSE,
+            new HttpCacheEvent('ekyna_cms.menu[id:'.$menu->getId().']')
+        );
+
+        return $this->helper->render($name, $options, $renderer);
+    }
+
+    /**
+     * Renders the breadcrumb.
+     *
+     * @param array $options
+     *
+     * @return string
+     */
+    public function renderBreadcrumb(array $options = array())
+    {
+        return $this->helper->render('breadcrumb', array_merge(array(
+            'template' => 'EkynaCmsBundle:Cms:breadcrumb.html.twig'
+        ), $options));
+    }
+
+    /**
+     * Renders the session flashes.
+     *
+     * @param array $options
+     *
+     * @return string
+     */
+    public function renderFlashes(array $options = array())
+    {
+        // TODO if esi not enabled, render flashes.html.twig
+
+        return '<div id="flashes"></div>';
     }
 
     /**
