@@ -9,7 +9,7 @@
     <entity name="Ekyna\Bundle\CmsBundle\Entity\Image" table="cms_image">
 
         <field name="deletedAt" column="deleted_at" type="datetime" nullable="true" />
-        <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" />
+        <gedmo:soft-deleteable field-name="deletedAt" />
 
     </entity>
 

@@ -8,6 +8,15 @@
     <parameters>
         <parameter key="ekyna_cms.seo.class">Ekyna\Bundle\CmsBundle\Entity\Seo</parameter>
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
+        <parameter key="ekyna_cms.image.class">Ekyna\Bundle\CmsBundle\Entity\Image</parameter>
+        <parameter key="ekyna_cms.image.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\ImageType</parameter>
+        <parameter key="ekyna_cms.gallery.class">Ekyna\Bundle\CmsBundle\Entity\Gallery</parameter>
+        <parameter key="ekyna_cms.gallery.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\GalleryType</parameter>
+        <parameter key="ekyna_cms.gallery_image.class">Ekyna\Bundle\CmsBundle\Entity\GalleryImage</parameter>
+        <parameter key="ekyna_cms.gallery_image.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\GalleryImageType</parameter>
+        <parameter key="ekyna_cms.tag.class">Ekyna\Bundle\CmsBundle\Entity\Tag</parameter>
+        <parameter key="ekyna_cms.tag.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\TagType</parameter>
+        <parameter key="ekyna_cms.tags.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\TagsType</parameter>
     </parameters>
 
     <services>
@@ -15,6 +24,26 @@
         <service id="ekyna_cms.seo.form_type" class="%ekyna_cms.seo.form_type.class%">
             <argument>%ekyna_cms.seo.class%</argument>
             <tag name="form.type" alias="ekyna_cms_seo" />
+        </service>
+        <service id="ekyna_cms.image.form_type" class="%ekyna_cms.image.form_type.class%">
+            <argument>%ekyna_cms.image.class%</argument>
+            <tag name="form.type" alias="ekyna_cms_image" />
+        </service>
+        <service id="ekyna_cms.gallery.form_type" class="%ekyna_cms.gallery.form_type.class%">
+            <argument>%ekyna_cms.gallery.class%</argument>
+            <tag name="form.type" alias="ekyna_cms_gallery" />
+        </service>
+        <service id="ekyna_cms.gallery_image.form_type" class="%ekyna_cms.gallery_image.form_type.class%">
+            <argument>%ekyna_cms.gallery_image.class%</argument>
+            <tag name="form.type" alias="ekyna_cms_gallery_image" />
+        </service>
+        <service id="ekyna_cms.tag.form_type" class="%ekyna_cms.tag.form_type.class%">
+            <argument>%ekyna_cms.tag.class%</argument>
+            <tag name="form.type" alias="ekyna_cms_tag" />
+        </service>
+        <service id="ekyna_cms.tags.form_type" class="%ekyna_cms.tags.form_type.class%">
+            <argument>%ekyna_cms.tag.class%</argument>
+            <tag name="form.type" alias="ekyna_cms_tags" />
         </service>
 
         <!-- Repositories -->
@@ -60,13 +89,20 @@
         </service>
 
         <!-- Doctrine subscriber -->
+        <!-- TODO merge metadata subscriber -->
         <service id="ekyna_cms.content.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber" public="false">
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
         <service id="ekyna_cms.seo.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber" public="false">
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
-        <service id="ekyna_cms.tag.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\TagSubjectSubscriber" public="false">
+        <service id="ekyna_cms.image.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\ImageSubjectSubscriber" public="false">
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+        <service id="ekyna_cms.gallery.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\GallerySubjectSubscriber" public="false">
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+        <service id="ekyna_cms.tags.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\TagsSubjectSubscriber" public="false">
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
         <service id="ekyna_cms.abstract_block.subscriber" class="Ekyna\Bundle\CmsBundle\Listener\AbstractBlockSubscriber" public="false">

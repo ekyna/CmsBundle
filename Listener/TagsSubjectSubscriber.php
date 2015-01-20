@@ -7,14 +7,14 @@ use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 
 /**
- * Class TagSubjectSubscriber
+ * Class TagsSubjectSubscriber
  * @package Ekyna\Bundle\CmsBundle\Listener
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class TagSubjectSubscriber implements EventSubscriber
+class TagsSubjectSubscriber implements EventSubscriber
 {
     const TAG_FQCN = 'Ekyna\Bundle\CmsBundle\Entity\Tag';
-    const SUBJECT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\TagSubjectInterface';
+    const SUBJECT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\TagsSubjectInterface';
 
     /**
      * @param LoadClassMetadataEventArgs $eventArgs

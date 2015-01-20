@@ -5,11 +5,11 @@ namespace Ekyna\Bundle\CmsBundle\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Trait TagSubjectTrait
+ * Trait TagsSubjectTrait
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-trait TagSubjectTrait
+trait TagsSubjectTrait
 {
     /**
      * @var ArrayCollection|TagInterface[]

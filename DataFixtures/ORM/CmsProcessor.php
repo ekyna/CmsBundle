@@ -3,15 +3,12 @@
 namespace Ekyna\Bundle\CmsBundle\DataFixtures\ORM;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Entity\Content;
-use Ekyna\Bundle\CmsBundle\Entity\Seo;
-use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
-use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
-use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
-use Ekyna\Bundle\CmsBundle\Model\TagSubjectInterface;
+use Ekyna\Bundle\CmsBundle\Entity as Entity;
+use Ekyna\Bundle\CmsBundle\Model as Model;
 use Faker\Factory;
 use Nelmio\Alice\ProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Class CmsProcessor
@@ -25,7 +22,15 @@ class CmsProcessor implements ProcessorInterface
      */
     protected $container;
 
+    /**
+     * @var \Faker\Generator
+     */
     protected $faker;
+
+    /**
+     * @var array
+     */
+    protected $photosCategory = array('business', 'city', 'technics', 'transport');
 
     /**
      * @param ContainerInterface $container
@@ -33,7 +38,7 @@ class CmsProcessor implements ProcessorInterface
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->faker = Factory::create();
+        $this->faker = Factory::create($container->getParameter('locale'));
     }
 
     /**
@@ -41,14 +46,20 @@ class CmsProcessor implements ProcessorInterface
      */
     public function preProcess($object)
     {
-        if ($object instanceof SeoSubjectInterface) {
+        if ($object instanceof Model\SeoSubjectInterface) {
             $this->generateSeo($object);
         }
-        if ($object instanceof ContentSubjectInterface) {
+        if ($object instanceof Model\ContentSubjectInterface) {
             $this->generateContent($object);
         }
-        if ($object instanceof TagSubjectInterface) {
+        if ($object instanceof Model\TagsSubjectInterface) {
             $this->generateTags($object);
+        }
+        if ($object instanceof Model\ImageSubjectInterface) {
+            $this->generateImage($object);
+        }
+        if ($object instanceof Model\GallerySubjectInterface) {
+            $this->generateGallery($object);
         }
     }
 
@@ -63,21 +74,19 @@ class CmsProcessor implements ProcessorInterface
     /**
      * Generates seo to the given subject.
      *
-     * @param SeoSubjectInterface $subject
+     * @param Model\SeoSubjectInterface $subject
      */
-    protected function generateSeo(SeoSubjectInterface $subject)
+    protected function generateSeo(Model\SeoSubjectInterface $subject)
     {
-        $seo = new Seo();
+        $seo = new Entity\Seo();
         if (0 < strlen($name = $this->objectToString($subject))) {
             $seo
                 ->setTitle($name . ' seo title')
-                ->setDescription($name . ' seo description')
-            ;
+                ->setDescription($name . ' seo description');
         } else {
             $seo
                 ->setTitle($this->faker->sentence(rand(3, 6)))
-                ->setDescription($this->faker->words(rand(3, 6)))
-            ;
+                ->setDescription($this->faker->words(rand(3, 6)));
         }
         $subject->setSeo($seo);
     }
@@ -85,23 +94,22 @@ class CmsProcessor implements ProcessorInterface
     /**
      * Generates content to the given subject.
      *
-     * @param ContentSubjectInterface $subject
+     * @param Model\ContentSubjectInterface $subject
      */
-    protected function generateContent(ContentSubjectInterface $subject)
+    protected function generateContent(Model\ContentSubjectInterface $subject)
     {
         $html = '';
         for ($i = 0; $i < rand(3, 5); $i++) {
             $html .= '<p>' . $this->faker->text(rand(300, 600)) . '</p>';
         }
 
-        $block = new TinymceBlock();
+        $block = new Entity\TinymceBlock();
         $block->setHtml($html);
 
-        $content = new Content();
+        $content = new Entity\Content();
         $content
             ->setVersion(0)
-            ->addBlock($block)
-        ;
+            ->addBlock($block);
 
         $subject->addContent($content);
     }
@@ -109,19 +117,141 @@ class CmsProcessor implements ProcessorInterface
     /**
      * Associates tags to the given subject.
      *
-     * @param TagSubjectInterface $subject
+     * @param Model\TagsSubjectInterface $subject
      */
-    protected function generateTags(TagSubjectInterface $subject)
+    protected function generateTags(Model\TagsSubjectInterface $subject)
     {
         $qb = $this->container->get('ekyna_cms.tag.repository')->createQueryBuilder('t');
         $tags = $qb
             ->addSelect('RAND() as HIDDEN rand')
             ->orderBy('rand')
-            ->setMaxResults(rand(1,4))
+            ->setMaxResults(rand(1, 4))
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
         $subject->setTags(new ArrayCollection($tags));
+    }
+
+    /**
+     * Associates an image to the given subject.
+     *
+     * @param Model\ImageSubjectInterface $subject
+     */
+    protected function generateImage(Model\ImageSubjectInterface $subject)
+    {
+        $subject->setImage($this->findImages()[0]);
+    }
+
+    /**
+     * Associates a gallery to the given subject.
+     *
+     * @param Model\GallerySubjectInterface $subject
+     */
+    protected function generateGallery(Model\GallerySubjectInterface $subject)
+    {
+        $gallery = null;
+
+        // TODO
+        /*if (rand(0, 10) > 5) {
+            $qb = $this->container
+                ->get('ekyna_cms.gallery.repository')
+                ->createQueryBuilder('g');
+
+            $gallery = $qb
+                ->addSelect('RAND() as HIDDEN rand')
+                ->orderBy('rand')
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+        }*/
+
+        if (null === $gallery) {
+            $gallery = new Entity\Gallery();
+            $gallery->setName($this->faker->sentence(3));
+
+            $images = $this->findImages(rand(4, 5));
+            $position = 0;
+            foreach ($images as $image) {
+                $galleryImage = new Entity\GalleryImage();
+                $galleryImage
+                    ->setImage($image)
+                    ->setPosition($position)
+                ;
+                $gallery->addImage($galleryImage);
+                $position++;
+            }
+        }
+
+        $subject->setGallery($gallery);
+    }
+
+    /**
+     * Find some images.
+     *
+     * @param int $limit
+     * @return Entity\Image[]
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    private function findImages($limit = 1)
+    {
+        if ($limit < 1) {
+            $limit = 1;
+        }
+
+        $images = [];
+
+        if (rand(0, 10) > 5) {
+            $qb = $this->container
+                ->get('ekyna_cms.image.repository')
+                ->createQueryBuilder('i');
+
+            $query = $qb
+                ->addSelect('RAND() as HIDDEN rand')
+                ->orderBy('rand')
+                ->setMaxResults($limit)
+                ->getQuery();
+
+            if ($limit == 1 && null !== $image = $query->getOneOrNullResult()) {
+                $images = array($image);
+            } else {
+                $images = $query->getResult();
+            }
+        }
+
+        if (count($images) < $limit) {
+            $images = array_merge($images, $this->createImages($limit - count($images)));
+        }
+
+        return $images;
+    }
+
+    /**
+     * Creates some images.
+     *
+     * @param int $number
+     * @return array
+     */
+    private function createImages($number = 1)
+    {
+        $images = [];
+
+        for ($j = 0; $j < $number; $j++) {
+            $realPath = $this->faker->image(
+                sys_get_temp_dir(),
+                800, 600,
+                $this->faker->randomElement($this->photosCategory)
+            );
+            $filename = pathinfo($realPath, PATHINFO_BASENAME);
+
+            $image = new Entity\Image();
+            $image
+                ->setFile(new UploadedFile($realPath, $filename))
+                ->setRename($this->faker->sentence(3))
+                ->setAlt($this->faker->sentence(5));
+
+            $images[] = $image;
+        }
+
+        return $images;
     }
 
     /**
@@ -134,17 +264,17 @@ class CmsProcessor implements ProcessorInterface
     {
         $r = new \ReflectionClass(get_class($object));
 
+        if ($r->hasMethod('__toString')) {
+            return (string)$object;
+        }
+
         foreach (array('getName', 'getTitle') as $getter) {
             if ($r->hasMethod($getter)) {
                 try {
                     return $object->{$getter}();
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                 }
             }
-        }
-
-        if ($r->hasMethod('__toString')) {
-            return (string) $object;
         }
 
         return '';

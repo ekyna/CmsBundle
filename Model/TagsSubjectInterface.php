@@ -5,17 +5,17 @@ namespace Ekyna\Bundle\CmsBundle\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Interface TagSubjectInterface
+ * Interface TagsSubjectInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-interface TagSubjectInterface
+interface TagsSubjectInterface
 {
     /**
      * Sets the tags.
      *
      * @param ArrayCollection $tags
-     * @return TagSubjectInterface|$this
+     * @return TagsSubjectInterface|$this
      */
     public function setTags(ArrayCollection $tags);
 
@@ -31,7 +31,7 @@ interface TagSubjectInterface
      * Adds the tag.
      *
      * @param TagInterface $tag
-     * @return TagSubjectInterface|$this
+     * @return TagsSubjectInterface|$this
      */
     public function addTag(TagInterface $tag);
 
@@ -39,7 +39,7 @@ interface TagSubjectInterface
      * Removes the tag.
      *
      * @param TagInterface $tag
-     * @return TagSubjectInterface|$this
+     * @return TagsSubjectInterface|$this
      */
     public function removeTag(TagInterface $tag);
 
