@@ -186,7 +186,9 @@ class PageGenerator
         /** @var Route $route */
         foreach ($this->routes as $name => $route) {
             if ($this->homeRouteName !== $name && null !== $cms = $route->getDefault('_cms')) {
-                $this->createRouteDefinition($name, $route);
+                if (array_key_exists('name', $cms)) {
+                    $this->createRouteDefinition($name, $route);
+                }
             }
         }
 

@@ -101,7 +101,16 @@ class MenuBuilder
             $currentPage = null;
             if (null !== $request = $this->requestStack->getCurrentRequest()) {
                 $currentPage = $this->pageRepository->findOneByRequest($request);
+
+                // If not found look for a parent
+                if (null === $currentPage && null !== $cms = $request->attributes->get('_cms')) {
+                    if (array_key_exists('parent', $cms) && 0 < strlen($cms['parent'])) {
+                        $currentPage = $this->pageRepository->findOneByRoute($cms['parent']);
+                    }
+                }
             }
+
+            // If found, build the breadcrumb
             if (null !== $currentPage) {
                 // Loop through parents
                 $pages = array();
@@ -123,6 +132,7 @@ class MenuBuilder
                 }
             }
         }
+
         return $this->breadcrumb;
     }
 
