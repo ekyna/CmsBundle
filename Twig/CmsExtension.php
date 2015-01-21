@@ -365,7 +365,9 @@ class CmsExtension extends \Twig_Extension
     public function renderBreadcrumb(array $options = array())
     {
         return $this->helper->render('breadcrumb', array_merge(array(
-            'template' => 'EkynaCmsBundle:Cms:breadcrumb.html.twig'
+            'template' => 'EkynaCmsBundle:Cms:breadcrumb.html.twig',
+            //'currentAsLink' => false,
+            'depth' => 1,
         ), $options));
     }
 

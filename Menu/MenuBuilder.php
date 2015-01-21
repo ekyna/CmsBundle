@@ -73,11 +73,7 @@ class MenuBuilder
     public function breadcrumbAppend($name, $label, $route = null, array $parameters = array())
     {
         if (null === $this->breadcrumb) {
-            if (null === $home = $this->pageRepository->findOneByRoute($this->homeRouteName)) {
-                throw new \RuntimeException('Home page not found.');
-            }
-            $this->createBreadcrumbRoot();
-            $this->breadcrumb->addChild('home', array('route' => $home->getRoute()))->setLabel($home->getName());
+            $this->createBreadcrumb();
         }
 
         $this
@@ -123,7 +119,7 @@ class MenuBuilder
                 /** @var PageInterface[] $pages */
                 for ($i = 0; $i < count($pages); $i++) {
                     $page = $pages[$i];
-                    if (($i === count($pages) - 1) || preg_match('#\{[\w]+\}#', $page->getPath())) {
+                    if (preg_match('#\{[\w]+\}#', $page->getPath())) {
                         $params = array('uri' => null);
                     } else {
                         $params = array('route' => $page->getRoute());
@@ -142,6 +138,9 @@ class MenuBuilder
     private function createBreadcrumbRoot()
     {
         if (null === $this->breadcrumb) {
+            if (null === $home = $this->pageRepository->findOneByRoute($this->homeRouteName)) {
+                throw new \RuntimeException('Home page not found.');
+            }
             $this->breadcrumb = $this->factory->createItem('root', array(
                 'childrenAttributes' => array(
                     'class' => 'breadcrumb hidden-xs'
