@@ -28,17 +28,12 @@ class CmsProcessor implements ProcessorInterface
     protected $faker;
 
     /**
-     * @var array
-     */
-    protected $photosCategory = array('business', 'city', 'technics', 'transport');
-
-    /**
      * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->faker = Factory::create($container->getParameter('locale'));
+        $this->faker = Factory::create($container->getParameter('hautelook_alice.locale'));
     }
 
     /**
@@ -235,11 +230,7 @@ class CmsProcessor implements ProcessorInterface
         $images = [];
 
         for ($j = 0; $j < $number; $j++) {
-            $realPath = $this->faker->image(
-                sys_get_temp_dir(),
-                800, 600,
-                $this->faker->randomElement($this->photosCategory)
-            );
+            $realPath = $this->faker->image(sys_get_temp_dir(), 800, 600);
             $filename = pathinfo($realPath, PATHINFO_BASENAME);
 
             $image = new Entity\Image();
