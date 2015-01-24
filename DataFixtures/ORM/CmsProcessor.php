@@ -8,6 +8,7 @@ use Ekyna\Bundle\CmsBundle\Model as Model;
 use Faker\Factory;
 use Nelmio\Alice\ProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -28,12 +29,19 @@ class CmsProcessor implements ProcessorInterface
     protected $faker;
 
     /**
+     * @var array
+     */
+    protected $images;
+
+    /**
      * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->faker = Factory::create($container->getParameter('hautelook_alice.locale'));
+
+        $this->loadImagesFiles();
     }
 
     /**
@@ -145,20 +153,6 @@ class CmsProcessor implements ProcessorInterface
     {
         $gallery = null;
 
-        // TODO
-        /*if (rand(0, 10) > 5) {
-            $qb = $this->container
-                ->get('ekyna_cms.gallery.repository')
-                ->createQueryBuilder('g');
-
-            $gallery = $qb
-                ->addSelect('RAND() as HIDDEN rand')
-                ->orderBy('rand')
-                ->setMaxResults(1)
-                ->getQuery()
-                ->getOneOrNullResult();
-        }*/
-
         if (null === $gallery) {
             $gallery = new Entity\Gallery();
             $gallery->setName($this->faker->sentence(3));
@@ -230,12 +224,9 @@ class CmsProcessor implements ProcessorInterface
         $images = [];
 
         for ($j = 0; $j < $number; $j++) {
-            $realPath = $this->faker->image(sys_get_temp_dir(), 800, 600);
-            $filename = pathinfo($realPath, PATHINFO_BASENAME);
-
             $image = new Entity\Image();
             $image
-                ->setFile(new UploadedFile($realPath, $filename))
+                ->setFile($this->images[rand(0, 5)])
                 ->setRename($this->faker->sentence(3))
                 ->setAlt($this->faker->sentence(5));
 
@@ -243,6 +234,18 @@ class CmsProcessor implements ProcessorInterface
         }
 
         return $images;
+    }
+
+    /**
+     * Loads the fixtures images files.
+     */
+    private function loadImagesFiles()
+    {
+        $this->images = [];
+        $imagesDir = realpath(__DIR__.'/../../Resources/fixtures/images/');
+        for ($i = 1; $i < 7; $i++) {
+            $this->images[] = new File($imagesDir.'/0'.$i.'.jpg');
+        }
     }
 
     /**
