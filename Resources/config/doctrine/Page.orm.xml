@@ -11,10 +11,6 @@
         repository-class="Ekyna\Bundle\CmsBundle\Entity\PageRepository"
         table="cms_page">
 
-        <entity-listeners>
-            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\PageListener" />
-        </entity-listeners>
-
         <indexes>
             <index name="idx_path" columns="path" />
             <index name="idx_name" columns="name" />
@@ -23,8 +19,12 @@
 
         <unique-constraints>
             <unique-constraint name="uniq_name" columns="name,parent_id" />
-            <unique-constraint name="uniq_path" columns="path,parent_id" />
+            <!--<unique-constraint name="uniq_path" columns="path,parent_id" />-->
         </unique-constraints>
+
+        <entity-listeners>
+            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\PageListener" />
+        </entity-listeners>
 
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO" />
@@ -39,13 +39,14 @@
         <field name="locked" column="locked" type="boolean" />
         <field name="controller" column="controller" type="string" length="64" nullable="true" />
         <field name="advanced" column="advanced" type="boolean" />
+        <field name="dynamicPath" column="dynamic_path" type="boolean" />
         <field name="left" column="lft" type="integer">
             <gedmo:tree-left />
         </field>
         <field name="right" column="rgt" type="integer">
             <gedmo:tree-right />
         </field>
-        <field name="root" type="integer" nullable="true">
+        <field name="root" column="root" type="integer" nullable="true">
             <gedmo:tree-root />
         </field>
         <field name="level" column="lvl" type="integer">

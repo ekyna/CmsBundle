@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectTrait;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectTrait;
+use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
 
 /**
  * Class Page
@@ -16,6 +17,7 @@ class Page implements PageInterface
 {
     use ContentSubjectTrait;
     use SeoSubjectTrait;
+    use TimestampableTrait;
 
     /**
      * @var integer
@@ -98,27 +100,24 @@ class Page implements PageInterface
     protected $advanced;
 
     /**
-     * @var \DateTime
+     * @var boolean
      */
-    protected $createdAt;
+    protected $dynamicPath;
 
-    /**
-     * @var \DateTime
-     */
-    protected $updatedAt;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->children = new ArrayCollection();
-        $this->contents = new ArrayCollection();
-        $this->seo      = new Seo();
+        $this->children    = new ArrayCollection();
+        $this->contents    = new ArrayCollection();
+        $this->seo         = new Seo();
 
-        $this->static   = false;
-        $this->locked   = false;
-        $this->advanced = false;
+        $this->static      = false;
+        $this->locked      = false;
+        $this->advanced    = false;
+        $this->dynamicPath = false;
     }
 
     /**
@@ -430,36 +429,17 @@ class Page implements PageInterface
     /**
      * {@inheritdoc}
      */
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setDynamicPath($dynamicPath)
     {
-        $this->createdAt = $createdAt;
-
+        $this->dynamicPath = $dynamicPath;
         return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getCreatedAt()
+    public function getDynamicPath()
     {
-        return $this->createdAt;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUpdatedAt(\DateTime  $updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
+        return $this->dynamicPath;
     }
 }

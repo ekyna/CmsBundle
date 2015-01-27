@@ -88,7 +88,7 @@ class CmsSettingsSchema extends AbstractSchema
      */
     public function getShowTemplate()
     {
-        return 'EkynaCmsBundle:Settings:show.html.twig';
+        return 'EkynaCmsBundle:Admin/Settings:show.html.twig';
     }
 
     /**
@@ -96,7 +96,7 @@ class CmsSettingsSchema extends AbstractSchema
      */
     public function getFormTemplate()
     {
-        return 'EkynaCmsBundle:Settings:form.html.twig';
+        return 'EkynaCmsBundle:Admin/Settings:form.html.twig';
     }
 
     public function getName()

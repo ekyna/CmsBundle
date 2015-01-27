@@ -6,21 +6,29 @@
                         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
+        <!-- TODO Remove parameters defined by the pool builder -->
+        <!--<parameter key="ekyna_cms.menu.class">Ekyna\Bundle\CmsBundle\Entity\Menu</parameter>-->
+        <parameter key="ekyna_cms.menu.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\MenuType</parameter>
         <parameter key="ekyna_cms.seo.class">Ekyna\Bundle\CmsBundle\Entity\Seo</parameter>
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
-        <parameter key="ekyna_cms.image.class">Ekyna\Bundle\CmsBundle\Entity\Image</parameter>
+        <!--<parameter key="ekyna_cms.image.class">Ekyna\Bundle\CmsBundle\Entity\Image</parameter>-->
         <parameter key="ekyna_cms.image.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\ImageType</parameter>
         <parameter key="ekyna_cms.gallery.class">Ekyna\Bundle\CmsBundle\Entity\Gallery</parameter>
         <parameter key="ekyna_cms.gallery.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\GalleryType</parameter>
         <parameter key="ekyna_cms.gallery_image.class">Ekyna\Bundle\CmsBundle\Entity\GalleryImage</parameter>
         <parameter key="ekyna_cms.gallery_image.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\GalleryImageType</parameter>
-        <parameter key="ekyna_cms.tag.class">Ekyna\Bundle\CmsBundle\Entity\Tag</parameter>
+        <!--<parameter key="ekyna_cms.tag.class">Ekyna\Bundle\CmsBundle\Entity\Tag</parameter>-->
         <parameter key="ekyna_cms.tag.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\TagType</parameter>
         <parameter key="ekyna_cms.tags.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\TagsType</parameter>
     </parameters>
 
     <services>
         <!-- Form Types -->
+        <service id="ekyna_cms.menu.form_type" class="%ekyna_cms.menu.form_type.class%">
+            <argument>%ekyna_cms.menu.class%</argument>
+            <argument>%ekyna_cms.page.class%</argument>
+            <tag name="form.type" alias="ekyna_cms_menu" />
+        </service>
         <service id="ekyna_cms.seo.form_type" class="%ekyna_cms.seo.form_type.class%">
             <argument>%ekyna_cms.seo.class%</argument>
             <tag name="form.type" alias="ekyna_cms_seo" />

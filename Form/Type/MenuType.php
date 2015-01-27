@@ -16,6 +16,25 @@ use Symfony\Component\Form\FormEvents;
 class MenuType extends ResourceFormType
 {
     /**
+     * @var string
+     */
+    protected $pageClass;
+
+
+    /**
+     * Constructor.
+     *
+     * @param string $menuClass
+     * @param string $pageClass
+     */
+    public function __construct($menuClass, $pageClass)
+    {
+        parent::__construct($menuClass);
+
+        $this->pageClass = $pageClass;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -63,22 +82,44 @@ class MenuType extends ResourceFormType
                         }
                         return $qb;
                     },
-                    'property' => 'name',
+                    'property' => 'title',
                     'required' => true,
                     'disabled' => $disabled,
                 ))
                 ->add('path', 'text', array(
                     'label' => 'ekyna_core.field.url',
-                    'admin_helper' => 'MENU_PATH',
+                    'admin_helper' => 'CMS_MENU_PATH',
                     'required' => false,
                     'disabled' => $disabled,
                 ))
                 ->add('route', 'text', array(
                     'label' => 'ekyna_core.field.route',
+                    'admin_helper' => 'CMS_MENU_ROUTE',
+                    'required' => false,
                     'disabled' => $disabled,
                 ))
-                // TODO parameters
+                // TODO parameters ?
             ;
+
+            if (!$disabled) {
+                $form
+                    ->add('page', 'entity', array(
+                        'label' => 'ekyna_cms.page.label.singular',
+                        'admin_helper' => 'CMS_MENU_PAGE',
+                        'class' => $this->pageClass,
+                        'query_builder' => function (EntityRepository $er) {
+                            $qb = $er->createQueryBuilder('p');
+                            $qb
+                                ->andWhere($qb->expr()->eq('p.dynamicPath', $qb->expr()->literal(false)))
+                                ->addOrderBy('p.left', 'ASC')
+                            ;
+                            return $qb;
+                        },
+                        'property' => 'name',
+                        'required' => false,
+                    ))
+                ;
+            }
         });
     }
 

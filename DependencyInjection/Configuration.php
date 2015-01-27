@@ -75,13 +75,13 @@ class Configuration implements ConfigurationInterface
                             ->addDefaultsIfNotSet()
                             ->children()
                                 ->variableNode('templates')->defaultValue(array(
-                                    '_form.html'     => 'EkynaCmsBundle:Page/Admin:_form.html',
-                                    'list.html'      => 'EkynaCmsBundle:Page/Admin:list.html',
-                                    'new.html'       => 'EkynaCmsBundle:Page/Admin:new.html',
-                                    'new_child.html' => 'EkynaCmsBundle:Page/Admin:new_child.html',
-                                    'show.html'      => 'EkynaCmsBundle:Page/Admin:show.html',
-                                    'edit.html'      => 'EkynaCmsBundle:Page/Admin:edit.html',
-                                    'remove.html'    => 'EkynaCmsBundle:Page/Admin:remove.html',
+                                    '_form.html'     => 'EkynaCmsBundle:Admin/Page:_form.html',
+                                    'list.html'      => 'EkynaCmsBundle:Admin/Page:list.html',
+                                    'new.html'       => 'EkynaCmsBundle:Admin/Page:new.html',
+                                    'new_child.html' => 'EkynaCmsBundle:Admin/Page:new_child.html',
+                                    'show.html'      => 'EkynaCmsBundle:Admin/Page:show.html',
+                                    'edit.html'      => 'EkynaCmsBundle:Admin/Page:edit.html',
+                                    'remove.html'    => 'EkynaCmsBundle:Admin/Page:remove.html',
                                 ))->end()
                                 ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Page')->end()
                                 ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\PageController')->end()
@@ -96,7 +96,7 @@ class Configuration implements ConfigurationInterface
                             ->addDefaultsIfNotSet()
                             ->children()
                                 ->variableNode('templates')->defaultValue(array(
-                                    'show.html'  => 'EkynaCmsBundle:Image/Admin:show.html',
+                                    'show.html'  => 'EkynaCmsBundle:Admin/Image:show.html',
                                 ))->end()
                                 ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Image')->end()
                                 ->scalarNode('controller')->end()
@@ -110,16 +110,16 @@ class Configuration implements ConfigurationInterface
                             ->addDefaultsIfNotSet()
                             ->children()
                                 ->variableNode('templates')->defaultValue(array(
-                                    '_form.html'     => 'EkynaCmsBundle:Menu/Admin:_form.html',
-                                    'list.html'      => 'EkynaCmsBundle:Menu/Admin:list.html',
-                                    'new.html'       => 'EkynaCmsBundle:Menu/Admin:new.html',
-                                    'new_child.html' => 'EkynaCmsBundle:Menu/Admin:new_child.html',
-                                    'show.html'      => 'EkynaCmsBundle:Menu/Admin:show.html',
-                                    'edit.html'      => 'EkynaCmsBundle:Menu/Admin:edit.html',
-                                    'remove.html'    => 'EkynaCmsBundle:Menu/Admin:remove.html',
+                                    '_form.html'     => 'EkynaCmsBundle:Admin/Menu:_form.html',
+                                    'list.html'      => 'EkynaCmsBundle:Admin/Menu:list.html',
+                                    'new.html'       => 'EkynaCmsBundle:Admin/Menu:new.html',
+                                    'new_child.html' => 'EkynaCmsBundle:Admin/Menu:new_child.html',
+                                    'show.html'      => 'EkynaCmsBundle:Admin/Menu:show.html',
+                                    'edit.html'      => 'EkynaCmsBundle:Admin/Menu:edit.html',
+                                    'remove.html'    => 'EkynaCmsBundle:Admin/Menu:remove.html',
                                 ))->end()
                                 ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Menu')->end()
-                                ->scalarNode('controller')->end()
+                                ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\MenuController')->end()
                                 ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\MenuRepository')->end()
                                 ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\MenuType')->end()
                                 ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\MenuType')->end()

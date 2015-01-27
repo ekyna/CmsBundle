@@ -18,6 +18,24 @@
         </property>
     </class>
 
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Menu">
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Menu" />
+        <property name="name">
+            <constraint name="NotBlank" />
+            <constraint name="Length">
+                <option name="min">2</option>
+                <option name="max">255</option>
+            </constraint>
+        </property>
+        <property name="title">
+            <constraint name="NotBlank" />
+            <constraint name="Length">
+                <option name="min">2</option>
+                <option name="max">255</option>
+            </constraint>
+        </property>
+    </class>
+
     <class name="Ekyna\Bundle\CmsBundle\Entity\Image">
         <constraint name="Ekyna\Bundle\CoreBundle\Validator\Constraints\AbstractImage" />
         <property name="file">
@@ -103,7 +121,7 @@
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\AbstractBlock">
-        <constraint name="Ekyna\Bundle\CmsBundle\Validator\BlockIdentity" />
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\BlockIdentity" />
         <property name="row">
             <constraint name="GreaterThanOrEqual">
                 <option name="value">1</option>
@@ -124,7 +142,7 @@
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\Content">
-        <constraint name="Ekyna\Bundle\CmsBundle\Validator\ContentGrid" />
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\ContentGrid" />
         <property name="version">
             <constraint name="NotNull" />
         </property>

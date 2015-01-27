@@ -2,7 +2,9 @@
 
 namespace Ekyna\Bundle\CmsBundle\Listener;
 
+use Behat\Transliterator\Transliterator;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvent;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvents;
@@ -15,6 +17,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class MenuListener
 {
+    const NAME_REGEX = '#^[a-z0-9_]+$#';
+
     /**
      * @var EventDispatcherInterface
      */
@@ -28,6 +32,38 @@ class MenuListener
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * Pre persist event handler.
+     *
+     * @param MenuInterface $menu
+     * @param LifecycleEventArgs $event
+     */
+    public function prePersist(MenuInterface $menu, LifecycleEventArgs $event)
+    {
+        if (null !== $page = $menu->getPage()) {
+            $menu->setRoute($page->getRoute());
+        }
+        if (!preg_match(self::NAME_REGEX, $menu->getName())) {
+            $menu->setName(Transliterator::urlize($menu->getName(), '_'));
+        }
+    }
+
+    /**
+     * Pre update event handler.
+     *
+     * @param MenuInterface $menu
+     * @param PreUpdateEventArgs $event
+     */
+    public function preUpdate(MenuInterface $menu, PreUpdateEventArgs $event)
+    {
+        if (null !== $page = $menu->getPage()) {
+            $event->setNewValue('route', $page->getRoute());
+        }
+        if ($event->hasChangedField('name') && !preg_match(self::NAME_REGEX, $name = $event->getNewValue('name'))) {
+            $event->setNewValue('name', Transliterator::urlize($name, '_'));
+        }
     }
 
     /**

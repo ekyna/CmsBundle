@@ -243,7 +243,22 @@ interface MenuInterface extends NodeInterface
      * Adds the options.
      *
      * @param array $options
-     * @return $this
+     * @return MenuInterface|$this
      */
     public function addOptions(array $options);
+
+    /**
+     * Returns the page (non mapped).
+     *
+     * @return PageInterface|null
+     */
+    public function getPage();
+
+    /**
+     * Sets the page (non mapped).
+     *
+     * @param PageInterface $page
+     * @return MenuInterface|$this
+     */
+    public function setPage(PageInterface $page);
 }

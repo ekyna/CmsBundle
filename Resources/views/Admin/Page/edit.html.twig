@@ -1,0 +1,20 @@
+{% extends "EkynaAdminBundle:Entity:sided.html.twig" %}
+
+{% block title %}
+<h1>{{ 'ekyna_cms.page.header.edit'|trans({'%name%': page})|raw }}</h1>
+{% endblock %}
+
+{% block actions %}
+{{ admin_resource_btn(page, 'list') }}
+{#{ admin_resource_btn(page, 'new') }#}
+{% endblock %}
+
+{% block main %}
+<form action="{{ path('ekyna_cms_page_admin_edit', {'pageId': page.id}) }}" {{ form_enctype(form) }} method="post" class="form-horizontal form-with-tabs">
+    {% include "EkynaCmsBundle:Admin/Page:_form.html.twig" %}
+    {{ ui_form_footer(form) }}
+</form>
+{% endblock %}
+
+{% block side %}
+{% endblock %}

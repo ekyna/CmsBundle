@@ -11,6 +11,11 @@ use Ekyna\Bundle\CoreBundle\Entity\AbstractImage;
  */
 class Image extends AbstractImage
 {
+    /**
+     * Returns the string representation.
+     *
+     * @return string
+     */
     public function __toString()
     {
         return pathinfo($this->getPath(), PATHINFO_BASENAME);

@@ -1,0 +1,23 @@
+{% extends "EkynaAdminBundle:Entity:sided.html.twig" %}
+
+{% block title %}
+<h1>{{ 'ekyna_cms.page.header.remove'|trans({'%name%': page})|raw }}</h1>
+{% endblock %}
+
+{% block actions %}
+{{ admin_resource_btn(page, 'list') }}
+{#{ admin_resource_btn(page, 'new') }#}
+{% endblock %}
+
+{% block main %}
+<form action="{{ path('ekyna_cms_page_admin_remove', identifiers|merge({'pageId': page.id})) }}" method="post" class="form-horizontal">
+    <div class="form-body">
+	    {{ bootstrap_set_style('horizontal') }}
+		{{ form_widget(form) }}
+    </div>
+    {{ ui_form_footer(form) }}
+</form>
+{% endblock %}
+
+{% block side %}
+{% endblock %}

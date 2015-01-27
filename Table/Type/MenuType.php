@@ -20,16 +20,16 @@ class MenuType extends ResourceTableType
     public function buildTable(TableBuilderInterface $tableBuilder, array $options = array())
     {
         $tableBuilder
-            ->addColumn('name', 'nested_anchor', array(
-                'label' => 'ekyna_core.field.name',
+            ->addColumn('title', 'nested_anchor', array(
+                'label' => 'ekyna_core.field.title',
                 'sortable' => true,
                 'route_name' => 'ekyna_cms_menu_admin_show',
                 'route_parameters_map' => array(
                     'menuId' => 'id'
                 ),
             ))
-            ->addColumn('title', 'text', array(
-                'label' => 'ekyna_core.field.title',
+            ->addColumn('name', 'text', array(
+                'label' => 'ekyna_core.field.name',
                 'sortable' => true,
             ))
             ->addColumn('actions', 'admin_nested_actions', array(

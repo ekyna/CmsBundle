@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
+use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 
 /**
  * Class Menu
@@ -86,6 +87,11 @@ class Menu implements MenuInterface
      * @var array
      */
     protected $options;
+
+    /**
+     * @var PageInterface
+     */
+    protected $page;
 
 
     /**
@@ -374,7 +380,12 @@ class Menu implements MenuInterface
     public function getOptions()
     {
         if (null === $this->options) {
-            $this->options = array('label' => $this->getTitle());
+            $this->options = array(
+                'label' => $this->getTitle(),
+                'attributes' => array(
+                    'id' => str_replace('_', '-', $this->getName()),
+                )
+            );
             if (0 < strlen($this->getPath())) {
                 $this->options['uri'] = $this->getPath();
             } elseif (0 < strlen($this->getRoute())) {
@@ -395,5 +406,21 @@ class Menu implements MenuInterface
     {
         $this->options = array_merge($this->getOptions(), $options);
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPage()
+    {
+        return $this->page;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPage(PageInterface $page)
+    {
+        $this->page = $page;
     }
 }

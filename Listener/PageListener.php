@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Listener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvent;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvents;
@@ -28,6 +29,38 @@ class PageListener
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * Pre persist event handler.
+     *
+     * @param PageInterface $page
+     * @param LifecycleEventArgs $event
+     */
+    public function prePersist(PageInterface $page, LifecycleEventArgs $event)
+    {
+        if (preg_match('#\{.*\}#', $page->getPath())) {
+            $page->setDynamicPath(true);
+        } else {
+            $page->setDynamicPath(false);
+        }
+    }
+
+    /**
+     * Pre update event handler.
+     *
+     * @param PageInterface $page
+     * @param PreUpdateEventArgs $event
+     */
+    public function preUpdate(PageInterface $page, PreUpdateEventArgs $event)
+    {
+        if ($event->hasChangedField('path')) {
+            if (preg_match('#\{.*\}#', $event->getNewValue('path'))) {
+                $event->setNewValue('dynamicPath', true);
+            } else {
+                $event->setNewValue('dynamicPath', false);
+            }
+        }
     }
 
     /**

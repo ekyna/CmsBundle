@@ -2,12 +2,14 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+use Ekyna\Bundle\CoreBundle\Model\TimestampableInterface;
+
 /**
  * Class PageInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface
+interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface, TimestampableInterface
 {
     /**
      * Get id
@@ -258,32 +260,17 @@ interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface
     public function getAdvanced();
 
     /**
-     * Set createdAt
+     * Sets whether the path has parameters or not.
      *
-     * @param \DateTime $createdAt
+     * @param boolean $dynamicPath
      * @return PageInterface|$this
      */
-    public function setCreatedAt(\DateTime $createdAt);
+    public function setDynamicPath($dynamicPath);
 
     /**
-     * Get createdAt
+     * Returns whether the path has parameters or not.
      *
-     * @return \DateTime
+     * @return boolean
      */
-    public function getCreatedAt();
-
-    /**
-     * Set updatedAt
-     *
-     * @param \DateTime $updatedAt
-     * @return PageInterface|$this
-     */
-    public function setUpdatedAt(\DateTime  $updatedAt);
-
-    /**
-     * Get updatedAt
-     *
-     * @return \DateTime
-     */
-    public function getUpdatedAt();
-} 
+    public function getDynamicPath();
+}
