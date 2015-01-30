@@ -24,6 +24,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('output_dir')->defaultValue('')->end()
+                ->booleanNode('esi_flashes')->defaultFalse()->end()
                 ->arrayNode('seo')
                     ->addDefaultsIfNotSet()
                     ->children()

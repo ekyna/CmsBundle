@@ -42,6 +42,7 @@ class CmsController extends Controller
         return $this
             ->render('EkynaCmsBundle:Cms:flashes.html.twig')
             ->setPrivate()
+            ->setSharedMaxAge(0)
         ;
     }
 }

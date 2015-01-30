@@ -13,6 +13,8 @@ use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvent;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvents;
 use Knp\Menu\Twig\Helper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Controller\ControllerReference;
+use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 
 /**
  * Class CmsExtension
@@ -42,6 +44,11 @@ class CmsExtension extends \Twig_Extension
     protected $eventDispatcher;
 
     /**
+     * @var FragmentHandler
+     */
+    protected $fragmentHandler;
+
+    /**
      * @var array
      */
     protected $config;
@@ -59,6 +66,7 @@ class CmsExtension extends \Twig_Extension
      * @param MenuRepository $menuRepository
      * @param Helper $helper
      * @param EventDispatcherInterface $eventDispatcher
+     * @param FragmentHandler $handler
      * @param array $config
      */
     public function __construct(
@@ -66,17 +74,20 @@ class CmsExtension extends \Twig_Extension
         MenuRepository $menuRepository,
         Helper $helper,
         EventDispatcherInterface $eventDispatcher,
+        FragmentHandler $fragmentHandler,
         array $config = array()
     ) {
         $this->editor = $editor;
         $this->menuRepository = $menuRepository;
         $this->helper = $helper;
         $this->eventDispatcher = $eventDispatcher;
+        $this->fragmentHandler = $fragmentHandler;
 
         $this->config = array_merge(array(
             'template' => 'EkynaCmsBundle:Editor:content.html.twig',
             'seo_no_follow' => true,
             'seo_no_index' => true,
+            'esi_flashes' => false,
         ), $config);
     }
 
@@ -374,15 +385,14 @@ class CmsExtension extends \Twig_Extension
     /**
      * Renders the session flashes.
      *
-     * @param array $options
-     *
      * @return string
      */
-    public function renderFlashes(array $options = array())
+    public function renderFlashes()
     {
-        // TODO if esi not enabled, render flashes.html.twig
-
-        return '<div id="flashes"></div>';
+        if ($this->config['esi_flashes']) {
+            return $this->fragmentHandler->render(new ControllerReference('EkynaCmsBundle:Cms:flashes'), 'esi');
+        }
+        return '<div id="cms-flashes"></div>';
     }
 
     /**

@@ -1,14 +1,18 @@
-(function(win, $, router) {
-    $(document).ready(function() {
+(function(doc, $, router) {
+    $(doc).ready(function() {
         if ($('.cms-editor-block').length > 0) {
-            $.ajax({
-                url: Routing.generate('ekyna_cms_editor_init'),
-                type: 'GET',
-                dataType: 'html'
-            })
-            .done(function(html) {
+            var editorXhr = $.get(router.generate('ekyna_cms_editor_init'));
+            editorXhr.done(function(html) {
                 $(html).appendTo('body');
             });
         }
+        // Load flashes if not handled by ESI
+        var $flashes = $('#cms-flashes');
+        if ($flashes.length > 0) {
+            var flashXhr = $.get(router.generate('ekyna_cms_flashes'));
+            flashXhr.done(function (html) {
+                $flashes.html(html);
+            })
+        }
     });
-})(window, jQuery, Routing);
+})(document, jQuery, Routing);

@@ -193,9 +193,11 @@
             <argument type="service" id="ekyna_cms.menu.repository" />
             <argument type="service" id="knp_menu.helper" />
             <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="fragment.handler" />
             <argument type="collection">
                 <argument key="seo_no_follow">%ekyna_cms.seo.no_follow%</argument>
                 <argument key="seo_no_index">%ekyna_cms.seo.no_index%</argument>
+                <argument key="esi_flashes">%ekyna_cms.esi_flashes%</argument>
             </argument>
             <tag name="twig.extension" />
         </service>
