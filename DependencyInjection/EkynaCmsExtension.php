@@ -23,7 +23,6 @@ class EkynaCmsExtension extends AbstractExtension implements PrependExtensionInt
         $container->setParameter('ekyna_cms.home_route_name', $config['defaults']['home_route']);
         $container->setParameter('ekyna_cms.default_template', $config['defaults']['template']);
         $container->setParameter('ekyna_cms.default_controller', $config['defaults']['controller']);
-        $container->setParameter('ekyna_cms.default_max_age', $config['defaults']['max_age']);
 
         $container->setParameter('ekyna_cms.esi_flashes', $config['esi_flashes']);
 

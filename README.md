@@ -19,6 +19,7 @@ TODO
 TODO
 
 ## TODOs
+- Move "_cms" (routing definitions) from "defaults" to "options" !
 - Disallow locked pages removal.
 - Configurable editor content template.
 - route provider / doctrine cache

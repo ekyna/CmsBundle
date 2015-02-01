@@ -25,11 +25,7 @@ class CmsController extends Controller
             throw new NotFoundHttpException('Page not found');
         }
 
-        return $this
-            ->render('EkynaCmsBundle:Cms:default.html.twig')
-            ->setPublic()
-            ->setSharedMaxAge($this->container->getParameter('ekyna_cms.default_max_age'))
-        ;
+        return $this->configureSharedCache($this->render('EkynaCmsBundle:Cms:default.html.twig'));
     }
 
     /**
