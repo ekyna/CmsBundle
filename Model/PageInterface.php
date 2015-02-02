@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
 use Ekyna\Bundle\CoreBundle\Model\TimestampableInterface;
 
 /**
@@ -9,7 +10,7 @@ use Ekyna\Bundle\CoreBundle\Model\TimestampableInterface;
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface, TimestampableInterface
+interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface, TimestampableInterface, TaggedEntityInterface
 {
     /**
      * Get id

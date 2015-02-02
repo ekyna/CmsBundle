@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
+use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
 
 /**
  * Class Content
@@ -13,6 +14,8 @@ use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
  */
 class Content implements ContentInterface
 {
+    use TimestampableTrait;
+
     /**
      * @var integer
      */
@@ -22,16 +25,6 @@ class Content implements ContentInterface
      * @var number
      */
     protected $version;
-
-    /**
-     * @var \DateTime
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime
-     */
-    protected $updatedAt;
 
     /**
      * @var ArrayCollection|BlockInterface[]
@@ -76,42 +69,6 @@ class Content implements ContentInterface
     /**
      * {@inheritdoc}
      */
-    public function setCreatedAt(\DateTime $createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUpdatedAt(\DateTime $updatedAt = null)
-    {
-        $this->updatedAt = $updatedAt;
-    
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function addBlock(BlockInterface $block)
     {
         $block->setContent($this);
@@ -148,5 +105,16 @@ class Content implements ContentInterface
     public function getBlocks()
     {
         return $this->blocks;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityTag()
+    {
+        if (null === $this->getId()) {
+            throw new \RuntimeException('Unable to generate entity tag, as the id property is undefined.');
+        }
+        return sprintf('ekyna_cms.content[id:%s]', $this->getId());
     }
 }

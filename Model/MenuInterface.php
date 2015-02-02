@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
 use Knp\Menu\NodeInterface;
 
 /**
@@ -10,7 +11,7 @@ use Knp\Menu\NodeInterface;
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-interface MenuInterface extends NodeInterface
+interface MenuInterface extends NodeInterface, TaggedEntityInterface
 {
 
     /**

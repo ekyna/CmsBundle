@@ -2,12 +2,14 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
+
 /**
  * Interface SeoInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-interface SeoInterface
+interface SeoInterface extends TaggedEntityInterface
 {
     /**
      * Returns the valid changefreq choices.

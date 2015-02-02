@@ -3,13 +3,15 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
+use Ekyna\Bundle\CoreBundle\Model\TimestampableInterface;
 
 /**
  * Interface ContentInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-interface ContentInterface
+interface ContentInterface extends TimestampableInterface, TaggedEntityInterface
 {
     /**
      * Get id
@@ -33,37 +35,6 @@ interface ContentInterface
      * @return integer
      */
     public function getVersion();
-
-    /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     * @return ContentInterface|$this
-     */
-    public function setCreatedAt(\DateTime $createdAt);
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt();
-
-    /**
-     * Set updatedAt
-     *
-     * @param \DateTime $updatedAt
-     *
-     * @return ContentInterface|$this
-     */
-    public function setUpdatedAt(\DateTime $updatedAt = null);
-
-    /**
-     * Get updatedAt
-     *
-     * @return \DateTime
-     */
-    public function getUpdatedAt();
 
     /**
      * Set blocks

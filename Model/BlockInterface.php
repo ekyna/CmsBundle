@@ -2,12 +2,14 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
+
 /**
  * Interface BlockInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-interface BlockInterface
+interface BlockInterface extends TaggedEntityInterface
 {
     /**
      * Returns the id.

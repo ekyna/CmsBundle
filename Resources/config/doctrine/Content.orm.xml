@@ -8,10 +8,6 @@
 
     <entity name="Ekyna\Bundle\CmsBundle\Entity\Content" table="cms_content">
 
-        <entity-listeners>
-            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\ContentListener" />
-        </entity-listeners>
-
 	    <id name="id" type="integer" column="id">
 	        <generator strategy="AUTO" />
 	    </id>

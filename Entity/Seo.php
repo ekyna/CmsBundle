@@ -200,4 +200,15 @@ class Seo implements SeoInterface
     {
         return array('hourly', 'monthly', 'yearly');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityTag()
+    {
+        if (null === $this->getId()) {
+            throw new \RuntimeException('Unable to generate entity tag, as the id property is undefined.');
+        }
+        return sprintf('ekyna_cms.seo[id:%s]', $this->getId());
+    }
 }

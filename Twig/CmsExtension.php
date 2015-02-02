@@ -62,12 +62,12 @@ class CmsExtension extends \Twig_Extension
     /**
      * Constructor.
      *
-     * @param Editor $editor
-     * @param MenuRepository $menuRepository
-     * @param Helper $helper
+     * @param Editor                   $editor
+     * @param MenuRepository           $menuRepository
+     * @param Helper                   $helper
      * @param EventDispatcherInterface $eventDispatcher
-     * @param FragmentHandler $handler
-     * @param array $config
+     * @param FragmentHandler          $fragmentHandler
+     * @param array                    $config
      */
     public function __construct(
         Editor $editor,
@@ -162,7 +162,7 @@ class CmsExtension extends \Twig_Extension
             // Tags the response as Seo relative
             $this->eventDispatcher->dispatch(
                 HttpCacheEvents::TAG_RESPONSE,
-                new HttpCacheEvent('ekyna_cms.seo[id:'.$seo->getId().']')
+                new HttpCacheEvent($seo->getEntityTag())
             );
         } else {
             $metas = '<title>Undefined</title>' . $this->renderMeta('robots', 'follow,noindex');
@@ -200,7 +200,7 @@ class CmsExtension extends \Twig_Extension
             // Tags the response as Page relative
             $this->eventDispatcher->dispatch(
                 HttpCacheEvents::TAG_RESPONSE,
-                new HttpCacheEvent('ekyna_cms.page[id:'.$page->getId().']')
+                new HttpCacheEvent($page->getEntityTag())
             );
         }
 
@@ -282,7 +282,7 @@ class CmsExtension extends \Twig_Extension
         // Tag response as Content relative
         $this->eventDispatcher->dispatch(
             HttpCacheEvents::TAG_RESPONSE,
-            new HttpCacheEvent('ekyna_cms.content[id:'.$content->getId().']')
+            new HttpCacheEvent($content->getEntityTag())
         );
 
         return $this->template->renderBlock('cms_block_content', array(
@@ -331,7 +331,7 @@ class CmsExtension extends \Twig_Extension
         // Tags the response as Block relative
         $this->eventDispatcher->dispatch(
             HttpCacheEvents::TAG_RESPONSE,
-            new HttpCacheEvent('ekyna_cms.block[id:'.$block->getId().']')
+            new HttpCacheEvent($block->getEntityTag())
         );
 
         return $this->template->renderBlock('cms_block', array(
@@ -343,7 +343,7 @@ class CmsExtension extends \Twig_Extension
     /**
      * Renders the menu by his name.
      *
-     * @param MenuInterface|string $name
+     * @param string $name
      * @param array  $options
      * @param string $renderer
      *
@@ -353,14 +353,15 @@ class CmsExtension extends \Twig_Extension
      */
     public function renderMenu($name, array $options = array(), $renderer = null)
     {
+        /** @var MenuInterface $menu */
         if (null === $menu = $this->menuRepository->findOneBy(array('name' => $name))) {
             throw new \InvalidArgumentException(sprintf('Menu named "%s" not found.', $name));
         }
 
-        // Tags the response as Block relative
+        // Tags the response as Menu relative
         $this->eventDispatcher->dispatch(
             HttpCacheEvents::TAG_RESPONSE,
-            new HttpCacheEvent('ekyna_cms.menu[id:'.$menu->getId().']')
+            new HttpCacheEvent($menu->getEntityTag())
         );
 
         return $this->helper->render($name, $options, $renderer);

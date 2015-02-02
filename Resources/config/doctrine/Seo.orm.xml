@@ -10,10 +10,6 @@
 			repository-class="Ekyna\Bundle\CmsBundle\Entity\SeoRepository"
 			table="cms_seo">
 
-		<entity-listeners>
-			<entity-listener class="Ekyna\Bundle\CmsBundle\Listener\SeoListener" />
-		</entity-listeners>
-
 	    <id name="id" type="integer" column="id">
 	        <generator strategy="AUTO" />
 	    </id>

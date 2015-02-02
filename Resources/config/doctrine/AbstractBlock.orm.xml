@@ -12,7 +12,7 @@
             inheritance-type="JOINED">
 
         <entity-listeners>
-            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\BlockListener" />
+            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\AbstractBlockListener" />
         </entity-listeners>
 
         <discriminator-column name="type" type="string" />
