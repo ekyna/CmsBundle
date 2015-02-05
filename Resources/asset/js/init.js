@@ -1,18 +1,28 @@
 (function(doc, $, router) {
     $(doc).ready(function() {
-        if ($('.cms-editor-block').length > 0) {
-            var editorXhr = $.get(router.generate('ekyna_cms_editor_init'));
-            editorXhr.done(function(html) {
-                $(html).appendTo('body');
-            });
-        }
-        // Load flashes if not handled by ESI
-        var $flashes = $('#cms-flashes');
-        if ($flashes.length > 0) {
-            var flashXhr = $.get(router.generate('ekyna_cms_flashes'));
-            flashXhr.done(function (html) {
-                $flashes.html(html);
-            })
-        }
+
+        var $flashesContainer = $('#cms-flashes');
+
+        var initXrh = $.ajax({
+            url: router.generate('ekyna_cms_init'),
+            data: {
+                flashes: $flashesContainer.length > 0 ? 1 : 0,
+                editor: $('.cms-editor-block').length > 0 ? 1 : 0
+            },
+            dataType: 'xml',
+            type: 'POST'
+        });
+
+        initXrh.done(function (xml) {
+            console.log(xml);
+            $xml = $(xml);
+            if ($flashesContainer.length > 0) {
+                var flashes = $xml.find('flashes').text();
+                $flashesContainer.html($(flashes));
+            }
+            var editor = $xml.find('editor').text();
+            console.log(editor);
+            $('body').append($(editor));
+        });
     });
 })(document, jQuery, Routing);

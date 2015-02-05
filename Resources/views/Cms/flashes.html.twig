@@ -1,3 +1,4 @@
+{% spaceless %}
 {% for type in ['success', 'danger', 'info', 'warning'] %}
     {% for message in app.session.flashbag.get(type) %}
         <div class="alert alert-{{ type }} alert-dismissable">
@@ -6,3 +7,4 @@
         </div>
     {% endfor %}
 {% endfor %}
+{% endspaceless %}

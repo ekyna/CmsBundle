@@ -29,6 +29,40 @@ class CmsController extends Controller
     }
 
     /**
+     * Renders the cms init (xhr only).
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function initAction(Request $request)
+    {
+        if (!$request->isXmlHttpRequest()) {
+            throw new NotFoundHttpException();
+        }
+
+        $data = [];
+
+        // Does flashes must be rendered ?
+        if ($request->request->get('flashes', false)) {
+            $data['flashes'] = true;
+        } else {
+            $data['flashes'] = false;
+        }
+
+        // Does editor must be rendered ?
+        if ($request->request->get('editor', false) && $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            $data['editor'] = true;
+        } else {
+            $data['editor'] = false;
+        }
+
+        $response = $this->render('EkynaCmsBundle:Cms:init.xml.twig', $data);
+        $response->headers->add(array('Content-Type' => 'application/xml'));
+
+        return $response;
+    }
+
+    /**
      * Renders the flash.
      *
      * @return \Symfony\Component\HttpFoundation\Response

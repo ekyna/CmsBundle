@@ -13,3 +13,11 @@ ekyna_cms_flashes:
         _method: GET
     options:
         expose: true
+
+ekyna_cms_init:
+    path: /cms/init
+    defaults: { _controller: "EkynaCmsBundle:Cms:init" }
+    requirements:
+        _method: POST
+    options:
+        expose: true

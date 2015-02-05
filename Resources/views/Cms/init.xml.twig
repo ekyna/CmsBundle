@@ -1,0 +1,15 @@
+{% spaceless %}
+<?xml version="1.0" encoding="UTF-8" ?>
+<init>
+    <flashes>
+    <![CDATA[{% if flashes -%}
+        {%- include 'EkynaCmsBundle:Cms:flashes.html.twig' -%}
+    {%- endif %}]]>
+    </flashes>
+    <editor>
+    <![CDATA[{% if editor -%}
+        {%- include 'EkynaCmsBundle:Editor:editor.html.twig' -%}
+    {%- endif %}]]>
+    </editor>
+</init>
+{% endspaceless %}
