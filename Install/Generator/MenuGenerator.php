@@ -31,7 +31,7 @@ class MenuGenerator
     /**
      * @var array
      */
-    private $menusConfigs;
+    private $config;
 
     /**
      * Constructor.
@@ -45,7 +45,7 @@ class MenuGenerator
 
         $this->em = $container->get('ekyna_cms.page.manager');
         $this->repository = $container->get('ekyna_cms.menu.repository');
-        $this->menusConfigs = $container->getParameter('ekyna_cms.menus');
+        $this->config = $container->getParameter('ekyna_cms.menu.config');
     }
 
     /**
@@ -53,7 +53,7 @@ class MenuGenerator
      */
     public function generateMenus()
     {
-        foreach($this->menusConfigs as $name => $config) {
+        foreach ($this->config['roots'] as $name => $config) {
             $this->output->write(sprintf(
                 '- <comment>%s</comment> %s ',
                 $name,

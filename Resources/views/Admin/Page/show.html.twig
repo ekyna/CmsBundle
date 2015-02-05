@@ -26,11 +26,15 @@
             <div class="tab-pane active" id="general">
                 {{ show_row(page.name, 'text', 'ekyna_core.field.name') }}
                 {{ show_row(page.title, 'text', 'ekyna_core.field.title') }}
+                {% if not page.static %}
+                    {{ show_row(cms_page_controller(page.controller), 'text', 'ekyna_cms.page.field.controller') }}
+                {% endif %}
                 {% if not page.advanced %}
                 {{ show_row(path('ekyna_cms_page_admin_tinymce', identifiers|merge({'pageId': page.id})), 'tinymce', 'ekyna_core.field.content') }}
                 {% endif %}
             </div>
             <div class="tab-pane" id="seo">
+                {{ show_row(page.path, 'text', 'ekyna_core.field.url') }}
                 {{ show_row(page.seo, 'seo') }}
             </div>
         </div>

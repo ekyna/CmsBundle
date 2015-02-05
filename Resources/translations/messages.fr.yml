@@ -18,6 +18,8 @@ ekyna_cms:
             new: Nouvelle page
             edit: Modifier la page
             remove: Supprimer la page
+        field:
+            controller: Gabarit
         alert:
             no_item: Aucune page configuré
     menu:

@@ -10,6 +10,9 @@
 	        {{ form_row(form.name) }}
 	        {{ form_row(form.title) }}
 	        {{ form_row(form.parent) }}
+	        {% if form.controller is defined %}
+	            {{ form_row(form.controller) }}
+	        {% endif %}
 	        {% if form.html is defined %}
 	            {{ form_row(form.html) }}
 	        {% endif %}

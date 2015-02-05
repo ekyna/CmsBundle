@@ -67,7 +67,7 @@ class PageGenerator
         $this->output = $output;
 
         $this->routes = $container->get('router')->getRouteCollection();
-        $this->homeRouteName = $container->getParameter('ekyna_cms.home_route_name');
+        $this->homeRouteName = $container->getParameter('ekyna_cms.home_route');
 
         $this->em = $container->get('ekyna_cms.page.manager');
         $this->validator = $container->get('validator');

@@ -23,13 +23,19 @@ class RouteProvider implements RouteProviderInterface
     protected $pageRepository;
 
     /**
+     * @var array
+     */
+    protected $config;
+
+    /**
      * Constructor.
      *
      * @param PageRepository $pageRepository
      */
-    public function __construct(PageRepository $pageRepository)
+    public function __construct(PageRepository $pageRepository, array $config)
     {
         $this->pageRepository = $pageRepository;
+        $this->config = $config;
     }
 
     /**
@@ -107,8 +113,12 @@ class RouteProvider implements RouteProviderInterface
     {
         $route = new Route($page->getPath());
 
+        if (!array_key_exists($page->getController(), $this->config['controllers'])) {
+            throw new \RuntimeException(sprintf('Undefined controller "%s".', $page->getController()));
+        }
+
         $route
-            ->setDefault('_controller', $page->getController())
+            ->setDefault('_controller', $this->config['controllers'][$page->getController()]['value'])
             ->setMethods(array('GET'))
         ;
 

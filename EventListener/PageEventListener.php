@@ -16,21 +16,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class PageEventListener implements EventSubscriberInterface
 {
     /**
-     * @var string
-     */
-    protected $defaultController;
-
-    /**
-     * Constructor.
-     *
-     * @param string $defaultController
-     */
-    public function __construct($defaultController)
-    {
-        $this->defaultController = $defaultController;
-    }
-
-    /**
      * Pre create event handler.
      *
      * @param PageEvent $event
@@ -52,11 +37,6 @@ class PageEventListener implements EventSubscriberInterface
                 $path = $page->getName();
             }
             $page->setPath($parentPath . '/' . Urlizer::urlize(trim($path, '/')));
-
-            // Set default controller
-            if (null === $page->getController()) {
-                $page->setController($this->defaultController);
-            }
         }
     }
 

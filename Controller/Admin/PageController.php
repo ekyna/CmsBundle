@@ -24,13 +24,13 @@ class PageController extends ResourceController
     /**
      * {@inheritDoc}
      */
-    public function createNew(Context $context)
+    /*public function createNew(Context $context)
     {
         $resource = parent::createNew($context);
         $resource->setController($this->container->getParameter('ekyna_cms.default_controller'));
 
         return $resource;
-    }
+    }*/
 
     /**
      * {@inheritDoc}
@@ -39,7 +39,7 @@ class PageController extends ResourceController
     {
         /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $parent */
         $resource = $this->traitCreateNewFromParent($context, $parent);
-        $resource->setController($this->container->getParameter('ekyna_cms.default_controller'));
+        //$resource->setController($this->container->getParameter('ekyna_cms.default_controller'));
         if ($parent->getAdvanced()) {
             $resource->setAdvanced(true);
         }

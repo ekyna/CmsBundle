@@ -85,8 +85,14 @@ class CmsExtension extends \Twig_Extension
 
         $this->config = array_merge(array(
             'template' => 'EkynaCmsBundle:Editor:content.html.twig',
-            'seo_no_follow' => true,
-            'seo_no_index' => true,
+            'home_route' => 'home',
+            'seo' => array(
+                'no_follow' => true,
+                'no_index' => true,
+            ),
+            'page' => array(
+                'controllers' => array(),
+            ),
             'esi_flashes' => false,
         ), $config);
     }
@@ -97,6 +103,13 @@ class CmsExtension extends \Twig_Extension
     public function initRuntime(\Twig_Environment $twig)
     {
         $this->template = $twig->loadTemplate($this->config['template']);
+    }
+
+    public function getGlobals()
+    {
+        return array(
+            'ekyna_cms_home_route' => $this->config['home_route'],
+        );
     }
 
     /**
@@ -115,6 +128,7 @@ class CmsExtension extends \Twig_Extension
             new \Twig_SimpleFunction('cms_menu', array($this, 'renderMenu'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_breadcrumb', array($this, 'renderBreadcrumb'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_flashes', array($this, 'renderFlashes'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_page_controller', array($this, 'getPageControllerTitle'), array('is_safe' => array('html'))),
         );
     }
 
@@ -143,8 +157,8 @@ class CmsExtension extends \Twig_Extension
         }
 
         if (null !== $seo) {
-            $follow = !$this->config['seo_no_follow'] ? ($seo->getFollow() ? 'follow' : 'nofollow') : 'nofollow';
-            $index = !$this->config['seo_no_index'] ? ($seo->getIndex() ?  'index'  : 'noindex') : 'noindex';
+            $follow = !$this->config['seo']['_no_follow'] ? ($seo->getFollow() ? 'follow' : 'nofollow') : 'nofollow';
+            $index = !$this->config['seo']['no_index'] ? ($seo->getIndex() ?  'index'  : 'noindex') : 'noindex';
 
             $metas =
                 $this->renderTitle('title', $seo->getTitle()) . "\n" .
@@ -394,6 +408,20 @@ class CmsExtension extends \Twig_Extension
             return $this->fragmentHandler->render(new ControllerReference('EkynaCmsBundle:Cms:flashes'), 'esi');
         }
         return '<div id="cms-flashes"></div>';
+    }
+
+    /**
+     * Returns the page controller title.
+     *
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    public function getPageControllerTitle($name)
+    {
+        if (!array_key_exists($name, $this->config['page']['controllers'])) {
+            throw new \InvalidArgumentException(sprintf('Undefined controller "%s".', $name));
+        }
+        return $this->config['page']['controllers'][$name]['title'];
     }
 
     /**

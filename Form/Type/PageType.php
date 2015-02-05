@@ -16,6 +16,25 @@ use Symfony\Component\Form\FormEvent;
 class PageType extends ResourceFormType
 {
     /**
+     * @var array
+     */
+    protected $config;
+
+
+    /**
+     * Constructor.
+     *
+     * @param string $class
+     * @param array  $config
+     */
+    public function __construct($class, array $config)
+    {
+        parent::__construct($class);
+
+        $this->config = $config;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -42,7 +61,7 @@ class PageType extends ResourceFormType
                 ));
             }
 
-            if($page->getStatic()) {
+            if ($page->getStatic()) {
                 $form->add('name', 'text', array(
                     'label' => 'ekyna_core.field.name',
                 	'disabled' => true,
@@ -58,36 +77,54 @@ class PageType extends ResourceFormType
                     'label' => 'ekyna_core.field.url',
                     'disabled' => true,
                 ));
-            }else{
-                $form->add('name', 'text', array(
-                    'label' => 'ekyna_core.field.name',
+            } else {
+                $form
+                    ->add('name', 'text', array(
+                        'label' => 'ekyna_core.field.name',
+                        'required' => true,
+                    ))
+                    ->add('parent', 'entity', array(
+                        'label' => 'ekyna_core.field.parent',
+                        'class' => $this->dataClass,
+                        'query_builder' => function(EntityRepository $er) use ($page) {
+                            $qb = $er
+                                ->createQueryBuilder('p')
+                                ->where('p.locked = :locked')
+                                ->orderBy('p.left', 'ASC')
+                                ->setParameter('locked', false)
+                            ;
+                            if (0 < $page->getId()) {
+                                $qb
+                                    ->andWhere('p.id != :id')
+                                    ->setParameter('id', $page->getId())
+                                ;
+                            }
+                            return $qb;
+                        },
+                        'property' => 'name',
+                        'required' => true,
+                    ))
+                ;
+
+                $controllers = [];
+                foreach ($this->config['controllers'] as $name => $config) {
+                    $controllers[$name] = $config['title'];
+                }
+
+                $form->add('controller', 'choice', array(
+                    'label' => 'ekyna_cms.page.field.controller',
+                    'choices' => $controllers,
                     'required' => true,
                 ));
-                $form->add('parent', 'entity', array(
-                    'label' => 'ekyna_core.field.parent',
-                    'class' => $this->dataClass,
-                    'query_builder' => function(EntityRepository $er) use ($page) {
-                        $qb = $er->createQueryBuilder('p')
-                            ->where('p.locked = :locked')
-                            ->orderBy('p.left', 'ASC')
-                            ->setParameter('locked', false);
-                        if(0 < $page->getId()) {
-                            $qb->andWhere('p.id != :id')
-                                ->setParameter('id', $page->getId());
-                        }
-                        return $qb;
-                    },
-                    'property' => 'name',
-                    'required' => true,
-                ));
-                if(null === $page->getId()) {
+
+                if (null === $page->getId()) {
                     $form->add('path', 'text', array(
                         'label' => 'ekyna_core.field.url',
                         'admin_helper' => 'PAGE_PATH',
                         'required' => false,
                         'attr' => array('input_group' => array('prepend' => $page->getParent()->getPath().'/')),
                     ));
-                }else{
+                } else {
                     $form->add('path', 'text', array(
                         'label' => 'ekyna_core.field.url',
                         'disabled' => true,
