@@ -32,23 +32,23 @@ class AbstractBlockListener
     }
 
     /**
-     * Pre persist event handler.
+     * Post update event handler.
      *
      * @param BlockInterface $block
      * @param LifecycleEventArgs $event
      */
-    public function prePersist(BlockInterface $block, LifecycleEventArgs $event)
+    public function postUpdate(BlockInterface $block, LifecycleEventArgs $event)
     {
         $this->invalidateBlockContent($block);
     }
 
     /**
-     * Pre update event handler.
+     * Post remove event handler.
      *
      * @param BlockInterface $block
-     * @param PreUpdateEventArgs $event
+     * @param LifecycleEventArgs $event
      */
-    public function preUpdate(BlockInterface $block, PreUpdateEventArgs $event)
+    public function postRemove(BlockInterface $block, LifecycleEventArgs $event)
     {
         $this->invalidateBlockContent($block);
     }
