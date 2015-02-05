@@ -157,7 +157,7 @@ class CmsExtension extends \Twig_Extension
         }
 
         if (null !== $seo) {
-            $follow = !$this->config['seo']['_no_follow'] ? ($seo->getFollow() ? 'follow' : 'nofollow') : 'nofollow';
+            $follow = !$this->config['seo']['no_follow'] ? ($seo->getFollow() ? 'follow' : 'nofollow') : 'nofollow';
             $index = !$this->config['seo']['no_index'] ? ($seo->getIndex() ?  'index'  : 'noindex') : 'noindex';
 
             $metas =
