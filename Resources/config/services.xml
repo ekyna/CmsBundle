@@ -14,6 +14,7 @@
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
         <!--<parameter key="ekyna_cms.image.class">Ekyna\Bundle\CmsBundle\Entity\Image</parameter>-->
         <parameter key="ekyna_cms.image.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\ImageType</parameter>
+        <parameter key="ekyna_cms.file.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\FileType</parameter>
         <parameter key="ekyna_cms.gallery.class">Ekyna\Bundle\CmsBundle\Entity\Gallery</parameter>
         <parameter key="ekyna_cms.gallery.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\GalleryType</parameter>
         <parameter key="ekyna_cms.gallery_image.class">Ekyna\Bundle\CmsBundle\Entity\GalleryImage</parameter>
@@ -38,6 +39,10 @@
         <service id="ekyna_cms.seo.form_type" class="%ekyna_cms.seo.form_type.class%">
             <argument>%ekyna_cms.seo.class%</argument>
             <tag name="form.type" alias="ekyna_cms_seo" />
+        </service>
+        <service id="ekyna_cms.file.form_type" class="%ekyna_cms.file.form_type.class%">
+            <argument>%ekyna_cms.file.class%</argument>
+            <tag name="form.type" alias="ekyna_cms_file" />
         </service>
         <service id="ekyna_cms.image.form_type" class="%ekyna_cms.image.form_type.class%">
             <argument>%ekyna_cms.image.class%</argument>
@@ -97,6 +102,9 @@
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
         <service id="ekyna_cms.seo.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber" public="false">
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+        <service id="ekyna_cms.file.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\FileSubjectSubscriber" public="false">
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
         <service id="ekyna_cms.image.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\ImageSubjectSubscriber" public="false">

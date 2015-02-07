@@ -6,7 +6,7 @@
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Ekyna\Bundle\CmsBundle\Entity\Image" table="cms_image">
+    <entity name="Ekyna\Bundle\CmsBundle\Entity\File" table="cms_file">
 
         <field name="createdAt" column="created_at" type="datetime">
             <gedmo:timestampable on="create" />

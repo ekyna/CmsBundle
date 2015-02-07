@@ -19,7 +19,7 @@
 
         <unique-constraints>
             <unique-constraint name="uniq_name" columns="name,parent_id" />
-            <!--<unique-constraint name="uniq_path" columns="path,parent_id" />-->
+            <unique-constraint name="uniq_path" columns="path,parent_id" />
         </unique-constraints>
 
         <entity-listeners>
@@ -56,7 +56,7 @@
         <field name="createdAt" column="created_at" type="datetime">
             <gedmo:timestampable on="create" />
         </field>
-        <field name="updatedAt" column="updated_at" type="datetime">
+        <field name="updatedAt" column="updated_at" type="datetime" nullable="true">
             <gedmo:timestampable on="update" />
         </field>
 

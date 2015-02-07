@@ -2,17 +2,16 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Bundle\CoreBundle\Model\ImageInterface;
-use Ekyna\Bundle\CoreBundle\Model\ImageTrait;
+use Ekyna\Bundle\CoreBundle\Model;
 
 /**
  * Class ImageBlock
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class ImageBlock extends AbstractBlock implements ImageInterface
+class ImageBlock extends AbstractBlock implements Model\ImageInterface
 {
-    use ImageTrait;
+    use Model\ImageTrait;
 
     /**
      * {@inheritdoc}

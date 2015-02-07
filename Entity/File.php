@@ -2,14 +2,14 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Bundle\CoreBundle\Entity\AbstractImage;
+use Ekyna\Bundle\CoreBundle\Entity\AbstractFile;
 
 /**
- * Class Image
+ * Class File
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class Image extends AbstractImage
+class File extends AbstractFile
 {
     /**
      * @var \DateTime

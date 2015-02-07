@@ -3,14 +3,17 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ekyna\Bundle\CoreBundle\Model as Core;
 
 /**
  * Class Gallery
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class Gallery
+class Gallery implements Core\TimestampableInterface
 {
+    use Core\TimestampableTrait;
+
     /**
      * @var int
      */

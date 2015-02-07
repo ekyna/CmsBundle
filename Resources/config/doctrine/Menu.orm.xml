@@ -10,18 +10,18 @@
             repository-class="Ekyna\Bundle\CmsBundle\Entity\MenuRepository"
             table="cms_menu">
 
-        <entity-listeners>
-            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\MenuListener" />
-        </entity-listeners>
-
-        <!--<indexes>
+        <indexes>
             <index name="idx_name" columns="name" />
             <index name="idx_parent" columns="parent_id" />
         </indexes>
+
         <unique-constraints>
             <unique-constraint name="uniq_name" columns="name,parent_id" />
-            <unique-constraint name="uniq_path" columns="path,parent_id" />
-        </unique-constraints>-->
+        </unique-constraints>
+
+        <entity-listeners>
+            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\MenuListener" />
+        </entity-listeners>
 
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO" />
