@@ -14,14 +14,12 @@
         });
 
         initXrh.done(function (xml) {
-            console.log(xml);
-            $xml = $(xml);
+            var $xml = $(xml);
             if ($flashesContainer.length > 0) {
                 var flashes = $xml.find('flashes').text();
                 $flashesContainer.html($(flashes));
             }
             var editor = $xml.find('editor').text();
-            console.log(editor);
             $('body').append($(editor));
         });
     });

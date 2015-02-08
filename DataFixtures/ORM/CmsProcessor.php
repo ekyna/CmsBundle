@@ -9,7 +9,6 @@ use Faker\Factory;
 use Nelmio\Alice\ProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Class CmsProcessor
