@@ -49,7 +49,8 @@
             <gedmo:tree-level />
         </field>
 
-        <one-to-many field="children" target-entity="Ekyna\Bundle\CmsBundle\Entity\Menu" mapped-by="parent">
+        <!-- TODO fetch eager ? -->
+        <one-to-many field="children" target-entity="Ekyna\Bundle\CmsBundle\Entity\Menu" mapped-by="parent" fetch="EAGER">
             <order-by>
                 <order-by-field name="left" direction="ASC" />
             </order-by>
