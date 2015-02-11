@@ -24,21 +24,32 @@
 {% block ekyna_cms_gallery_image_widget %}
 {% spaceless %}
     <div class="row">
-        <div class="col-md-11">
+        {{ form_errors(form) }}
+        {% set controls = form.parent.vars.allow_sort or form.parent.vars.allow_delete %}
+        <div class="col-md-{{ controls ? '11' : '12' }}">
             {{ form_widget(form.image) }}
             {{ form_widget(form.position) }}
         </div>
+        {% if controls %}
         <div class="col-md-1 child-controls">
+            {% if form.parent.vars.allow_sort %}
             <button class="btn btn-default btn-sm" data-role="move-up" type="button">
                 <span class="glyphicon glyphicon-chevron-up"></span>
             </button>
+            {% endif %}
+            {% if form.parent.vars.allow_delete %}
             <button class="btn btn-default btn-danger btn-sm" data-role="remove" type="button">
                 <span class="glyphicon glyphicon-remove"></span>
             </button>
+            {% endif %}
+            {% if form.parent.vars.allow_sort %}
             <button class="btn btn-default btn-sm" data-role="move-down" type="button">
                 <span class="glyphicon glyphicon-chevron-down"></span>
             </button>
+            {% endif %}
         </div>
+        {% endif %}
+        {{ form_rest(form) }}
     </div>
 {% endspaceless %}
 {% endblock ekyna_cms_gallery_image_widget %}
