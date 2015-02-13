@@ -36,10 +36,22 @@
         </property>
     </class>
 
-    <class name="Ekyna\Bundle\CmsBundle\Entity\Image">
-        <constraint name="Ekyna\Bundle\CoreBundle\Validator\Constraints\AbstractImage" />
-        <property name="file">
-            <constraint name="Image" />
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Gallery">
+        <property name="images">
+            <constraint name="Valid" />
+        </property>
+    </class>
+
+    <class name="Ekyna\Bundle\CmsBundle\Entity\GalleryImage">
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\GalleryImage" />
+        <property name="image">
+            <constraint name="Valid" />
+        </property>
+        <property name="position">
+            <constraint name="NotNull" />
+            <constraint name="GreaterThanOrEqual">
+                <option name="value">0</option>
+            </constraint>
         </property>
     </class>
 

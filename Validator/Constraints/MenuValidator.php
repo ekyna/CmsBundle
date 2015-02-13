@@ -2,8 +2,10 @@
 
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
+use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * Class ContentGridValidator
@@ -17,9 +19,16 @@ class MenuValidator extends ConstraintValidator
      */
     public function validate($menu, Constraint $constraint)
     {
+        if (!$constraint instanceof Menu) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Menu');
+        }
+        if (!$constraint instanceof MenuInterface) {
+            throw new UnexpectedTypeException($menu, 'Ekyna\Bundle\CmsBundle\Model\MenuInterface');
+        }
+
         /**
-         * @var \Ekyna\Bundle\CmsBundle\Model\MenuInterface $menu
-         * @var \Ekyna\Bundle\CmsBundle\Validator\Constraints\Menu $constraint
+         * @var MenuInterface $menu
+         * @var Menu $constraint
          */
         $page = null !== $menu->getPage();
         $path = 0 < strlen($menu->getPath());

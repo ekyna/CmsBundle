@@ -10,7 +10,7 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class GalleryImage implements Cms\ImageSubjectInterface, Core\SortableInterface
+class GalleryImage implements Cms\GalleryImageInterface
 {
     use Cms\ImageSubjectTrait,
         Core\SortableTrait;

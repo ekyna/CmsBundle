@@ -23,16 +23,6 @@ class File extends AbstractFile
 
 
     /**
-     * Returns the string representation.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return pathinfo($this->getPath(), PATHINFO_BASENAME);
-    }
-
-    /**
      * Returns the createdAt.
      *
      * @return \DateTime

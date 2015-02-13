@@ -2,8 +2,10 @@
 
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
+use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * Class BlockIdentityValidator
@@ -14,9 +16,16 @@ class BlockIdentityValidator extends ConstraintValidator
 {
     public function validate($block, Constraint $constraint)
     {
+        if (!$constraint instanceof BlockIdentity) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\BlockIdentity');
+        }
+        if (!$constraint instanceof BlockInterface) {
+            throw new UnexpectedTypeException($block, 'Ekyna\Bundle\CmsBundle\Model\BlockInterface');
+        }
+
         /**
-         * @var \Ekyna\Bundle\CmsBundle\Entity\AbstractBlock $block
-         * @var \Ekyna\Bundle\CmsBundle\Validator\Constraints\BlockIdentity $constraint
+         * @var BlockInterface $block
+         * @var BlockIdentity $constraint
          */
         $content = $block->getContent();
         $name    = $block->getName();

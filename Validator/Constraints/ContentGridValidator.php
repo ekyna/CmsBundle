@@ -2,8 +2,10 @@
 
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
+use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * Class ContentGridValidator
@@ -14,9 +16,16 @@ class ContentGridValidator extends ConstraintValidator
 {
     public function validate($content, Constraint $constraint)
     {
+        if (!$constraint instanceof ContentGrid) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\ContentGrid');
+        }
+        if (!$constraint instanceof ContentInterface) {
+            throw new UnexpectedTypeException($content, 'Ekyna\Bundle\CmsBundle\Model\ContentInterface');
+        }
+
         /**
-         * @var \Ekyna\Bundle\CmsBundle\Model\ContentInterface $content
-         * @var \Ekyna\Bundle\CmsBundle\Validator\Constraints\ContentGrid $constraint
+         * @var ContentInterface $content
+         * @var ContentGrid $constraint
          */
         $currentColumn = 1;
         $currentRow = 1;
