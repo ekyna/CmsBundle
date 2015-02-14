@@ -45,6 +45,7 @@
     <class name="Ekyna\Bundle\CmsBundle\Entity\GalleryImage">
         <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\GalleryImage" />
         <property name="image">
+            <constraint name="NotNull" />
             <constraint name="Valid" />
         </property>
         <property name="position">
