@@ -2,6 +2,7 @@
 <doctrine-mapping
         xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping"
         xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                             http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
@@ -11,8 +12,16 @@
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO" />
         </id>
-        <field name="position" type="integer" column="position" />
-        <!-- Can't use gedmo:sortable as we can't group from this -->
+
+        <field name="position" type="integer" column="position">
+            <gedmo:sortable-position />
+        </field>
+
+        <many-to-one target-entity="Ekyna\Bundle\CmsBundle\Entity\Gallery" inversed-by="images" field="gallery" orphan-removal="true">
+            <join-column name="gallery_id" referenced-column-name="id" nullable="true" on-delete="CASCADE" />
+            <gedmo:sortable-group />
+        </many-to-one>
+
     </entity>
 
 </doctrine-mapping>

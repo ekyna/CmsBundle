@@ -22,22 +22,14 @@
             <gedmo:timestampable on="update" />
         </field>
 
-        <many-to-many target-entity="Ekyna\Bundle\CmsBundle\Entity\GalleryImage" field="images" fetch="EXTRA_LAZY">
+        <one-to-many target-entity="Ekyna\Bundle\CmsBundle\Entity\GalleryImage" mapped-by="gallery" field="images" fetch="EXTRA_LAZY" orphan-removal="true">
             <cascade>
                 <cascade-all />
             </cascade>
-            <join-table name="cms_gallery_gallery_image">
-                <join-columns>
-                    <join-column name="gallery_id" referenced-column-name="id" on-delete="CASCADE" />
-                </join-columns>
-                <inverse-join-columns>
-                    <join-column name="gallery_image_id" referenced-column-name="id" on-delete="CASCADE" />
-                </inverse-join-columns>
-            </join-table>
             <order-by>
                 <order-by-field name="position" direction="ASC" />
             </order-by>
-        </many-to-many>
+        </one-to-many>
 
     </entity>
 

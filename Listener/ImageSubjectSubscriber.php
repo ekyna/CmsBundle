@@ -37,7 +37,6 @@ class ImageSubjectSubscriber implements EventSubscriber
             'fieldName'     => 'image',
             'targetEntity'  => self::IMAGE_FQCN,
             'cascade'       => array('persist', 'refresh', 'detach', 'merge'),
-            //'orphanRemoval' => true,
             'joinColumns' => array(
                 array(
                     'name'                  => 'image_id',
@@ -46,7 +45,6 @@ class ImageSubjectSubscriber implements EventSubscriber
                     'nullable'              => true,
                 ),
             ),
-            // TODO fetch => ?
         ));
     }
 

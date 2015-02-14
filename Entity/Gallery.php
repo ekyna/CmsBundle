@@ -83,11 +83,14 @@ class Gallery implements Core\TimestampableInterface
     /**
      * Sets the images.
      *
-     * @param ArrayCollection $images
+     * @param ArrayCollection|GalleryImage[] $images
      * @return Gallery
      */
     public function setImages(ArrayCollection $images)
     {
+        foreach ($images as $image) {
+            $image->setGallery($this);
+        }
         $this->images = $images;
         return $this;
     }
@@ -112,7 +115,9 @@ class Gallery implements Core\TimestampableInterface
     public function addImage(GalleryImage $image)
     {
         if (!$this->hasImage($image)) {
+            $image->setGallery($this);
             $this->images->add($image);
+            $this->setUpdatedAt(new \DateTime());
         }
         return $this;
     }
@@ -126,7 +131,9 @@ class Gallery implements Core\TimestampableInterface
     public function removeImage(GalleryImage $image)
     {
         if ($this->hasImage($image)) {
+            $image->setGallery(null);
             $this->images->removeElement($image);
+            $this->setUpdatedAt(new \DateTime());
         }
         return $this;
     }

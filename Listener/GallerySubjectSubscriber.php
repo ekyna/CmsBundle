@@ -37,7 +37,6 @@ class GallerySubjectSubscriber implements EventSubscriber
             'fieldName'     => 'gallery',
             'targetEntity'  => self::GALLERY_FQCN,
             'cascade'       => array('persist', 'refresh', 'detach', 'merge'),
-            //'orphanRemoval' => true,
             'joinColumns' => array(
                 array(
                     'name'                  => 'gallery_id',

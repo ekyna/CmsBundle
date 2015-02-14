@@ -21,6 +21,12 @@ class GalleryImage implements Cms\GalleryImageInterface
     protected $id;
 
     /**
+     * @var Gallery
+     */
+    protected $gallery;
+
+
+    /**
      * Returns the id.
      *
      * @return int
@@ -28,6 +34,28 @@ class GalleryImage implements Cms\GalleryImageInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Returns the gallery.
+     *
+     * @return Gallery
+     */
+    public function getGallery()
+    {
+        return $this->gallery;
+    }
+
+    /**
+     * Sets the gallery.
+     *
+     * @param Gallery $gallery
+     * @return GalleryImage
+     */
+    public function setGallery(Gallery $gallery = null)
+    {
+        $this->gallery = $gallery;
+        return $this;
     }
 
     /**
