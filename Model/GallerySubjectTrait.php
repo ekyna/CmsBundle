@@ -22,7 +22,7 @@ trait GallerySubjectTrait
      * @param Gallery $gallery
      * @return GallerySubjectInterface|$this
      */
-    public function setGallery(Gallery $gallery)
+    public function setGallery(Gallery $gallery = null)
     {
         $this->gallery = $gallery;
         return $this;

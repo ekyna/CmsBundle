@@ -67,6 +67,7 @@ class GalleryType extends ResourceFormType
                 'thumb_col'     => 3,
                 'rename_field'  => true,
                 'alt_field'     => true,
+                'required'      => false,
             ))
             ->setRequired(array('data_class'))
             ->setOptional(array('image_path'))

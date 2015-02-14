@@ -29,7 +29,13 @@ class TagsSubjectSubscriber implements EventSubscriber
             return;
         }
 
+        // Check if class implements the subject interface
         if (!in_array(self::SUBJECT_INTERFACE, class_implements($metadata->getName()))) {
+            return;
+        }
+
+        // Don't add mapping twice
+        if ($metadata->hasAssociation('tags')) {
             return;
         }
 
