@@ -276,7 +276,7 @@ class CmsExtension extends \Twig_Extension
                     } elseif (0 < strlen($html = $page->getHtml())) {
                         return $html;
                     } else {
-                        return '<p>Page en construction.</p>';
+                        return '<p></p>'; // TODO default content
                     }
                 }
             }

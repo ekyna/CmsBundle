@@ -18,7 +18,8 @@ class TinymcePlugin extends AbstractPlugin
     public function create(array $datas = array())
     {
     	$block = new TinymceBlock();
-    	$block->setHtml('<p>Default block content.</p>');
+        $defaultContent = array_key_exists('default_content', $this->config) ? $this->config['default_content'] : '';
+    	$block->setHtml('<p>' . $defaultContent . '</p>');
     	return $block;
     }
 

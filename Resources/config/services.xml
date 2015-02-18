@@ -185,9 +185,11 @@
 
         <!-- Web Editor plugins -->
         <service id="ekyna_cms.editor.plugin.tinymce" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\TinymcePlugin">
+            <argument>%ekyna_cms.editor.plugin.tinymce.config%</argument>
             <tag name="ekyna_cms.editor.plugin" alias="tinymce" />
         </service>
         <service id="ekyna_cms.editor.plugin.image" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\ImagePlugin">
+            <argument>%ekyna_cms.editor.plugin.image.config%</argument>
             <tag name="ekyna_cms.editor.plugin" alias="image" />
         </service>
 

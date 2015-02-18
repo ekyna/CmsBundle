@@ -12,6 +12,31 @@ use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 abstract class AbstractPlugin implements PluginInterface
 {
     /**
+     * @var array
+     */
+    protected $config;
+
+    /**
+     * Constructor.
+     *
+     * @param array $config
+     */
+    public function __construct(array $config = array())
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * Returns the plugin config.
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function supports(BlockInterface $block)

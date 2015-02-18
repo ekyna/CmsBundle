@@ -309,6 +309,7 @@ class PageGenerator
                 ->setCanonical($seoDefinition['canonical'])
             ;
 
+            // Page
             $page
                 ->setName($definition->getPageName())
                 ->setTitle($definition->getPageName())
@@ -319,8 +320,8 @@ class PageGenerator
                 ->setAdvanced($definition->getAdvanced())
                 ->setParent($parentPage)
                 ->setSeo($seo)
-                ->setHtml('<p>Page en cours de rédaction.</p>');
-            // Page
+                ->setHtml('<p></p>') // TODO default content
+            ;
 
             $violationList = $this->validator->validate($page, null, array('generator'));
             if (0 < $violationList->count()) {
