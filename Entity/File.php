@@ -16,11 +16,6 @@ class File extends AbstractFile
      */
     private $createdAt;
 
-    /**
-     * @var \DateTime
-     */
-    private $deletedAt;
-
 
     /**
      * Returns the createdAt.
@@ -42,28 +37,5 @@ class File extends AbstractFile
     {
         $this->createdAt = $createdAt;
         return $this;
-    }
-
-    /**
-     * Sets the deletedAt datetime.
-     *
-     * @param \DateTime $deletedAt
-     * @return Image
-     */
-    public function setDeletedAt(\DateTime $deletedAt = null)
-    {
-        $this->deletedAt = $deletedAt;
-
-        return $this;
-    }
-
-    /**
-     * Returns the deletedAt datetime.
-     *
-     * @return \DateTime
-     */
-    public function getDeletedAt()
-    {
-        return $this->deletedAt;
     }
 }

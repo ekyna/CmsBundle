@@ -16,11 +16,6 @@ class Image extends AbstractImage
      */
     private $createdAt;
 
-    /**
-     * @var \DateTime
-     */
-    private $deletedAt;
-
 
     /**
      * Returns the string representation.
@@ -52,28 +47,5 @@ class Image extends AbstractImage
     {
         $this->createdAt = $createdAt;
         return $this;
-    }
-
-    /**
-     * Sets the deletedAt datetime.
-     *
-     * @param \DateTime $deletedAt
-     * @return Image
-     */
-    public function setDeletedAt(\DateTime $deletedAt = null)
-    {
-        $this->deletedAt = $deletedAt;
-
-        return $this;
-    }
-
-    /**
-     * Returns the deletedAt datetime.
-     *
-     * @return \DateTime
-     */
-    public function getDeletedAt()
-    {
-        return $this->deletedAt;
     }
 }

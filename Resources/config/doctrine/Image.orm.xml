@@ -11,8 +11,6 @@
         <field name="createdAt" column="created_at" type="datetime">
             <gedmo:timestampable on="create" />
         </field>
-        <field name="deletedAt" column="deleted_at" type="datetime" nullable="true" />
-        <gedmo:soft-deleteable field-name="deletedAt" />
 
     </entity>
 
