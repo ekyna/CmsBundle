@@ -5,12 +5,11 @@ namespace Ekyna\Bundle\CmsBundle\Settings;
 use Ekyna\Bundle\SettingBundle\Schema\AbstractSchema;
 use Ekyna\Bundle\SettingBundle\Schema\SettingsBuilderInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Locale;
+use Symfony\Component\Validator\Constraints;
 
 /**
- * CmsSettingsSchema.
- *
+ * Class CmsSettingsSchema
+ * @package Ekyna\Bundle\CmsBundle\Settings
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class CmsSettingsSchema extends AbstractSchema
@@ -56,20 +55,20 @@ class CmsSettingsSchema extends AbstractSchema
             ->add('title', 'text', array(
                 'label'       => 'ekyna_core.field.title',
                 'constraints' => array(
-                    new NotBlank()
+                    new Constraints\NotBlank()
                 )
             ))
             ->add('meta_description', 'textarea', array(
                 'label'       => 'ekyna_core.field.description',
                 'constraints' => array(
-                    new NotBlank()
+                    new Constraints\NotBlank()
                 )
             ))
             ->add('locale', 'locale', array(
                 'label'       => 'ekyna_core.field.locale',
                 'constraints' => array(
-                    new NotBlank(),
-                    new Locale(),
+                    new Constraints\NotBlank(),
+                    new Constraints\Locale(),
                 )
             ))
         ;
