@@ -7,8 +7,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 
 /**
- * EkynaCmsExtension
- *
+ * Class EkynaCmsExtension
+ * @package Ekyna\Bundle\CmsBundle\DependencyInjection
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class EkynaCmsExtension extends AbstractExtension implements PrependExtensionInterface

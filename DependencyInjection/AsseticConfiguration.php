@@ -56,7 +56,7 @@ class AsseticConfiguration
      * @return array
      */
     protected function buildJs(array $config)
-    {        
+    {
         $inputs = array(
             '@EkynaCmsBundle/Resources/asset/editor/editor.js',
             '@EkynaCmsBundle/Resources/asset/editor/plugin/tinymce.js',
