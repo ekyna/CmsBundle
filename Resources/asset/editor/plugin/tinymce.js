@@ -39,6 +39,7 @@
         config.toolbar_items_size = 'small';
         config.paste_as_text = true;
         config.relative_urls = false;
+        config.content_css = [];
         config.setup = function(ed) {
             ed.on('click', function(e) {
                 e.stopPropagation();
