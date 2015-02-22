@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Twig;
 
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Entity\MenuRepository;
+use Ekyna\Bundle\CmsBundle\Entity\Seo;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
@@ -11,6 +12,7 @@ use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvent;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvents;
+use Ekyna\Bundle\SettingBundle\Manager\SettingsManagerInterface;
 use Knp\Menu\Twig\Helper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
@@ -23,6 +25,11 @@ use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
  */
 class CmsExtension extends \Twig_Extension
 {
+    /**
+     * @var SettingsManagerInterface
+     */
+    protected $settings;
+
     /**
      * @var Editor
      */
@@ -62,6 +69,7 @@ class CmsExtension extends \Twig_Extension
     /**
      * Constructor.
      *
+     * @param SettingsManagerInterface $settings
      * @param Editor                   $editor
      * @param MenuRepository           $menuRepository
      * @param Helper                   $helper
@@ -70,6 +78,7 @@ class CmsExtension extends \Twig_Extension
      * @param array                    $config
      */
     public function __construct(
+        SettingsManagerInterface $settings,
         Editor $editor,
         MenuRepository $menuRepository,
         Helper $helper,
@@ -77,6 +86,7 @@ class CmsExtension extends \Twig_Extension
         FragmentHandler $fragmentHandler,
         array $config = array()
     ) {
+        $this->settings = $settings;
         $this->editor = $editor;
         $this->menuRepository = $menuRepository;
         $this->helper = $helper;
@@ -152,8 +162,18 @@ class CmsExtension extends \Twig_Extension
      */
     public function renderSeo(SeoInterface $seo = null)
     {
-        if (null === $seo && null !== $page = $this->editor->getCurrentPage()) {
-            $seo = $page->getSeo();
+        if (null === $seo) {
+            if (null !== $page = $this->editor->getCurrentPage()) {
+                $seo = $page->getSeo();
+            } else {
+                $seo = new Seo();
+                $seo
+                    ->setTitle($this->settings->getParameter('seo.title'))
+                    ->setDescription($this->settings->getParameter('seo.description'))
+                    ->setIndex(!$this->config['seo']['no_index'])
+                    ->setFollow(!$this->config['seo']['no_follow'])
+                ;
+            }
         }
 
         if (null !== $seo) {
@@ -174,10 +194,12 @@ class CmsExtension extends \Twig_Extension
             }
 
             // Tags the response as Seo relative
-            $this->eventDispatcher->dispatch(
-                HttpCacheEvents::TAG_RESPONSE,
-                new HttpCacheEvent($seo->getEntityTag())
-            );
+            if ($seo->getId()) {
+                $this->eventDispatcher->dispatch(
+                    HttpCacheEvents::TAG_RESPONSE,
+                    new HttpCacheEvent($seo->getEntityTag())
+                );
+            }
         } else {
             $metas = '<title>Undefined</title>' . $this->renderMeta('robots', 'follow,noindex');
         }

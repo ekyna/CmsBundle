@@ -26,6 +26,7 @@ class EkynaCmsExtension extends AbstractExtension implements PrependExtensionInt
         $container->setParameter('ekyna_cms.seo.config', $config['seo']);
         $container->setParameter('ekyna_cms.page.config', $config['page']);
         $container->setParameter('ekyna_cms.menu.config', $config['menu']);
+        $container->setParameter('ekyna_cms.cookie_consent.config', $config['cookie_consent']);
 
         foreach ($config['editor']['plugin'] as $name => $editorPluginConfig) {
             $container->setParameter('ekyna_cms.editor.plugin.'.$name.'.config', $editorPluginConfig);

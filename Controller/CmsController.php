@@ -56,6 +56,13 @@ class CmsController extends Controller
             $data['editor'] = false;
         }
 
+        // Does cookie consent must be rendered ?
+        if ($request->request->get('cookie', false) && $this->container->getParameter('ekyna_cms.cookie_consent.config')['enable']) {
+            $data['cookie_consent'] = true;
+        } else {
+            $data['cookie_consent'] = false;
+        }
+
         $response = $this->render('EkynaCmsBundle:Cms:init.xml.twig', $data);
         $response->headers->add(array('Content-Type' => 'application/xml'));
 

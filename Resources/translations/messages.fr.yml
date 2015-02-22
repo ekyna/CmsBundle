@@ -1,4 +1,15 @@
 ekyna_cms:
+    settings:
+        cookies:
+            label: Cookies
+            mode:
+                label: Mode
+                header: En-tête
+                dialog: Dialogue
+            header_text: Texte du mode en-tête
+            dialog_text: Texte du mode dialogue
+            close: Masquer ce message
+            learn: En savoir plus
     page:
         label:
             singular: Page

@@ -122,11 +122,14 @@
         </service>
 
         <!-- Settings Schema -->
-        <service id="ekyna_cms.settings" class="Ekyna\Bundle\CmsBundle\Settings\CmsSettingsSchema" public="false">
+        <service id="ekyna_cms.settings.seo" class="Ekyna\Bundle\CmsBundle\Settings\SeoSettingsSchema" public="false">
             <argument type="collection">
                 <argument key="locale">%locale%</argument>
             </argument>
-            <tag name="ekyna_setting.schema" namespace="cms" position="10" />
+            <tag name="ekyna_setting.schema" namespace="seo" position="10" />
+        </service>
+        <service id="ekyna_cms.settings.cookies" class="Ekyna\Bundle\CmsBundle\Settings\CookiesSettingsSchema" public="false">
+            <tag name="ekyna_setting.schema" namespace="cookies" position="11" />
         </service>
 
         <!-- Sitemap providers -->
@@ -173,6 +176,12 @@
             <argument type="service" id="logger" on-invalid="ignore" />
         </service>
 
+        <!-- Routing loader -->
+        <service id="ekyna_cms.routing_loader" class="Ekyna\Bundle\CmsBundle\Routing\RoutingLoader">
+            <argument>%ekyna_cms.cookie_consent.config%</argument>
+            <tag name="routing.loader" />
+        </service>
+
         <!-- Web Editor -->
         <service id="ekyna_cms.editor.plugin_registry" class="Ekyna\Bundle\CmsBundle\Editor\PluginRegistry" />
         <service id="ekyna_cms.editor" class="Ekyna\Bundle\CmsBundle\Editor\Editor">
@@ -195,6 +204,7 @@
 
         <!-- Twig extensions -->
         <service id="ekyna_cms.twig.cms_extension" class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
+            <argument type="service" id="ekyna_setting.manager" />
             <argument type="service" id="ekyna_cms.editor" />
             <argument type="service" id="ekyna_cms.menu.repository" />
             <argument type="service" id="knp_menu.helper" />

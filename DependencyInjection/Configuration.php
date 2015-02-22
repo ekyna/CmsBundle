@@ -91,6 +91,13 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('cookie_consent')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enable')->defaultTrue()->end()
+                        ->scalarNode('controller')->defaultValue('EkynaCmsBundle:Cms:default')->end()
+                    ->end()
+                ->end()
             ->end()
         ;
 

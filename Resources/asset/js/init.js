@@ -1,3 +1,164 @@
+(function(window) {
+    if (!!window.cookieChoices) {
+        return window.cookieChoices;
+    }
+
+    var zIndex = 1050;
+    var document = window.document;
+    // IE8 does not support textContent, so we should fallback to innerText.
+    var supportsTextContent = 'textContent' in document.body;
+
+    var cookieChoices = (function() {
+
+        var cookieName = 'displayCookieConsent';
+        var cookieConsentId = 'cookieChoiceInfo';
+        var dismissLinkId = 'cookieChoiceDismiss';
+
+        function _createHeaderElement(cookieText, dismissText, linkText, linkHref) {
+            var butterBarStyles = 'position:fixed;width:100%;background-color:#eee;' +
+                'margin:0; left:0; top:0;padding:4px;z-index:' + zIndex + ';text-align:center;';
+
+            var cookieConsentElement = document.createElement('div');
+            cookieConsentElement.id = cookieConsentId;
+            cookieConsentElement.style.cssText = butterBarStyles;
+            cookieConsentElement.appendChild(_createConsentText(cookieText));
+
+            if (!!linkText && !!linkHref) {
+                cookieConsentElement.appendChild(_createInformationLink(linkText, linkHref));
+            }
+            cookieConsentElement.appendChild(_createDismissLink(dismissText));
+            return cookieConsentElement;
+        }
+
+        function _createDialogElement(cookieText, dismissText, linkText, linkHref) {
+            var glassStyle = 'position:fixed;width:100%;height:100%;z-index:' + zIndex + ';' +
+                'top:0;left:0;opacity:0.5;filter:alpha(opacity=50);' +
+                'background-color:#ccc;';
+            var dialogStyle = 'z-index:' + (zIndex+1) + ';position:fixed;left:50%;top:50%';
+            var contentStyle = 'position:relative;left:-50%;margin-top:-25%;' +
+                'background-color:#fff;padding:20px;box-shadow:4px 4px 25px #888;';
+
+            var cookieConsentElement = document.createElement('div');
+            cookieConsentElement.id = cookieConsentId;
+
+            var glassPanel = document.createElement('div');
+            glassPanel.style.cssText = glassStyle;
+
+            var content = document.createElement('div');
+            content.style.cssText = contentStyle;
+
+            var dialog = document.createElement('div');
+            dialog.style.cssText = dialogStyle;
+
+            var dismissLink = _createDismissLink(dismissText);
+            dismissLink.style.display = 'block';
+            dismissLink.style.textAlign = 'right';
+            dismissLink.style.marginTop = '8px';
+
+            content.innerHTML = cookieText;
+            if (!!linkText && !!linkHref) {
+                content.appendChild(_createInformationLink(linkText, linkHref));
+            }
+            content.appendChild(dismissLink);
+            dialog.appendChild(content);
+            cookieConsentElement.appendChild(glassPanel);
+            cookieConsentElement.appendChild(dialog);
+            return cookieConsentElement;
+        }
+
+        function _setElementText(element, text) {
+            if (supportsTextContent) {
+                element.textContent = text;
+            } else {
+                element.innerText = text;
+            }
+        }
+
+        function _createConsentText(cookieText) {
+            var consentText = document.createElement('span');
+            _setElementText(consentText, cookieText);
+            return consentText;
+        }
+
+        function _createDismissLink(dismissText) {
+            var dismissLink = document.createElement('a');
+            _setElementText(dismissLink, dismissText);
+            dismissLink.id = dismissLinkId;
+            dismissLink.href = '#';
+            dismissLink.style.marginLeft = '24px';
+            return dismissLink;
+        }
+
+        function _createInformationLink(linkText, linkHref) {
+            var infoLink = document.createElement('a');
+            _setElementText(infoLink, linkText);
+            infoLink.href = linkHref;
+            infoLink.target = '_blank';
+            infoLink.style.marginLeft = '8px';
+            return infoLink;
+        }
+
+        function _dismissLinkClick() {
+            _saveUserPreference();
+            _removeCookieConsent();
+            return false;
+        }
+
+        function _showCookieConsent(cookieText, dismissText, linkText, linkHref, isDialog) {
+            console.log(cookieText);
+            console.log(dismissText);
+            console.log(linkText);
+            console.log(linkHref);
+            if (_shouldDisplayConsent()) {
+                _removeCookieConsent();
+                var consentElement = (isDialog) ?
+                    _createDialogElement(cookieText, dismissText, linkText, linkHref) :
+                    _createHeaderElement(cookieText, dismissText, linkText, linkHref);
+                var fragment = document.createDocumentFragment();
+                fragment.appendChild(consentElement);
+                document.body.appendChild(fragment.cloneNode(true));
+                document.getElementById(dismissLinkId).onclick = _dismissLinkClick;
+            }
+        }
+
+        function showCookieConsentBar(cookieText, dismissText, linkText, linkHref) {
+            _showCookieConsent(cookieText, dismissText, linkText, linkHref, false);
+        }
+
+        function showCookieConsentDialog(cookieText, dismissText, linkText, linkHref) {
+            _showCookieConsent(cookieText, dismissText, linkText, linkHref, true);
+        }
+
+        function _removeCookieConsent() {
+            var cookieChoiceElement = document.getElementById(cookieConsentId);
+            if (cookieChoiceElement != null) {
+                cookieChoiceElement.parentNode.removeChild(cookieChoiceElement);
+            }
+        }
+
+        function _saveUserPreference() {
+            // Set the cookie expiry to one year after today.
+            var expiryDate = new Date();
+            expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+            document.cookie = cookieName + '=y; expires=' + expiryDate.toGMTString();
+        }
+
+        function _shouldDisplayConsent() {
+            // Display the header only if the cookie has not been set.
+            return !document.cookie.match(new RegExp(cookieName + '=([^;]+)'));
+        }
+
+        var exports = {};
+        exports.showCookieConsentBar = showCookieConsentBar;
+        exports.showCookieConsentDialog = showCookieConsentDialog;
+        exports.consentRequired = _shouldDisplayConsent;
+        return exports;
+    })();
+
+    window.cookieChoices = cookieChoices;
+    return cookieChoices;
+})(this);
+
 (function(doc, $, router) {
     $(doc).ready(function() {
 
@@ -7,7 +168,8 @@
             url: router.generate('ekyna_cms_init'),
             data: {
                 flashes: $flashesContainer.length > 0 ? 1 : 0,
-                editor: $('.cms-editor-block').length > 0 ? 1 : 0
+                editor: $('.cms-editor-block').length > 0 ? 1 : 0,
+                cookie: cookieChoices.consentRequired() ? 1 : 0
             },
             dataType: 'xml',
             type: 'POST'
@@ -15,12 +177,38 @@
 
         initXrh.done(function (xml) {
             var $xml = $(xml);
+            // Flashes
             if ($flashesContainer.length > 0) {
                 var flashes = $xml.find('flashes').text();
                 $flashesContainer.html($(flashes));
             }
+
+            // Editor
             var editor = $xml.find('editor').text();
             $('body').append($(editor));
+
+            // Cookie consent
+            var $cookie = $xml.find('cookie');
+            console.log($cookie);
+            if ($cookie.length == 1) {
+                if ($cookie.attr('mode') == 'header') {
+                    console.log('showCookieConsentBar');
+                    cookieChoices.showCookieConsentBar(
+                        $cookie.text(),
+                        $cookie.attr('close'),
+                        $cookie.attr('learn'),
+                        router.generate('cookies_informations')
+                    );
+                } else {
+                    console.log('showCookieConsentDialog');
+                    cookieChoices.showCookieConsentDialog(
+                        $cookie.text(),
+                        $cookie.attr('close'),
+                        $cookie.attr('learn'),
+                        router.generate('cookies_informations')
+                    );
+                }
+            }
         });
     });
 })(document, jQuery, Routing);

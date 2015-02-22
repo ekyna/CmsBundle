@@ -11,5 +11,11 @@
         {%- include 'EkynaCmsBundle:Editor:editor.html.twig' -%}
     {%- endif %}]]>
     </editor>
+    {% if cookie_consent -%}
+    {%- set cookie_mode = get_setting('cookies.mode') -%}
+    <cookie mode="{{ cookie_mode }}" close="{{ 'ekyna_cms.settings.cookies.close'|trans }}" learn="{{ 'ekyna_cms.settings.cookies.learn'|trans }}">
+        <![CDATA[{{ get_setting('cookies.' ~ cookie_mode ~ '_text')|raw }}]]>
+    </cookie>
+    {%- endif %}
 </init>
 {% endspaceless %}
