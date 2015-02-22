@@ -2,20 +2,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <init>
     <flashes>
-    <![CDATA[{% if flashes -%}
+    <![CDATA[
+    {%- if flashes -%}
         {%- include 'EkynaCoreBundle:Ui:flashes.html.twig' -%}
-    {%- endif %}]]>
+    {%- endif -%}
+    ]]>
     </flashes>
     <editor>
-    <![CDATA[{% if editor -%}
-        {%- include 'EkynaCmsBundle:Editor:editor.html.twig' -%}
-    {%- endif %}]]>
+    <![CDATA[
+        {%- if editor -%}
+            {%- include 'EkynaCmsBundle:Editor:editor.html.twig' -%}
+        {%- endif -%}
+    ]]>
     </editor>
-    {% if cookie_consent -%}
-    {%- set cookie_mode = get_setting('cookies.mode') -%}
-    <cookie mode="{{ cookie_mode }}" close="{{ 'ekyna_cms.settings.cookies.close'|trans }}" learn="{{ 'ekyna_cms.settings.cookies.learn'|trans }}">
-        <![CDATA[{{ get_setting('cookies.' ~ cookie_mode ~ '_text')|raw }}]]>
-    </cookie>
+    {% if cookie_consent is not sameas(null) -%}
+        {%- if cookie_consent -%}
+            {%- set cookie_mode = get_setting('cookies.mode') -%}
+            <cookie mode="{{ cookie_mode }}" close="{{ 'ekyna_cms.settings.cookies.close'|trans }}" learn="{{ 'ekyna_cms.settings.cookies.learn'|trans }}">
+                <![CDATA[{{ get_setting('cookies.' ~ cookie_mode ~ '_text')|raw }}]]>
+            </cookie>
+        {%- else -%}
+            <cookie disabled="disabled"></cookie>
+        {%- endif %}
     {%- endif %}
 </init>
 {% endspaceless %}

@@ -10,23 +10,32 @@
 
     var cookieChoices = (function() {
 
-        var cookieName = 'displayCookieConsent';
-        var cookieConsentId = 'cookieChoiceInfo';
-        var dismissLinkId = 'cookieChoiceDismiss';
+        var cookieName = 'cms-cookies-consent';
+        var cookieConsentId = 'cms-cookies-consent';
+        var contentId = 'cms-cookies-consent-content';
+        var infoLinkId = 'cms-cookies-consent-info';
+        var dismissLinkId = 'cms-cookies-consent-dismiss';
 
         function _createHeaderElement(cookieText, dismissText, linkText, linkHref) {
             var butterBarStyles = 'position:fixed;width:100%;background-color:#eee;' +
-                'margin:0; left:0; top:0;padding:4px;z-index:' + zIndex + ';text-align:center;';
+                'margin:0;left:0;top:0;padding:4px; z-index:' + zIndex + ';text-align:center;';
 
             var cookieConsentElement = document.createElement('div');
             cookieConsentElement.id = cookieConsentId;
             cookieConsentElement.style.cssText = butterBarStyles;
-            cookieConsentElement.appendChild(_createConsentText(cookieText));
+
+            var content = _createConsentText(cookieText);
+            content.id = contentId;
+            cookieConsentElement.appendChild(content);
 
             if (!!linkText && !!linkHref) {
-                cookieConsentElement.appendChild(_createInformationLink(linkText, linkHref));
+                var infoLink = _createInformationLink(linkText, linkHref);
+                infoLink.style.marginLeft = '16px';
+                cookieConsentElement.appendChild(infoLink);
             }
-            cookieConsentElement.appendChild(_createDismissLink(dismissText));
+            var dismissLink = _createDismissLink(dismissText);
+            dismissLink.style.marginLeft = '16px';
+            cookieConsentElement.appendChild(dismissLink);
             return cookieConsentElement;
         }
 
@@ -44,23 +53,30 @@
             var glassPanel = document.createElement('div');
             glassPanel.style.cssText = glassStyle;
 
+            var container = document.createElement('div');
+            container.style.cssText = contentStyle;
+
             var content = document.createElement('div');
-            content.style.cssText = contentStyle;
+            content.id = contentId;
+            content.innerHTML = cookieText;
 
             var dialog = document.createElement('div');
             dialog.style.cssText = dialogStyle;
 
-            var dismissLink = _createDismissLink(dismissText);
-            dismissLink.style.display = 'block';
-            dismissLink.style.textAlign = 'right';
-            dismissLink.style.marginTop = '8px';
+            var controls = document.createElement('p');
+            controls.style.borderTop = '1px solid #ccc';
+            controls.style.paddingTop = '10px';
+            controls.style.marginBottom = '0';
 
-            content.innerHTML = cookieText;
+            var dismissLink = _createDismissLink(dismissText);
+            dismissLink.style.float = 'right';
+            controls.appendChild(dismissLink);
             if (!!linkText && !!linkHref) {
-                content.appendChild(_createInformationLink(linkText, linkHref));
+                controls.appendChild(_createInformationLink(linkText, linkHref));
             }
-            content.appendChild(dismissLink);
-            dialog.appendChild(content);
+            container.appendChild(content);
+            container.appendChild(controls);
+            dialog.appendChild(container);
             cookieConsentElement.appendChild(glassPanel);
             cookieConsentElement.appendChild(dialog);
             return cookieConsentElement;
@@ -85,16 +101,15 @@
             _setElementText(dismissLink, dismissText);
             dismissLink.id = dismissLinkId;
             dismissLink.href = '#';
-            dismissLink.style.marginLeft = '24px';
             return dismissLink;
         }
 
         function _createInformationLink(linkText, linkHref) {
             var infoLink = document.createElement('a');
             _setElementText(infoLink, linkText);
+            infoLink.id = infoLinkId;
             infoLink.href = linkHref;
             infoLink.target = '_blank';
-            infoLink.style.marginLeft = '8px';
             return infoLink;
         }
 
@@ -105,10 +120,6 @@
         }
 
         function _showCookieConsent(cookieText, dismissText, linkText, linkHref, isDialog) {
-            console.log(cookieText);
-            console.log(dismissText);
-            console.log(linkText);
-            console.log(linkHref);
             if (_shouldDisplayConsent()) {
                 _removeCookieConsent();
                 var consentElement = (isDialog) ?
@@ -152,6 +163,7 @@
         exports.showCookieConsentBar = showCookieConsentBar;
         exports.showCookieConsentDialog = showCookieConsentDialog;
         exports.consentRequired = _shouldDisplayConsent;
+        exports.saveUserPreference = _saveUserPreference;
         return exports;
     })();
 
@@ -189,10 +201,10 @@
 
             // Cookie consent
             var $cookie = $xml.find('cookie');
-            console.log($cookie);
             if ($cookie.length == 1) {
-                if ($cookie.attr('mode') == 'header') {
-                    console.log('showCookieConsentBar');
+                if ($cookie.attr('disabled') == 'disabled') {
+                    cookieChoices.saveUserPreference();
+                } else if ($cookie.attr('mode') == 'header') {
                     cookieChoices.showCookieConsentBar(
                         $cookie.text(),
                         $cookie.attr('close'),
@@ -200,7 +212,6 @@
                         router.generate('cookies_informations')
                     );
                 } else {
-                    console.log('showCookieConsentDialog');
                     cookieChoices.showCookieConsentDialog(
                         $cookie.text(),
                         $cookie.attr('close'),
