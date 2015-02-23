@@ -69,7 +69,7 @@
             controls.style.marginBottom = '0';
 
             var dismissLink = _createDismissLink(dismissText);
-            dismissLink.style.float = 'right';
+            dismissLink.style.cssFloat = 'right';
             controls.appendChild(dismissLink);
             if (!!linkText && !!linkHref) {
                 controls.appendChild(_createInformationLink(linkText, linkHref));
