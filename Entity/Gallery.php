@@ -10,7 +10,7 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class Gallery implements Core\TimestampableInterface
+class Gallery implements Core\TimestampableInterface, Core\TaggedEntityInterface
 {
     use Core\TimestampableTrait;
 
@@ -146,5 +146,16 @@ class Gallery implements Core\TimestampableInterface
     public function getImages()
     {
         return $this->images;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityTag()
+    {
+        if (null === $this->getId()) {
+            throw new \RuntimeException('Unable to generate entity tag, as the id property is undefined.');
+        }
+        return sprintf('ekyna_cms.gallery[id:%s]', $this->getId());
     }
 }
