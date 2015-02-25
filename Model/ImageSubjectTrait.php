@@ -19,7 +19,7 @@ trait ImageSubjectTrait
     /**
      * Returns the image.
      *
-     * @return mixed
+     * @return Image
      */
     public function getImage()
     {
