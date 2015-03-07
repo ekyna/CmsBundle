@@ -6,6 +6,7 @@ use Ekyna\Bundle\CoreBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -52,7 +53,7 @@ class EditorController extends Controller
 
         // TODO improve security with acls
         if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
-            throw new NotFoundHttpException();
+            throw new AccessDeniedHttpException('Expected administrator.');
         }
 
         $editor = $this->get('ekyna_cms.editor');

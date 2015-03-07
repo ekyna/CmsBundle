@@ -350,7 +350,7 @@ class CmsExtension extends \Twig_Extension
     /**
      * Generates html from given Block.
      *
-     * @param string $name the block name
+     * @param BlockInterface|string $block The block or the block name
      * @param string $type the block type
      * @param array $datas the block datas
      *
@@ -358,9 +358,14 @@ class CmsExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function renderBlock($name, $type = null, array $datas = array())
+    public function renderBlock($block, $type = null, array $datas = array())
     {
-        $block = $this->editor->findBlockByName($name, $type, $datas);
+        if (is_string($block)) {
+            $block = $this->editor->findBlockByName($block, $type, $datas);
+        }
+        if (!$block instanceof BlockInterface) {
+            throw new \InvalidArgumentException('Expected instance of Ekyna\Bundle\CmsBundle\Model\BlockInterface');
+        }
 
         $this->editor->setEnabled(true);
 
