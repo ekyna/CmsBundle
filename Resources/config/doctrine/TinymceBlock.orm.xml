@@ -7,7 +7,7 @@
 
     <entity name="Ekyna\Bundle\CmsBundle\Entity\TinymceBlock" table="cms_block_tinymce">
 
-	    <field name="html" type="text" column="html" />
+	    <field name="html" type="text" column="html" nullable="true" />
 
     </entity>
 
