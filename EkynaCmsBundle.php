@@ -8,12 +8,15 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler\EditorPluginPass;
 
 /**
- * EkynaCmsBundle
- *
+ * Class EkynaCmsBundle
+ * @package Ekyna\Bundle\CmsBundle
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class EkynaCmsBundle extends Bundle
 {
+    /**
+     * {@inheritdoc}
+     */
     public function build(ContainerBuilder $container)
     {
         parent::build($container);

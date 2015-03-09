@@ -31,24 +31,28 @@ class AdminMenuPass implements CompilerPassInterface
             'route'    => 'ekyna_cms_page_admin_home',
             'label'    => 'ekyna_cms.page.label.plural',
             'resource' => 'ekyna_cms_page',
+            'position' => 1,
         )));
         $pool->addMethodCall('createEntry', array('content', array(
             'name'     => 'menus',
             'route'    => 'ekyna_cms_menu_admin_home',
             'label'    => 'ekyna_cms.menu.label.plural',
             'resource' => 'ekyna_cms_menu',
+            'position' => 90,
         )));
         $pool->addMethodCall('createEntry', array('content', array(
             'name'     => 'files',
             'route'    => 'ekyna_cms_file_admin_home',
             'label'    => 'ekyna_cms.file.label.plural',
             'resource' => 'ekyna_cms_file',
+            'position' => 91,
         )));
         $pool->addMethodCall('createEntry', array('content', array(
             'name'     => 'images',
             'route'    => 'ekyna_cms_image_admin_home',
             'label'    => 'ekyna_cms.image.label.plural',
             'resource' => 'ekyna_cms_image',
+            'position' => 92,
         )));
         /* TODO $pool->addMethodCall('createEntry', array('content', array(
             'name'     => 'gallery',
@@ -61,6 +65,7 @@ class AdminMenuPass implements CompilerPassInterface
             'route'    => 'ekyna_cms_tag_admin_home',
             'label'    => 'ekyna_cms.tag.label.plural',
             'resource' => 'ekyna_cms_tag',
+            'position' => 93,
         )));
     }
 }
