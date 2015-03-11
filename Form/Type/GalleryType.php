@@ -29,13 +29,17 @@ class GalleryType extends ResourceFormType
         }
 
         $builder
-            ->add('images', 'collection', array(
+            ->add('images', 'ekyna_core_collection', array(
                 'label'        => 'ekyna_core.field.images',
                 'type'         => 'ekyna_cms_gallery_image',
                 'allow_add'    => $options['allow_add'],
                 'allow_delete' => $options['allow_delete'],
                 'allow_sort'   => $options['allow_sort'],
                 'by_reference' => false,
+                'add_button_text' => 'ekyna_core.button.add',
+                'sub_widget_col'  => 11,
+                'button_col'      => 1,
+                'prototype_name'  => '__iname__',
                 'options'      => array(
                     'label'        => false,
                     'required'     => false,

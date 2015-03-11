@@ -20,9 +20,8 @@ class GalleryImageType extends ResourceFormType
     {
         $builder
             ->add('position', 'hidden', array(
-                'label' => false,
                 'attr'  => array(
-                    'data-role' => 'position'
+                    'data-collection-role' => 'position'
                 ),
             ))
             ->add('image', 'ekyna_cms_image', array(

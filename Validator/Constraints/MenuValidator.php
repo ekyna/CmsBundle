@@ -22,7 +22,7 @@ class MenuValidator extends ConstraintValidator
         if (!$constraint instanceof Menu) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Menu');
         }
-        if (!$constraint instanceof MenuInterface) {
+        if (!$menu instanceof MenuInterface) {
             throw new UnexpectedTypeException($menu, 'Ekyna\Bundle\CmsBundle\Model\MenuInterface');
         }
 
