@@ -50,7 +50,10 @@ class GalleryType extends ResourceFormType
                     'attr'         => array(
                         'widget_col' => 12
                     ),
-                )
+                ),
+                'attr'         => array(
+                    'widget_col' => 10
+                ),
             ))
         ;
     }
