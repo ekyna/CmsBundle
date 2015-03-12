@@ -206,19 +206,34 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setRoute($route);
 
     /**
-     * Returns the parameters.
+     * Returns the route parameters.
      *
      * @return array
      */
     public function getParameters();
 
     /**
-     * Sets the parameters.
+     * Sets the route parameters.
      *
      * @param array $parameters
      * @return MenuInterface|$this
      */
     public function setParameters(array $parameters = array());
+
+    /**
+     * Returns the route attributes.
+     *
+     * @return array
+     */
+    public function getAttributes();
+
+    /**
+     * Sets the route attributes.
+     *
+     * @param array $attributes
+     * @return MenuInterface|$this
+     */
+    public function setAttributes(array $attributes = array());
 
     /**
      * Returns the locked.

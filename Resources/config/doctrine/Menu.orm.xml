@@ -34,6 +34,8 @@
         <field name="path" type="string" column="path" length="255" nullable="true" />
         <field name="route" type="string" column="route" length="255" nullable="true" />
         <field name="parameters" type="array" column="parameters" />
+
+        <field name="attributes" type="array" column="attributes" />
         <field name="locked" type="boolean" column="locked" />
 
         <field name="left" column="lft" type="integer">

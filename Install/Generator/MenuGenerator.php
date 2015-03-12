@@ -72,6 +72,9 @@ class MenuGenerator
                 ->setTitle($config['title'])
                 ->setDescription($config['description'])
                 ->setLocked(true)
+                ->setAttributes(array(
+                    'id' => $name,
+                ))
             ;
 
             $this->em->persist($menu);

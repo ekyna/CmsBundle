@@ -79,6 +79,11 @@ class Menu implements MenuInterface
     protected $parameters;
 
     /**
+     * @var array
+     */
+    protected $attributes;
+
+    /**
      * @var boolean
      */
     protected $locked;
@@ -101,6 +106,7 @@ class Menu implements MenuInterface
     {
         $this->children = new ArrayCollection();
         $this->parameters = [];
+        $this->attributes = [];
         $this->locked = false;
     }
 
@@ -360,6 +366,23 @@ class Menu implements MenuInterface
     /**
      * {@inheritdoc}
      */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAttributes(array $attributes = array())
+    {
+        $this->attributes = $attributes;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getLocked()
     {
         return $this->locked;
@@ -382,9 +405,7 @@ class Menu implements MenuInterface
         if (null === $this->options) {
             $this->options = array(
                 'label' => $this->getTitle(),
-                'attributes' => array(
-                    'id' => str_replace('_', '-', $this->getName()),
-                )
+                'attributes' => $this->getAttributes(),
             );
             if (0 < strlen($this->getPath())) {
                 $this->options['uri'] = $this->getPath();

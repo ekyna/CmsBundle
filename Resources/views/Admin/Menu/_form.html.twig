@@ -11,12 +11,18 @@
             <hr>
             {{ form_row(form.title) }}
 	        {{ form_row(form.description) }}
+            {% if form.attributes is defined %}
+                {{ form_row(form.attributes) }}
+            {% endif %}
             <hr>
             {% if form.page is defined -%}
 	        {{ form_row(form.page) }}
             {%- endif %}
 	        {{ form_row(form.path) }}
-	        {{ form_row(form.route) }}
+            {% if form.route is defined %}
+                {{ form_row(form.route) }}
+                {{ form_row(form.parameters) }}
+            {% endif %}
 		</div>
     </div>
     {{ form_rest(form) }}

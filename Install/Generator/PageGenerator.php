@@ -167,7 +167,7 @@ class PageGenerator
      */
     private function resolveRouteOptions(Route $route, $routeName)
     {
-        if (null === $cmsOptions = $route->getDefault('_cms')) {
+        if (null === $cmsOptions = $route->getDefault('_cms')) { // $route->getOption('_cms')
             throw new \InvalidArgumentException(sprintf('Route "%s" does not have "_cms" defaults attributes.', $routeName));
         }
         return $this->optionsResolver->resolve(array_merge($cmsOptions, array('path' => $route->getPath())));

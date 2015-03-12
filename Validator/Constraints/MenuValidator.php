@@ -26,6 +26,10 @@ class MenuValidator extends ConstraintValidator
             throw new UnexpectedTypeException($menu, 'Ekyna\Bundle\CmsBundle\Model\MenuInterface');
         }
 
+        if (0 === $menu->getLevel() || $menu->getLocked()) {
+            return;
+        }
+
         /**
          * @var MenuInterface $menu
          * @var Menu $constraint

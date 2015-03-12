@@ -25,9 +25,15 @@
                 <hr>
                 {{ show_row(menu.title, 'text', 'ekyna_core.field.title') }}
                 {{ show_row(menu.description, 'textarea', 'ekyna_core.field.description') }}
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                {{ show_row(menu.attributes, 'key_value_collection', 'ekyna_core.field.attributes') }}
+                {% endif %}
                 <hr>
                 {{ show_row(menu.path, 'text', 'ekyna_core.field.url') }}
-                {{ show_row(menu.route, 'text', 'ekyna_core.field.route') }}
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    {{ show_row(menu.route, 'text', 'ekyna_core.field.route') }}
+                    {{ show_row(menu.parameters, 'key_value_collection', 'ekyna_core.field.parameters') }}
+                {% endif %}
             </div>
         </div>
     </div>
