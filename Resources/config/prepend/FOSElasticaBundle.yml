@@ -1,0 +1,28 @@
+fos_elastica:
+    indexes:
+        search:
+            types:
+                ekyna_cms_page:
+                    indexable_callback: 'isIndexable'
+                    serializer:
+                        groups: [Default]
+                    mappings:
+                        title: {boost: 5, search_analyzer: fr_search, index_analyzer: fr_index}
+                        seo:
+                            type: "object"
+                            properties:
+                                title: {boost: 2, search_analyzer: fr_search, index_analyzer: fr_index}
+                                description: {boost: 2, search_analyzer: fr_search, index_analyzer: fr_index}
+                        content:
+                            type: "object"
+                            properties:
+                                content: {search_analyzer: fr_search, index_analyzer: fr_index}
+                    persistence:
+                        driver: orm
+                        model: %ekyna_cms.page.class%
+                        provider:
+                            batch_size: 20
+                        listener:
+                            immediate: ~
+                        finder: ~
+                        repository: Ekyna\Bundle\CmsBundle\Search\PageRepository

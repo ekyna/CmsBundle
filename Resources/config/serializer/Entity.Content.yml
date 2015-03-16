@@ -1,0 +1,9 @@
+Ekyna\Bundle\CmsBundle\Entity\Content:
+    exclusion_policy: ALL
+    properties:
+        id:
+            expose: true
+    virtual_properties:
+        getIndexableContent:
+            expose: true
+            serialized_name: content

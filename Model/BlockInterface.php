@@ -104,4 +104,18 @@ interface BlockInterface extends TaggedEntityInterface
      * Returns the type of the block
      */
     public function getType();
+
+    /**
+     * Returns whether the exhibitor should be indexed or not by elasticsearch.
+     *
+     * @return bool
+     */
+    public function isIndexable();
+
+    /**
+     * Returns the indexable content.
+     *
+     * @return string
+     */
+    public function getIndexableContent();
 }

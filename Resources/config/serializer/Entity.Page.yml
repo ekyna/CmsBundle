@@ -1,0 +1,19 @@
+Ekyna\Bundle\CmsBundle\Entity\Page:
+    exclusion_policy: ALL
+    properties:
+        id:
+            expose: true
+            groups: [Search, Default]
+        title:
+            expose: true
+        seo:
+            expose: true
+    virtual_properties:
+        getContent:
+            expose: true
+            serialized_name: content
+        __toString:
+            expose: true
+            serialized_name: text
+            type: string
+            groups: [Search]

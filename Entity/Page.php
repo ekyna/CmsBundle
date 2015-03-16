@@ -127,7 +127,7 @@ class Page implements PageInterface
      */
     public function __toString()
     {
-        return (string) $this->getName();
+        return $this->getName();
     }
 
     /**
@@ -441,6 +441,16 @@ class Page implements PageInterface
     public function getDynamicPath()
     {
         return $this->dynamicPath;
+    }
+
+    /**
+     * Returns whether the exhibitor should be indexed or not by elasticsearch.
+     *
+     * @return bool
+     */
+    public function isIndexable()
+    {
+        return $this->seo->getIndex();
     }
 
     /**

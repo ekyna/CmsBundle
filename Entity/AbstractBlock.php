@@ -4,7 +4,6 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class AbstractBlock
@@ -151,6 +150,22 @@ abstract class AbstractBlock implements BlockInterface
             throw new \RuntimeException('Unable to generate entity tag, as the id property is undefined.');
         }
         return sprintf('ekyna_cms.block[id:%s]', $this->getId());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isIndexable()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIndexableContent()
+    {
+        return '';
     }
 
     /**

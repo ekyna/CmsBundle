@@ -39,6 +39,26 @@ class TinymceBlock extends AbstractBlock
     }
 
     /**
+     * Returns whether the exhibitor should be indexed or not by elasticsearch.
+     *
+     * @return bool
+     */
+    public function isIndexable()
+    {
+        return true;
+    }
+
+    /**
+     * Returns the indexable content.
+     *
+     * @return string
+     */
+    public function getIndexableContent()
+    {
+        return strip_tags($this->html);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getType()

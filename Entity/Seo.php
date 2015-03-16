@@ -51,6 +51,7 @@ class Seo implements SeoInterface
      */
     protected $canonical;
 
+
     /**
      * Constructor
      */
@@ -60,6 +61,16 @@ class Seo implements SeoInterface
         $this->priority = 0.5;
         $this->follow = true;
         $this->index = true;
+    }
+
+    /**
+     * Returns the string representation.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getTitle();
     }
 
     /**
@@ -199,6 +210,16 @@ class Seo implements SeoInterface
     public static function getChangefreqs()
     {
         return array('hourly', 'monthly', 'yearly');
+    }
+
+    /**
+     * Returns whether the exhibitor should be indexed or not by elasticsearch.
+     *
+     * @return bool
+     */
+    public function isIndexable()
+    {
+        return $this->getIndex();
     }
 
     /**

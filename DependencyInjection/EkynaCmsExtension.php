@@ -4,14 +4,13 @@ namespace Ekyna\Bundle\CmsBundle\DependencyInjection;
 
 use Ekyna\Bundle\AdminBundle\DependencyInjection\AbstractExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 
 /**
  * Class EkynaCmsExtension
  * @package Ekyna\Bundle\CmsBundle\DependencyInjection
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class EkynaCmsExtension extends AbstractExtension implements PrependExtensionInterface
+class EkynaCmsExtension extends AbstractExtension
 {
     /**
      * {@inheritDoc}
@@ -38,6 +37,8 @@ class EkynaCmsExtension extends AbstractExtension implements PrependExtensionInt
      */
     public function prepend(ContainerBuilder $container)
     {
+        parent::prepend($container);
+
         $bundles = $container->getParameter('kernel.bundles');
         $configs = $container->getExtensionConfig($this->getAlias());
         $config = $this->processConfiguration(new Configuration(), $configs);

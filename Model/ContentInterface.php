@@ -69,4 +69,11 @@ interface ContentInterface extends TimestampableInterface, TaggedEntityInterface
      * @return ArrayCollection|BlockInterface[]
      */
     public function getBlocks();
+
+    /**
+     * Returns the indexable content.
+     *
+     * @return string
+     */
+    public function getIndexableContent();
 }

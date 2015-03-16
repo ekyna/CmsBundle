@@ -23,7 +23,7 @@ trait ContentSubjectTrait
      */
     public function getContent()
     {
-        if(null !== $this->contents && 0 < $this->contents->count()) {
+        if (null !== $this->contents && 0 < $this->contents->count()) {
             return $this->contents->first();
         }
         return null;

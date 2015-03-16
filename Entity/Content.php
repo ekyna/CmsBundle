@@ -110,6 +110,20 @@ class Content implements ContentInterface
     /**
      * {@inheritdoc}
      */
+    public function getIndexableContent()
+    {
+        $content = '';
+        foreach ($this->blocks as $block) {
+            if ($block->isIndexable()) {
+                $content .= $block->getIndexableContent() . ' ';
+            }
+        }
+        return $content;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getEntityTag()
     {
         if (null === $this->getId()) {
