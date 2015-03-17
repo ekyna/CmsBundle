@@ -13,7 +13,14 @@ use FOS\ElasticaBundle\Repository;
  */
 class PageRepository extends Repository implements SearchRepositoryInterface
 {
-    public function defaultSearch($text)
+    /**
+     * Default text search.
+     *
+     * @param string $text
+     * @param integer $limit
+     * @return \Ekyna\Bundle\CmsBundle\Model\PageInterface[]
+     */
+    public function defaultSearch($text, $limit = 10)
     {
         if (0 == strlen($text)) {
             $query = new Query\MatchAll();
@@ -25,6 +32,6 @@ class PageRepository extends Repository implements SearchRepositoryInterface
             ;
         }
 
-        return $this->find($query);
+        return $this->find($query, $limit);
     }
 }
