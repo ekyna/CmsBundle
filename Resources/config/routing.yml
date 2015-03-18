@@ -1,6 +1,6 @@
 ekyna_cms_admin:
     resource: "routing/admin.yml"
-    prefix:   /admin/cms
+    prefix:   /admin/content
 
 ekyna_cms_editor:
     resource: "routing/editor.yml"
