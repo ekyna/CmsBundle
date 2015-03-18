@@ -24,7 +24,7 @@ class AdminMenuPass implements CompilerPassInterface
             'name'     => 'content',
             'label'    => 'ekyna_core.field.content',
             'icon'     => 'file',
-            'position' => 97,
+            'position' => 20,
         )));
         $pool->addMethodCall('createEntry', array('content', array(
             'name'     => 'pages',
