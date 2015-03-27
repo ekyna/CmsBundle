@@ -42,7 +42,8 @@ ekyna_cms_page_admin_tinymce:
     defaults: { _controller: "ekyna_cms.page.controller:tinymceAction", field: html }
     requirements:
         _method: GET
-        pageId:  \d+
+        field: "[a-zA-Z0-9]+"
+        pageId: \d+
 
 ekyna_cms_page_admin_move_up:
     path: /{pageId}/moveup

@@ -15,19 +15,6 @@ use Symfony\Component\Validator\Constraints;
 class SeoSettingsSchema extends AbstractSchema
 {
     /**
-     * @var array
-     */
-    protected $defaults;
-
-    /**
-     * @param array $defaults
-     */
-    public function __construct(array $defaults = array())
-    {
-        $this->defaults = $defaults;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function buildSettings(SettingsBuilderInterface $builder)

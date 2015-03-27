@@ -57,7 +57,7 @@ class PageType extends ResourceFormType
                     'attr' => array(
                         'class' => 'tinymce',
                         'data-theme' => 'advanced',
-                    )
+                    ),
                 ));
             }
 
