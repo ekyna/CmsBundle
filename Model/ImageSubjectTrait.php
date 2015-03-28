@@ -32,7 +32,7 @@ trait ImageSubjectTrait
      * @param Image $image
      * @return ImageSubjectInterface|$this
      */
-    public function setImage(Image $image)
+    public function setImage(Image $image = null)
     {
         $this->image = $image;
 

@@ -24,5 +24,5 @@ interface ImageSubjectInterface
      * @param Image $image
      * @return ImageSubjectInterface|$this
      */
-    public function setImage(Image $image);
+    public function setImage(Image $image = null);
 }

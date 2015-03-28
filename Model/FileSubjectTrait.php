@@ -32,7 +32,7 @@ trait FileSubjectTrait
      * @param File $file
      * @return FileSubjectInterface|$this
      */
-    public function setFile(File $file)
+    public function setFile(File $file = null)
     {
         $this->file = $file;
 
