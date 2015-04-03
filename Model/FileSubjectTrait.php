@@ -19,7 +19,7 @@ trait FileSubjectTrait
     /**
      * Returns the file.
      *
-     * @return mixed
+     * @return File
      */
     public function getFile()
     {

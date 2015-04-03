@@ -10,11 +10,33 @@
 
     {{ ui_google_font() }}
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    {% block stylesheets -%}
+        {% stylesheets output='css/example/main.css' filter='cssrewrite, ?yui_css' debug=false
+            'css/content.css'
+            'css/fontawesome.css'
+            'css/core.css'
+        %}
+        <link href="{{ asset_url }}" rel="stylesheet" type="text/css" />
+        {% endstylesheets %}
+
+        {% include 'EkynaCoreBundle:Ui:ie-fix.html.twig' %}
+    {%- endblock stylesheets %}
 </head>
 <body>
     {% block body %}{% endblock body %}
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    {% include "EkynaCoreBundle:Ui:modal.html.twig" %}
+
+    {% block javascripts -%}
+        {% javascripts output='js/example/main.js' filter='?yui_js' debug=false
+            'js/jquery.js'
+            'js/bootstrap.js'
+            'js/core.js'
+            '@EkynaCmsBundle/Resources/asset/js/init.js'
+        %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {%- endblock javascripts %}
 </body>
 </html>
 {% endspaceless %}

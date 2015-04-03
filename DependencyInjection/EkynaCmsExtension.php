@@ -74,6 +74,7 @@ class EkynaCmsExtension extends AbstractExtension
         $asseticConfig = new AsseticConfiguration;
         $container->prependExtensionConfig('assetic', array(
             'assets' => $asseticConfig->build($config),
+            'bundles' => array('EkynaCmsBundle')
         ));
     }
 }
