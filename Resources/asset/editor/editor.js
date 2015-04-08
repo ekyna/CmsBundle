@@ -545,7 +545,10 @@
     /* Creates a new column */
     Editor.createNewColumn = function (colDatas) {
 
-        var colType = this.$box.find('#cms-editor-plugin-type').val();
+        //var colType = this.$box.find('#cms-editor-plugin-type').val();
+        /* TODO temp as only tinymce workds for now */
+        var colType = 'tinymce';
+
         if (!(colType in this.plugingRegistry)) {
             this.log('Undefined type.');
             return false;
