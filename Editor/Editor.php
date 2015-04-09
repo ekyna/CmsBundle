@@ -260,6 +260,12 @@ class Editor
         if (null === $this->content) {
             throw new \InvalidArgumentException('No Content selected.');
         }
+
+        // Don't remove if there is only one block
+        if (1 == $this->content->getBlocks()->count()) {
+            return array();
+        }
+
         $removedIds = array();
         foreach($datas as $blockDatas) {
             $block = $this->findBlock($blockDatas);

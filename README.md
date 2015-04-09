@@ -23,3 +23,5 @@ TODO
 - Disallow locked pages removal.
 - Configurable editor content template.
 - route provider / doctrine cache
+- Bug URL (double /) on page creation
+- (Editor) Prevent last content block removal.

@@ -474,9 +474,12 @@
             this.$box.find('.cms-editor-row-add').prop('disabled', false);
 
             if (this.current.$block !== null) {
+                var nbRows = this.current.$content.find(this.config.rowSelector).length;
                 var nbCols = this.current.$row.find(this.config.columnSelector).length;
                 /* Remove row */
-                this.$box.find('.cms-editor-row-remove').prop('disabled', false);
+                if (nbRows > 1) {
+                    this.$box.find('.cms-editor-row-remove').prop('disabled', false);
+                }
                 /* Add row before / Move row up */
                 if (this.current.$row.is(':not(:first-child)')) {
                     this.$box.find('.cms-editor-row-insert-before').prop('disabled', false);

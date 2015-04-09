@@ -31,7 +31,7 @@ class GalleryImageValidator extends ConstraintValidator
          * @var GalleryImageInterface $galleryImage
          */
         $image = $galleryImage->getImage();
-        if (null === $image || (!$image->hasFile() && !$image->hasPath())) {
+        if (null === $image || !($image->hasFile() || $image->hasKey() || $image->hasPath())) {
             $this->context->addViolationAt(
                 'image.file',
                 $constraint->fileIsMandatory
