@@ -30,6 +30,7 @@ class GalleryImageType extends ResourceFormType
                 'thumb_col'    => $options['thumb_col'],
                 'rename_field' => $options['rename_field'],
                 'alt_field'    => $options['alt_field'],
+                'js_upload'    => $options['js_upload'],
             ))
         ;
     }
@@ -39,21 +40,23 @@ class GalleryImageType extends ResourceFormType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+        parent::setDefaultOptions($resolver);
+
         $resolver
             ->setDefaults(array(
-                'data_class'    => 'Ekyna\Bundle\CmsBundle\Entity\GalleryImage',
                 'image_path'    => 'path',
                 'thumb_col'     => 3,
                 'rename_field'  => true,
                 'alt_field'     => true,
+                'js_upload'     => false,
             ))
-            ->setRequired(array('data_class'))
             ->setOptional(array('image_path'))
             ->setAllowedTypes(array(
                 'image_path'    => array('null', 'string'),
                 'thumb_col'     => 'int',
                 'rename_field'  => 'bool',
                 'alt_field'     => 'bool',
+                'js_upload'     => 'bool',
             ))
             ->setNormalizers(array(
                 'thumb_col' => function($options, $value) {

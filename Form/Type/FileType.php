@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
 use Ekyna\Bundle\AdminBundle\Form\Type\ResourceFormType;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class FileType
@@ -11,6 +12,20 @@ use Ekyna\Bundle\AdminBundle\Form\Type\ResourceFormType;
  */
 class FileType extends ResourceFormType
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        parent::setDefaultOptions($resolver);
+
+        $resolver
+            ->setDefaults(array(
+                'js_upload' => true,
+            ))
+        ;
+    }
+
     /**
      * {@inheritdoc}
      */
