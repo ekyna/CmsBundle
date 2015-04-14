@@ -14,7 +14,7 @@ interface FileSubjectInterface
     /**
      * Returns the file.
      *
-     * @return mixed
+     * @return File
      */
     public function getFile();
 

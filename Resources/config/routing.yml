@@ -27,7 +27,7 @@ ekyna_cms_file:
     defaults: { _controller: "EkynaCmsBundle:Cms:file" }
     requirements:
         _method: GET
-        key: "[a-z0-9\./]+"
+        key: "[a-z0-9-\./]+"
 
 ekyna_cms_routing:
     resource: .
