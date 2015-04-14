@@ -22,6 +22,13 @@ ekyna_cms_init:
     options:
         expose: true
 
+ekyna_cms_file:
+    path: /cms/file/{key}
+    defaults: { _controller: "EkynaCmsBundle:Cms:file" }
+    requirements:
+        _method: GET
+        key: "[a-z0-9\./]+"
+
 ekyna_cms_routing:
     resource: .
     type: cms
