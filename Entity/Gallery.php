@@ -3,6 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ekyna\Bundle\CmsBundle\Model\GalleryImageInterface;
+use Ekyna\Bundle\CmsBundle\Model\GalleryInterface;
 use Ekyna\Bundle\CoreBundle\Model as Core;
 
 /**
@@ -10,7 +12,7 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class Gallery implements Core\TimestampableInterface, Core\TaggedEntityInterface
+class Gallery implements GalleryInterface
 {
     use Core\TimestampableTrait;
     use Core\TaggedEntityTrait;
@@ -26,7 +28,7 @@ class Gallery implements Core\TimestampableInterface, Core\TaggedEntityInterface
     private $name;
 
     /**
-     * @var ArrayCollection
+     * @var ArrayCollection|GalleryImageInterface[]
      */
     private $images;
 
@@ -50,9 +52,7 @@ class Gallery implements Core\TimestampableInterface, Core\TaggedEntityInterface
     }
 
     /**
-     * Returns the id.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -60,10 +60,7 @@ class Gallery implements Core\TimestampableInterface, Core\TaggedEntityInterface
     }
 
     /**
-     * Sets the name.
-     *
-     * @param string $name
-     * @return Gallery
+     * {@inheritdoc}
      */
     public function setName($name)
     {
@@ -72,9 +69,7 @@ class Gallery implements Core\TimestampableInterface, Core\TaggedEntityInterface
     }
 
     /**
-     * Returns the name.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -82,10 +77,7 @@ class Gallery implements Core\TimestampableInterface, Core\TaggedEntityInterface
     }
 
     /**
-     * Sets the images.
-     *
-     * @param ArrayCollection|GalleryImage[] $images
-     * @return Gallery
+     * {@inheritdoc}
      */
     public function setImages(ArrayCollection $images)
     {
@@ -97,23 +89,17 @@ class Gallery implements Core\TimestampableInterface, Core\TaggedEntityInterface
     }
 
     /**
-     * Returns whether the images contains the image or not.
-     *
-     * @param GalleryImage $image
-     * @return bool
+     * {@inheritdoc}
      */
-    public function hasImage(GalleryImage $image)
+    public function hasImage(GalleryImageInterface $image)
     {
         return $this->images->contains($image);
     }
 
     /**
-     * Adds the image.
-     *
-     * @param GalleryImage $image
-     * @return Gallery
+     * {@inheritdoc}
      */
-    public function addImage(GalleryImage $image)
+    public function addImage(GalleryImageInterface $image)
     {
         if (!$this->hasImage($image)) {
             $image->setGallery($this);
@@ -124,12 +110,9 @@ class Gallery implements Core\TimestampableInterface, Core\TaggedEntityInterface
     }
 
     /**
-     * Removes the image.
-     *
-     * @param GalleryImage $image
-     * @return Gallery
+     * {@inheritdoc}
      */
-    public function removeImage(GalleryImage $image)
+    public function removeImage(GalleryImageInterface $image)
     {
         if ($this->hasImage($image)) {
             $image->setGallery(null);
@@ -140,13 +123,23 @@ class Gallery implements Core\TimestampableInterface, Core\TaggedEntityInterface
     }
 
     /**
-     * Returns the images.
-     *
-     * @return ArrayCollection|GalleryImage[]
+     * {@inheritdoc}
      */
     public function getImages()
     {
         return $this->images;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityTags()
+    {
+        $tags = [$this->getEntityTag()];
+        foreach ($this->images as $image) {
+            $tags = array_merge($tags, $image->getEntityTags());
+        }
+        return $tags;
     }
 
     /**

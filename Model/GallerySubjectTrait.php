@@ -2,8 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Ekyna\Bundle\CmsBundle\Entity\Gallery;
-
 /**
  * Trait GallerySubjectTrait
  * @package Ekyna\Bundle\CmsBundle\Model
@@ -12,17 +10,17 @@ use Ekyna\Bundle\CmsBundle\Entity\Gallery;
 trait GallerySubjectTrait
 {
     /**
-     * @var Gallery
+     * @var GalleryInterface
      */
     protected $gallery;
 
     /**
      * Sets the gallery.
      *
-     * @param Gallery $gallery
+     * @param GalleryInterface $gallery
      * @return GallerySubjectInterface|$this
      */
-    public function setGallery(Gallery $gallery = null)
+    public function setGallery(GalleryInterface $gallery = null)
     {
         $this->gallery = $gallery;
         return $this;
@@ -31,7 +29,7 @@ trait GallerySubjectTrait
     /**
      * Returns the gallery.
      *
-     * @return Gallery
+     * @return GalleryInterface
      */
     public function getGallery()
     {

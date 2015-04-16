@@ -13,7 +13,8 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
 class GalleryImage implements Cms\GalleryImageInterface
 {
     use Cms\ImageSubjectTrait,
-        Core\SortableTrait;
+        Core\SortableTrait,
+        Core\TaggedEntityTrait;
 
     /**
      * @var int
@@ -47,21 +48,16 @@ class GalleryImage implements Cms\GalleryImageInterface
     }
 
     /**
-     * Sets the gallery.
-     *
-     * @param Gallery $gallery
-     * @return GalleryImage
+     * {@inheritdoc}
      */
-    public function setGallery(Gallery $gallery = null)
+    public function setGallery(Cms\GalleryInterface $gallery = null)
     {
         $this->gallery = $gallery;
         return $this;
     }
 
     /**
-     * Image path getter alias.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getPath()
     {
@@ -69,12 +65,30 @@ class GalleryImage implements Cms\GalleryImageInterface
     }
 
     /**
-     * Image alt getter alias.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getAlt()
     {
         return $this->image->getAlt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityTags()
+    {
+        $tags = [$this->getEntityTag()];
+        if (null !== $this->image) {
+            $tags[] = $this->image->getEntityTag();
+        }
+        return $tags;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getEntityTagPrefix()
+    {
+        return 'ekyna_cms.gallery';
     }
 }

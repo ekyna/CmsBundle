@@ -2,8 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Ekyna\Bundle\CmsBundle\Entity\Gallery;
-
 /**
  * Class GallerySubjectInterface
  * @package Ekyna\Bundle\CmsBundle\Model
@@ -14,14 +12,15 @@ interface GallerySubjectInterface
     /**
      * Sets the gallery.
      *
-     * @param Gallery $gallery
+     * @param GalleryInterface $gallery
      * @return GallerySubjectInterface|$this
      */
-    public function setGallery(Gallery $gallery);
+    public function setGallery(GalleryInterface $gallery);
+
     /**
      * Returns the gallery.
      *
-     * @return Gallery
+     * @return GalleryInterface
      */
     public function getGallery();
 }

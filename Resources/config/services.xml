@@ -219,6 +219,11 @@
             </argument>
             <tag name="twig.extension" />
         </service>
+        <service id="ekyna_cms.twig.media_extension" class="Ekyna\Bundle\CmsBundle\Twig\MediaExtension">
+            <argument type="service" id="gaufrette.local_file_filesystem" />
+            <argument type="service" id="router" />
+            <tag name="twig.extension" />
+        </service>
 
         <!-- Menus -->
         <service id="ekyna_cms.menu.provider" class="Ekyna\Bundle\CmsBundle\Menu\MenuProvider">
