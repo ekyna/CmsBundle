@@ -65,4 +65,12 @@ class TinymceBlock extends AbstractBlock
     {
         return 'tinymce';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getEntityTagPrefix()
+    {
+        return 'ekyna_cms.tinymce_block';
+    }
 }

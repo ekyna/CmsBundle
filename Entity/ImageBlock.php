@@ -20,4 +20,12 @@ class ImageBlock extends AbstractBlock implements Model\ImageInterface
     {
         return 'image';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getEntityTagPrefix()
+    {
+        return 'ekyna_cms.image_block';
+    }
 }

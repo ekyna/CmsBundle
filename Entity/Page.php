@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectTrait;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectTrait;
+use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
 
 /**
@@ -18,6 +19,7 @@ class Page implements PageInterface
     use ContentSubjectTrait;
     use SeoSubjectTrait;
     use TimestampableTrait;
+    use TaggedEntityTrait;
 
     /**
      * @var integer
@@ -456,11 +458,8 @@ class Page implements PageInterface
     /**
      * {@inheritdoc}
      */
-    public function getEntityTag()
+    public static function getEntityTagPrefix()
     {
-        if (null === $this->getId()) {
-            throw new \RuntimeException('Unable to generate entity tag, as the id property is undefined.');
-        }
-        return sprintf('ekyna_cms.page[id:%s]', $this->getId());
+        return 'ekyna_cms.page';
     }
 }

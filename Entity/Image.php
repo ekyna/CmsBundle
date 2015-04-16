@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CoreBundle\Entity\AbstractImage;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
+use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 
 /**
  * Class Image
@@ -12,6 +13,8 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
  */
 class Image extends AbstractImage implements TaggedEntityInterface
 {
+    use TaggedEntityTrait;
+
     /**
      * @var \DateTime
      */
@@ -53,11 +56,8 @@ class Image extends AbstractImage implements TaggedEntityInterface
     /**
      * {@inheritdoc}
      */
-    public function getEntityTag()
+    public static function getEntityTagPrefix()
     {
-        if (null === $this->getId()) {
-            throw new \RuntimeException('Unable to generate entity tag, as the id property is undefined.');
-        }
-        return sprintf('ekyna_cms.image[id:%s]', $this->getId());
+        return 'ekyna_cms.image';
     }
 }

@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
+use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
 
 /**
@@ -15,6 +16,7 @@ use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
 class Content implements ContentInterface
 {
     use TimestampableTrait;
+    use TaggedEntityTrait;
 
     /**
      * @var integer
@@ -124,11 +126,8 @@ class Content implements ContentInterface
     /**
      * {@inheritdoc}
      */
-    public function getEntityTag()
+    public static function getEntityTagPrefix()
     {
-        if (null === $this->getId()) {
-            throw new \RuntimeException('Unable to generate entity tag, as the id property is undefined.');
-        }
-        return sprintf('ekyna_cms.content[id:%s]', $this->getId());
+        return 'ekyna_cms.content';
     }
 }

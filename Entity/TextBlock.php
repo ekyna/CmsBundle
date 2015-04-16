@@ -45,4 +45,12 @@ class TextBlock extends AbstractBlock
     {
         return 'text';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getEntityTagPrefix()
+    {
+        return 'ekyna_cms.text_block';
+    }
 }

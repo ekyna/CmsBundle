@@ -13,6 +13,7 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
 class Gallery implements Core\TimestampableInterface, Core\TaggedEntityInterface
 {
     use Core\TimestampableTrait;
+    use Core\TaggedEntityTrait;
 
     /**
      * @var int
@@ -151,11 +152,8 @@ class Gallery implements Core\TimestampableInterface, Core\TaggedEntityInterface
     /**
      * {@inheritdoc}
      */
-    public function getEntityTag()
+    public static function getEntityTagPrefix()
     {
-        if (null === $this->getId()) {
-            throw new \RuntimeException('Unable to generate entity tag, as the id property is undefined.');
-        }
-        return sprintf('ekyna_cms.gallery[id:%s]', $this->getId());
+        return 'ekyna_cms.gallery';
     }
 }

@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 
 /**
  * Class Menu
@@ -13,6 +14,8 @@ use Ekyna\Bundle\CmsBundle\Model\PageInterface;
  */
 class Menu implements MenuInterface
 {
+    use TaggedEntityTrait;
+
     /**
      * @var integer
      */
@@ -448,11 +451,8 @@ class Menu implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getEntityTag()
+    public static function getEntityTagPrefix()
     {
-        if (null === $this->getId()) {
-            throw new \RuntimeException('Unable to generate entity tag, as the id property is undefined.');
-        }
-        return sprintf('ekyna_cms.menu[id:%s]', $this->getId());
+        return 'ekyna_cms.menu';
     }
 }

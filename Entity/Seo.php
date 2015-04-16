@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 
 /**
  * Class Seo
@@ -11,6 +12,8 @@ use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
  */
 class Seo implements SeoInterface
 {
+    use TaggedEntityTrait;
+
     /**
      * @var integer
      */
@@ -225,11 +228,8 @@ class Seo implements SeoInterface
     /**
      * {@inheritdoc}
      */
-    public function getEntityTag()
+    public static function getEntityTagPrefix()
     {
-        if (null === $this->getId()) {
-            throw new \RuntimeException('Unable to generate entity tag, as the id property is undefined.');
-        }
-        return sprintf('ekyna_cms.seo[id:%s]', $this->getId());
+        return 'ekyna_cms.seo';
     }
 }

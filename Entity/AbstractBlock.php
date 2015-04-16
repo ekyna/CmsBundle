@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
+use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 
 /**
  * Class AbstractBlock
@@ -12,6 +13,8 @@ use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
  */
 abstract class AbstractBlock implements BlockInterface
 {
+    use TaggedEntityTrait;
+
     /**
      * @var integer
      */
@@ -139,17 +142,6 @@ abstract class AbstractBlock implements BlockInterface
     public function getSize()
     {
         return $this->size;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEntityTag()
-    {
-        if (null === $this->getId()) {
-            throw new \RuntimeException('Unable to generate entity tag, as the id property is undefined.');
-        }
-        return sprintf('ekyna_cms.block[id:%s]', $this->getId());
     }
 
     /**
