@@ -402,7 +402,7 @@ class CmsExtension extends \Twig_Extension
         // Tags the response as Menu relative
         $this->eventDispatcher->dispatch(
             HttpCacheEvents::TAG_RESPONSE,
-            new HttpCacheEvent($menu->getEntityTag())
+            new HttpCacheEvent(array($menu->getEntityTagPrefix(), $menu->getEntityTag()))
         );
 
         return $this->helper->render($name, $options, $renderer);
