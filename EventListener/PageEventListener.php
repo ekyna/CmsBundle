@@ -36,7 +36,7 @@ class PageEventListener implements EventSubscriberInterface
             if (strlen($path) == 0) {
                 $path = $page->getName();
             }
-            $page->setPath($parentPath . '/' . Urlizer::urlize(trim($path, '/')));
+            $page->setPath(rtrim($parentPath, '/').'/'.Urlizer::urlize(trim($path, '/')));
         }
     }
 

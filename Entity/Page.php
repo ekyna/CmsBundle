@@ -343,7 +343,7 @@ class Page implements PageInterface
      */
     public function setPath($path)
     {
-        $this->path = $path;
+        $this->path = '/'.ltrim($path, '/');
 
         return $this;
     }

@@ -24,5 +24,5 @@ TODO
 - Configurable editor content template.
 - route provider / doctrine cache
 - Bug URL (double /) on page creation
-- (Editor) Prevent last content block removal.
 - Interfaces (file, image, etc)
+- Menu enabled field

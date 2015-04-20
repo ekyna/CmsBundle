@@ -13,6 +13,11 @@
                 <option name="max">64</option>
             </constraint>
         </property>
+        <property name="path">
+            <constraint name="Regex">
+                <option name="pattern">~^(/[a-z0-9-]+)*$~</option>
+            </constraint>
+        </property>
         <property name="seo">
             <constraint name="Valid" />
         </property>
