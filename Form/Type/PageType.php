@@ -122,7 +122,7 @@ class PageType extends ResourceFormType
                         'label' => 'ekyna_core.field.url',
                         'admin_helper' => 'PAGE_PATH',
                         'required' => false,
-                        'attr' => array('input_group' => array('prepend' => $page->getParent()->getPath().'/')),
+                        'attr' => array('input_group' => array('prepend' => rtrim($page->getParent()->getPath(), '/').'/')),
                     ));
                 } else {
                     $form->add('path', 'text', array(
