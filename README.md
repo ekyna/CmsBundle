@@ -25,4 +25,5 @@ TODO
 - route provider / doctrine cache
 - Bug URL (double /) on page creation
 - Interfaces (file, image, etc)
-- Menu enabled field
+- Menu enabled field.
+- Published pages (for non static only).
