@@ -37,10 +37,24 @@ class PageListener
     public function preUpdate(PageInterface $page, PreUpdateEventArgs $event)
     {
         if ($event->hasChangedField('path')) {
+            $recompute = false;
             if (preg_match('#\{.*\}#', $event->getNewValue('path'))) {
-                $event->setNewValue('dynamicPath', true);
+                if (!$page->getDynamicPath()) {
+                    $recompute = true;
+                    $page->setDynamicPath(true);
+                }
             } else {
-                $event->setNewValue('dynamicPath', false);
+                if ($page->getDynamicPath()) {
+                    $recompute = true;
+                    $page->setDynamicPath(false);
+                }
+            }
+
+            if ($recompute) {
+                $em = $event->getEntityManager();
+                $uow = $em->getUnitOfWork();
+                $meta = $em->getClassMetadata(get_class($page));
+                $uow->recomputeSingleEntityChangeSet($meta, $page);
             }
         }
     }
