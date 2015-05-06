@@ -74,7 +74,7 @@ class RouteDefinition
         $this->parentRouteName = $options['parent'];
 
         $this->pageName = $options['name'];
-        $this->path     = $options['path'];
+        $this->path     = '/'.trim($options['path'], '/');
         $this->locked   = $options['locked'];
         $this->menus    = $options['menus'];
         $this->advanced = $options['advanced'];
@@ -257,7 +257,11 @@ class RouteDefinition
             $seo['index'] = false;
             $routeDefinition->setSeo($seo);
         }
-        $this->children[$routeDefinition->getRouteName()] = $routeDefinition;
+        $routeName = $routeDefinition->getRouteName();
+        if (array_key_exists($routeName, $this->children)) {
+            throw new \LogicException(sprintf('Route "%s" already exists.', $routeName));
+        }
+        $this->children[$routeName] = $routeDefinition;
 
         return $this;
     }
@@ -292,7 +296,7 @@ class RouteDefinition
     public function findChildByRouteName($routeName)
     {
         if ($this->hasChildren()) {
-            if (isset($this->children[$routeName])) {
+            if (array_key_exists($routeName, $this->children)) {
                 return $this->children[$routeName];
             }
             /** @var RouteDefinition $definition */
@@ -315,7 +319,7 @@ class RouteDefinition
             foreach ($this->children as $definition) {
                 $definition->sortChildren();
             }
-            usort($this->children, function ($a, $b) {
+            uasort($this->children, function ($a, $b) {
                 /** @var RouteDefinition $a */
                 /** @var RouteDefinition $b */
                 if ($a->getPosition() == $b->getPosition()) {

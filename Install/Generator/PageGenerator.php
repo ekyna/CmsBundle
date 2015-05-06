@@ -81,6 +81,8 @@ class PageGenerator
         $this->gatherRoutesDefinitions();
 
         $this->createPage($this->homeDefinition);
+
+        $this->removeNonMappedPages();
     }
 
     private function configureOptionsResolver()
@@ -167,7 +169,7 @@ class PageGenerator
      */
     private function resolveRouteOptions(Route $route, $routeName)
     {
-        if (null === $cmsOptions = $route->getDefault('_cms')) { // $route->getOption('_cms')
+        if (null === $cmsOptions = $route->getDefault('_cms')) { // TODO $route->getOption('_cms')
             throw new \InvalidArgumentException(sprintf('Route "%s" does not have "_cms" defaults attributes.', $routeName));
         }
         return $this->optionsResolver->resolve(array_merge($cmsOptions, array('path' => $route->getPath())));
@@ -278,14 +280,33 @@ class PageGenerator
     private function createPage(RouteDefinition $definition, PageInterface $parentPage = null)
     {
         if (null !== $page = $this->findPageByRouteName($definition->getRouteName())) {
-            $this->output->writeln(sprintf(
-                '- <comment>%s</comment> %s already exists.',
-                $page->getName(),
-                str_pad('.', 44 - mb_strlen($page->getName()), '.', STR_PAD_LEFT)
-            ));
 
-            // TODO check for updates
-            $this->createMenus($page, $definition->getMenus());
+            $updated = false;
+            if ($page->getName() !== $definition->getPageName()) {
+                $page->setName($definition->getPageName());
+                $updated = true;
+            }
+            if ($page->getPath() !== $definition->getPath()) {
+                $page->setPath($definition->getPath());
+                $updated = true;
+            }
+            if ($page->getLocked() !== $definition->getLocked()) {
+                $page->setLocked($definition->getLocked());
+                $updated = true;
+            }
+            if ($page->getAdvanced() !== $definition->getAdvanced()) {
+                $page->setAdvanced($definition->getAdvanced());
+                $updated = true;
+            }
+
+            if ($updated) {
+                if (!$this->validatePage($page)) {
+                    return false;
+                }
+                $this->em->persist($page);
+            }
+
+            $this->outputPageAction($page->getName(), $updated ? 'updated' : 'already exists');
 
         } else {
             $page = $this->pageRepository->createNew();
@@ -323,26 +344,16 @@ class PageGenerator
                 ->setHtml('<p></p>') // TODO default content
             ;
 
-            $violationList = $this->validator->validate($page, null, array('generator'));
-            if (0 < $violationList->count()) {
-                $this->output->writeln('<error>Invalid page</error>');
-                /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
-                foreach($violationList as $violation) {
-                    $this->output->writeln(sprintf('<error>%s : %s</error>', $violation->getPropertyPath(), $violation->getMessage()));
-                }
+            if (!$this->validatePage($page)) {
                 return false;
             }
 
             $this->em->persist($page);
 
-            $this->createMenus($page, $definition->getMenus());
-
-            $this->output->writeln(sprintf(
-                '- <comment>%s</comment> %s done.',
-                $page->getName(),
-                str_pad('.', 44 - mb_strlen($page->getName()), '.', STR_PAD_LEFT)
-            ));
+            $this->outputPageAction($page->getName(), 'created');
         }
+
+        $this->createMenus($page, $definition->getMenus());
 
         $this->em->flush();
 
@@ -353,6 +364,26 @@ class PageGenerator
             }
         }
 
+        return true;
+    }
+
+    /**
+     * Validates the page.
+     *
+     * @param PageInterface $page
+     * @return bool
+     */
+    private function validatePage(PageInterface $page)
+    {
+        $violationList = $this->validator->validate($page, null, array('generator'));
+        if (0 < $violationList->count()) {
+            $this->output->writeln('<error>Invalid page</error>');
+            /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
+            foreach($violationList as $violation) {
+                $this->output->writeln(sprintf('<error>%s : %s</error>', $violation->getPropertyPath(), $violation->getMessage()));
+            }
+            return false;
+        }
         return true;
     }
 
@@ -379,5 +410,37 @@ class PageGenerator
                 }
             }
         }
+    }
+
+    /**
+     * Removes static pages which are no longer mapped to the routing.
+     */
+    private function removeNonMappedPages()
+    {
+        /** @var PageInterface[] $staticPages */
+        $staticPages = $this->pageRepository->findBy(['static' => true], ['left' => 'DESC']);
+        foreach ($staticPages as $page) {
+            if (null === $this->findRouteDefinitionByRouteName($page->getRoute())) {
+                $this->outputPageAction($page->getName(), 'removed');
+                $this->em->remove($page);
+            }
+        }
+        $this->em->flush();
+    }
+
+    /**
+     * Outputs the page action.
+     *
+     * @param string $name
+     * @param string $action
+     */
+    private function outputPageAction($name, $action)
+    {
+        $this->output->writeln(sprintf(
+            '- <comment>%s</comment> %s %s.',
+            $name,
+            str_pad('.', 44 - mb_strlen($name), '.', STR_PAD_LEFT),
+            $action
+        ));
     }
 }
