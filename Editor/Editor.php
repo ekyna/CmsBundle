@@ -151,7 +151,7 @@ class Editor
 
         $this->manager->persist($content);
         $this->manager->persist($subject);
-        $this->manager->flush();
+        $this->manager->flush($subject);
 
         return $content;
     }
@@ -212,7 +212,7 @@ class Editor
         $this->content->addBlock($block);
 
         $this->manager->persist($this->content);
-        $this->manager->flush();
+        $this->manager->flush($this->content);
 
         return array(
     	    'datas' => $block->getInitDatas(),
@@ -240,7 +240,7 @@ class Editor
         // TODO content validation
 
         $this->manager->persist($block);
-        $this->manager->flush();
+        $this->manager->flush($block);
 
         return array(
             'id' => $block->getId(),
@@ -281,7 +281,7 @@ class Editor
         // TODO content validation
 
         $this->manager->persist($this->content);
-        $this->manager->flush();
+        $this->manager->flush($this->content);
 
         return array(
             'ids' => $removedIds,
@@ -307,7 +307,7 @@ class Editor
 
         // TODO content validation
 
-        $this->manager->flush();
+        $this->manager->flush($this->content);
     }
 
     /**
@@ -377,7 +377,7 @@ class Editor
             $block->setName($name);
 
             $this->manager->persist($block);
-            $this->manager->flush();
+            $this->manager->flush($block);
         } else {
             // TODO test block type ?
         }
