@@ -22,16 +22,6 @@ class Image extends AbstractImage implements TaggedEntityInterface
 
 
     /**
-     * Returns the string representation.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return pathinfo($this->getPath(), PATHINFO_BASENAME);
-    }
-
-    /**
      * Returns the createdAt.
      *
      * @return \DateTime
