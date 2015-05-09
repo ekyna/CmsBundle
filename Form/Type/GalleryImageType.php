@@ -26,7 +26,7 @@ class GalleryImageType extends ResourceFormType
             ))
             ->add('image', 'ekyna_cms_image', array(
                 'label'        => false,
-                'image_path'   => $options['image_path'],
+                'file_path'    => $options['file_path'],
                 'thumb_col'    => $options['thumb_col'],
                 'rename_field' => $options['rename_field'],
                 'alt_field'    => $options['alt_field'],
@@ -44,23 +44,23 @@ class GalleryImageType extends ResourceFormType
 
         $resolver
             ->setDefaults(array(
-                'image_path'    => 'path',
-                'thumb_col'     => 3,
-                'rename_field'  => true,
-                'alt_field'     => true,
-                'js_upload'     => false,
+                'file_path'    => 'path',
+                'thumb_col'    => 3,
+                'rename_field' => true,
+                'alt_field'    => true,
+                'js_upload'    => false,
             ))
-            ->setOptional(array('image_path'))
+            ->setOptional(array('file_path'))
             ->setAllowedTypes(array(
-                'image_path'    => array('null', 'string'),
-                'thumb_col'     => 'int',
-                'rename_field'  => 'bool',
-                'alt_field'     => 'bool',
-                'js_upload'     => 'bool',
+                'file_path'    => array('null', 'string'),
+                'thumb_col'    => 'int',
+                'rename_field' => 'bool',
+                'alt_field'    => 'bool',
+                'js_upload'    => 'bool',
             ))
             ->setNormalizers(array(
                 'thumb_col' => function($options, $value) {
-                    if (0 == strlen($options['image_path'])) {
+                    if (0 == strlen($options['file_path'])) {
                         return 0;
                     }
                     if ($value > 4) {

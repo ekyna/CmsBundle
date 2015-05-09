@@ -42,7 +42,7 @@ class GalleryType extends ResourceFormType
                 'options'      => array(
                     'label'        => false,
                     'required'     => false,
-                    'image_path'   => $options['image_path'],
+                    'file_path'    => $options['file_path'],
                     'thumb_col'    => $options['thumb_col'],
                     'rename_field' => $options['rename_field'],
                     'alt_field'    => $options['alt_field'],
@@ -67,32 +67,32 @@ class GalleryType extends ResourceFormType
 
         $resolver
             ->setDefaults(array(
-                'allow_add'     => true,
-                'allow_delete'  => true,
-                'allow_sort'    => true,
-                'name_field'    => false,
-                'image_path'    => 'path',
-                'thumb_col'     => 3,
-                'rename_field'  => true,
-                'alt_field'     => true,
-                'required'      => false,
-                'js_upload'     => false,
+                'allow_add'    => true,
+                'allow_delete' => true,
+                'allow_sort'   => true,
+                'name_field'   => false,
+                'file_path'    => 'path',
+                'thumb_col'    => 3,
+                'rename_field' => true,
+                'alt_field'    => true,
+                'required'     => false,
+                'js_upload'    => false,
             ))
-            ->setOptional(array('image_path'))
+            ->setOptional(array('file_path'))
             ->setAllowedTypes(array(
-                'allow_add'     => 'bool',
-                'allow_delete'  => 'bool',
-                'allow_sort'    => 'bool',
-                'name_field'    => 'bool',
-                'image_path'    => array('null', 'string'),
-                'thumb_col'     => 'int',
-                'rename_field'  => 'bool',
-                'alt_field'     => 'bool',
-                'js_upload'     => 'bool',
+                'allow_add'    => 'bool',
+                'allow_delete' => 'bool',
+                'allow_sort'   => 'bool',
+                'name_field'   => 'bool',
+                'file_path'    => array('null', 'string'),
+                'thumb_col'    => 'int',
+                'rename_field' => 'bool',
+                'alt_field'    => 'bool',
+                'js_upload'    => 'bool',
             ))
             ->setNormalizers(array(
                 'thumb_col' => function($options, $value) {
-                    if (0 == strlen($options['image_path'])) {
+                    if (0 == strlen($options['file_path'])) {
                         return 0;
                     }
                     if ($value > 4) {
