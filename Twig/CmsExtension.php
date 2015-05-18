@@ -182,7 +182,7 @@ class CmsExtension extends \Twig_Extension
             $index = !$this->config['seo']['no_index'] ? ($seo->getIndex() ?  'index'  : 'noindex') : 'noindex';
 
             $metas =
-                $this->renderTitle('title', $seo->getTitle()) . "\n" .
+                $this->renderTitle('title', $seo->getTitle().$this->config['seo']['title_append']) . "\n" .
                 $this->renderMeta('description', $seo->getDescription()) . "\n" .
                 $this->renderMeta('robots', $follow.','.$index)
             ;
@@ -243,10 +243,6 @@ class CmsExtension extends \Twig_Extension
 
         if (0 == strlen($content)) {
             $content = 'Undefined title';
-        }
-
-        if (0 < strlen($append = $this->config['seo']['title_append'])) {
-            $content .= $append;
         }
 
         return $this->renderTag($tag, $content);
