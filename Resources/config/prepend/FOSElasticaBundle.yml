@@ -3,6 +3,7 @@ fos_elastica:
         search:
             types:
                 ekyna_cms_page:
+                    _all: {enabled: false}
                     indexable_callback: 'isIndexable'
                     serializer:
                         groups: [Default]

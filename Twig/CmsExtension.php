@@ -99,6 +99,7 @@ class CmsExtension extends \Twig_Extension
             'seo' => array(
                 'no_follow' => true,
                 'no_index' => true,
+                'title_append' => null,
             ),
             'page' => array(
                 'controllers' => array(),
@@ -242,6 +243,10 @@ class CmsExtension extends \Twig_Extension
 
         if (0 == strlen($content)) {
             $content = 'Undefined title';
+        }
+
+        if (0 < strlen($append = $this->config['seo']['title_append'])) {
+            $content .= $append;
         }
 
         return $this->renderTag($tag, $content);

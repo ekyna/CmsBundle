@@ -31,6 +31,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->booleanNode('no_follow')->defaultFalse()->end()
                         ->booleanNode('no_index')->defaultFalse()->end()
+                        ->scalarNode('title_append')->defaultValue('')->end()
                     ->end()
                 ->end()
                 ->arrayNode('page')
