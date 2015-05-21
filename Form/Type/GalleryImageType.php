@@ -29,6 +29,7 @@ class GalleryImageType extends ResourceFormType
                 'file_path'    => $options['file_path'],
                 'thumb_col'    => $options['thumb_col'],
                 'rename_field' => $options['rename_field'],
+                'unlink_field' => false,
                 'alt_field'    => $options['alt_field'],
                 'js_upload'    => $options['js_upload'],
             ))
