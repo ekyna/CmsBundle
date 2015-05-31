@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 
@@ -9,8 +10,10 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
  * Class Seo
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @method \Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface translate($locale = null)
  */
-class Seo implements SeoInterface
+class Seo extends AbstractTranslatable implements SeoInterface
 {
     use TaggedEntityTrait;
 
@@ -18,16 +21,6 @@ class Seo implements SeoInterface
      * @var integer
      */
     protected $id;
-
-    /**
-     * @var string
-     */
-    protected $title;
-
-    /**
-     * @var string
-     */
-    protected $description;
 
     /**
      * @var string
@@ -60,6 +53,8 @@ class Seo implements SeoInterface
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->changefreq = 'monthly';
         $this->priority = 0.5;
         $this->follow = true;
@@ -89,7 +84,7 @@ class Seo implements SeoInterface
      */
     public function setTitle($title)
     {
-        $this->title = $title;
+        $this->translate()->setTitle($title);
 
         return $this;
     }
@@ -99,7 +94,7 @@ class Seo implements SeoInterface
      */
     public function getTitle()
     {
-        return $this->title;
+        return $this->translate()->getTitle();
     }
 
     /**
@@ -107,7 +102,7 @@ class Seo implements SeoInterface
      */
     public function setDescription($description)
     {
-        $this->description = $description;
+        $this->translate()->setDescription($description);
 
         return $this;
     }
@@ -117,7 +112,7 @@ class Seo implements SeoInterface
      */
     public function getDescription()
     {
-        return $this->description;
+        return $this->translate()->getDescription();
     }
 
     /**
@@ -205,6 +200,14 @@ class Seo implements SeoInterface
     {
         $this->canonical = $canonical;
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTranslationClass()
+    {
+        return get_class($this).'Translation';
     }
 
     /**

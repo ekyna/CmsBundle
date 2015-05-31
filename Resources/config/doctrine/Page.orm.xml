@@ -31,8 +31,6 @@
         </id>
 
         <field name="name" column="name" type="string" length="64" />
-        <field name="title" column="title" type="string" length="255" />
-        <field name="html" column="html" type="text" nullable="true" />
         <field name="route" column="route" type="string" length="64" />
         <field name="path" column="path" type="string" length="255" nullable="true" />
         <field name="static" column="static" type="boolean" />

@@ -3,8 +3,7 @@
 {% block ekyna_cms_seo_widget %}
 {% spaceless %}
     {{ form_errors(form) }}
-    {{ form_row(form.title) }}
-    {{ form_row(form.description) }}
+    {{ form_row(form.translations) }}
     {% if form.vars.advanced %}
     <hr>
     <div class="row">

@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectTrait;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectTrait;
@@ -13,8 +14,10 @@ use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
  * Class Page
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @method \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface translate($locale = null)
  */
-class Page implements PageInterface
+class Page extends AbstractTranslatable implements PageInterface
 {
     use ContentSubjectTrait;
     use SeoSubjectTrait;
@@ -64,16 +67,6 @@ class Page implements PageInterface
     /**
      * @var string
      */
-    protected $title;
-
-    /**
-     * @var string
-     */
-    protected $html;
-
-    /**
-     * @var string
-     */
     protected $route;
     
     /**
@@ -112,6 +105,8 @@ class Page implements PageInterface
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->children    = new ArrayCollection();
         $this->contents    = new ArrayCollection();
         $this->seo         = new Seo();
@@ -289,7 +284,7 @@ class Page implements PageInterface
      */
     public function setTitle($title)
     {
-        $this->title = $title;
+        $this->translate()->setTitle($title);
 
         return $this;
     }
@@ -299,7 +294,7 @@ class Page implements PageInterface
      */
     public function getTitle()
     {
-        return $this->title;
+        return $this->translate()->getTitle();
     }
 
     /**
@@ -307,7 +302,7 @@ class Page implements PageInterface
      */
     public function setHtml($html)
     {
-        $this->html = $html;
+        $this->translate()->setHtml($html);
 
         return $this;
     }
@@ -317,7 +312,7 @@ class Page implements PageInterface
      */
     public function getHtml()
     {
-        return $this->html;
+        return $this->translate()->getHtml();
     }
 
     /**
@@ -443,6 +438,34 @@ class Page implements PageInterface
     public function getDynamicPath()
     {
         return $this->dynamicPath;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCurrentLocale($currentLocale)
+    {
+        $this->seo->setCurrentLocale($currentLocale);
+
+        return parent::setCurrentLocale($currentLocale);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFallbackLocale($fallbackLocale)
+    {
+        $this->seo->setFallbackLocale($fallbackLocale);
+
+        return parent::setFallbackLocale($fallbackLocale);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTranslationClass()
+    {
+        return get_class($this).'Translation';
     }
 
     /**

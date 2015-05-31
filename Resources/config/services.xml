@@ -10,11 +10,11 @@
         <!--<parameter key="ekyna_cms.menu.class">Ekyna\Bundle\CmsBundle\Entity\Menu</parameter>-->
         <parameter key="ekyna_cms.menu.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\MenuType</parameter>
         <parameter key="ekyna_cms.page.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>
-        <parameter key="ekyna_cms.seo.class">Ekyna\Bundle\CmsBundle\Entity\Seo</parameter>
+        <!--<parameter key="ekyna_cms.seo.class">Ekyna\Bundle\CmsBundle\Entity\Seo</parameter>
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
-        <!--<parameter key="ekyna_cms.image.class">Ekyna\Bundle\CmsBundle\Entity\Image</parameter>-->
+        <parameter key="ekyna_cms.image.class">Ekyna\Bundle\CmsBundle\Entity\Image</parameter>
         <parameter key="ekyna_cms.image.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\ImageType</parameter>
-        <parameter key="ekyna_cms.file.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\FileType</parameter>
+        <parameter key="ekyna_cms.file.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\FileType</parameter>-->
         <parameter key="ekyna_cms.gallery.class">Ekyna\Bundle\CmsBundle\Entity\Gallery</parameter>
         <parameter key="ekyna_cms.gallery.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\GalleryType</parameter>
         <parameter key="ekyna_cms.gallery_image.class">Ekyna\Bundle\CmsBundle\Entity\GalleryImage</parameter>
@@ -37,7 +37,7 @@
             <argument>%ekyna_cms.page.config%</argument>
             <tag name="form.type" alias="ekyna_cms_page" />
         </service>
-        <service id="ekyna_cms.seo.form_type" class="%ekyna_cms.seo.form_type.class%">
+        <!--<service id="ekyna_cms.seo.form_type" class="%ekyna_cms.seo.form_type.class%">
             <argument>%ekyna_cms.seo.class%</argument>
             <tag name="form.type" alias="ekyna_cms_seo" />
         </service>
@@ -48,7 +48,7 @@
         <service id="ekyna_cms.image.form_type" class="%ekyna_cms.image.form_type.class%">
             <argument>%ekyna_cms.image.class%</argument>
             <tag name="form.type" alias="ekyna_cms_image" />
-        </service>
+        </service>-->
         <service id="ekyna_cms.gallery.form_type" class="%ekyna_cms.gallery.form_type.class%">
             <argument>%ekyna_cms.gallery.class%</argument>
             <tag name="form.type" alias="ekyna_cms_gallery" />
@@ -67,12 +67,12 @@
         </service>
 
         <!-- Repositories -->
-        <service id="ekyna_cms.seo.repository"
+        <!--<service id="ekyna_cms.seo.repository"
                  class="Ekyna\Bundle\CmsBundle\Entity\SeoRepository"
                  factory-service="doctrine.orm.default_entity_manager"
                  factory-method="getRepository">
             <argument>Ekyna\Bundle\CmsBundle\Entity\Seo</argument>
-        </service>
+        </service>-->
         <service id="ekyna_cms.content.repository"
                  class="Ekyna\Bundle\CmsBundle\Entity\ContentRepository"
                  factory-service="doctrine.orm.default_entity_manager"

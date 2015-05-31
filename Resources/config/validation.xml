@@ -13,13 +13,21 @@
                 <option name="max">64</option>
             </constraint>
         </property>
-        <!--<property name="path">
-            <constraint name="Regex">
-                <option name="pattern">~^(/[a-z0-9-]+)*$~</option>
-            </constraint>
-        </property>-->
         <property name="seo">
             <constraint name="Valid" />
+        </property>
+        <property name="translations">
+            <constraint name="Valid" />
+        </property>
+    </class>
+
+    <class name="Ekyna\Bundle\CmsBundle\Entity\PageTranslation">
+        <property name="title">
+            <constraint name="NotBlank" />
+            <constraint name="Length">
+                <option name="min">2</option>
+                <option name="max">64</option>
+            </constraint>
         </property>
     </class>
 
@@ -62,32 +70,6 @@
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\Seo">
-        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
-            <option name="fields">title</option>
-            <option name="message">ekyna_cms.validation.seo.unique_title</option>
-        </constraint>
-
-        <property name="title">
-            <constraint name="NotBlank">
-                <option name="groups">
-                    <value>generator</value>
-                </option>
-            </constraint>
-            <constraint name="Length">
-                <option name="min">2</option>
-                <option name="max">255</option>
-                <option name="groups">
-                    <value>generator</value>
-                </option>
-            </constraint>
-        </property>
-        <property name="description">
-            <constraint name="NotBlank" />
-            <constraint name="Length">
-                <option name="min">2</option>
-                <option name="max">255</option>
-            </constraint>
-        </property>
 	    <property name="changefreq">
 	        <constraint name="Choice">
 	            <option name="callback">getChangefreqs</option>
@@ -135,6 +117,27 @@
                     <value>generator</value>
                 </option>
             </constraint>
+        </property>
+        <property name="translations">
+            <constraint name="Valid" />
+        </property>
+    </class>
+
+    <class name="Ekyna\Bundle\CmsBundle\Entity\SeoTranslation">
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">title</option>
+            <option name="message">ekyna_cms.validation.seo.unique_title</option>
+        </constraint>
+
+        <property name="title">
+            <constraint name="NotBlank" />
+            <constraint name="Length">
+                <option name="min">2</option>
+                <option name="max">255</option>
+            </constraint>
+        </property>
+        <property name="description">
+            <constraint name="NotBlank" />
         </property>
     </class>
 

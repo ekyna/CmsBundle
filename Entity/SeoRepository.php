@@ -2,14 +2,14 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Doctrine\ORM\EntityRepository;
+use Ekyna\Bundle\AdminBundle\Doctrine\ORM\TranslatableResourceRepository;
 
 /**
  * Class SeoRepository
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class SeoRepository extends EntityRepository
+class SeoRepository extends TranslatableResourceRepository
 {
     /**
      * Finds the seo by his id.

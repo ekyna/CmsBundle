@@ -40,26 +40,19 @@ class PageType extends ResourceFormType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', 'text', array(
-                'label' => 'ekyna_core.field.title',
-                'admin_helper' => 'PAGE_TITLE',
-            ))
             ->add('seo', 'ekyna_cms_seo')
+            ->add('translations', 'a2lix_translationsForms', array(
+                'form_type' => new PageTranslationType(),
+                'label'     => false,
+                'attr' => array(
+                    'widget_col' => 12,
+                ),
+            ))
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
             $page = $event->getData();
             $form = $event->getForm();
-
-            if (! $page->getAdvanced()) {
-                $form->add('html', 'textarea', array(
-                    'label' => 'ekyna_core.field.content',
-                    'attr' => array(
-                        'class' => 'tinymce',
-                        'data-theme' => 'advanced',
-                    ),
-                ));
-            }
 
             if ($page->getStatic()) {
                 $form->add('name', 'text', array(

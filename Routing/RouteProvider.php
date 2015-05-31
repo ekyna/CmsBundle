@@ -74,11 +74,16 @@ class RouteProvider implements RouteProviderInterface
     {
         // TODO optimize by querying only required fields
         // TODO doctrine cache
-        $pages = $this->pageRepository->findBy(array('route' => $names));
+        $criteria = array('static' => false);
+        if (null !== $names) {
+            $criteria['route'] = $names;
+        }
+        /** @var PageInterface[] $pages */
+        $pages = $this->pageRepository->findBy($criteria);
 
         $routes = array();
         foreach($pages as $page) {
-            $routes[] = $this->routeFromPage($page);
+            $routes[$page->getRoute()] = $this->routeFromPage($page);
         }
 
         return $routes;
@@ -96,7 +101,11 @@ class RouteProvider implements RouteProviderInterface
     {
         // TODO optimize by querying only required fields
         // TODO doctrine cache
-        if (null !== $page = $this->pageRepository->findOneByRoute($name)) {
+        $criteria = array(
+            'static' => false,
+            'route' => $name,
+        );
+        if (null !== $page = $this->pageRepository->findOneBy($criteria)) {
             return $this->routeFromPage($page);
         }
         return null;

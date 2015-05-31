@@ -66,7 +66,14 @@ class PageGenerator
     {
         $this->output = $output;
 
-        $this->routes = $container->get('router')->getRouteCollection();
+        /** @var \Symfony\Component\Routing\RouterInterface|\JMS\I18nRoutingBundle\Router\I18nRouter $router */
+        $router = $container->get('router');
+        $i18nRouterClass = 'JMS\I18nRoutingBundle\Router\I18nRouterInterface';
+        if (interface_exists($i18nRouterClass) && $router instanceof $i18nRouterClass) {
+            $this->routes = $router->getOriginalRouteCollection();
+        } else {
+            $this->routes = $router->getRouteCollection();
+        }
         $this->homeRouteName = $container->getParameter('ekyna_cms.home_route');
 
         $this->em = $container->get('ekyna_cms.page.manager');
@@ -235,7 +242,7 @@ class PageGenerator
     private function findRouteByName($name)
     {
         if (null === $route = $this->routes->get($name)) {
-            throw new \RuntimeException(sprintf('"%s" route can\'t be found.', $name));
+            throw new \RuntimeException(sprintf('Route "%s" not found.', $name));
         }
         return $route;
     }
@@ -309,6 +316,7 @@ class PageGenerator
             $this->outputPageAction($page->getName(), $updated ? 'updated' : 'already exists');
 
         } else {
+            /** @var PageInterface $page */
             $page = $this->pageRepository->createNew();
 
             if (null !== $parentPage && $parentPage->getRoute() !== $this->homeRouteName) {
@@ -319,7 +327,7 @@ class PageGenerator
 
             // Seo
             $seoDefinition = $definition->getSeo();
-            $seo = new Seo();
+            $seo = $page->getSeo();
             $seo
                 ->setTitle($title)
                 ->setDescription('') // empty to force edition in backend

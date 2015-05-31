@@ -3,7 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\ORM\QueryBuilder;
-use Ekyna\Bundle\AdminBundle\Doctrine\ORM\ResourceRepositoryInterface;
+use Ekyna\Bundle\AdminBundle\Doctrine\ORM\TranslatableResourceRepositoryInterface;
+use Ekyna\Bundle\AdminBundle\Doctrine\ORM\Util\TranslatableResourceRepositoryTrait;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -12,18 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class PageRepository extends NestedTreeRepository implements ResourceRepositoryInterface
+class PageRepository extends NestedTreeRepository implements TranslatableResourceRepositoryInterface
 {
-    /**
-     * Creates a new page.
-     *
-     * @return \Ekyna\Bundle\CmsBundle\Model\PageInterface
-     */
-    public function createNew()
-    {
-        $class = $this->getClassName();
-        return new $class;
-    }
+    use TranslatableResourceRepositoryTrait;
 
     /**
      * Creates a new QueryBuilder instance.

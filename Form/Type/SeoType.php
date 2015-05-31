@@ -21,17 +21,15 @@ class SeoType extends ResourceFormType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', 'text', array(
-                'label' => 'ekyna_core.field.title',
-                'required' => true,
-                'admin_helper' => 'SEO_TITLE',
-            ))
-            ->add('description', 'textarea', array(
-                'label' => 'ekyna_core.field.description',
-                'required' => true,
-                'admin_helper' => 'SEO_DESCRIPTION',
+            ->add('translations', 'a2lix_translationsForms', array(
+                'form_type' => new SeoTranslationType(),
+                'label'     => false,
+                'attr' => array(
+                    'widget_col' => 12,
+                ),
             ))
         ;
+
         if ($options['advanced']) {
             $builder
                 ->add('changefreq', 'choice', array(
