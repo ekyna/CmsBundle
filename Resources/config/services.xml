@@ -196,6 +196,9 @@
         <!-- Web Editor plugins -->
         <service id="ekyna_cms.editor.plugin.tinymce" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\TinymcePlugin">
             <argument>%ekyna_cms.editor.plugin.tinymce.config%</argument>
+            <call method="setLocaleProvider">
+                <argument type="service" id="ekyna_core.locale_provider.request" />
+            </call>
             <tag name="ekyna_cms.editor.plugin" alias="tinymce" />
         </service>
         <service id="ekyna_cms.editor.plugin.image" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\ImagePlugin">

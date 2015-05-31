@@ -149,7 +149,7 @@ class Editor
 
         $this->manager->persist($content);
         $this->manager->persist($subject);
-        $this->manager->flush($subject);
+        $this->manager->flush();
 
         return $content;
     }
@@ -171,7 +171,7 @@ class Editor
 
     /**
      * Initializes the content.
-     * 
+     *
      * @param integer $id
      * @throws \InvalidArgumentException
      * @return Editor
@@ -210,7 +210,7 @@ class Editor
         $this->content->addBlock($block);
 
         $this->manager->persist($this->content);
-        $this->manager->flush($this->content);
+        $this->manager->flush();
 
         return array(
     	    'datas' => $block->getInitDatas(),
@@ -238,7 +238,7 @@ class Editor
         // TODO content validation
 
         $this->manager->persist($block);
-        $this->manager->flush($block);
+        $this->manager->flush();
 
         return array(
             'id' => $block->getId(),
@@ -279,7 +279,7 @@ class Editor
         // TODO content validation
 
         $this->manager->persist($this->content);
-        $this->manager->flush($this->content);
+        $this->manager->flush();
 
         return array(
             'ids' => $removedIds,
@@ -305,7 +305,7 @@ class Editor
 
         // TODO content validation
 
-        $this->manager->flush($this->content);
+        $this->manager->flush();
     }
 
     /**

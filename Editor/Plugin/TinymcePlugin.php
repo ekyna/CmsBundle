@@ -2,8 +2,10 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 
+use Ekyna\Bundle\CmsBundle\Entity\TinymceBlockTranslation;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
+use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
 
 /**
  * Class TinymcePlugin
@@ -13,13 +15,33 @@ use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
 class TinymcePlugin extends AbstractPlugin
 {
     /**
+     * @var LocaleProviderInterface
+     */
+    protected $localeProvider;
+
+    /**
+     * Sets the localeProvider.
+     *
+     * @param LocaleProviderInterface $localeProvider
+     */
+    public function setLocaleProvider(LocaleProviderInterface $localeProvider)
+    {
+        $this->localeProvider = $localeProvider;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function create(array $datas = array())
     {
     	$block = new TinymceBlock();
         $defaultContent = array_key_exists('default_content', $this->config) ? $this->config['default_content'] : '';
-    	$block->setHtml('<p>' . $defaultContent . '</p>');
+
+        $block->setCurrentLocale($this->localeProvider->getCurrentLocale());
+        $block->setFallbackLocale($this->localeProvider->getFallbackLocale());
+
+        $block->setHtml($defaultContent);
+
     	return $block;
     }
 
@@ -28,7 +50,9 @@ class TinymcePlugin extends AbstractPlugin
      */
     public function update(BlockInterface $block, array $datas = array())
     {
+        /** @var TinymceBlock $block */
         if (array_key_exists('html', $datas)) {
+            $block->translate(null, true);
             $block->setHtml($datas['html']);
         }
     }

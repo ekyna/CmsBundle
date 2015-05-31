@@ -2,18 +2,26 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use Ekyna\Bundle\AdminBundle\Model\TranslatableInterface;
+use Ekyna\Bundle\AdminBundle\Model\TranslatableTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * Class TinymceBlock
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class TinymceBlock extends AbstractBlock
+class TinymceBlock extends AbstractBlock implements TranslatableInterface
 {
-    /**
-     * @var string
-     */
-    private $html;
+    use TranslatableTrait;
 
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->translations = new ArrayCollection();
+    }
 
     /**
      * Set html
@@ -23,7 +31,7 @@ class TinymceBlock extends AbstractBlock
      */
     public function setHtml($html)
     {
-        $this->html = $html;
+        $this->translate()->setHtml($html);
 
         return $this;
     }
@@ -35,7 +43,7 @@ class TinymceBlock extends AbstractBlock
      */
     public function getHtml()
     {
-        return $this->html;
+        return $this->translate()->getHtml();
     }
 
     /**
@@ -55,7 +63,7 @@ class TinymceBlock extends AbstractBlock
      */
     public function getIndexableContent()
     {
-        return strip_tags($this->html);
+        return strip_tags($this->getHtml());
     }
 
     /**
