@@ -78,10 +78,10 @@
         }
     };
     
-    $(win.document).ready(function() {
+    $(function() {
         // TODO configurable tinymce url
-        $.getScript('/js/tinymce/tinymce.min.js', function () {
-            tinymce.baseURL = '/js/tinymce';
+        $.getScript('/assets/tinymce/tinymce.min.js', function () {
+            tinymce.baseURL = '/assets/tinymce';
             tinymce.suffix = '.min';
             CmsEditor.registerPlugin('tinymce', TinymceCmsPlugin);
         });

@@ -12,7 +12,6 @@
 	        <generator strategy="AUTO" />
 	    </id>
 
-        <field name="version" type="integer" column="version" />
         <field name="createdAt" type="datetime" column="created_at">
             <gedmo:timestampable on="create" />
         </field>

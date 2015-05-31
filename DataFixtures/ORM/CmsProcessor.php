@@ -109,11 +109,9 @@ class CmsProcessor implements ProcessorInterface
         $block->setHtml($html);
 
         $content = new Entity\Content();
-        $content
-            ->setVersion(0)
-            ->addBlock($block);
+        $content->addBlock($block);
 
-        $subject->addContent($content);
+        $subject->setContent($content);
     }
 
     /**

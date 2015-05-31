@@ -2,8 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 /**
  * Interface ContentSubjectInterface
  * @package Ekyna\Bundle\CmsBundle\Model
@@ -12,40 +10,25 @@ use Doctrine\Common\Collections\ArrayCollection;
 interface ContentSubjectInterface
 {
     /**
+     * Sets the content.
+     *
+     * @param ContentInterface $content
+     * @return ContentSubjectInterface|$this
+     */
+    public function setContent(ContentInterface $content);
+
+    /**
      * Returns the current content (last version).
-     * 
+     *
      * @return ContentInterface|null
      */
     public function getContent();
 
     /**
-     * Sets the contents.
-     * 
-     * @param ArrayCollection $contents
-     * @return ContentSubjectInterface|$this
-     */
-    public function setContents(ArrayCollection $contents);
-
-    /**
-     * Adds the content.
-     * 
-     * @param ContentInterface $content
-     * @return ContentSubjectInterface|$this
-     */
-    public function addContent(ContentInterface $content);
-
-    /**
-     * Remove the content
-     * 
-     * @param ContentInterface $content
-     * @return ContentSubjectInterface|$this
-     */
-    public function removeContent(ContentInterface $content);
-
-    /**
-     * Returns all contents
+     * Returns the content summary.
      *
-     * @return ArrayCollection|ContentInterface[]
+     * @param int $maxLength
+     * @return string
      */
-    public function getContents();
+    public function getContentSummary($maxLength = 128);
 }

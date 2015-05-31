@@ -463,10 +463,10 @@ class Page extends AbstractTranslatable implements PageInterface
     /**
      * {@inheritdoc}
      */
-    protected function getTranslationClass()
+    /*protected function getTranslationClass()
     {
         return get_class($this).'Translation';
-    }
+    }*/
 
     /**
      * Returns whether the exhibitor should be indexed or not by elasticsearch.

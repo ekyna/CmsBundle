@@ -6,12 +6,11 @@ Ekyna\Bundle\CmsBundle\Entity\Page:
             groups: [Search, Default]
         title:
             expose: true
+        content:
+            expose: true
         seo:
             expose: true
     virtual_properties:
-        getContent:
-            expose: true
-            serialized_name: content
         __toString:
             expose: true
             serialized_name: text

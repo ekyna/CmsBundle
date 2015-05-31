@@ -24,11 +24,6 @@ class Content implements ContentInterface
     protected $id;
 
     /**
-     * @var number
-     */
-    protected $version;
-
-    /**
      * @var ArrayCollection|BlockInterface[]
      */
     protected $blocks;
@@ -48,24 +43,6 @@ class Content implements ContentInterface
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setVersion($version)
-    {
-        $this->version = $version;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersion()
-    {
-        return $this->version;
     }
 
     /**

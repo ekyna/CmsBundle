@@ -1,6 +1,6 @@
 // Editor.js
 ;
-(function (win, $, router) {
+(function ($, router) {
     "use strict";
 
     var Editor = {
@@ -103,7 +103,7 @@
     Editor.init = function () {
         var pressedBlock = null;
 
-        $(win).on('mousedown', function(e) {
+        $(window).on('mousedown', function(e) {
             if (Editor.enabled) {
                 pressedBlock = Editor.getMouseEventTarget(e);
             }
@@ -1064,7 +1064,7 @@
         }
     };
 
-    win.CmsEditor = Editor;
+    window.CmsEditor = Editor;
 
 
     /* Base plugin */
@@ -1095,11 +1095,11 @@
         return {};
     };
 
-    win.CmsPlugin = CmsPlugin;
+    window.CmsPlugin = CmsPlugin;
 
 
-    $(win.document).ready(function () {
+    $(function() {
         CmsEditor.init();
     });
 
-})(window, jQuery, Routing);
+})(jQuery, Routing);

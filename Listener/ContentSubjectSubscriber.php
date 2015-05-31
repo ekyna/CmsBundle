@@ -35,7 +35,7 @@ class ContentSubjectSubscriber implements EventSubscriber
         }
 
         // Don't add mapping twice
-        if ($metadata->hasAssociation('contents')) {
+        if ($metadata->hasAssociation('content')) {
             return;
         }
 
@@ -45,28 +45,17 @@ class ContentSubjectSubscriber implements EventSubscriber
             ->getNamingStrategy()
         ;
 
-        $metadata->mapManyToMany(array(
-            'fieldName'     => 'contents',
+        $metadata->mapOneToOne(array(
+            'fieldName'     => 'content',
             'targetEntity'  => self::CONTENT_FQCN,
             'cascade'       => array('all'),
-            'joinTable'     => array(
-                'name'        => sprintf('%s_content', strtolower($metadata->getTableName())),
-                'joinColumns' => array(
-                    array(
-                        'name'                  => $namingStrategy->joinKeyColumnName($metadata->getName()),
-                        'referencedColumnName'  => $namingStrategy->referenceColumnName(),
-                        'onDelete'              => 'CASCADE',
-                    ),
-                ),
-                'inverseJoinColumns'    => array(
-                    array(
-                        'name'                  => 'content_id',
-                        'referencedColumnName'  => $namingStrategy->referenceColumnName(),
-                        'onDelete'              => 'CASCADE',
-                    ),
+            'joinColumn' => array(
+                array(
+                    'name'                  => $namingStrategy->joinKeyColumnName($metadata->getName()),
+                    'referencedColumnName'  => $namingStrategy->referenceColumnName(),
+                    'onDelete'              => 'CASCADE',
                 ),
             ),
-            // TODO fetch => EXTRA_LAZY
         ));
     }
 

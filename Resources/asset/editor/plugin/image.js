@@ -1,4 +1,4 @@
-;(function(win, $) {
+;(function($) {
     "use strict";
 
     function ImageCmsPlugin($el) {
@@ -20,8 +20,8 @@
         CmsPlugin.prototype.update.apply(this, arguments);
     };*/
     
-    $(win.document).ready(function() {
-		win.CmsEditor.registerPlugin('image', ImageCmsPlugin);
+    $(function() {
+		CmsEditor.registerPlugin('image', ImageCmsPlugin);
     });
     
-})(window, jQuery);
+})(jQuery);

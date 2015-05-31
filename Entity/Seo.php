@@ -205,10 +205,10 @@ class Seo extends AbstractTranslatable implements SeoInterface
     /**
      * {@inheritdoc}
      */
-    protected function getTranslationClass()
+    /*protected function getTranslationClass()
     {
         return get_class($this).'Translation';
-    }
+    }*/
 
     /**
      * {@inheritDoc}

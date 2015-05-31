@@ -2,7 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
 
 /**
@@ -13,73 +12,32 @@ use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
 trait ContentSubjectTrait
 {
     /**
-     * @var ArrayCollection|ContentInterface[]
+     * @var ContentInterface
      */
-    protected $contents;
+    protected $content;
 
     /**
-     * Returns the content (last version).
+     * Sets the content.
+     *
+     * @param ContentInterface $content
+     *
+     * @return ContentSubjectInterface|$this
+     */
+    public function setContent(ContentInterface $content)
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * Returns the content.
      *
      * @return ContentInterface|null
      */
     public function getContent()
     {
-        if (null !== $this->contents && 0 < $this->contents->count()) {
-            return $this->contents->first();
-        }
-        return null;
-    }
-
-    /**
-     * Sets the contents.
-     *
-     * @param ArrayCollection $contents
-     *
-     * @return ContentSubjectInterface|$this
-     */
-    public function setContents(ArrayCollection $contents)
-    {
-        $this->contents = $contents;
-
-        return $this;
-    }
-
-    /**
-     * Adds the content.
-     *
-     * @param ContentInterface $content
-     *
-     * @return ContentSubjectInterface|$this
-     */
-    public function addContent(ContentInterface $content)
-    {
-        $this->contents->add($content);
-    
-        return $this;
-    }
-
-    /**
-     * Removes the content.
-     *
-     * @param ContentInterface $content
-     *
-     * @return ContentSubjectInterface|$this
-     */
-    public function removeContent(ContentInterface $content)
-    {
-        $this->contents->removeElement($content);
-
-        return $this;
-    }
-
-    /**
-     * Returns the contents.
-     *
-     * @return ArrayCollection|ContentInterface[]
-     */
-    public function getContents()
-    {
-        return $this->contents;
+        return $this->content;
     }
 
     /**

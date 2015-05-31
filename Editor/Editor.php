@@ -143,11 +143,9 @@ class Editor
         $block = $this->createDefaultBlock($this->defaultBlockType);
 
         $content = new Content();
-        $content
-            ->setVersion(1)
-            ->addBlock($block);
+        $content->addBlock($block);
 
-        $subject->addContent($content);
+        $subject->setContent($content);
 
         $this->manager->persist($content);
         $this->manager->persist($subject);

@@ -171,8 +171,8 @@
     return cookieChoices;
 })(this);
 
-(function(doc, $, router) {
-    $(doc).ready(function() {
+(function($, router) {
+    $(document).on('fos_js_routing_loaded', function() {
 
         var $flashesContainer = $('#cms-flashes');
 
@@ -222,4 +222,4 @@
             }
         });
     });
-})(document, jQuery, Routing);
+})(jQuery, Routing);

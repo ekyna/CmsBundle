@@ -21,22 +21,6 @@ interface ContentInterface extends TimestampableInterface, TaggedEntityInterface
     public function getId();
 
     /**
-     * Set version
-     *
-     * @param integer $version
-     *
-     * @return ContentInterface|$this
-     */
-    public function setVersion($version);
-
-    /**
-     * Get version
-     *
-     * @return integer
-     */
-    public function getVersion();
-
-    /**
      * Set blocks
      *
      * @param ArrayCollection|BlockInterface[] $blocks
