@@ -95,20 +95,28 @@ interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface, Ti
     public function getLevel();
 
     /**
+     * Returns whether the page has the child or not.
+     *
+     * @param PageInterface $child
+     * @return bool
+     */
+    public function hasChild(PageInterface $child);
+
+    /**
      * Add children
      *
-     * @param PageInterface $children
+     * @param PageInterface $child
      * @return PageInterface|$this
      */
-    public function addChild(PageInterface $children);
+    public function addChild(PageInterface $child);
 
     /**
      * Remove children
      *
-     * @param PageInterface $children
+     * @param PageInterface $child
      * @return PageInterface|$this
      */
-    public function removeChild(PageInterface $children);
+    public function removeChild(PageInterface $child);
 
     /**
      * Has children

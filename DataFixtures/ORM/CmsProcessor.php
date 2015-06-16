@@ -3,8 +3,10 @@
 namespace Ekyna\Bundle\CmsBundle\DataFixtures\ORM;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Entity as Entity;
-use Ekyna\Bundle\CmsBundle\Model as Model;
+use Ekyna\Bundle\CmsBundle\Entity as CmsEntity;
+use Ekyna\Bundle\CmsBundle\Model as CmsModel;
+use Ekyna\Bundle\MediaBundle\Entity as MediaEntity;
+use Ekyna\Bundle\MediaBundle\Model as MediaModel;
 use Faker\Factory;
 use Nelmio\Alice\ProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -48,21 +50,21 @@ class CmsProcessor implements ProcessorInterface
      */
     public function preProcess($object)
     {
-        if ($object instanceof Model\SeoSubjectInterface) {
+        if ($object instanceof CmsModel\SeoSubjectInterface) {
             $this->generateSeo($object);
         }
-        if ($object instanceof Model\ContentSubjectInterface) {
+        if ($object instanceof CmsModel\ContentSubjectInterface) {
             $this->generateContent($object);
         }
-        if ($object instanceof Model\TagsSubjectInterface) {
+        if ($object instanceof CmsModel\TagsSubjectInterface) {
             $this->generateTags($object);
         }
-        if ($object instanceof Model\ImageSubjectInterface) {
+        /*if ($object instanceof MediaModel\ImageSubjectInterface) {
             $this->generateImage($object);
         }
-        if ($object instanceof Model\GallerySubjectInterface) {
+        if ($object instanceof MediaModel\GallerySubjectInterface) {
             $this->generateGallery($object);
-        }
+        }*/
     }
 
     /**
@@ -76,11 +78,11 @@ class CmsProcessor implements ProcessorInterface
     /**
      * Generates seo to the given subject.
      *
-     * @param Model\SeoSubjectInterface $subject
+     * @param CmsModel\SeoSubjectInterface $subject
      */
-    protected function generateSeo(Model\SeoSubjectInterface $subject)
+    protected function generateSeo(CmsModel\SeoSubjectInterface $subject)
     {
-        $seo = new Entity\Seo();
+        $seo = new CmsEntity\Seo();
         if (0 < strlen($name = $this->objectToString($subject))) {
             $seo
                 ->setTitle($name . ' seo title')
@@ -96,19 +98,19 @@ class CmsProcessor implements ProcessorInterface
     /**
      * Generates content to the given subject.
      *
-     * @param Model\ContentSubjectInterface $subject
+     * @param CmsModel\ContentSubjectInterface $subject
      */
-    protected function generateContent(Model\ContentSubjectInterface $subject)
+    protected function generateContent(CmsModel\ContentSubjectInterface $subject)
     {
         $html = '';
         for ($i = 0; $i < rand(3, 5); $i++) {
             $html .= '<p>' . $this->faker->text(rand(300, 600)) . '</p>';
         }
 
-        $block = new Entity\TinymceBlock();
+        $block = new CmsEntity\TinymceBlock();
         $block->setHtml($html);
 
-        $content = new Entity\Content();
+        $content = new CmsEntity\Content();
         $content->addBlock($block);
 
         $subject->setContent($content);
@@ -117,9 +119,9 @@ class CmsProcessor implements ProcessorInterface
     /**
      * Associates tags to the given subject.
      *
-     * @param Model\TagsSubjectInterface $subject
+     * @param CmsModel\TagsSubjectInterface $subject
      */
-    protected function generateTags(Model\TagsSubjectInterface $subject)
+    protected function generateTags(CmsModel\TagsSubjectInterface $subject)
     {
         $qb = $this->container->get('ekyna_cms.tag.repository')->createQueryBuilder('t');
         $tags = $qb
@@ -134,30 +136,30 @@ class CmsProcessor implements ProcessorInterface
     /**
      * Associates an image to the given subject.
      *
-     * @param Model\ImageSubjectInterface $subject
+     * @param MediaModel\ImageSubjectInterface $subject
      */
-    protected function generateImage(Model\ImageSubjectInterface $subject)
+    /*protected function generateImage(MediaModel\ImageSubjectInterface $subject)
     {
         $subject->setImage($this->findImages()[0]);
-    }
+    }*/
 
     /**
      * Associates a gallery to the given subject.
      *
-     * @param Model\GallerySubjectInterface $subject
+     * @param MediaModel\GallerySubjectInterface $subject
      */
-    protected function generateGallery(Model\GallerySubjectInterface $subject)
+    /*protected function generateGallery(MediaModel\GallerySubjectInterface $subject)
     {
         $gallery = null;
 
         if (null === $gallery) {
-            $gallery = new Entity\Gallery();
+            $gallery = new MediaEntity\Gallery();
             $gallery->setName($this->faker->sentence(3));
 
             $images = $this->findImages(rand(4, 5));
             $position = 0;
             foreach ($images as $image) {
-                $galleryImage = new Entity\GalleryImage();
+                $galleryImage = new MediaEntity\GalleryImage();
                 $galleryImage
                     ->setImage($image)
                     ->setPosition($position)
@@ -168,13 +170,13 @@ class CmsProcessor implements ProcessorInterface
         }
 
         $subject->setGallery($gallery);
-    }
+    }*/
 
     /**
      * Find some images.
      *
      * @param int $limit
-     * @return Entity\Image[]
+     * @return MediaEntity\Image[]
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     private function findImages($limit = 1)
@@ -187,7 +189,7 @@ class CmsProcessor implements ProcessorInterface
 
         if (rand(0, 10) > 5) {
             $qb = $this->container
-                ->get('ekyna_cms.image.repository')
+                ->get('ekyna_media.image.repository')
                 ->createQueryBuilder('i');
 
             $query = $qb
@@ -221,7 +223,7 @@ class CmsProcessor implements ProcessorInterface
         $images = [];
 
         for ($j = 0; $j < $number; $j++) {
-            $image = new Entity\Image();
+            $image = new MediaEntity\Image();
             $image
                 ->setFile($this->images[rand(0, 5)])
                 ->setRename($this->faker->sentence(3))

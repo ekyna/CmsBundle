@@ -2,16 +2,16 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Bundle\CoreBundle\Model;
+use Ekyna\Bundle\MediaBundle\Model as Media;
 
 /**
  * Class ImageBlock
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class ImageBlock extends AbstractBlock implements Model\ImageInterface
+class ImageBlock extends AbstractBlock implements Media\MediaSubjectInterface
 {
-    use Model\ImageTrait;
+    use Media\MediaSubjectTrait;
 
     /**
      * {@inheritdoc}

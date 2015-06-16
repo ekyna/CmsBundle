@@ -18,8 +18,8 @@
         </indexes>
 
         <unique-constraints>
-            <unique-constraint name="uniq_name" columns="name,parent_id" />
-            <unique-constraint name="uniq_path" columns="path,parent_id" />
+            <unique-constraint name="unique_name" columns="name,parent_id" />
+            <unique-constraint name="unique_path" columns="path,parent_id" />
         </unique-constraints>
 
         <entity-listeners>

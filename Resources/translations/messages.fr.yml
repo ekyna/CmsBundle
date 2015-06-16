@@ -52,42 +52,6 @@ ekyna_cms:
             remove: Supprimer le menu
         alert:
             no_item: Aucun menu configuré
-    file:
-        label:
-            singular: Fichier
-            plural: Fichiers
-        header:
-            list: Fichiers <small>Liste des fichiers</small>
-            show: Détail du fichier
-            new: Créer un nouveau fichier
-            edit: Modifier le fichier
-            remove: Supprimer le fichier
-        button:
-            list: Liste des fichiers
-            show: Détail du fichier
-            new: Nouveau fichier
-            edit: Modifier le fichier
-            remove: Supprimer le fichier
-        alert:
-            no_item: Aucun fichier configuré
-    image:
-        label:
-            singular: Image
-            plural: Images
-        header:
-            list: Images <small>Liste des images</small>
-            show: Détail de l'image
-            new: Créer une nouvelle image
-            edit: Modifier l'image
-            remove: Supprimer l'image
-        button:
-            list: Liste des images
-            show: Détail de l'image
-            new: Nouvelle image
-            edit: Modifier l'image
-            remove: Supprimer l'image
-        alert:
-            no_item: Aucune image configuré
     tag:
         label:
             singular: Tag

@@ -228,9 +228,19 @@ class Page extends AbstractTranslatable implements PageInterface
     /**
      * {@inheritdoc}
      */
-    public function addChild(PageInterface $children)
+    public function hasChild(PageInterface $child)
     {
-        $this->children[] = $children;
+        return $this->children->contains($child);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addChild(PageInterface $child)
+    {
+        if (!$this->hasChild($child)) {
+            $this->children->add($child);
+        }
 
         return $this;
     }
@@ -238,9 +248,11 @@ class Page extends AbstractTranslatable implements PageInterface
     /**
      * {@inheritdoc}
      */
-    public function removeChild(PageInterface $children)
+    public function removeChild(PageInterface $child)
     {
-        $this->children->removeElement($children);
+        if ($this->hasChild($child)) {
+            $this->children->removeElement($child);
+        }
 
         return $this;
     }
@@ -250,7 +262,7 @@ class Page extends AbstractTranslatable implements PageInterface
      */
     public function hasChildren()
     {
-        return 0 < count($this->children);
+        return 0 < $this->children->count();
     }
 
     /**
