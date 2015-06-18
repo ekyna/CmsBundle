@@ -2,24 +2,16 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use Ekyna\Bundle\AdminBundle\Doctrine\ORM\TranslatableResourceRepositoryInterface;
+use Ekyna\Bundle\AdminBundle\Doctrine\ORM\Util\TranslatableResourceRepositoryTrait;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
-use Ekyna\Bundle\AdminBundle\Doctrine\ORM\ResourceRepositoryInterface;
 
 /**
  * Class MenuRepository
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class MenuRepository extends NestedTreeRepository implements ResourceRepositoryInterface
+class MenuRepository extends NestedTreeRepository implements TranslatableResourceRepositoryInterface
 {
-    /**
-     * Creates a new menu.
-     *
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Menu
-     */
-    public function createNew()
-    {
-        $class = $this->getClassName();
-        return new $class;
-    }
+    use TranslatableResourceRepositoryTrait;
 }

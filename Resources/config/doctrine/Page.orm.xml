@@ -6,10 +6,9 @@
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity
-        name="Ekyna\Bundle\CmsBundle\Entity\Page"
-        repository-class="Ekyna\Bundle\CmsBundle\Entity\PageRepository"
-        table="cms_page">
+    <entity name="Ekyna\Bundle\CmsBundle\Entity\Page"
+            repository-class="Ekyna\Bundle\CmsBundle\Entity\PageRepository"
+            table="cms_page">
 
         <indexes>
             <index name="idx_path" columns="path" />
@@ -30,7 +29,7 @@
             <generator strategy="AUTO" />
         </id>
 
-        <field name="name" column="name" type="string" length="64" />
+        <field name="name" column="name" type="string" length="255" />
         <field name="route" column="route" type="string" length="64" />
         <field name="path" column="path" type="string" length="255" nullable="true" />
         <field name="static" column="static" type="boolean" />

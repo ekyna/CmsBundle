@@ -48,9 +48,12 @@ class MenuType extends ResourceFormType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', 'text', array(
-                'label'    => 'ekyna_core.field.title',
-                'required' => true
+            ->add('translations', 'a2lix_translationsForms', array(
+                'form_type' => new MenuTranslationType(),
+                'label'     => false,
+                'attr' => array(
+                    'widget_col' => 12,
+                ),
             ))
             ->add('description', 'textarea', array(
                 'label'    => 'ekyna_core.field.description',

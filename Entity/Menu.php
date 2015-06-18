@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
 use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
@@ -11,8 +12,10 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
  * Class Menu
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @method \Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface translate($locale = null)
  */
-class Menu implements MenuInterface
+class Menu extends AbstractTranslatable implements MenuInterface
 {
     use TaggedEntityTrait;
 
@@ -107,6 +110,8 @@ class Menu implements MenuInterface
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->children = new ArrayCollection();
         $this->parameters = [];
         $this->attributes = [];
@@ -282,19 +287,19 @@ class Menu implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getTitle()
+    public function setTitle($title)
     {
-        return $this->title;
+        $this->translate()->setTitle($title);
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setTitle($title)
+    public function getTitle()
     {
-        $this->title = $title;
-
-        return $this;
+        return $this->translate()->getTitle();
     }
 
     /**

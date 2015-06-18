@@ -13,7 +13,6 @@ class AsseticConfiguration
      * Builds the assetic configuration.
      *
      * @param array $config
-     *
      * @return array
      */
     public function build(array $config)
@@ -26,7 +25,6 @@ class AsseticConfiguration
         }
 
         $output['cms_editor_css'] = $this->buildCss($config);
-        $output['cms_editor_js'] = $this->buildJs($config);
 
         return $output;
     }
@@ -39,34 +37,13 @@ class AsseticConfiguration
     protected function buildCss(array $config)
     {
         $inputs = array(
-            '@EkynaCmsBundle/Resources/asset/editor/editor.css',
+            '@EkynaCmsBundle/Resources/asset/css/editor.css',
         );
 
         return array(
             'inputs'  => $inputs,
             'filters' => array('yui_css'),
             'output'  => $config['output_dir'].'css/cms-editor.css',
-            'debug'   => false,
-        );
-    }
-
-    /**
-     * @param array $config
-     *
-     * @return array
-     */
-    protected function buildJs(array $config)
-    {
-        $inputs = array(
-            '@EkynaCmsBundle/Resources/asset/editor/editor.js',
-            '@EkynaCmsBundle/Resources/asset/editor/plugin/tinymce.js',
-            '@EkynaCmsBundle/Resources/asset/editor/plugin/image.js',
-        );
-
-        return array(
-            'inputs'  => $inputs,
-            'filters' => array('yui_js'),
-            'output'  => $config['output_dir'].'js/cms-editor.js',
             'debug'   => false,
         );
     }
