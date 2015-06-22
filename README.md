@@ -19,11 +19,10 @@ TODO
 TODO
 
 ## TODOs
-- Move "_cms" (routing definitions) from "defaults" to "options" !
+- Fix MenuBuilder breadcrumb.
 - Disallow locked pages removal.
 - Configurable editor content template.
 - route provider / doctrine cache
 - Bug URL (double /) on page creation
-- Interfaces (file, image, etc)
 - Menu enabled field.
 - Published pages (for non static only).

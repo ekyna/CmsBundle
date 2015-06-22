@@ -63,6 +63,7 @@
     <class name="Ekyna\Bundle\CmsBundle\Entity\Menu">
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
             <option name="fields">
+                <value>root</value>
                 <value>name</value>
             </option>
             <option name="message">ekyna_cms.menu.unique_name</option>

@@ -77,6 +77,7 @@ class PageGenerator
         $this->homeRouteName = $container->getParameter('ekyna_cms.home_route');
 
         $this->em = $container->get('ekyna_cms.page.manager');
+        /** @noinspection YamlDeprecatedClasses */
         $this->validator = $container->get('validator');
         $this->pageRepository = $container->get('ekyna_cms.page.repository');
         $this->menuRepository = $container->get('ekyna_cms.menu.repository');
@@ -96,6 +97,7 @@ class PageGenerator
     {
         $seoOptionResolver = new OptionsResolver();
 
+        /** @noinspection PhpUnusedParameterInspection */
         $seoOptionResolver
             ->setDefaults(array(
                 'changefreq' => 'monthly',
@@ -129,6 +131,7 @@ class PageGenerator
 
         $this->optionsResolver = new OptionsResolver();
 
+        /** @noinspection PhpUnusedParameterInspection */
         $this->optionsResolver
             ->setDefaults(array(
                 'name' => null,
@@ -388,15 +391,33 @@ class PageGenerator
     {
         if (!empty($parentNames)) {
             foreach ($parentNames as $parentName) {
-                if (null !== $parent = $this->menuRepository->findOneBy(array('name' => $parentName))) {
-                    $name = sprintf('%s_%s', $parentName, $page->getRoute());
+                if (0 < strpos($parentName, ':')) {
+                    list($rootName, $parentName) = explode(':', $parentName);
+                    /** @var \Ekyna\Bundle\CmsBundle\Model\MenuInterface $root */
+                    if (null === $root = $this->menuRepository->findOneBy(array('name' => $rootName))) {
+                        $this->output->writeln(sprintf(
+                            '<error>Root menu "%s" not found for route "%s".</error>',
+                            $rootName,
+                            $page->getRoute()
+                        ));
+                        return false;
+                    }
+                    $parent = $this->menuRepository->findOneBy(array(
+                        'name' => $parentName,
+                        'root' => $root->getId(),
+                    ));
+                } else {
+                    $parent = $this->menuRepository->findOneBy(array('name' => $parentName));
+                }
+                if (null !== $parent) {
+                    $name = $page->getRoute();
                     if (null === $this->menuRepository->findOneBy(array('name' => $name, 'parent' => $parent))) {
                         $menu = $this->menuRepository->createNew();
                         $menu
                             ->setParent($parent)
                             ->setName($name)
                             ->setTitle($page->getTitle())
-                            ->setRoute($page->getRoute())
+                            ->setRoute($name)
                         ;
 
                         if (!$this->validate($menu)) {
