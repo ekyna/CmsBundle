@@ -307,10 +307,11 @@ class PageGenerator
             }
 
             if ($updated) {
-                if (!$this->validatePage($page)) {
+                if (!$this->validate($page)) {
                     return false;
                 }
                 $this->em->persist($page);
+                $this->em->flush();
             }
 
             $this->outputPageAction($page->getName(), $updated ? 'updated' : 'already exists');
@@ -352,18 +353,19 @@ class PageGenerator
                 ->setHtml('<p></p>') // TODO default content
             ;
 
-            if (!$this->validatePage($page)) {
+            if (!$this->validate($page)) {
                 return false;
             }
 
             $this->em->persist($page);
+            $this->em->flush();
 
             $this->outputPageAction($page->getName(), 'created');
         }
 
-        $this->createMenus($page, $definition->getMenus());
-
-        $this->em->flush();
+        if (!$this->createMenus($page, $definition->getMenus())) {
+            return false;
+        }
 
         // Creates children pages
         foreach ($definition->getChildren() as $child) {
@@ -376,48 +378,45 @@ class PageGenerator
     }
 
     /**
-     * Validates the page.
-     *
-     * @param PageInterface $page
-     * @return bool
-     */
-    private function validatePage(PageInterface $page)
-    {
-        $violationList = $this->validator->validate($page, null, array('generator'));
-        if (0 < $violationList->count()) {
-            $this->output->writeln('<error>Invalid page</error>');
-            /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
-            foreach($violationList as $violation) {
-                $this->output->writeln(sprintf('<error>%s : %s</error>', $violation->getPropertyPath(), $violation->getMessage()));
-            }
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Creates the menus entries.
      *
      * @param PageInterface $page
      * @param array $parentNames
+     * @return bool
      */
     private function createMenus(PageInterface $page, array $parentNames)
     {
-        foreach ($parentNames as $parentName) {
-            $name = $page->getRoute();
-            if (null !== $parent = $this->menuRepository->findOneBy(array('name' => $parentName))) {
-                if (null === $this->menuRepository->findOneBy(array('name' => $name, 'parent' => $parent))) {
-                    $menu = $this->menuRepository->createNew();
-                    $menu
-                        ->setParent($parent)
-                        ->setName($name)
-                        ->setTitle($page->getTitle())
-                        ->setRoute($name)
-                    ;
-                    $this->em->persist($menu);
+        if (!empty($parentNames)) {
+            foreach ($parentNames as $parentName) {
+                if (null !== $parent = $this->menuRepository->findOneBy(array('name' => $parentName))) {
+                    $name = sprintf('%s_%s', $parentName, $page->getRoute());
+                    if (null === $this->menuRepository->findOneBy(array('name' => $name, 'parent' => $parent))) {
+                        $menu = $this->menuRepository->createNew();
+                        $menu
+                            ->setParent($parent)
+                            ->setName($name)
+                            ->setTitle($page->getTitle())
+                            ->setRoute($page->getRoute())
+                        ;
+
+                        if (!$this->validate($menu)) {
+                            return false;
+                        }
+
+                        $this->em->persist($menu);
+                        $this->em->flush();
+                    }
+                } else {
+                    $this->output->writeln(sprintf(
+                        '<error>Parent menu "%s" not found for route "%s".</error>',
+                        $parentName,
+                        $page->getRoute()
+                    ));
+                    return false;
                 }
             }
         }
+        return true;
     }
 
     /**
@@ -434,6 +433,26 @@ class PageGenerator
             }
         }
         $this->em->flush();
+    }
+
+    /**
+     * Validates the element.
+     *
+     * @param object $element
+     * @return bool
+     */
+    private function validate($element)
+    {
+        $violationList = $this->validator->validate($element);
+        if (0 < $violationList->count()) {
+            $this->output->writeln('<error>Invalid element</error>');
+            /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
+            foreach($violationList as $violation) {
+                $this->output->writeln(sprintf('<error>%s : %s</error>', $violation->getPropertyPath(), $violation->getMessage()));
+            }
+            return false;
+        }
+        return true;
     }
 
     /**

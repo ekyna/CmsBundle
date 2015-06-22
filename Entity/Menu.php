@@ -62,11 +62,6 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * @var string
      */
-    protected $title;
-
-    /**
-     * @var string
-     */
     protected $description;
 
     /**

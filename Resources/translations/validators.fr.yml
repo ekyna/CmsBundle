@@ -8,5 +8,8 @@ ekyna_cms:
         identity: L'identité du block n'est pas correctement définie.
     seo:
         unique_title: Une page est déjà définie avec ce titre.
+    page:
+        unique_name: Veuillez saisir un nom unique.
     menu:
         invalid_routing: Vous devez spécifier un et seulement un des champs "Page", "Url" ou "Route".
+        unique_name: Veuillez saisir un nom unique.

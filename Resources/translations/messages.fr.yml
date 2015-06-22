@@ -70,6 +70,10 @@ ekyna_cms:
             remove: Supprimer le tag
         alert:
             no_item: Aucun tag configuré
+    seo:
+        label:
+            singular: Référencement
+            plural: Référencements
     field:
         main_menu: Menu principal
         footer_menu: Menu pied de page
