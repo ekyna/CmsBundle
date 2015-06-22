@@ -176,7 +176,7 @@ class PageGenerator
      */
     private function resolveRouteOptions(Route $route, $routeName)
     {
-        if (null === $cmsOptions = $route->getDefault('_cms')) { // TODO $route->getOption('_cms')
+        if (null === $cmsOptions = $route->getOption('_cms')) {
             throw new \InvalidArgumentException(sprintf('Route "%s" does not have "_cms" defaults attributes.', $routeName));
         }
         return $this->optionsResolver->resolve(array_merge($cmsOptions, array('path' => $route->getPath())));
@@ -194,7 +194,7 @@ class PageGenerator
 
         /** @var Route $route */
         foreach ($this->routes as $name => $route) {
-            if ($this->homeRouteName !== $name && null !== $cms = $route->getDefault('_cms')) {
+            if ($this->homeRouteName !== $name && null !== $cms = $route->getOption('_cms')) {
                 if (array_key_exists('name', $cms)) {
                     $this->createRouteDefinition($name, $route);
                 }
@@ -443,7 +443,7 @@ class PageGenerator
      */
     private function validate($element)
     {
-        $violationList = $this->validator->validate($element);
+        $violationList = $this->validator->validate($element, null, array('Generator'));
         if (0 < $violationList->count()) {
             $this->output->writeln('<error>Invalid element</error>');
             /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */

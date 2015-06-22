@@ -45,11 +45,13 @@ class RoutingLoader extends Loader
         $collection = new RouteCollection();
 
         if ($this->config['enable']) {
-
             $cookieInfos = new Route('/cookies-informations');
             $cookieInfos->setDefaults(array(
                 '_controller' => $this->config['controller'],
-                '_cms' => array( // TODO move in route options
+            ));
+            $cookieInfos->setOptions(array(
+                'expose' => true,
+                '_cms' => array(
                     'name' => 'Utilisation des cookies',
                     'advanced' => true,
                     'position' => 999,
@@ -59,10 +61,6 @@ class RoutingLoader extends Loader
                     ),
                 ),
             ));
-            $cookieInfos->setOptions(array(
-                'expose' => true,
-            ));
-
             $collection->add('cookies_informations', $cookieInfos);
         }
 

@@ -12,12 +12,25 @@
                 <value>name</value>
             </option>
             <option name="message">ekyna_cms.page.unique_name</option>
+            <option name="groups">
+                <value>Default</value>
+                <value>Generator</value>
+            </option>
         </constraint>
         <property name="name">
-            <constraint name="NotBlank" />
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
+            </constraint>
             <constraint name="Length">
                 <option name="min">2</option>
                 <option name="max">64</option>
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
             </constraint>
         </property>
         <property name="seo">
@@ -30,10 +43,19 @@
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\PageTranslation">
         <property name="title">
-            <constraint name="NotBlank" />
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
+            </constraint>
             <constraint name="Length">
                 <option name="min">2</option>
                 <option name="max">64</option>
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
             </constraint>
         </property>
     </class>
@@ -41,27 +63,48 @@
     <class name="Ekyna\Bundle\CmsBundle\Entity\Menu">
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
             <option name="fields">
-                <value>root</value>
                 <value>name</value>
             </option>
             <option name="message">ekyna_cms.menu.unique_name</option>
+            <option name="groups">
+                <value>Default</value>
+                <value>Generator</value>
+            </option>
         </constraint>
         <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Menu" />
         <property name="name">
-            <constraint name="NotBlank" />
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
+            </constraint>
             <constraint name="Length">
                 <option name="min">2</option>
                 <option name="max">255</option>
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
             </constraint>
         </property>
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\MenuTranslation">
         <property name="title">
-            <constraint name="NotBlank" />
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
+            </constraint>
             <constraint name="Length">
                 <option name="min">2</option>
                 <option name="max">255</option>
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
             </constraint>
         </property>
     </class>
@@ -70,25 +113,56 @@
 	    <property name="changefreq">
 	        <constraint name="Choice">
 	            <option name="callback">getChangefreqs</option>
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
 	        </constraint>
 	    </property>
         <property name="priority">
-            <constraint name="NotBlank" />
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
+            </constraint>
             <constraint name="Range">
                 <option name="min">0</option>
                 <option name="max">1</option>
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
             </constraint>
         </property>
         <property name="follow">
-            <constraint name="NotNull" />
+            <constraint name="NotNull">
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
+            </constraint>
             <constraint name="Type">
                 <option name="type">bool</option>
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
             </constraint>
         </property>
         <property name="index">
-            <constraint name="NotNull" />
+            <constraint name="NotNull">
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
+            </constraint>
             <constraint name="Type">
                 <option name="type">bool</option>
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
             </constraint>
         </property>
         <property name="translations">
@@ -100,12 +174,25 @@
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
             <option name="fields">title</option>
             <option name="message">ekyna_cms.seo.unique_title</option>
+            <option name="groups">
+                <value>Default</value>
+                <value>Generator</value>
+            </option>
         </constraint>
         <property name="title">
-            <constraint name="NotBlank" />
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
+            </constraint>
             <constraint name="Length">
                 <option name="min">2</option>
                 <option name="max">255</option>
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
             </constraint>
         </property>
         <property name="description">
