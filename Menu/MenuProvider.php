@@ -59,7 +59,7 @@ class MenuProvider implements MenuProviderInterface
     public function get($name, array $options = array())
     {
         /** @var \Ekyna\Bundle\CmsBundle\Entity\Menu $menu  */
-        if (null === $menu = $this->menuRepository->findOneBy(array('name' => $name))) {
+        if (null === $menu = $this->menuRepository->findOneByName($name)) {
             throw new \InvalidArgumentException(sprintf('The menu "%s" is not defined.', $name));
         }
 
@@ -78,7 +78,7 @@ class MenuProvider implements MenuProviderInterface
      */
     public function has($name, array $options = array())
     {
-        $menu = $this->menuRepository->findOneBy(array('name' => $name));
+        $menu = $this->menuRepository->findOneByName($name);
 
         return $menu !== null;
     }
