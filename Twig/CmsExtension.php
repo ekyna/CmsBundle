@@ -398,7 +398,7 @@ class CmsExtension extends \Twig_Extension
     public function renderMenu($name, array $options = array(), $renderer = null)
     {
         /** @var MenuInterface $menu */
-        if (null === $menu = $this->menuRepository->findOneBy(array('name' => $name))) {
+        if (null === $menu = $this->menuRepository->findOneByName($name)) {
             throw new \InvalidArgumentException(sprintf('Menu named "%s" not found.', $name));
         }
 
