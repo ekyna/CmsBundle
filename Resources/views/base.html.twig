@@ -19,24 +19,18 @@
         <link href="{{ asset_url }}" rel="stylesheet" type="text/css" />
         {% endstylesheets %}
 
-        {% include 'EkynaCoreBundle:Ui:ie-fix.html.twig' %}
     {%- endblock stylesheets %}
+
+    {% include 'EkynaCoreBundle:Ui:ie-fix.html.twig' %}
+
+    {{ require_js(not app.debug) }}
 </head>
 <body>
     {% block body %}{% endblock body %}
 
-    {% include "EkynaCoreBundle:Ui:modal.html.twig" %}
-
-    {#{% block javascripts -%}
-        {% javascripts output='js/example/main.js' filter='?yui_js' debug=false
-            'js/jquery.js'
-            'js/bootstrap.js'
-            'js/form.js'
-            '@EkynaCmsBundle/Resources/asset/js/init.js'
-        %}
-        <script type="text/javascript" src="{{ asset_url }}"></script>
-        {% endjavascripts %}
-    {%- endblock javascripts %}#}
+    {% block javascripts -%}
+        <script type="text/javascript">require(['bundles/ekynacms/js/main']);</script>
+    {%- endblock javascripts %}
 </body>
 </html>
 {% endspaceless %}
