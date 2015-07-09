@@ -59,12 +59,6 @@ class CmsProcessor implements ProcessorInterface
         if ($object instanceof CmsModel\TagsSubjectInterface) {
             $this->generateTags($object);
         }
-        /*if ($object instanceof MediaModel\ImageSubjectInterface) {
-            $this->generateImage($object);
-        }
-        if ($object instanceof MediaModel\GallerySubjectInterface) {
-            $this->generateGallery($object);
-        }*/
     }
 
     /**
@@ -82,7 +76,7 @@ class CmsProcessor implements ProcessorInterface
      */
     protected function generateSeo(CmsModel\SeoSubjectInterface $subject)
     {
-        $seo = new CmsEntity\Seo();
+        $seo = new CmsEntity\Seo(); // TODO use repo::createNew (translations)
         if (0 < strlen($name = $this->objectToString($subject))) {
             $seo
                 ->setTitle($name . ' seo title')
@@ -107,7 +101,7 @@ class CmsProcessor implements ProcessorInterface
             $html .= '<p>' . $this->faker->text(rand(300, 600)) . '</p>';
         }
 
-        $block = new CmsEntity\TinymceBlock();
+        $block = new CmsEntity\TinymceBlock(); // TODO use repo::createNew (translations)
         $block->setHtml($html);
 
         $content = new CmsEntity\Content();
@@ -132,45 +126,6 @@ class CmsProcessor implements ProcessorInterface
             ->getResult();
         $subject->setTags(new ArrayCollection($tags));
     }
-
-    /**
-     * Associates an image to the given subject.
-     *
-     * @param MediaModel\ImageSubjectInterface $subject
-     */
-    /*protected function generateImage(MediaModel\ImageSubjectInterface $subject)
-    {
-        $subject->setImage($this->findImages()[0]);
-    }*/
-
-    /**
-     * Associates a gallery to the given subject.
-     *
-     * @param MediaModel\GallerySubjectInterface $subject
-     */
-    /*protected function generateGallery(MediaModel\GallerySubjectInterface $subject)
-    {
-        $gallery = null;
-
-        if (null === $gallery) {
-            $gallery = new MediaEntity\Gallery();
-            $gallery->setName($this->faker->sentence(3));
-
-            $images = $this->findImages(rand(4, 5));
-            $position = 0;
-            foreach ($images as $image) {
-                $galleryImage = new MediaEntity\GalleryImage();
-                $galleryImage
-                    ->setImage($image)
-                    ->setPosition($position)
-                ;
-                $gallery->addImage($galleryImage);
-                $position++;
-            }
-        }
-
-        $subject->setGallery($gallery);
-    }*/
 
     /**
      * Find some images.

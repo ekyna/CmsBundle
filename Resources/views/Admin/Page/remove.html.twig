@@ -13,6 +13,7 @@
 <form action="{{ path('ekyna_cms_page_admin_remove', identifiers|merge({'pageId': page.id})) }}" method="post" class="form-horizontal">
     <div class="form-body">
 	    {{ bootstrap_set_style('horizontal') }}
+        {{ bootstrap_set_col_size('md') }}
 		{{ form_widget(form) }}
     </div>
     {{ ui_form_footer(form) }}
