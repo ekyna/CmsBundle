@@ -7,7 +7,8 @@ require(['require', 'jquery', 'ekyna-cms/user', 'bootstrap'], function(require, 
     if ($forms.size() > 0) {
         require(['ekyna-form'], function(Form) {
             $forms.each(function(i, f) {
-                Form.create(f);
+                var form = Form.create(f);
+                form.init();
             });
         });
     }

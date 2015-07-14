@@ -125,7 +125,7 @@ class MenuBuilder
                     } else {
                         $params = array('route' => $page->getRoute());
                     }
-                    $this->breadcrumb->addChild('page-'.$page->getId(), $params)->setLabel($page->getName());
+                    $this->breadcrumb->addChild('page-'.$page->getId(), $params)->setLabel($page->getTitle());
                 }
             }
         }
