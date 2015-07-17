@@ -22,6 +22,11 @@ class MenuTranslation extends AbstractTranslation implements MenuTranslationInte
      */
     protected $title;
 
+    /**
+     * @var string
+     */
+    protected $path;
+
 
     /**
      * {@inheritdoc}
@@ -46,5 +51,22 @@ class MenuTranslation extends AbstractTranslation implements MenuTranslationInte
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+        return $this;
     }
 }

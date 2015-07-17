@@ -15,7 +15,7 @@ use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  *
- * @method \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface translate($locale = null)
+ * @method \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface translate($locale = null, $create = false)
  */
 class Page extends AbstractTranslatable implements PageInterface
 {
@@ -70,11 +70,6 @@ class Page extends AbstractTranslatable implements PageInterface
     protected $route;
     
     /**
-     * @var string
-     */
-    protected $path;
-    
-    /**
      * @var boolean
      */
     protected $static;
@@ -93,11 +88,6 @@ class Page extends AbstractTranslatable implements PageInterface
      * @var boolean
      */
     protected $advanced;
-
-    /**
-     * @var boolean
-     */
-    protected $dynamicPath;
 
 
     /**
@@ -126,6 +116,16 @@ class Page extends AbstractTranslatable implements PageInterface
     {
         return $this->getName();
     }
+
+    /**
+     * {@inheritdoc
+     */
+    /*public function translate($locale = null, $create = false)
+    {
+        $this->seo->translate($locale);
+
+        return parent::translate($locale, $create);
+    }*/
 
     /**
      * {@inheritdoc}
@@ -330,6 +330,24 @@ class Page extends AbstractTranslatable implements PageInterface
     /**
      * {@inheritdoc}
      */
+    public function setPath($path)
+    {
+        $this->translate()->setPath($path);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPath()
+    {
+        return $this->translate()->getPath();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setRoute($route = null)
     {
         $this->route = $route;
@@ -343,24 +361,6 @@ class Page extends AbstractTranslatable implements PageInterface
     public function getRoute()
     {
         return $this->route;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPath($path)
-    {
-        $this->path = '/'.trim($path, '/');
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPath()
-    {
-        return $this->path;
     }
 
     /**
@@ -438,56 +438,17 @@ class Page extends AbstractTranslatable implements PageInterface
     /**
      * {@inheritdoc}
      */
-    public function setDynamicPath($dynamicPath)
-    {
-        $this->dynamicPath = $dynamicPath;
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDynamicPath()
-    {
-        return $this->dynamicPath;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setCurrentLocale($currentLocale)
-    {
-        $this->seo->setCurrentLocale($currentLocale);
-
-        return parent::setCurrentLocale($currentLocale);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setFallbackLocale($fallbackLocale)
-    {
-        $this->seo->setFallbackLocale($fallbackLocale);
-
-        return parent::setFallbackLocale($fallbackLocale);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    /*protected function getTranslationClass()
-    {
-        return get_class($this).'Translation';
-    }*/
-
-    /**
-     * Returns whether the exhibitor should be indexed or not by elasticsearch.
-     *
-     * @return bool
-     */
     public function isIndexable()
     {
         return $this->seo->getIndex();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasDynamicPath()
+    {
+        return 0 < preg_match('#\{.*\}#', $this->getPath());
     }
 
     /**

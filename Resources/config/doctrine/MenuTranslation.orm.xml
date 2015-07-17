@@ -13,6 +13,7 @@
         </id>
 
         <field name="title" column="title" type="string" length="255" />
+        <field name="path" type="string" column="path" length="255" nullable="true" />
 
     </entity>
 

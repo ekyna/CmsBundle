@@ -3,12 +3,12 @@
 namespace Ekyna\Bundle\CmsBundle\Twig;
 
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
-use Ekyna\Bundle\CmsBundle\Entity\MenuRepository;
+use Ekyna\Bundle\CmsBundle\Entity\Menu;
 use Ekyna\Bundle\CmsBundle\Entity\Seo;
+use Ekyna\Bundle\CmsBundle\Menu\MenuProvider;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
-use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvent;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvents;
@@ -36,9 +36,9 @@ class CmsExtension extends \Twig_Extension
     protected $editor;
 
     /**
-     * @var MenuRepository
+     * @var MenuProvider
      */
-    protected $menuRepository;
+    protected $menuProvider;
 
     /**
      * @var Helper
@@ -71,7 +71,7 @@ class CmsExtension extends \Twig_Extension
      *
      * @param SettingsManagerInterface $settings
      * @param Editor                   $editor
-     * @param MenuRepository           $menuRepository
+     * @param MenuProvider             $menuProvider
      * @param Helper                   $helper
      * @param EventDispatcherInterface $eventDispatcher
      * @param FragmentHandler          $fragmentHandler
@@ -80,7 +80,7 @@ class CmsExtension extends \Twig_Extension
     public function __construct(
         SettingsManagerInterface $settings,
         Editor $editor,
-        MenuRepository $menuRepository,
+        MenuProvider $menuProvider,
         Helper $helper,
         EventDispatcherInterface $eventDispatcher,
         FragmentHandler $fragmentHandler,
@@ -88,7 +88,7 @@ class CmsExtension extends \Twig_Extension
     ) {
         $this->settings = $settings;
         $this->editor = $editor;
-        $this->menuRepository = $menuRepository;
+        $this->menuProvider = $menuProvider;
         $this->helper = $helper;
         $this->eventDispatcher = $eventDispatcher;
         $this->fragmentHandler = $fragmentHandler;
@@ -397,15 +397,17 @@ class CmsExtension extends \Twig_Extension
      */
     public function renderMenu($name, array $options = array(), $renderer = null)
     {
-        /** @var MenuInterface $menu */
-        if (null === $menu = $this->menuRepository->findOneByName($name)) {
+        if (null === $menu = $this->menuProvider->findByName($name)) {
             throw new \InvalidArgumentException(sprintf('Menu named "%s" not found.', $name));
         }
 
         // Tags the response as Menu relative
         $this->eventDispatcher->dispatch(
             HttpCacheEvents::TAG_RESPONSE,
-            new HttpCacheEvent(array($menu->getEntityTagPrefix(), $menu->getEntityTag()))
+            new HttpCacheEvent(array(
+                Menu::getEntityTagPrefix(),
+                sprintf('%s[id:%s]', Menu::getEntityTagPrefix(), $menu['id'])
+            ))
         );
 
         return $this->helper->render($name, $options, $renderer);

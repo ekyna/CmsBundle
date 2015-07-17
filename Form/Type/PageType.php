@@ -44,6 +44,7 @@ class PageType extends ResourceFormType
             ->add('translations', 'a2lix_translationsForms', array(
                 'form_type' => new PageTranslationType(),
                 'label'     => false,
+                'error_bubbling' => false,
                 'attr' => array(
                     'widget_col' => 12,
                 ),
@@ -65,10 +66,6 @@ class PageType extends ResourceFormType
                     'property' => 'name',
                     'empty_value' => 'Racine',
                 	'disabled' => true,
-                ))
-                ->add('path', 'text', array(
-                    'label' => 'ekyna_core.field.url',
-                    'disabled' => true,
                 ));
             } else {
                 $form
@@ -109,20 +106,6 @@ class PageType extends ResourceFormType
                     'choices' => $controllers,
                     'required' => true,
                 ));
-
-                if (null === $page->getId()) {
-                    $form->add('path', 'text', array(
-                        'label' => 'ekyna_core.field.url',
-                        'admin_helper' => 'PAGE_PATH',
-                        'required' => false,
-                        'attr' => array('input_group' => array('prepend' => rtrim($page->getParent()->getPath(), '/').'/')),
-                    ));
-                } else {
-                    $form->add('path', 'text', array(
-                        'label' => 'ekyna_core.field.url',
-                        'disabled' => true,
-                    ));
-                }
             }
         });
     }

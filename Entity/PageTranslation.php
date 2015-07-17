@@ -27,6 +27,11 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
      */
     protected $html;
 
+    /**
+     * @var string
+     */
+    protected $path;
+
 
     /**
      * {@inheritdoc}
@@ -68,5 +73,22 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     public function getHtml()
     {
         return $this->html;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPath($path)
+    {
+        $this->path = '/'.trim($path, '/');
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPath()
+    {
+        return $this->path;
     }
 }

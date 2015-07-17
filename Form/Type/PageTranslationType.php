@@ -28,16 +28,41 @@ class PageTranslationType extends AbstractType
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
-            /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
+            $form = $event->getForm();
             $translation = $event->getData();
-            if (null !== $translation && null !== $page = $translation->getTranslatable()) {
-                if (!$page->getAdvanced()) {
-                    $form = $event->getForm();
-                    $form->add('html', 'tinymce', array(
-                        'label' => 'ekyna_core.field.content',
-                        'theme' => 'advanced',
+            if (null === $translation) {
+                /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
+                $page = $form->getParent()->getParent()->getData();
+                if (null !== $page && null === $page->getId()) {
+                    $form->add('path', 'text', array(
+                        'label' => 'ekyna_core.field.url',
+                        'admin_helper' => 'PAGE_PATH',
+                        'required' => false,
+                        'attr' => array('input_group' => array(
+                            'prepend' => rtrim($page->getParent()->translate($form->getName())->getPath(), '/').'/')
+                        ),
+                    ));
+                } else {
+                    $form->add('path', 'text', array(
+                        'label' => 'ekyna_core.field.url',
+                        'admin_helper' => 'PAGE_PATH',
+                        'required' => false,
                     ));
                 }
+            } else {
+                /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
+                if (null !== $page = $translation->getTranslatable()) {
+                    if (!$page->getAdvanced()) {
+                        $form->add('html', 'tinymce', array(
+                            'label' => 'ekyna_core.field.content',
+                            'theme' => 'advanced',
+                        ));
+                    }
+                }
+                $form->add('path', 'text', array(
+                    'label' => 'ekyna_core.field.url',
+                    'disabled' => true,
+                ));
             }
         });
     }

@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Listener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 /**
  * Class SeoSubjectSubscriber
@@ -43,6 +44,7 @@ class SeoSubjectSubscriber implements EventSubscriber
             'fieldName'     => 'seo',
             'targetEntity'  => self::SEO_FQCN,
             'cascade'       => array('all'),
+//            'fetch' => ClassMetadataInfo::FETCH_EAGER,
             'orphanRemoval' => true,
             'joinColumns' => array(
                 array(
@@ -52,7 +54,6 @@ class SeoSubjectSubscriber implements EventSubscriber
                     'nullable'              => false,
                 ),
             ),
-            // TODO fetch => EAGER
         ));
     }
 

@@ -5,13 +5,13 @@ namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * Class Menu
+ * Class Page
  * @package Ekyna\Bundle\CmsBundle\Validator\Constraints
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class Menu extends Constraint
+class Page extends Constraint
 {
-    public $invalid_routing = 'ekyna_cms.menu.invalid_routing';
+    public $invalid_title = 'ekyna_cms.page.invalid_title';
 
     public function getTargets()
     {
@@ -20,6 +20,6 @@ class Menu extends Constraint
 
     public function validatedBy()
     {
-        return 'ekyna_cms.menu';
+        return 'ekyna_cms.page';
     }
 }

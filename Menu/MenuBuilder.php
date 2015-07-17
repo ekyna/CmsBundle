@@ -118,9 +118,8 @@ class MenuBuilder
 
                 // Fill the menu
                 /** @var PageInterface[] $pages */
-                for ($i = 0; $i < count($pages); $i++) {
-                    $page = $pages[$i];
-                    if (preg_match('#\{[\w]+\}#', $page->getPath())) {
+                foreach ($pages as $page) {
+                    if ($page->hasDynamicPath()) {
                         $params = array('uri' => null);
                     } else {
                         $params = array('route' => $page->getRoute());

@@ -13,7 +13,7 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  *
- * @method \Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface translate($locale = null)
+ * @method \Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface translate($locale = null, $create = false)
  */
 class Menu extends AbstractTranslatable implements MenuInterface
 {
@@ -63,11 +63,6 @@ class Menu extends AbstractTranslatable implements MenuInterface
      * @var string
      */
     protected $description;
-
-    /**
-     * @var string
-     */
-    protected $path;
 
     /**
      * @var string
@@ -134,14 +129,6 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getParent()
-    {
-        return $this->parent;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setParent(MenuInterface $parent = null)
     {
         $this->parent = $parent;
@@ -151,9 +138,9 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getLeft()
+    public function getParent()
     {
-        return $this->left;
+        return $this->parent;
     }
 
     /**
@@ -168,9 +155,9 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getRight()
+    public function getLeft()
     {
-        return $this->right;
+        return $this->left;
     }
 
     /**
@@ -185,9 +172,9 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getRoot()
+    public function getRight()
     {
-        return $this->root;
+        return $this->right;
     }
 
     /**
@@ -202,9 +189,9 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getLevel()
+    public function getRoot()
     {
-        return $this->level;
+        return $this->root;
     }
 
     /**
@@ -219,9 +206,26 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getChildren()
+    public function getLevel()
     {
-        return $this->children;
+        return $this->level;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setChildren(ArrayCollection $children)
+    {
+        $this->children = $children;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasChildren()
+    {
+        return 0 < count($this->children);
     }
 
     /**
@@ -247,26 +251,9 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function hasChildren()
+    public function getChildren()
     {
-        return 0 < count($this->children);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setChildren(ArrayCollection $children)
-    {
-        $this->children = $children;
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->name;
+        return $this->children;
     }
 
     /**
@@ -277,6 +264,14 @@ class Menu extends AbstractTranslatable implements MenuInterface
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
@@ -300,14 +295,6 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setDescription($description)
     {
         $this->description = $description;
@@ -318,9 +305,9 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getPath()
+    public function getDescription()
     {
-        return $this->path;
+        return $this->description;
     }
 
     /**
@@ -335,9 +322,9 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getRoute()
+    public function getPath()
     {
-        return $this->route;
+        return $this->translate()->getPath();
     }
 
     /**
@@ -352,9 +339,9 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getParameters()
+    public function getRoute()
     {
-        return $this->parameters;
+        return $this->route;
     }
 
     /**
@@ -369,9 +356,9 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getAttributes()
+    public function getParameters()
     {
-        return $this->attributes;
+        return $this->parameters;
     }
 
     /**
@@ -386,9 +373,9 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getLocked()
+    public function getAttributes()
     {
-        return $this->locked;
+        return $this->attributes;
     }
 
     /**
@@ -403,41 +390,9 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getOptions()
+    public function getLocked()
     {
-        if (null === $this->options) {
-            $this->options = array(
-                'label' => $this->getTitle(),
-                'attributes' => $this->getAttributes(),
-            );
-            if (0 < strlen($this->getPath())) {
-                $this->options['uri'] = $this->getPath();
-            } elseif (0 < strlen($this->getRoute())) {
-                $this->options['route'] = $this->getRoute();
-                $parameters = $this->getParameters();
-                if (!empty($parameters)) {
-                    $this->options['routeParameters'] = $parameters;
-                }
-            }
-        }
-        return $this->options;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addOptions(array $options)
-    {
-        $this->options = array_merge($this->getOptions(), $options);
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPage()
-    {
-        return $this->page;
+        return $this->locked;
     }
 
     /**
@@ -446,6 +401,14 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setPage(PageInterface $page)
     {
         $this->page = $page;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPage()
+    {
+        return $this->page;
     }
 
     /**

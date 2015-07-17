@@ -15,6 +15,20 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class MenuValidator extends ConstraintValidator
 {
     /**
+     * @var array
+     */
+    private $locales;
+
+
+    /**
+     * @param array $locales
+     */
+    public function __construct(array $locales)
+    {
+        $this->locales = $locales;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function validate($menu, Constraint $constraint)
@@ -35,12 +49,18 @@ class MenuValidator extends ConstraintValidator
          * @var Menu $constraint
          */
         $page = null !== $menu->getPage();
-        $path = 0 < strlen($menu->getPath());
         $route = 0 < strlen($menu->getRoute());
 
-        if (!($page || $path || $route )) {
+        $path = true;
+        foreach ($this->locales as $locale) {
+            if (0 === strlen($menu->translate($locale, true)->getPath())) {
+                $path = false;
+            }
+        }
+
+        if (!($page || $path || $route)) {
             $this->context->addViolation($constraint->invalid_routing);
-        } elseif ($page && ($path || $route) || ($path && $route) ) {
+        } elseif ($page && ($path || $route) || ($path && $route)) {
             $this->context->addViolation($constraint->invalid_routing);
         }
     }

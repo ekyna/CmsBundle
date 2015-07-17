@@ -34,6 +34,11 @@ class MenuGenerator
     private $config;
 
     /**
+     * @var array
+     */
+    private $locales;
+
+    /**
      * Constructor.
      *
      * @param ContainerInterface $container
@@ -46,6 +51,7 @@ class MenuGenerator
         $this->em = $container->get('ekyna_cms.page.manager');
         $this->repository = $container->get('ekyna_cms.menu.repository');
         $this->config = $container->getParameter('ekyna_cms.menu.config');
+        $this->locales = $container->getParameter('locales');
     }
 
     /**
@@ -69,13 +75,19 @@ class MenuGenerator
             $menu = $this->repository->createNew();
             $menu
                 ->setName($name)
-                ->setTitle($config['title'])
                 ->setDescription($config['description'])
                 ->setLocked(true)
                 ->setAttributes(array(
                     'id' => $name,
                 ))
             ;
+
+            foreach ($this->locales as $locale) {
+                $menuTranslation = $menu->translate($locale, true);
+                $menuTranslation
+                    ->setTitle($config['title'])
+                ;
+            }
 
             $this->em->persist($menu);
             $this->output->writeln('done.');

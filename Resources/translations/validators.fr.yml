@@ -9,7 +9,8 @@ ekyna_cms:
     seo:
         unique_title: Une page est déjà définie avec ce titre.
     page:
+        invalid_title: Vous devez spécifier tous les champs "Titre" des traductions de page.
         unique_name: Veuillez saisir un nom unique.
     menu:
-        invalid_routing: Vous devez spécifier un et seulement un des champs "Page", "Url" ou "Route".
+        invalid_routing: Vous devez spécifier un et seulement un des champs "Page" ou "Route", ou tous les champs "Url" des traductions.
         unique_name: Veuillez saisir un nom unique.

@@ -11,7 +11,7 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  *
- * @method \Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface translate($locale = null)
+ * @method \Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface translate($locale = null, $create = false)
  */
 class Seo extends AbstractTranslatable implements SeoInterface
 {

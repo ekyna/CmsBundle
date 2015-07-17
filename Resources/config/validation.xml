@@ -17,6 +17,12 @@
                 <value>Generator</value>
             </option>
         </constraint>
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Page">
+            <option name="groups">
+                <value>Default</value>
+                <value>Generator</value>
+            </option>
+        </constraint>
         <property name="name">
             <constraint name="NotBlank">
                 <option name="groups">
@@ -39,6 +45,7 @@
         <property name="translations">
             <constraint name="Valid" />
         </property>
+        <!-- TODO validate controller -->
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\PageTranslation">

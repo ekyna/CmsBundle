@@ -2,11 +2,11 @@
 
 namespace Ekyna\Bundle\CmsBundle\Menu;
 
+use Doctrine\ORM\Query\Expr;
 use Ekyna\Bundle\CmsBundle\Entity\MenuRepository;
+use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
 use Knp\Menu\FactoryInterface;
-use Knp\Menu\Loader\NodeLoader;
 use Knp\Menu\Provider\MenuProviderInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class MenuProvider
@@ -26,26 +26,71 @@ class MenuProvider implements MenuProviderInterface
     protected $menuRepository;
 
     /**
-     * @var RequestStack
+     * @var LocaleProviderInterface
      */
-    protected $requestStack;
+    protected $localeProvider;
+
+    /**
+     * @var array
+     */
+    protected $menus;
 
 
     /**
      * Constructor.
      *
-     * @param FactoryInterface $factory
-     * @param MenuRepository $menuRepository
-     * @param RequestStack $requestStack
+     * @param FactoryInterface        $factory
+     * @param MenuRepository          $menuRepository
+     * @param LocaleProviderInterface $localeProvider
      */
     public function __construct(
-        FactoryInterface $factory,
-        MenuRepository   $menuRepository,
-        RequestStack     $requestStack
+        FactoryInterface        $factory,
+        MenuRepository          $menuRepository,
+        LocaleProviderInterface $localeProvider
     ) {
-        $this->factory = $factory;
+        $this->factory        = $factory;
         $this->menuRepository = $menuRepository;
-        $this->requestStack = $requestStack;
+        $this->localeProvider = $localeProvider;
+    }
+
+    /**
+     * Checks whether a menu exists in this provider
+     *
+     * @param string $name
+     * @param array $options
+     * @return bool
+     */
+    public function has($name, array $options = array())
+    {
+        return null !== $this->findByName($name);
+    }
+
+    /**
+     * Finds the menu by his name.
+     *
+     * @param $name
+     * @return null
+     */
+    public function findByName($name)
+    {
+        $this->loadMenus();
+
+        $rootId = 0;
+        if (0 < strpos($name, ':')) {
+            list($rootName, $name) = explode(':', $name);
+            if (null === $root = $this->findByName($rootName)) {
+                throw new \InvalidArgumentException(sprintf('Root menu "%s" not found.', $rootName));
+            }
+            $rootId = intval($root['id']);
+        }
+
+        foreach ($this->menus as $menu) {
+            if ($menu['name'] === $name && !(0 < $rootId && intval($menu['root']) != $rootId)) {
+                return $menu;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -58,28 +103,63 @@ class MenuProvider implements MenuProviderInterface
      */
     public function get($name, array $options = array())
     {
-        /** @var \Ekyna\Bundle\CmsBundle\Entity\Menu $menu  */
-        if (null === $menu = $this->menuRepository->findOneByName($name)) {
+        if (null === $menu = $this->findByName($name)) {
             throw new \InvalidArgumentException(sprintf('The menu "%s" is not defined.', $name));
         }
 
-        $menu->addOptions($options);
-        $loader = new NodeLoader($this->factory);
-
-        return $loader->load($menu);
+        return $this->buildItem($menu, $options);
     }
 
     /**
-     * Checks whether a menu exists in this provider
+     * Builds the menu item.
      *
-     * @param string $name
+     * @param array $data
      * @param array $options
-     * @return bool
+     * @return \Knp\Menu\ItemInterface
      */
-    public function has($name, array $options = array())
+    private function buildItem(array $data, array $options = array())
     {
-        $menu = $this->menuRepository->findOneByName($name);
+        $options = array_merge($options, array(
+            'label' => $data['title'],
+        ));
+        if (!empty($data['attributes'])) {
+            $options['attributes'] = $data['attributes'];
+        }
+        if (0 < strlen($data['path'])) {
+            $options['uri'] = $data['path'];
+        } elseif (0 < strlen($data['route'])) {
+            $options['route'] = $data['route'];
+            if (!empty($data['parameters'])) {
+                $options['routeParameters'] = $data['parameters'];
+            }
+        }
 
-        return $menu !== null;
+        $item = $this->factory->createItem($data['name'], $options);
+
+        foreach ($this->menus as $menu) {
+            if ($data['id'] === intval($menu['parent'])) {
+                $item->addChild($this->buildItem($menu));
+            }
+        }
+
+        return $item;
+    }
+
+    /**
+     * Loads the menus.
+     */
+    private function loadMenus()
+    {
+        if (null === $this->menus) {
+            $qb = $this->menuRepository->createQueryBuilder('m');
+            $qb
+                ->select('m.id, IDENTITY(m.parent) as parent, m.name, m.route, m.parameters, m.attributes, m.root, t.title, t.path')
+                ->join('m.translations', 't', Expr\Join::WITH, $qb->expr()->eq('t.locale',
+                    $qb->expr()->literal($this->localeProvider->getCurrentLocale())
+                ))
+                ->orderBy('m.left', 'asc')
+            ;
+            $this->menus = $qb->getQuery()->getArrayResult();
+        }
     }
 }

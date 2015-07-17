@@ -10,8 +10,8 @@
 
 {% block main %}
 <div class="actions">
-    {% if not page.dynamicPath %}
-        {{ ui_button('ekyna_core.button.show_front', {'type': 'link', 'icon': 'eye-open', 'path': page.path}) }}
+    {% if not page.hasDynamicPath %}
+        {{ ui_button('ekyna_core.button.show_front', {'type': 'link', 'icon': 'eye-open', 'path': path(page.route)}) }}
     {% endif %}
 	{{ admin_resource_btn(page, 'edit') }}
 	{{ admin_resource_btn(page, 'remove') }}
@@ -26,6 +26,7 @@
             <div class="tab-pane active" id="general">
                 {{ show_row(page.name, 'text', 'ekyna_core.field.name') }}
                 {{ show_row(page.title, 'text', 'ekyna_core.field.title') }}
+                {{ show_row(page.path, 'text', 'ekyna_core.field.url') }}
                 {% if not page.static %}
                     {{ show_row(cms_page_controller(page.controller), 'text', 'ekyna_cms.page.field.controller') }}
                 {% endif %}
@@ -34,7 +35,6 @@
                 {% endif %}
             </div>
             <div class="tab-pane" id="seo">
-                {{ show_row(page.path, 'text', 'ekyna_core.field.url') }}
                 {{ show_row(page.seo, 'seo') }}
             </div>
         </div>

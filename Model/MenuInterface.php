@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ekyna\Bundle\AdminBundle\Model\TranslatableInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
 use Knp\Menu\NodeInterface;
 
@@ -10,23 +11,17 @@ use Knp\Menu\NodeInterface;
  * Interface MenuInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @method \Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface translate($locale = null, $create = false)
  */
-interface MenuInterface extends NodeInterface, TaggedEntityInterface
+interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
 {
-
     /**
      * Get id
      *
      * @return integer
      */
     public function getId();
-
-    /**
-     * Returns the parent.
-     *
-     * @return MenuInterface|null
-     */
-    public function getParent();
 
     /**
      * Sets the parent.
@@ -37,11 +32,11 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setParent(MenuInterface $parent = null);
 
     /**
-     * Returns the left.
+     * Returns the parent.
      *
-     * @return int
+     * @return MenuInterface|null
      */
-    public function getLeft();
+    public function getParent();
 
     /**
      * Sets the left.
@@ -52,11 +47,11 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setLeft($left);
 
     /**
-     * Returns the right.
+     * Returns the left.
      *
      * @return int
      */
-    public function getRight();
+    public function getLeft();
 
     /**
      * Sets the right.
@@ -67,11 +62,11 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setRight($right);
 
     /**
-     * Returns the root.
+     * Returns the right.
      *
      * @return int
      */
-    public function getRoot();
+    public function getRight();
 
     /**
      * Sets the root.
@@ -82,11 +77,11 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setRoot($root);
 
     /**
-     * Returns the level.
+     * Returns the root.
      *
      * @return int
      */
-    public function getLevel();
+    public function getRoot();
 
     /**
      * Sets the level.
@@ -97,9 +92,26 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setLevel($level);
 
     /**
-     * {@inheritdoc}
+     * Returns the level.
+     *
+     * @return int
      */
-    public function getChildren();
+    public function getLevel();
+
+    /**
+     * Sets the children.
+     *
+     * @param ArrayCollection|MenuInterface[] $children
+     * @return MenuInterface|$this
+     */
+    public function setChildren(ArrayCollection $children);
+
+    /**
+     * Returns whether the menu has children or not.
+     *
+     * @return boolean
+     */
+    public function hasChildren();
 
     /**
      * Adds the child menu.
@@ -118,24 +130,9 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function removeChild(MenuInterface $menu);
 
     /**
-     * Returns whether the menu has children or not.
-     *
-     * @return boolean
-     */
-    public function hasChildren();
-
-    /**
-     * Sets the children.
-     *
-     * @param ArrayCollection|MenuInterface[] $children
-     * @return MenuInterface|$this
-     */
-    public function setChildren(ArrayCollection $children);
-
-    /**
      * {@inheritdoc}
      */
-    public function getName();
+    public function getChildren();
 
     /**
      * Set name
@@ -146,11 +143,9 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setName($name);
 
     /**
-     * Get title
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getTitle();
+    public function getName();
 
     /**
      * Set title
@@ -161,11 +156,11 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setTitle($title);
 
     /**
-     * Get description
+     * Get title
      *
      * @return string
      */
-    public function getDescription();
+    public function getTitle();
 
     /**
      * Set description
@@ -176,11 +171,11 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setDescription($description);
 
     /**
-     * Returns the path.
+     * Get description
      *
      * @return string
      */
-    public function getPath();
+    public function getDescription();
 
     /**
      * Sets the path.
@@ -191,11 +186,11 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setPath($path);
 
     /**
-     * Returns the route.
+     * Returns the path.
      *
      * @return string
      */
-    public function getRoute();
+    public function getPath();
 
     /**
      * Sets the route.
@@ -206,11 +201,11 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setRoute($route);
 
     /**
-     * Returns the route parameters.
+     * Returns the route.
      *
-     * @return array
+     * @return string
      */
-    public function getParameters();
+    public function getRoute();
 
     /**
      * Sets the route parameters.
@@ -221,11 +216,11 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setParameters(array $parameters = array());
 
     /**
-     * Returns the route attributes.
+     * Returns the route parameters.
      *
      * @return array
      */
-    public function getAttributes();
+    public function getParameters();
 
     /**
      * Sets the route attributes.
@@ -236,11 +231,11 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setAttributes(array $attributes = array());
 
     /**
-     * Returns the locked.
+     * Returns the route attributes.
      *
-     * @return boolean
+     * @return array
      */
-    public function getLocked();
+    public function getAttributes();
 
     /**
      * Sets the locked.
@@ -251,24 +246,11 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
     public function setLocked($locked);
 
     /**
-     * {@inheritdoc}
-     */
-    public function getOptions();
-
-    /**
-     * Adds the options.
+     * Returns the locked.
      *
-     * @param array $options
-     * @return MenuInterface|$this
+     * @return boolean
      */
-    public function addOptions(array $options);
-
-    /**
-     * Returns the page (non mapped).
-     *
-     * @return PageInterface|null
-     */
-    public function getPage();
+    public function getLocked();
 
     /**
      * Sets the page (non mapped).
@@ -277,4 +259,11 @@ interface MenuInterface extends NodeInterface, TaggedEntityInterface
      * @return MenuInterface|$this
      */
     public function setPage(PageInterface $page);
+
+    /**
+     * Returns the page (non mapped).
+     *
+     * @return PageInterface|null
+     */
+    public function getPage();
 }

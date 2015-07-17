@@ -2,10 +2,9 @@
 
 namespace Ekyna\Bundle\CmsBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Behat\Transliterator\Transliterator;
 use Ekyna\Bundle\CmsBundle\Event\PageEvent;
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
-use Gedmo\Sluggable\Util\Urlizer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -15,6 +14,20 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class PageEventListener implements EventSubscriberInterface
 {
+    /**
+     * @var array
+     */
+    private $locales;
+
+
+    /**
+     * @param array $locales
+     */
+    public function __construct(array $locales)
+    {
+        $this->locales = $locales;
+    }
+
     /**
      * Pre create event handler.
      *
@@ -29,14 +42,17 @@ class PageEventListener implements EventSubscriberInterface
             $page->setRoute(sprintf('cms_page_%s', uniqid()));
         }
 
-        // Generate path
+        // Generate paths
         if (!$page->getStatic()) {
-            $parentPath = $page->getParent()->getPath();
-            $path = $page->getPath();
-            if (strlen($path) == 0) {
-                $path = $page->getName();
+            $parentPage = $page->getParent();
+            foreach ($this->locales as $locale) {
+                $parentPath = $parentPage->translate($locale)->getPath();
+                $path = $page->translate($locale)->getPath();
+                if (strlen($path) == 0) {
+                    $path = $page->translate($locale)->getTitle();
+                }
+                $page->translate($locale)->setPath(rtrim($parentPath, '/').'/'.Transliterator::urlize(trim($path, '/')));
             }
-            $page->setPath(rtrim($parentPath, '/').'/'.Urlizer::urlize(trim($path, '/')));
         }
     }
 

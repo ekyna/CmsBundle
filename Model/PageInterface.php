@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+use Ekyna\Bundle\AdminBundle\Model\TranslatableInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
 use Ekyna\Bundle\CoreBundle\Model\TimestampableInterface;
 
@@ -9,8 +10,15 @@ use Ekyna\Bundle\CoreBundle\Model\TimestampableInterface;
  * Class PageInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @method \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface translate($locale = null, $create = false)
  */
-interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface, TimestampableInterface, TaggedEntityInterface
+interface PageInterface extends
+    ContentSubjectInterface,
+    SeoSubjectInterface,
+    TimestampableInterface,
+    TaggedEntityInterface,
+    TranslatableInterface
 {
     /**
      * Get id
@@ -179,21 +187,6 @@ interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface, Ti
     public function getHtml();
 
     /**
-     * Set route
-     *
-     * @param string $route
-     * @return PageInterface|$this
-     */
-    public function setRoute($route = null);
-
-    /**
-     * Get route
-     *
-     * @return string
-     */
-    public function getRoute();
-
-    /**
      * Set path
      *
      * @param string $path
@@ -207,6 +200,21 @@ interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface, Ti
      * @return string
      */
     public function getPath();
+
+    /**
+     * Set route
+     *
+     * @param string $route
+     * @return PageInterface|$this
+     */
+    public function setRoute($route = null);
+
+    /**
+     * Get route
+     *
+     * @return string
+     */
+    public function getRoute();
 
     /**
      * Set static
@@ -269,17 +277,16 @@ interface PageInterface extends ContentSubjectInterface, SeoSubjectInterface, Ti
     public function getAdvanced();
 
     /**
-     * Sets whether the path has parameters or not.
+     * Returns whether the exhibitor should be indexed or not by elasticsearch.
      *
-     * @param boolean $dynamicPath
-     * @return PageInterface|$this
+     * @return bool
      */
-    public function setDynamicPath($dynamicPath);
+    public function isIndexable();
 
     /**
-     * Returns whether the path has parameters or not.
+     * Returns whether the path has parameters.
      *
-     * @return boolean
+     * @return bool
      */
-    public function getDynamicPath();
+    public function hasDynamicPath();
 }

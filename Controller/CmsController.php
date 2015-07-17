@@ -22,10 +22,6 @@ class CmsController extends Controller
      */
     public function defaultAction(Request $request)
     {
-        if (null === $page = $this->getDoctrine()->getRepository('EkynaCmsBundle:Page')->findOneByRequest($request)) {
-            throw new NotFoundHttpException('Page not found');
-        }
-
         return $this->configureSharedCache($this->render('EkynaCmsBundle:Cms:default.html.twig'));
     }
 

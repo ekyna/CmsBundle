@@ -33,6 +33,21 @@ class PageGenerator
     private $validator;
 
     /**
+     * @var \Symfony\Component\Translation\TranslatorInterface
+     */
+    private $translator;
+
+    /**
+     * @var array
+     */
+    private $locales;
+
+    /**
+     * @var string
+     */
+    private $routesTranslationDomain = 'routes'; // TODO DI
+
+    /**
      * @var \Ekyna\Bundle\CmsBundle\Entity\PageRepository
      */
     private $pageRepository;
@@ -62,6 +77,13 @@ class PageGenerator
      */
     private $homeDefinition;
 
+
+    /**
+     * Constructor.
+     *
+     * @param ContainerInterface $container
+     * @param OutputInterface $output
+     */
     public function __construct(ContainerInterface $container, OutputInterface $output)
     {
         $this->output = $output;
@@ -77,8 +99,9 @@ class PageGenerator
         $this->homeRouteName = $container->getParameter('ekyna_cms.home_route');
 
         $this->em = $container->get('ekyna_cms.page.manager');
-        /** @noinspection YamlDeprecatedClasses */
         $this->validator = $container->get('validator');
+        $this->translator = $container->get('translator');
+        $this->locales = $container->getParameter('locales');
         $this->pageRepository = $container->get('ekyna_cms.page.repository');
         $this->menuRepository = $container->get('ekyna_cms.menu.repository');
     }
@@ -289,15 +312,12 @@ class PageGenerator
      */
     private function createPage(RouteDefinition $definition, PageInterface $parentPage = null)
     {
-        if (null !== $page = $this->findPageByRouteName($definition->getRouteName())) {
+        $routeName = $definition->getRouteName();
+        if (null !== $page = $this->findPageByRouteName($routeName)) {
 
             $updated = false;
             if ($page->getName() !== $definition->getPageName()) {
                 $page->setName($definition->getPageName());
-                $updated = true;
-            }
-            if ($page->getPath() !== $definition->getPath()) {
-                $page->setPath($definition->getPath());
                 $updated = true;
             }
             if ($page->getLocked() !== $definition->getLocked()) {
@@ -307,6 +327,20 @@ class PageGenerator
             if ($page->getAdvanced() !== $definition->getAdvanced()) {
                 $page->setAdvanced($definition->getAdvanced());
                 $updated = true;
+            }
+
+            // Watch for paths update
+            foreach ($this->locales as $locale) {
+                if ($routeName === $path = $this->translator->trans(
+                        $routeName, array(), $this->routesTranslationDomain, $locale
+                    )) {
+                    $path = $definition->getPath();
+                }
+                $pageTranslation = $page->translate($locale);
+                if ($pageTranslation->getPath() !== $path) {
+                    $pageTranslation->setPath($path);
+                    $updated = true;
+                }
             }
 
             if ($updated) {
@@ -323,18 +357,10 @@ class PageGenerator
             /** @var PageInterface $page */
             $page = $this->pageRepository->createNew();
 
-            if (null !== $parentPage && $parentPage->getRoute() !== $this->homeRouteName) {
-                $title = sprintf('%s - %s', $parentPage->getSeo()->getTitle(), $definition->getPageName());
-            } else {
-                $title = $definition->getPageName();
-            }
-
             // Seo
             $seoDefinition = $definition->getSeo();
             $seo = $page->getSeo();
             $seo
-                ->setTitle($title)
-                ->setDescription('') // empty to force edition in backend
                 ->setChangefreq($seoDefinition['changefreq'])
                 ->setPriority($seoDefinition['priority'])
                 ->setFollow($seoDefinition['follow'])
@@ -345,16 +371,40 @@ class PageGenerator
             // Page
             $page
                 ->setName($definition->getPageName())
-                ->setTitle($definition->getPageName())
-                ->setRoute($definition->getRouteName())
+                ->setRoute($routeName)
                 ->setPath($definition->getPath())
                 ->setStatic(true)
                 ->setLocked($definition->getLocked())
                 ->setAdvanced($definition->getAdvanced())
                 ->setParent($parentPage)
                 ->setSeo($seo)
-                ->setHtml('<p></p>') // TODO default content
             ;
+
+            foreach ($this->locales as $locale) {
+                $title = $seoTitle = $definition->getPageName();
+                if (null !== $parentPage && $parentPage->getRoute() !== $this->homeRouteName) {
+                    $seoTitle = sprintf('%s - %s', $parentPage->getSeo()->translate($locale)->getTitle(), $title);
+                }
+
+                $seoTranslation = $seo->translate($locale, true);
+                $seoTranslation
+                    ->setTitle($seoTitle)
+                    ->setDescription('') // empty to force edition in backend
+                ;
+
+                if ($routeName === $path = $this->translator->trans(
+                        $routeName, array(), $this->routesTranslationDomain, $locale
+                    )) {
+                    $path = $definition->getPath();
+                }
+
+                $pageTranslation = $page->translate($locale, true);
+                $pageTranslation
+                    ->setTitle($title)
+                    ->setHtml('<p></p>') // TODO default content
+                    ->setPath($path)
+                ;
+            }
 
             if (!$this->validate($page)) {
                 return false;
@@ -402,12 +452,20 @@ class PageGenerator
 
                 $name = $page->getRoute();
                 if (null === $this->menuRepository->findOneBy(array('name' => $name, 'parent' => $parent))) {
+                    /** @var \Ekyna\Bundle\CmsBundle\Model\MenuInterface $menu */
                     $menu = $this->menuRepository->createNew();
                     $menu
                         ->setParent($parent)
                         ->setName($name)
-                        ->setTitle($page->getTitle())
-                        ->setRoute($name);
+                        ->setRoute($name)
+                    ;
+
+                    foreach ($this->locales as $locale) {
+                        $menuTranslation = $menu->translate($locale, true);
+                        $menuTranslation
+                            ->setTitle($page->translate($locale)->getTitle())
+                        ;
+                    }
 
                     if (!$this->validate($menu)) {
                         return false;

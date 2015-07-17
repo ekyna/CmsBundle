@@ -11,19 +11,13 @@
             table="cms_page">
 
         <indexes>
-            <index name="idx_path" columns="path" />
             <index name="idx_name" columns="name" />
             <index name="idx_parent" columns="parent_id" />
         </indexes>
 
         <unique-constraints>
             <unique-constraint name="unique_name" columns="name,parent_id" />
-            <unique-constraint name="unique_path" columns="path,parent_id" />
         </unique-constraints>
-
-        <entity-listeners>
-            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\PageListener" />
-        </entity-listeners>
 
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO" />
@@ -31,12 +25,10 @@
 
         <field name="name" column="name" type="string" length="255" />
         <field name="route" column="route" type="string" length="64" />
-        <field name="path" column="path" type="string" length="255" nullable="true" />
         <field name="static" column="static" type="boolean" />
         <field name="locked" column="locked" type="boolean" />
         <field name="controller" column="controller" type="string" length="64" nullable="true" />
         <field name="advanced" column="advanced" type="boolean" />
-        <field name="dynamicPath" column="dynamic_path" type="boolean" />
         <field name="left" column="lft" type="integer">
             <gedmo:tree-left />
         </field>

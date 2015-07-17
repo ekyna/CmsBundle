@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 use Doctrine\ORM\QueryBuilder;
 use Ekyna\Bundle\AdminBundle\Doctrine\ORM\TranslatableResourceRepositoryInterface;
 use Ekyna\Bundle\AdminBundle\Doctrine\ORM\Util\TranslatableResourceRepositoryTrait;
+use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -63,7 +64,7 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
     }
 
     /**
-     * Finds a page by request.
+     * Finds a page by id.
      *
      * @param integer $pageId
      * @return null|\Ekyna\Bundle\CmsBundle\Model\PageInterface
@@ -78,5 +79,15 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
             ->useResultCache(true, 3600, 'ekyna_cms.page[id:'.$pageId.']')
         ;
         return $query->getOneOrNullResult();
+    }
+
+    /**
+     * Refreshes the page (to load translations).
+     *
+     * @param PageInterface $page
+     */
+    public function refresh(PageInterface $page)
+    {
+        $this->getEntityManager()->refresh($page);
     }
 }

@@ -3,7 +3,6 @@
 namespace Ekyna\Bundle\CmsBundle\Routing;
 
 use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
-use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
@@ -18,7 +17,7 @@ use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 class RouteProvider implements RouteProviderInterface
 {
     /**
-     * @var \Ekyna\Bundle\CmsBundle\Entity\PageRepository
+     * @var PageRepository
      */
     protected $pageRepository;
 
@@ -28,14 +27,22 @@ class RouteProvider implements RouteProviderInterface
     protected $config;
 
     /**
+     * @var array
+     */
+    protected $locales;
+
+    /**
      * Constructor.
      *
      * @param PageRepository $pageRepository
+     * @param array          $config
+     * @param array          $locales
      */
-    public function __construct(PageRepository $pageRepository, array $config)
+    public function __construct(PageRepository $pageRepository, array $config, array $locales)
     {
         $this->pageRepository = $pageRepository;
-        $this->config = $config;
+        $this->config         = $config;
+        $this->locales        = $locales;
     }
 
     /**
@@ -47,16 +54,40 @@ class RouteProvider implements RouteProviderInterface
      */
     public function getRouteCollectionForRequest(Request $request)
     {
-        /** @var PageInterface[] $pages */
-        $pages = $this->pageRepository->findBy(array(
-            'path' => rawurldecode($request->getPathInfo()),
-            'static' => false
-        ));
-        // TODO doctrine cache
+        // Fetch pages IDs by request path.
+        $qb = $this->pageRepository->createQueryBuilder('p');
+        $qb
+            ->select('p.id')
+            ->join('p.translations', 't')
+            ->andWhere($qb->expr()->eq('p.static', 0))
+            ->andWhere($qb->expr()->eq('t.path', rawurldecode($request->getPathInfo())))
+        ;
+        $results = $qb
+            ->getQuery()
+            ->getArrayResult()
+        ;
+        $ids = array_unique(array_map(function($row) {
+            return $row['id'];
+        }, $results));
 
+        // Fetch pages by IDs
+        $qb = $this->pageRepository->createQueryBuilder('p');
+        $qb
+            ->select('p.route, p.controller, t.path, t.locale')
+            ->join('p.translations', 't')
+            ->andWhere($qb->expr()->eq('p.static', 0))
+            ->andWhere($qb->expr()->in('p.id', $ids))
+        ;
+        $results = $qb
+            ->getQuery()
+            ->getArrayResult()
+        ;
+        $routes =  $this->transformResultsToRoutes($results);
+
+        // Build collection
         $collection = new RouteCollection();
-        foreach($pages as $page) {
-            $collection->add($page->getRoute(), $this->routeFromPage($page));
+        foreach ($routes as $name => $route) {
+            $collection->add($name, $route);
         }
 
         return $collection;
@@ -68,25 +99,29 @@ class RouteProvider implements RouteProviderInterface
      * @param array|null $names
      * @param array $parameters
      *
-     * @return array|\Symfony\Component\Routing\Route[]
+     * @return array|Route[]
      */
     public function getRoutesByNames($names, $parameters = array())
     {
-        // TODO optimize by querying only required fields
-        // TODO doctrine cache
-        $criteria = array('static' => false);
-        if (null !== $names) {
-            $criteria['route'] = $names;
-        }
-        /** @var PageInterface[] $pages */
-        $pages = $this->pageRepository->findBy($criteria);
-
-        $routes = array();
-        foreach($pages as $page) {
-            $routes[$page->getRoute()] = $this->routeFromPage($page);
+        $qb = $this->pageRepository->createQueryBuilder('p');
+        $qb
+            ->select('p.route, p.controller, t.path, t.locale')
+            ->join('p.translations', 't')
+            ->andWhere($qb->expr()->eq('p.static', 0))
+        ;
+        if (is_array($names) && !empty($names)) {
+            $qb->andWhere($qb->expr()->in('p.route', $names));
+        } elseif (is_string($names) && 0 < strlen($names)) {
+            $qb->andWhere($qb->expr()->eq('p.route', $names));
         }
 
-        return $routes;
+        $results = $qb
+            ->getQuery()
+            // TODO cache
+            ->getArrayResult()
+        ;
+
+        return $this->transformResultsToRoutes($results);
     }
 
     /**
@@ -99,38 +134,60 @@ class RouteProvider implements RouteProviderInterface
      */
     public function getRouteByName($name, $parameters = array())
     {
-        // TODO optimize by querying only required fields
-        // TODO doctrine cache
-        $criteria = array(
-            'static' => false,
-            'route' => $name,
-        );
-        if (null !== $page = $this->pageRepository->findOneBy($criteria)) {
-            return $this->routeFromPage($page);
+        $qb = $this->pageRepository->createQueryBuilder('p');
+        $qb
+            ->select('p.route, p.controller, t.path, t.locale')
+            ->join('p.translations', 't')
+            ->andWhere($qb->expr()->eq('p.static', 0))
+            ->andWhere($qb->expr()->eq('p.route', $name))
+        ;
+
+        $results = $qb
+            ->getQuery()
+            // TODO cache
+            ->getArrayResult()
+        ;
+
+        $routes = $this->transformResultsToRoutes($results);
+        if (count($routes) == 1) {
+            return $routes[0];
         }
+
         return null;
     }
 
     /**
-     * Creates a Route form the given Page.
+     * Transforms the array results into routes.
      *
-     * @param PageInterface $page
-     *
-     * @return Route
+     * @param array $results
+     * @return array|Route[]
      */
-    protected function routeFromPage(PageInterface $page)
+    protected function transformResultsToRoutes(array $results)
     {
-        $route = new Route($page->getPath());
-
-        if (!array_key_exists($page->getController(), $this->config['controllers'])) {
-            throw new \RuntimeException(sprintf('Undefined controller "%s".', $page->getController()));
+        $routes = array();
+        foreach ($results as $result) {
+            $name = $result['route'];
+            if (array_key_exists($name, $routes)) {
+                /** @var Route $route */
+                $route = $routes[$name];
+                $paths = $route->getOption('i18n_paths');
+                $paths[$result['locale']] = $result['path'];
+                $route->setOption('i18n_paths', $paths);
+            } else {
+                $route = new Route($result['path']);
+                if (!array_key_exists($result['controller'], $this->config['controllers'])) {
+                    throw new \RuntimeException(sprintf('Undefined controller "%s".', $result['controller']));
+                }
+                $paths = array($result['locale'] => $result['path']);
+                $route
+                    ->setDefault('_controller', $this->config['controllers'][$result['controller']]['value'])
+                    ->setMethods(array('GET'))
+                    ->setOption('i18n_paths', $paths)
+                ;
+                $routes[$name] = $route;
+            }
         }
-
-        $route
-            ->setDefault('_controller', $this->config['controllers'][$page->getController()]['value'])
-            ->setMethods(array('GET'))
-        ;
-
-        return $route;
+        // TODO check that i18n_paths are set for all locales ?
+        return $routes;
     }
 }
