@@ -116,6 +116,9 @@ class CmsExtension extends \Twig_Extension
         $this->template = $twig->loadTemplate($this->config['template']);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getGlobals()
     {
         return array(
@@ -129,6 +132,7 @@ class CmsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
+            new \Twig_SimpleFunction('cms_page', array($this, 'getPage')),
             new \Twig_SimpleFunction('cms_metas', array($this, 'renderMetas'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_seo', array($this, 'renderSeo'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_meta', array($this, 'renderMeta'), array('is_safe' => array('html'))),
@@ -141,6 +145,16 @@ class CmsExtension extends \Twig_Extension
             new \Twig_SimpleFunction('cms_flashes', array($this, 'renderFlashes'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_page_controller', array($this, 'getPageControllerTitle'), array('is_safe' => array('html'))),
         );
+    }
+
+    /**
+     * Returns the current page.
+     * 
+     * @return \Ekyna\Bundle\CmsBundle\Model\PageInterface|null
+     */
+    public function getPage()
+    {
+        return $this->editor->getCurrentPage();
     }
 
     /**
@@ -164,7 +178,7 @@ class CmsExtension extends \Twig_Extension
     public function renderSeo(SeoInterface $seo = null)
     {
         if (null === $seo) {
-            if (null !== $page = $this->editor->getCurrentPage()) {
+            if (null !== $page = $this->getPage()) {
                 $seo = $page->getSeo();
             } else {
                 $seo = new Seo();
@@ -231,7 +245,7 @@ class CmsExtension extends \Twig_Extension
      */
     public function renderTitle($tag = 'h1', $content = null)
     {
-        if (null === $content && null !== $page = $this->editor->getCurrentPage()) {
+        if (null === $content && null !== $page = $this->getPage()) {
             $content = $page->getTitle();
 
             // Tags the response as Page relative
@@ -292,7 +306,7 @@ class CmsExtension extends \Twig_Extension
                 $content = $this->editor->createDefaultContent($subject);
             }
         } elseif (null === $subject) {
-            if (null !== $page = $this->editor->getCurrentPage()) {
+            if (null !== $page = $this->getPage()) {
                 if (null === $content = $page->getContent()) {
                     if ($page->getAdvanced()) {
                         $content = $this->editor->createDefaultContent($page);
