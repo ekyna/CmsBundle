@@ -4,7 +4,7 @@ namespace Ekyna\Bundle\CmsBundle;
 
 use Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler\AdminMenuPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Ekyna\Bundle\CoreBundle\AbstractBundle;
 use Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler\EditorPluginPass;
 
 /**
@@ -12,7 +12,7 @@ use Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler\EditorPluginPass;
  * @package Ekyna\Bundle\CmsBundle
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class EkynaCmsBundle extends Bundle
+class EkynaCmsBundle extends AbstractBundle
 {
     /**
      * {@inheritdoc}
@@ -23,5 +23,16 @@ class EkynaCmsBundle extends Bundle
 
         $container->addCompilerPass(new AdminMenuPass());
         $container->addCompilerPass(new EditorPluginPass());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getModelInterfaces()
+    {
+        return array(
+            'Ekyna\Bundle\CmsBundle\Model\PageInterface' => 'ekyna_cms.page.class',
+            'Ekyna\Bundle\CmsBundle\Model\MenuInterface' => 'ekyna_cms.menu.class',
+        );
     }
 }

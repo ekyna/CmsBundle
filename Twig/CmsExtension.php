@@ -149,7 +149,7 @@ class CmsExtension extends \Twig_Extension
 
     /**
      * Returns the current page.
-     * 
+     *
      * @return \Ekyna\Bundle\CmsBundle\Model\PageInterface|null
      */
     public function getPage()
