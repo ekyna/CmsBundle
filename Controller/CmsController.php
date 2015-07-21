@@ -3,7 +3,6 @@
 namespace Ekyna\Bundle\CmsBundle\Controller;
 
 use Ekyna\Bundle\CoreBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -17,10 +16,9 @@ class CmsController extends Controller
     /**
      * Default action.
      *
-     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function defaultAction(Request $request)
+    public function defaultAction()
     {
         return $this->configureSharedCache($this->render('EkynaCmsBundle:Cms:default.html.twig'));
     }

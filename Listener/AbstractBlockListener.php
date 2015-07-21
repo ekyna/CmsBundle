@@ -3,7 +3,6 @@
 namespace Ekyna\Bundle\CmsBundle\Listener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvent;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvents;

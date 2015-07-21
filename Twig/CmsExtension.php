@@ -459,6 +459,7 @@ class CmsExtension extends \Twig_Extension
     /**
      * Returns the page controller title.
      *
+     * @param string $name
      * @return string
      * @throws \InvalidArgumentException
      */

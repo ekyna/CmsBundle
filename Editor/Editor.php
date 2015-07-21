@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 use Ekyna\Bundle\CmsBundle\Entity\Content;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
@@ -25,7 +25,7 @@ class Editor
     private $registry;
 
     /**
-     * @var ObjectManager
+     * @var EntityManager
      */
     private $manager;
 
@@ -50,6 +50,11 @@ class Editor
     private $defaultBlockType;
 
     /**
+     * @var string
+     */
+    private $pageClass;
+
+    /**
      * @var ContentInterface
      */
     private $content;
@@ -68,19 +73,21 @@ class Editor
     /**
      * Constructor.
      * 
-     * @param PluginRegistry     $registry
-     * @param ObjectManager      $manager
-     * @param ValidatorInterface $validator
-     * @param RequestStack       $requestStack
-     * @param SecurityContext    $securityContext
-     * @param string             $defaultBlockType
+     * @param PluginRegistry         $registry
+     * @param EntityManager $manager
+     * @param ValidatorInterface     $validator
+     * @param RequestStack           $requestStack
+     * @param SecurityContext        $securityContext
+     * @param string                 $pageClass
+     * @param string                 $defaultBlockType
      */
     public function __construct(
         PluginRegistry     $registry,
-        ObjectManager      $manager,
+        EntityManager      $manager,
         ValidatorInterface $validator,
         RequestStack       $requestStack,
         SecurityContext    $securityContext,
+        $pageClass,
         $defaultBlockType  = 'tinymce'
     ) {
         $this->registry        = $registry;
@@ -89,6 +96,7 @@ class Editor
         $this->requestStack    = $requestStack;
         $this->securityContext = $securityContext;
 
+        $this->pageClass        = $pageClass;
         $this->defaultBlockType = $defaultBlockType;
     }
 
@@ -102,7 +110,8 @@ class Editor
         if (false === $this->currentPage) {
             $this->currentPage = null;
             if (null !== $request = $this->requestStack->getCurrentRequest()) {
-                $repo = $this->manager->getRepository('EkynaCmsBundle:Page');
+                /** @var \Ekyna\Bundle\CmsBundle\Entity\PageRepository $repo */
+                $repo = $this->manager->getRepository($this->pageClass);
                 $this->currentPage = $repo->findOneByRequest($request);
             }
         }

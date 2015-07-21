@@ -2,7 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 
-use Ekyna\Bundle\CmsBundle\Entity\TinymceBlockTranslation;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
 use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;

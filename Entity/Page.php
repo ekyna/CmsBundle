@@ -30,7 +30,7 @@ class Page extends AbstractTranslatable implements PageInterface
     protected $id;
 
     /**
-     * @var Page
+     * @var PageInterface
      */
     protected $parent;
 
@@ -55,7 +55,7 @@ class Page extends AbstractTranslatable implements PageInterface
     protected $level;
 
     /**
-     * @var ArrayCollection|Page[]
+     * @var ArrayCollection|PageInterface[]
      */
     protected $children;
 

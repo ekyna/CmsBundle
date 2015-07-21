@@ -66,7 +66,7 @@ class PageProvider extends AbstractProvider
         ;
 
         $entries = [];
-        /** @var \Ekyna\Bundle\CmsBundle\Entity\Page $page */
+        /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
         foreach($pages as $page) {
             try {
                 $location = $this->urlGenerator->generate($page->getRoute(), array(), UrlGeneratorInterface::ABSOLUTE_URL);

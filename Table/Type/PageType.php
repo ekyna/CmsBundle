@@ -2,7 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Table\Type;
 
-use Doctrine\ORM\QueryBuilder;
 use Ekyna\Bundle\AdminBundle\Table\Type\ResourceTableType;
 use Ekyna\Component\Table\TableBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
