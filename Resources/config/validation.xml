@@ -180,7 +180,10 @@
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\SeoTranslation">
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
-            <option name="fields">title</option>
+            <option name="fields">
+                <value>locale</value>
+                <value>title</value>
+            </option>
             <option name="message">ekyna_cms.seo.unique_title</option>
             <option name="groups">
                 <value>Default</value>
