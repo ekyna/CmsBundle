@@ -89,6 +89,11 @@ class Page extends AbstractTranslatable implements PageInterface
      */
     protected $advanced;
 
+    /**
+     * @var boolean
+     */
+    protected $dynamicPath; // TODO
+
 
     /**
      * Constructor

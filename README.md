@@ -19,6 +19,7 @@ TODO
 TODO
 
 ## TODOs
+- Fix menu update (admin)
 - Fix MenuBuilder breadcrumb.
 - Disallow locked pages removal.
 - Configurable editor content template.
