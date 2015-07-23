@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\EventListener;
 use Behat\Transliterator\Transliterator;
 use Ekyna\Bundle\CmsBundle\Event\PageEvent;
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
+use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -42,7 +43,30 @@ class PageEventListener implements EventSubscriberInterface
             $page->setRoute(sprintf('cms_page_%s', uniqid()));
         }
 
-        // Generate paths
+        // Handle paths.
+        $this->generateTranslationPaths($page);
+        $this->watchDynamicPaths($page);
+    }
+
+    /**
+     * Pre create event handler.
+     *
+     * @param PageEvent $event
+     */
+    public function onPreUpdate(PageEvent $event)
+    {
+        $page = $event->getPage();
+
+        // Handle paths.
+        $this->generateTranslationPaths($page);
+        $this->watchDynamicPaths($page);
+    }
+
+    /**
+     * @param PageInterface $page
+     */
+    private function generateTranslationPaths(PageInterface $page)
+    {
         if (!$page->getStatic()) {
             $parentPage = $page->getParent();
             foreach ($this->locales as $locale) {
@@ -57,12 +81,27 @@ class PageEventListener implements EventSubscriberInterface
     }
 
     /**
+     * @param PageInterface $page
+     */
+    private function watchDynamicPaths(PageInterface $page)
+    {
+        foreach ($this->locales as $locale) {
+            if (0 < preg_match('~\{.*\}~', $page->translate($locale)->getPath())) {
+                $page->setDynamicPath(true);
+                return;
+            }
+        }
+        $page->setDynamicPath(false);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
         return array(
             PageEvents::PRE_CREATE  => array('onPreCreate', 0),
+            PageEvents::PRE_UPDATE  => array('onPreUpdate', 0),
         );
     }
 }

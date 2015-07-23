@@ -92,7 +92,7 @@ class Page extends AbstractTranslatable implements PageInterface
     /**
      * @var boolean
      */
-    protected $dynamicPath; // TODO
+    protected $dynamicPath;
 
 
     /**
@@ -443,17 +443,26 @@ class Page extends AbstractTranslatable implements PageInterface
     /**
      * {@inheritdoc}
      */
-    public function isIndexable()
+    public function setDynamicPath($dynamicPath)
     {
-        return $this->seo->getIndex();
+        $this->dynamicPath = $dynamicPath;
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasDynamicPath()
+    public function getDynamicPath()
     {
-        return 0 < preg_match('#\{.*\}#', $this->getPath());
+        return $this->dynamicPath;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isIndexable()
+    {
+        return $this->seo->getIndex();
     }
 
     /**

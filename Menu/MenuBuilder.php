@@ -2,10 +2,13 @@
 
 namespace Ekyna\Bundle\CmsBundle\Menu;
 
+use Doctrine\ORM\Query\Expr;
 use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class MenuBuilder
@@ -15,17 +18,27 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class MenuBuilder
 {
     /**
-     * @var \Knp\Menu\FactoryInterface
+     * @var FactoryInterface
      */
     protected $factory;
 
     /**
-     * @var \Ekyna\Bundle\CmsBundle\Entity\PageRepository
+     * @var RouterInterface|\JMS\I18nRoutingBundle\Router\I18nRouter
+     */
+    protected $router;
+
+    /**
+     * @var PageRepository
      */
     protected $pageRepository;
 
     /**
-     * @var \Symfony\Component\HttpFoundation\RequestStack
+     * @var LocaleProviderInterface
+     */
+    protected $localeProvider;
+
+    /**
+     * @var RequestStack
      */
     protected $requestStack;
 
@@ -43,19 +56,25 @@ class MenuBuilder
     /**
      * Constructor.
      * 
-     * @param \Knp\Menu\FactoryInterface                                $factory
-     * @param \Ekyna\Bundle\CmsBundle\Entity\PageRepository             $pageRepository
-     * @param \Symfony\Component\HttpFoundation\RequestStack            $requestStack
-     * @param string $homeRouteName
+     * @param FactoryInterface        $factory
+     * @param RouterInterface         $router
+     * @param PageRepository          $pageRepository
+     * @param LocaleProviderInterface $localeProvider
+     * @param RequestStack            $requestStack
+     * @param string                  $homeRouteName
      */
     public function __construct(
-        FactoryInterface         $factory, 
-        PageRepository           $pageRepository,
-        RequestStack             $requestStack,
-        $homeRouteName         = 'home'
+        FactoryInterface        $factory,
+        RouterInterface         $router,
+        PageRepository          $pageRepository,
+        LocaleProviderInterface $localeProvider,
+        RequestStack            $requestStack,
+        $homeRouteName        = 'home'
     ) {
         $this->factory         = $factory;
+        $this->router          = $router;
         $this->pageRepository  = $pageRepository;
+        $this->localeProvider  = $localeProvider;
         $this->requestStack    = $requestStack;
         $this->homeRouteName   = $homeRouteName;
     }
@@ -86,7 +105,7 @@ class MenuBuilder
     /**
      * Create if not exists and returns the breadcrumb.
      *
-     * @return \Knp\Menu\ItemInterface
+     * @ItemInterface
      */
     public function createBreadcrumb()
     {
@@ -99,32 +118,49 @@ class MenuBuilder
                 $currentPage = $this->pageRepository->findOneByRequest($request);
 
                 // If not found look for a parent
-                // TODO ("_cms" no longer available)
-                /*if (null === $currentPage && null !== $cms = $request->attributes->get('_cms')) {
-                    if (array_key_exists('parent', $cms) && 0 < strlen($cms['parent'])) {
-                        $currentPage = $this->pageRepository->findOneByRoute($cms['parent']);
+                if (null === $currentPage) {
+                    // TODO create a route finder ? (same in AdminBundle ResourceHelper)
+                    $routeName = $request->attributes->get('_route');
+                    $i18nRouterClass = 'JMS\I18nRoutingBundle\Router\I18nRouterInterface';
+                    if (interface_exists($i18nRouterClass) && $this->router instanceof $i18nRouterClass) {
+                        $route = $this->router->getOriginalRouteCollection()->get($routeName);
+                    } else {
+                        $route = $this->router->getRouteCollection()->get($routeName);
                     }
-                }*/
+                    if (null !== $route) {
+                        $cmsOptions = $route->getOption('_cms');
+                        if (null !== $cmsOptions && array_key_exists('parent', $cmsOptions) && 0 < strlen($cmsOptions['parent'])) {
+                            $currentPage = $this->pageRepository->findOneByRoute($cmsOptions['parent']);
+                        }
+                    }
+                }
             }
 
             // If found, build the breadcrumb
             if (null !== $currentPage) {
-                // Loop through parents
-                $pages = array();
-                do {
-                    $pages[] = $currentPage;
-                } while (null !== $currentPage = $currentPage->getParent());
-                $pages = array_reverse($pages);
+                $qb = $this->pageRepository->createQueryBuilder('p');
+                $qb
+                    ->select('p.id, p.route, p.dynamicPath, t.title')
+                    ->join('p.translations', 't', Expr\Join::WITH, $qb->expr()->eq('t.locale',
+                        $qb->expr()->literal($this->localeProvider->getCurrentLocale())
+                    ))
+                    ->andWhere('p.left <= ' . $currentPage->getLeft())
+                    ->andWhere('p.right >= ' . $currentPage->getRight())
+                    ->orderBy('p.left', 'asc')
+                ;
+                $pages = $qb->getQuery()->getArrayResult();
 
                 // Fill the menu
-                /** @var PageInterface[] $pages */
                 foreach ($pages as $page) {
-                    if ($page->hasDynamicPath()) {
+                    if ($page['dynamicPath']) {
                         $params = array('uri' => null);
                     } else {
-                        $params = array('route' => $page->getRoute());
+                        $params = array('route' => $page['route']);
                     }
-                    $this->breadcrumb->addChild('page-'.$page->getId(), $params)->setLabel($page->getTitle());
+                    $this->breadcrumb
+                        ->addChild('page-'.$page['id'], $params)
+                        ->setLabel($page['title'])
+                    ;
                 }
             }
         }

@@ -165,7 +165,9 @@
 	    </service>
         <service id="ekyna_cms.menu.builder" class="Ekyna\Bundle\CmsBundle\Menu\MenuBuilder">
 	        <argument type="service" id="knp_menu.factory" />
+	        <argument type="service" id="router" />
 	        <argument type="service" id="ekyna_cms.page.repository" />
+            <argument type="service" id="ekyna_core.locale_provider.request" />
 	        <argument type="service" id="request_stack" />
 	        <argument>%ekyna_cms.home_route%</argument>
 	    </service>

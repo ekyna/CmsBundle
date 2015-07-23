@@ -277,16 +277,24 @@ interface PageInterface extends
     public function getAdvanced();
 
     /**
+     * Sets the dynamicPath.
+     *
+     * @param boolean $dynamicPath
+     * @return PageInterface|$this
+     */
+    public function setDynamicPath($dynamicPath);
+
+    /**
+     * Returns the dynamicPath.
+     *
+     * @return boolean
+     */
+    public function getDynamicPath();
+
+    /**
      * Returns whether the exhibitor should be indexed or not by elasticsearch.
      *
      * @return bool
      */
     public function isIndexable();
-
-    /**
-     * Returns whether the path has parameters.
-     *
-     * @return bool
-     */
-    public function hasDynamicPath();
 }
