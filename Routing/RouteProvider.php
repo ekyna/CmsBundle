@@ -144,7 +144,7 @@ class RouteProvider implements RouteProviderInterface
             ->select('p.route, p.controller, t.path, t.locale')
             ->join('p.translations', 't')
             ->andWhere($qb->expr()->eq('p.static', 0))
-            ->andWhere($qb->expr()->eq('p.route', $name))
+            ->andWhere($qb->expr()->eq('p.route', $qb->expr()->literal($name)))
         ;
 
         $results = $qb
