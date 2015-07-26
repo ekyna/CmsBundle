@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\EventListener;
 
 use Behat\Transliterator\Transliterator;
+use Doctrine\Common\Cache\CacheProvider;
 use Ekyna\Bundle\CmsBundle\Event\PageEvent;
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
@@ -20,13 +21,22 @@ class PageEventListener implements EventSubscriberInterface
      */
     private $locales;
 
+    /**
+     * @var CacheProvider
+     */
+    private $cache;
+
 
     /**
+     * Constructor.
+     *
      * @param array $locales
+     * @param CacheProvider $cache
      */
-    public function __construct(array $locales)
+    public function __construct(array $locales, CacheProvider $cache = null)
     {
         $this->locales = $locales;
+        $this->cache   = $cache;
     }
 
     /**
@@ -49,7 +59,17 @@ class PageEventListener implements EventSubscriberInterface
     }
 
     /**
-     * Pre create event handler.
+     * Post create event handler.
+     *
+     * @param PageEvent $event
+     */
+    public function onPostCreate(PageEvent $event)
+    {
+        $this->savePageCache($event->getPage());
+    }
+
+    /**
+     * Pre update event handler.
      *
      * @param PageEvent $event
      */
@@ -60,6 +80,52 @@ class PageEventListener implements EventSubscriberInterface
         // Handle paths.
         $this->generateTranslationPaths($page);
         $this->watchDynamicPaths($page);
+    }
+
+    /**
+     * Post update event handler.
+     *
+     * @param PageEvent $event
+     */
+    public function onPostUpdate(PageEvent $event)
+    {
+        $this->savePageCache($event->getPage());
+    }
+
+    /**
+     * Post delete event handler.
+     *
+     * @param PageEvent $event
+     */
+    public function onPostDelete(PageEvent $event)
+    {
+        $this->deletePageCache($event->getPage());
+    }
+
+    /**
+     * Saves the page in doctrine cache.
+     *
+     * @param PageInterface $page
+     */
+    private function savePageCache(PageInterface $page)
+    {
+        if (null !== $this->cache) {
+            $this->cache->save('ekyna_cms.page[id:' . $page->getId() . ']', $page);
+            $this->cache->save('ekyna_cms.page[route:' . $page->getRoute() . ']', $page);
+        }
+    }
+
+    /**
+     * Saves the page in doctrine cache.
+     *
+     * @param PageInterface $page
+     */
+    private function deletePageCache(PageInterface $page)
+    {
+        if (null !== $this->cache) {
+            $this->cache->delete('ekyna_cms.page[id:' . $page->getId() . ']');
+            $this->cache->delete('ekyna_cms.page[route:' . $page->getRoute() . ']');
+        }
     }
 
     /**
@@ -101,7 +167,10 @@ class PageEventListener implements EventSubscriberInterface
     {
         return array(
             PageEvents::PRE_CREATE  => array('onPreCreate', 0),
+            PageEvents::POST_CREATE => array('onPostCreate', 0),
             PageEvents::PRE_UPDATE  => array('onPreUpdate', 0),
+            PageEvents::POST_UPDATE => array('onPostUpdate', 0),
+            PageEvents::POST_DELETE => array('onPostDelete', 0),
         );
     }
 }

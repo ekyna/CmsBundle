@@ -24,7 +24,7 @@ class ContentRepository extends EntityRepository
             ->andWhere($qb->expr()->eq('s.id', $contentId))
             ->setMaxResults(1)
             ->getQuery()
-            ->useResultCache(true, 3600, 'ekyna_cms.content[id:'.$contentId.']')
+            //->useResultCache(true, 3600, 'ekyna_cms.content[id:'.$contentId.']') // TODO doctrine cache clear/update
         ;
         return $query->getOneOrNullResult();
     }

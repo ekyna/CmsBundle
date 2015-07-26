@@ -14,6 +14,7 @@
         <indexes>
             <index name="idx_name" columns="name" />
             <index name="idx_parent" columns="parent_id" />
+            <index name="idx_route" columns="route" />
         </indexes>
 
         <unique-constraints>

@@ -14,6 +14,7 @@
     </parameters>
 
     <services>
+
         <!-- Form Types -->
         <service id="ekyna_cms.menu.form_type" class="%ekyna_cms.menu.form_type.class%">
             <argument type="service" id="security.context" />
@@ -42,6 +43,7 @@
         <!-- Event listeners -->
         <service id="ekyna_cms.page.event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\PageEventListener">
             <argument>%locales%</argument>
+            <argument type="service" id="doctrine.orm.default_result_cache" on-invalid="null" />
             <tag name="kernel.event_subscriber" />
         </service>
 

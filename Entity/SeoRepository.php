@@ -24,7 +24,7 @@ class SeoRepository extends TranslatableResourceRepository
             ->andWhere($qb->expr()->eq('s.id', $seoId))
             ->setMaxResults(1)
             ->getQuery()
-            ->useResultCache(true, 3600, 'ekyna_cms.seo[id:'.$seoId.']')
+            //->useResultCache(true, 3600, 'ekyna_cms.seo[id:'.$seoId.']') // TODO doctrine cache clear/update
         ;
         return $query->getOneOrNullResult();
     }
