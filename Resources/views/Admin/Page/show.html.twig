@@ -10,7 +10,7 @@
 
 {% block main %}
 <div class="actions">
-    {% if not page.hasDynamicPath %}
+    {% if not page.getDynamicPath %}
         {{ ui_button('ekyna_core.button.show_front', {'type': 'link', 'icon': 'eye-open', 'path': path(page.route)}) }}
     {% endif %}
 	{{ admin_resource_btn(page, 'edit') }}
