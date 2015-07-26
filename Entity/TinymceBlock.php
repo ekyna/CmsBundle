@@ -10,6 +10,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Class TinymceBlock
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @method \Ekyna\Bundle\CmsBundle\Entity\TinymceBlockTranslation translate($locale = null, $create = false)
  */
 class TinymceBlock extends AbstractBlock implements TranslatableInterface
 {

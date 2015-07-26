@@ -66,6 +66,7 @@ class TinymcePlugin extends AbstractPlugin
      */
     public function getInnerHtml(BlockInterface $block)
     {
+        /** @var TinymceBlock $block */
         return $block->getHtml();
     }
 
