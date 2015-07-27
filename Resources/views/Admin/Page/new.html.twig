@@ -1,16 +1,5 @@
-{% extends "EkynaAdminBundle:Entity:sided.html.twig" %}
-
-{% block title %}
-<h1>{{ 'ekyna_cms.page.header.new'|trans|raw }}</h1>
-{% endblock %}
+{% extends "EkynaAdminBundle:Entity/Default:new.html.twig" %}
 
 {% block actions %}
 {{ admin_resource_btn('ekyna_cms.page', 'list') }}
-{% endblock %}
-
-{% block main %}
-<form action="{{ path('ekyna_cms_page_admin_new', identifiers) }}" {{ form_enctype(form) }} method="post" class="form-horizontal form-with-tabs">
-    {% include "EkynaCmsBundle:Admin/Page:_form.html.twig" %}
-    {{ ui_form_footer(form) }}
-</form>
 {% endblock %}

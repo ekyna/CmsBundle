@@ -1,16 +1,5 @@
-{% extends "EkynaAdminBundle:Entity:sided.html.twig" %}
+{% extends "EkynaAdminBundle:Entity/Default:new.html.twig" %}
 
 {% block title %}
 <h1>{{ 'ekyna_cms.page.header.new_child'|trans({'%name%': page})|raw }}</h1>
-{% endblock %}
-
-{% block actions %}
-{{ admin_resource_btn(page, 'list') }}
-{% endblock %}
-
-{% block main %}
-<form action="{{ path('ekyna_cms_page_admin_new_child', identifiers|merge({'pageId': page.id})) }}" {{ form_enctype(form) }} method="post" class="form-horizontal form-with-tabs">
-    {% include "EkynaCmsBundle:Admin/Page:_form.html.twig" %}
-    {{ ui_form_footer(form) }}
-</form>
 {% endblock %}

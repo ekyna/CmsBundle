@@ -1,4 +1,4 @@
-{% extends "EkynaAdminBundle:Entity:sided.html.twig" %}
+{% extends "EkynaAdminBundle:Entity/Default:new.html.twig" %}
 
 {% block title %}
 <h1>{{ 'ekyna_cms.menu.header.new'|trans|raw }}</h1>
@@ -6,11 +6,4 @@
 
 {% block actions %}
 {{ admin_resource_btn('ekyna_cms.menu', 'list') }}
-{% endblock %}
-
-{% block main %}
-<form action="{{ path('ekyna_cms_menu_admin_new', identifiers) }}" {{ form_enctype(form) }} method="post" class="form-horizontal form-with-tabs">
-    {% include "EkynaCmsBundle:Admin/Menu:_form.html.twig" %}
-    {{ ui_form_footer(form) }}
-</form>
 {% endblock %}
