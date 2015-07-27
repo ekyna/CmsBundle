@@ -33,13 +33,13 @@ class PageTranslationType extends AbstractType
             if (null === $translation) {
                 /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
                 $page = $form->getParent()->getParent()->getData();
-                if (null !== $page && null === $page->getId()) {
+                if (null !== $page && null !== $parent = $page->getParent()) {
                     $form->add('path', 'text', array(
                         'label' => 'ekyna_core.field.url',
                         'admin_helper' => 'PAGE_PATH',
                         'required' => false,
                         'attr' => array('input_group' => array(
-                            'prepend' => rtrim($page->getParent()->translate($form->getName())->getPath(), '/').'/')
+                            'prepend' => rtrim($parent->translate($form->getName())->getPath(), '/').'/')
                         ),
                     ));
                 } else {

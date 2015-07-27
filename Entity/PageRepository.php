@@ -6,7 +6,6 @@ use Doctrine\ORM\QueryBuilder;
 use Ekyna\Bundle\AdminBundle\Doctrine\ORM\TranslatableResourceRepositoryInterface;
 use Ekyna\Bundle\AdminBundle\Doctrine\ORM\Util\TranslatableResourceRepositoryTrait;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
-use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Symfony\Component\HttpFoundation\Request;
 

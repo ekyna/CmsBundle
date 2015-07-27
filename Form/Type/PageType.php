@@ -66,6 +66,9 @@ class PageType extends ResourceFormType
                     'property' => 'name',
                     'empty_value' => 'Racine',
                 	'disabled' => true,
+                    'query_builder' => function(EntityRepository $er) use ($page) {
+                        return $er->createQueryBuilder('p'); // Prevent TranslatableResourceRepositoryTrait::getCollectionQueryBuilder() bug
+                    },
                 ));
             } else {
                 $form
