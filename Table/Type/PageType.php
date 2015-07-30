@@ -16,9 +16,9 @@ class PageType extends ResourceTableType
     /**
      * {@inheritdoc}
      */
-    public function buildTable(TableBuilderInterface $tableBuilder, array $options = array())
+    public function buildTable(TableBuilderInterface $builder, array $options)
     {
-        $tableBuilder
+        $builder
             ->addColumn('name', 'nested_anchor', array(
                 'label' => 'ekyna_core.field.name',
                 'route_name' => 'ekyna_cms_page_admin_show',

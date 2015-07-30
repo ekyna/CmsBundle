@@ -16,9 +16,9 @@ class MenuType extends ResourceTableType
     /**
      * {@inheritdoc}
      */
-    public function buildTable(TableBuilderInterface $tableBuilder, array $options = array())
+    public function buildTable(TableBuilderInterface $builder, array $options)
     {
-        $tableBuilder
+        $builder
             ->addColumn('title', 'nested_anchor', array(
                 'label' => 'ekyna_core.field.title',
                 'sortable' => true,

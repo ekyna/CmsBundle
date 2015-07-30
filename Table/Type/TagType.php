@@ -15,9 +15,9 @@ class TagType extends ResourceTableType
     /**
      * {@inheritdoc}
      */
-    public function buildTable(TableBuilderInterface $tableBuilder, array $options = array())
+    public function buildTable(TableBuilderInterface $builder, array $options)
     {
-        $tableBuilder
+        $builder
             ->addColumn('id', 'number', array(
                 'sortable' => true,
             ))
