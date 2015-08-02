@@ -19,9 +19,9 @@ class MenuGenerator
     private $output;
 
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var \Ekyna\Bundle\AdminBundle\Operator\ResourceOperatorInterface
      */
-    private $em;
+    private $menuOperator;
 
     /**
      * @var \Ekyna\Bundle\CmsBundle\Entity\MenuRepository
@@ -48,7 +48,7 @@ class MenuGenerator
     {
         $this->output = $output;
 
-        $this->em = $container->get('ekyna_cms.page.manager');
+        $this->menuOperator = $container->get('ekyna_cms.menu.operator');
         $this->repository = $container->get('ekyna_cms.menu.repository');
         $this->config = $container->getParameter('ekyna_cms.menu.config');
         $this->locales = $container->getParameter('locales');
@@ -89,10 +89,10 @@ class MenuGenerator
                 ;
             }
 
-            $this->em->persist($menu);
+            $this->menuOperator->persist($menu);
+
             $this->output->writeln('done.');
         }
-        $this->em->flush();
     }
 
     /**

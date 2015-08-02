@@ -63,14 +63,14 @@
                             $cookie.text(),
                             $cookie.attr('close'),
                             $cookie.attr('learn'),
-                            Router.generate('cookies_informations')
+                            Router.generate('cookies_privacy_policy')
                         );
                     } else {
                         Cookie.showCookieConsentDialog(
                             $cookie.text(),
                             $cookie.attr('close'),
                             $cookie.attr('learn'),
-                            Router.generate('cookies_informations')
+                            Router.generate('cookies_privacy_policy')
                         );
                     }
                 }

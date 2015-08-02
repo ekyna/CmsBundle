@@ -23,9 +23,14 @@ class PageGenerator
     private $output;
 
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var \Ekyna\Bundle\AdminBundle\Operator\ResourceOperatorInterface
      */
-    private $em;
+    private $pageOperator;
+
+    /**
+     * @var \Ekyna\Bundle\AdminBundle\Operator\ResourceOperatorInterface
+     */
+    private $menuOperator;
 
     /**
      * @var \Symfony\Component\Validator\Validator\ValidatorInterface
@@ -98,7 +103,8 @@ class PageGenerator
         }
         $this->homeRouteName = $container->getParameter('ekyna_cms.home_route');
 
-        $this->em = $container->get('ekyna_cms.page.manager');
+        $this->pageOperator = $container->get('ekyna_cms.page.operator');
+        $this->menuOperator = $container->get('ekyna_cms.menu.operator');
         $this->validator = $container->get('validator');
         $this->translator = $container->get('translator');
         $this->locales = $container->getParameter('locales');
@@ -347,8 +353,7 @@ class PageGenerator
                 if (!$this->validate($page)) {
                     return false;
                 }
-                $this->em->persist($page);
-                $this->em->flush();
+                $this->pageOperator->persist($page);
             }
 
             $this->outputPageAction($page->getName(), $updated ? 'updated' : 'already exists');
@@ -410,8 +415,7 @@ class PageGenerator
                 return false;
             }
 
-            $this->em->persist($page);
-            $this->em->flush();
+            $this->pageOperator->persist($page);
 
             $this->outputPageAction($page->getName(), 'created');
         }
@@ -471,8 +475,7 @@ class PageGenerator
                         return false;
                     }
 
-                    $this->em->persist($menu);
-                    $this->em->flush();
+                    $this->menuOperator->persist($menu);
                 }
             }
         }
@@ -489,10 +492,9 @@ class PageGenerator
         foreach ($staticPages as $page) {
             if (null === $this->findRouteDefinitionByRouteName($page->getRoute())) {
                 $this->outputPageAction($page->getName(), 'removed');
-                $this->em->remove($page);
+                $this->pageOperator->delete($page);
             }
         }
-        $this->em->flush();
     }
 
     /**
