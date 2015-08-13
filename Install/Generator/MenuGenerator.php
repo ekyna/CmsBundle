@@ -77,9 +77,6 @@ class MenuGenerator
                 ->setName($name)
                 ->setDescription($config['description'])
                 ->setLocked(true)
-                ->setAttributes(array(
-                    'id' => $name,
-                ))
             ;
 
             foreach ($this->locales as $locale) {

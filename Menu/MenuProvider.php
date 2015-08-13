@@ -107,7 +107,9 @@ class MenuProvider implements MenuProviderInterface
             throw new \InvalidArgumentException(sprintf('The menu "%s" is not defined.', $name));
         }
 
-        return $this->buildItem($menu, $options);
+        return $this->buildItem($menu, array_merge(array(
+            'attributes' => array('id' => $menu['name'].'-nav') // Root css id
+        ), $options));
     }
 
     /**
