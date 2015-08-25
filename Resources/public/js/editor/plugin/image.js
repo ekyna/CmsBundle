@@ -1,27 +1,42 @@
-;(function($) {
+(function(root, factory) {
+    "use strict";
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = factory(require('jquery'), require('ekyna-cms-editor/plugin-base'));
+    }
+    else if (typeof define === 'function' && define.amd) {
+        define('ekyna-cms-editor/image', ['jquery', 'ekyna-cms-editor/plugin-base'], function($, Base) {
+            return factory($, Base);
+        });
+    } else {
+        root.EkynaCmsEditorImagePlugin = factory(root.jQuery, root.EkynaCmsEditorBasePlugin);
+    }
+}(this, function($, Base) {
     "use strict";
 
-    function ImageCmsPlugin($el) {
-        CmsPlugin.call(this, $el);
-        this.editor = null;
-        this.name = 'ImageCmsPlugin';
+    var ImageCmsPlugin = function ($el) {
+        Base.call(this, $el);
+    };
+
+    ImageCmsPlugin.prototype = {
+        init: function () {
+            Base.prototype.init.apply(this, arguments);
+        },
+        destroy: function () {
+            Base.prototype.destroy.apply(this, arguments);
+        },
+        focus: function () {
+            Base.prototype.destroy.apply(this, arguments);
+        },
+        getDatas: function () {
+            Base.prototype.destroy.apply(this, arguments);
+        }
+    };
+
+    return {
+        name: 'image',
+        title: 'Image',
+        create: function ($element) {
+            return new ImageCmsPlugin($element);
+        }
     }
-    ImageCmsPlugin.title = 'Image';
-    /*ImageCmsPlugin.prototype.init = function() {
-        CmsPlugin.prototype.init.apply(this, arguments);
-    };
-    ImageCmsPlugin.prototype.destroy = function() {
-        CmsPlugin.prototype.destroy.apply(this, arguments);
-    };
-    ImageCmsPlugin.prototype.focus = function() {
-        CmsPlugin.prototype.focus.apply(this, arguments);
-    };
-    ImageCmsPlugin.prototype.update = function() {
-        CmsPlugin.prototype.update.apply(this, arguments);
-    };*/
-    
-    $(function() {
-		CmsEditor.registerPlugin('image', ImageCmsPlugin);
-    });
-    
-})(jQuery);
+}));

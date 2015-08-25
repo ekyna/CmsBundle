@@ -1,30 +1,47 @@
 (function(root, factory) {
     "use strict";
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = factory(require('jquery'), require('ekyna-cms-editor/plugin-base'), require('tinymce'));
+        module.exports = factory(require('jquery'), require('ekyna-cms-editor/plugin-base'), require('json!tinymce_config'), require('tinymce'));
     }
     else if (typeof define === 'function' && define.amd) {
-        define('ekyna-cms-editor/tinymce', ['jquery', 'ekyna-cms-editor/plugin-base', 'tinymce'], function($, Base) {
-            return factory($, Base);
+        define('ekyna-cms-editor/tinymce', ['jquery', 'ekyna-cms-editor/plugin-base', 'json!tinymce_config', 'tinymce'], function($, Base, config) {
+            return factory($, Base, config);
         });
     } else {
-        root.EkynaCmsEditorTinymcePlugin = factory(root.jQuery, root.EkynaCmsEditorBasePlugin);
+        root.EkynaCmsEditorTinymcePlugin = factory(root.jQuery, root.EkynaCmsEditorBasePlugin); // TODO
     }
-}(this, function($, Base) {
+}(this, function($, Base, config) {
     "use strict";
 
     if (typeof tinymce == 'undefined') {
         throw 'Tinymce is not available.';
     }
 
-    tinymce.baseURL = '/assets/tinymce';
+    tinymce.baseURL = config.tinymce_url;
     tinymce.suffix = '.min';
+
+    // Load external plugins
+    var externalPlugins = [];
+    if (typeof config.external_plugins == 'object') {
+        for (var pluginId in config.external_plugins) {
+            if (!config.external_plugins.hasOwnProperty(pluginId)) {
+                continue;
+            }
+            var opts = config.external_plugins[pluginId],
+                url = opts.url || null;
+            if (url) {
+                externalPlugins.push({
+                    'id': pluginId,
+                    'url': url
+                });
+                tinymce.PluginManager.load(pluginId, url);
+            }
+        }
+    }
 
     var TinymcePlugin = function ($el) {
         Base.call(this, $el);
         this.editor = null;
-        this.name = 'TinymcePlugin';
-        this.title = 'Tinymce';
     };
 
     TinymcePlugin.prototype = {
@@ -34,41 +51,64 @@
             this.$element.wrapInner('<div id="tinymce-plugin-editor"></div>');
 
             var self = this;
-            var config = {};
-            if (typeof cms_editor_tinymce_config != 'undefined') {
-                config = cms_editor_tinymce_config;
-            } else {
-                config = {
-                    theme: "modern",
-                    plugins: ["advlist autolink lists link image anchor paste textcolor nonbreaking table contextmenu directionality code"],
-                    image_advtab: true,
-                    table_adv_tab: true,
-                    //external_plugins: {filemanager: "/bundles/ekynafilemanager/js/tinymce.plugin.js"},
-                    toolbar1: "undo redo removeformat | styleselect | bold italic underline strikethrough | forecolor backcolor",
-                    toolbar2: "alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link image code"
-                };
+
+            var settings = config.theme['advanced'];
+
+            settings.external_plugins = settings.external_plugins || {};
+            for (var p = 0; p < externalPlugins.length; p++) {
+                settings.external_plugins[externalPlugins[p]['id']] = externalPlugins[p]['url'];
             }
-            config.add_unload_trigger = false;
-            config.inline = true;
-            config.menubar = false;
-            config.entity_encoding = 'raw';
-            config.toolbar_items_size = 'small';
-            config.paste_as_text = true;
-            config.relative_urls = false;
-            config.content_css = [];
-            config.setup = function (ed) {
-                ed.on('click', function (e) {
+
+            settings.add_unload_trigger = false;
+            settings.inline = true;
+            settings.menubar = false;
+            settings.entity_encoding = 'raw';
+            settings.toolbar_items_size = 'small';
+            settings.paste_as_text = true;
+            settings.relative_urls = false;
+            settings.content_css = [];
+            settings.setup = function (editor) {
+
+                if (typeof config.tinymce_buttons == 'object') {
+                    for (var buttonId in config.tinymce_buttons) {
+                        if (!config.tinymce_buttons.hasOwnProperty(buttonId)) continue;
+
+                        // Some tricky function to isolate variables values
+                        (function (id, opts) {
+                            opts.onclick = function () {
+                                var callback = window['tinymce_button_' + id];
+                                if (typeof callback == 'function') {
+                                    callback(editor);
+                                } else {
+                                    alert('You have to create callback function: "tinymce_button_' + id + '"');
+                                }
+                            };
+                            editor.addButton(id, opts);
+
+                        })(buttonId, clone(config.tinymce_buttons[buttonId]));
+                    }
+                }
+
+                editor.on('click', function (e) {
                     e.stopPropagation();
                 });
-                ed.on('init', function (e) {
-                    ed.focus();
+                editor.on('init', function () {
+                    if (config.use_callback_tinymce_init) {
+                        var callback = window['callback_tinymce_init'];
+                        if (typeof callback == 'function') {
+                            callback(editor);
+                        } else {
+                            alert('You have to create callback function: callback_tinymce_init');
+                        }
+                    }
+                    editor.focus();
                 });
-                ed.on('change', function (e) {
+                editor.on('change', function () {
                     self.setUpdated(true);
                 });
             };
 
-            this.editor = new tinymce.Editor('tinymce-plugin-editor', config, tinymce.EditorManager);
+            this.editor = new tinymce.Editor('tinymce-plugin-editor', settings, tinymce.EditorManager);
             this.editor.render();
         },
         destroy: function () {
@@ -89,25 +129,18 @@
             }
         },
         getDatas: function () {
+            Base.prototype.destroy.apply(this, arguments);
             if (this.editor !== null) {
                 return {html: this.editor.getContent()};
             }
         }
     };
-    
-    /*$(function() {
-        // TODO configurable tinymce url
-        $.getScript('/assets/tinymce/tinymce.min.js', function () {
-            tinymce.baseURL = '/assets/tinymce';
-            tinymce.suffix = '.min';
-            CmsEditor.registerPlugin('tinymce', TinymcePlugin);
-        });
-    });*/
 
     return {
+        name: 'tinymce',
+        title: 'Tinymce',
         create: function ($element) {
             return new TinymcePlugin($element);
         }
     }
-
 }));

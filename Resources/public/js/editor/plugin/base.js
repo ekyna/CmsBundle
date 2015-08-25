@@ -30,15 +30,16 @@
     BasePlugin.prototype = {
         constructor: BasePlugin,
         init: function () {
-            console.log(this.name + ' :: init');
+            //console.log(this.name + ' :: init');
         },
         destroy: function () {
-            console.log(this.name + ' :: destroy');
+            //console.log(this.name + ' :: destroy');
         },
         focus: function () {
-            console.log(this.name + ' :: focus');
+            //console.log(this.name + ' :: focus');
         },
         getDatas: function () {
+            //console.log(this.name + ' :: focus');
             return {};
         }
     };

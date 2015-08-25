@@ -21,8 +21,9 @@
         this.dragOffsetX = 0;
         this.dragOffsetY = 0;
         this.$box = null;
+        this.$body = null;
         this.config = {
-            debug: true,
+            debug: false,
             autosave: true,
             blockSelector: '.cms-editor-block',
             blockSelectedClass: 'cms-editor-selected-block',
@@ -34,7 +35,8 @@
             columnSelector: 'div[class^="col-"]',
             columnCreateHtml: '<div class="col-md-12 cms-editor-block"></div>',
             columnDefaultData: {id: null, row: 1, column: 1, size: 12, type: null},
-            columnSizeRegex: /col-\w{2}-\d+/
+            columnSizeRegex: /col-\w{2}-\d+/,
+            plugins: ['tinymce'] // TODO configurable
         };
         this.plugingRegistry = {};
         this.updatedBlocks = {};
@@ -117,6 +119,8 @@
         var ed = this;
         var pressedBlock = null;
 
+        this.$body = $('body');
+
         $(window).on('mousedown', function(e) {
             if (ed.enabled) {
                 pressedBlock = ed.getMouseEventTarget(e);
@@ -181,6 +185,14 @@
             $block.removeAttr('data-init').removeData('init');
         });
 
+        for (var type in this.config.plugins) {
+            if (this.config.plugins.hasOwnProperty(type)) {
+                Require(['ekyna-cms-editor/' + this.config.plugins[type]], function (plugin) {
+                    ed.registerPlugin(plugin);
+                });
+            }
+        }
+
         this.clearCurrent();
         this.createControlBox();
 
@@ -188,9 +200,15 @@
     };
 
     /* Plugin registration */
-    Editor.prototype.registerPlugin = function (name, contructor) {
-        this.plugingRegistry[name] = contructor;
-        this.buildPluginSelector();
+    Editor.prototype.registerPlugin = function (plugin) {
+        this.log('Editor.registerPlugin()');
+        if (!(plugin.hasOwnProperty('name'))) {
+            throw 'Unexpected plugin.';
+        }
+        if (!(plugin.name in this.plugingRegistry)) {
+            this.plugingRegistry[plugin.name] = plugin;
+            this.buildPluginSelector();
+        }
     };
 
     /* Plugin selector */
@@ -198,10 +216,12 @@
         var $selector = this.$box.find('#cms-editor-plugin-type');
         $selector.empty();
         for (var type in this.plugingRegistry) {
-            var $option = $('<option></option>');
-            $option.text(this.plugingRegistry[type].title);
-            $option.attr('value', type);
-            $selector.append($option);
+            if (this.plugingRegistry.hasOwnProperty(type)) {
+                var $option = $('<option></option>');
+                $option.text(this.plugingRegistry[type].title);
+                $option.attr('value', type);
+                $selector.append($option);
+            }
         }
     };
 
@@ -244,6 +264,7 @@
 
     /* Busy state */
     Editor.prototype.setBusy = function (bool) {
+        this.log('Editor.setBusy()');
         this.busy = bool;
         if (this.busy) {
             this.$box.find('.cms-editor-busy').show();
@@ -261,23 +282,24 @@
     /* Enables the editor. */
     Editor.prototype.enable = function () {
         this.enabled = true;
-        $('body').addClass('cms-editor-enabled');
+        this.$body.addClass('cms-editor-enabled');
         this.setBusy(false);
     };
 
     /* Disables the editor. */
     Editor.prototype.disable = function () {
+        this.log('Editor.disable()');
         var ed = this;
         if (this.isBusy()) return;
         if (this.save()) {
-            $('body').one('cms_editor_request_succeed', function() {
+            this.$body.one('cms_editor_request_succeed', function() {
                 ed.disable();
             });
             return;
         }
         this.selectBlock(null);
         this.enabled = false;
-        $('body').removeClass('cms-editor-enabled');
+        this.$body.removeClass('cms-editor-enabled');
         this.clearHandlers();
         this.updateControlsStates();
     };
@@ -398,7 +420,7 @@
             callback(data);
             ed.clearUpdatedBlocks();
             ed.setBusy(false);
-            $('body').trigger('cms_editor_request_succeed');
+            ed.$body.trigger('cms_editor_request_succeed');
         })
         .fail(function () {
             ed.log('An error occured.');
@@ -408,7 +430,7 @@
 
     /* Log messages */
     Editor.prototype.log = function (msg) {
-        if (this.config.debug) console.log(msg);
+        if (this.config.debug) this.log(msg);
     };
 
     /* Watch for updated blocks and returns true if save requested */
@@ -420,7 +442,7 @@
                     var plugin = this.current.plugin;
                     this.request({
                         updateBlock: $.extend(this.current.$block.data(), this.current.plugin.getDatas())
-                    }, function (data) {
+                    }, function () { // args: data
                         plugin.setUpdated(false);
                     });
                 } else {
@@ -436,10 +458,11 @@
 
     /* Selects a block */
     Editor.prototype.selectBlock = function ($block) {
+        this.log('Editor.selectBlock()');
         var ed = this;
         if (ed.isBusy()) return;
         if (ed.save()) {
-            $('body').one('cms_editor_request_succeed', function() {
+            ed.$body.one('cms_editor_request_succeed', function() {
                 ed.selectBlock($block);
             });
             return;
@@ -449,21 +472,9 @@
 
         if ($block !== null && $block.length == 1) {
             var type = $block.data('type');
-            Require(['ekyna-cms-editor/' + type], function (plugin) {
+            if (type in ed.plugingRegistry) {
                 ed.$box.find('#cms-editor-plugin-type').val(type);
-                ed.current.plugin = plugin.create($block);
-                ed.current.$block = $block.addClass(ed.config.blockSelectedClass);
-                var $content = ed.current.$block.parents(ed.config.contentSelector);
-                if ($content.length > 0) {
-                    ed.current.$content = $content;
-                    ed.current.$row = $block.parents(ed.config.rowSelector).eq(0).addClass(ed.config.rowSelectedClass);
-                }
-                ed.current.plugin.init();
-            });
-
-            /*if (type in ed.plugingRegistry) {
-                ed.$box.find('#cms-editor-plugin-type').val(type);
-                ed.current.plugin = new ed.plugingRegistry[type]($block);
+                ed.current.plugin = new ed.plugingRegistry[type].create($block);
                 ed.current.$block = $block.addClass(ed.config.blockSelectedClass);
                 var $content = ed.current.$block.parents(ed.config.contentSelector);
                 if ($content.length > 0) {
@@ -473,13 +484,15 @@
                 ed.current.plugin.init();
             } else {
                 throw '"' + type + '" plugin is not registered.';
-            }*/
+            }
         }
         ed.updateControlsStates();
     };
 
     /* Updates controls states */
     Editor.prototype.updateControlsStates = function () {
+        this.log('Editor.updateControlsStates()');
+
         /* Disables all */
         this.$box.find('.cms-editor-group button').prop('disabled', true);
 
@@ -493,6 +506,7 @@
             this.$box.find('.cms-editor-save').prop('disabled', true).hide();
         }
 
+        this.log(this.current.$content);
         if (this.current.$content === null) {
             this.$box.find('.cms-editor-content-controls').hide();
         } else {
@@ -581,7 +595,7 @@
         var colType = 'tinymce';
 
         if (!(colType in ed.plugingRegistry)) {
-            ed.log('Undefined type.');
+            this.log('Undefined type : ' + colType);
             return false;
         }
         colDatas = typeof colDatas === "object" ? colDatas : {};
@@ -602,7 +616,7 @@
                 ed.log('Column creation failed.');
             }
         });
-        $('body').one('cms_editor_request_succeed', function() {
+        ed.$body.one('cms_editor_request_succeed', function() {
             ed.selectBlock($newColumn);
         });
 
@@ -644,7 +658,7 @@
             }
         });
 
-        this.request({removeBlocks: removeDatas}, function (datas) {
+        this.request({removeBlocks: removeDatas}, function () { // args: datas
             $currentRow.remove();
         });
 
@@ -749,6 +763,7 @@
         this.setColumnSize($sibling, siblingSize);
 
         /* Create column */
+        // TODO createNewColumn() can return false (type not found). So don't change the layout until we've got a positive result.
         var $newColumn = this.createNewColumn({
             row: this.current.$row.data('num'),
             column: this.current.$row.find(this.config.columnSelector).length + 1,
@@ -765,7 +780,7 @@
         var $column = this.current.$block.detach();
         this.fixColumnSize();
 
-        this.request({removeBlocks: [$column.data()]}, function (datas) {
+        this.request({removeBlocks: [$column.data()]}, function () { // args: datas
             $column.remove();
         });
 
@@ -801,6 +816,7 @@
         });
 
         /* Create new column */
+        // TODO createNewColumn() can return false (type not found). So don't change the layout until we've got a positive result.
         var $newColumn = this.createNewColumn({
             row: this.current.$row.data('num'),
             column: colNum,
@@ -838,6 +854,7 @@
         });
 
         /* Create new column */
+        // TODO createNewColumn() can return false (type not found). So don't change the layout until we've got a positive result.
         var $newColumn = this.createNewColumn({
             row: this.current.$row.data('num'),
             column: colNum,

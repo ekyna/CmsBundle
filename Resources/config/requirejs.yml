@@ -8,6 +8,7 @@ config:
         'ekyna-cms-editor': 'bundles/ekynacms/js/editor/editor'
         'ekyna-cms-editor/plugin-base': 'bundles/ekynacms/js/editor/plugin/base'
         'ekyna-cms-editor/tinymce': 'bundles/ekynacms/js/editor/plugin/tinymce'
+#        'ekyna-cms-editor/image': 'bundles/ekynacms/js/editor/plugin/image'
         'ekyna-cms/cookie': 'bundles/ekynacms/js/cookie'
         'ekyna-cms/user': 'bundles/ekynacms/js/user'
 build:
