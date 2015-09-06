@@ -22,11 +22,10 @@
 		"ekyna/sitemap-bundle" : "0.3.*@dev"
 	},
 	"autoload" : {
-		"psr-0" : {
-			"Ekyna\\Bundle\\CmsBundle" : ""
+		"psr-4" : {
+			"Ekyna\\Bundle\\CmsBundle\\" : ""
 		}
 	},
-	"target-dir" : "Ekyna/Bundle/CmsBundle",
 	"extra" : {
 		"branch-alias" : {
 			"dev-master" : "0.3.x-dev"

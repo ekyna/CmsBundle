@@ -24,6 +24,14 @@ class CmsController extends Controller
     }
 
     /**
+     * (Wide site) Search action.
+     */
+    public function searchAction()
+    {
+        // TODO site wide search providers
+    }
+
+    /**
      * Renders the cms init (xhr only).
      *
      * @param Request $request

@@ -4,6 +4,8 @@ namespace Ekyna\Bundle\CmsBundle\DependencyInjection;
 
 use Ekyna\Bundle\AdminBundle\DependencyInjection\AbstractExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Class EkynaCmsExtension
@@ -29,6 +31,11 @@ class EkynaCmsExtension extends AbstractExtension
 
         foreach ($config['editor']['plugin'] as $name => $editorPluginConfig) {
             $container->setParameter('ekyna_cms.editor.plugin.'.$name.'.config', $editorPluginConfig);
+        }
+
+        $bundles = $container->getParameter('kernel.bundles');
+        if (array_key_exists('EkynaSocialButtonsBundle', $bundles)) {
+            $this->registerSocialSubjectEventSubscriber($container);
         }
     }
 
@@ -69,12 +76,26 @@ class EkynaCmsExtension extends AbstractExtension
      * @param ContainerBuilder $container
      * @param array            $config
      */
-    protected function configureAsseticBundle(ContainerBuilder $container, array $config)
+    private function configureAsseticBundle(ContainerBuilder $container, array $config)
     {
         $asseticConfig = new AsseticConfiguration;
         $container->prependExtensionConfig('assetic', array(
             'assets' => $asseticConfig->build($config),
             'bundles' => array('EkynaCmsBundle')
         ));
+    }
+
+    /**
+     * Registers the social subject event subscriber.
+     *
+     * @param ContainerBuilder $container
+     */
+    private function registerSocialSubjectEventSubscriber(ContainerBuilder $container)
+    {
+        $definition = new Definition('Ekyna\Bundle\CmsBundle\EventListener\SocialSubjectEventListener');
+        $definition->addArgument(new Reference('ekyna_cms.helper.page'));
+        $definition->addArgument(new Reference('router'));
+        $definition->addTag('kernel.event_subscriber');
+        $container->setDefinition('ekyna_cms.social_subject_event_listener', $definition);
     }
 }

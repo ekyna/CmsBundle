@@ -134,15 +134,21 @@
             <tag name="routing.loader" />
         </service>
 
+        <!-- Page Helper -->
+        <service id="ekyna_cms.helper.page" class="Ekyna\Bundle\CmsBundle\Helper\PageHelper">
+            <argument id="request_stack" type="service" />
+            <argument id="ekyna_cms.page.repository" type="service" />
+            <argument>%ekyna_cms.home_route%</argument>
+        </service>
+
         <!-- Web Editor -->
         <service id="ekyna_cms.editor.plugin_registry" class="Ekyna\Bundle\CmsBundle\Editor\PluginRegistry" />
         <service id="ekyna_cms.editor" class="Ekyna\Bundle\CmsBundle\Editor\Editor">
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="validator" />
-            <argument type="service" id="request_stack" />
             <argument type="service" id="security.context" />
-            <argument>%ekyna_cms.page.class%</argument>
+            <argument>tinymce</argument>
         </service>
 
         <!-- Web Editor plugins -->
@@ -188,6 +194,7 @@
             <argument type="service" id="ekyna_cms.editor" />
             <argument type="service" id="ekyna_cms.menu.provider" />
             <argument type="service" id="knp_menu.helper" />
+            <argument type="service" id="ekyna_cms.helper.page" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="fragment.handler" />
             <argument type="collection">

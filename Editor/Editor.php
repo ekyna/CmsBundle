@@ -7,8 +7,6 @@ use Ekyna\Bundle\CmsBundle\Entity\Content;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
-use Ekyna\Bundle\CmsBundle\Model\PageInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -35,11 +33,6 @@ class Editor
     private $validator;
 
     /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
      * @var SecurityContext
      */
     private $securityContext;
@@ -50,19 +43,9 @@ class Editor
     private $defaultBlockType;
 
     /**
-     * @var string
-     */
-    private $pageClass;
-
-    /**
      * @var ContentInterface
      */
     private $content;
-
-    /**
-     * @var PageInterface
-     */
-    private $currentPage = false;
 
     /**
      * @var bool
@@ -74,48 +57,23 @@ class Editor
      * Constructor.
      * 
      * @param PluginRegistry         $registry
-     * @param EntityManager $manager
+     * @param EntityManager          $manager
      * @param ValidatorInterface     $validator
-     * @param RequestStack           $requestStack
      * @param SecurityContext        $securityContext
-     * @param string                 $pageClass
      * @param string                 $defaultBlockType
      */
     public function __construct(
         PluginRegistry     $registry,
         EntityManager      $manager,
         ValidatorInterface $validator,
-        RequestStack       $requestStack,
         SecurityContext    $securityContext,
-        $pageClass,
         $defaultBlockType  = 'tinymce'
     ) {
-        $this->registry        = $registry;
-        $this->manager         = $manager;
-        $this->validator       = $validator;
-        $this->requestStack    = $requestStack;
-        $this->securityContext = $securityContext;
-
-        $this->pageClass        = $pageClass;
+        $this->registry         = $registry;
+        $this->manager          = $manager;
+        $this->validator        = $validator;
+        $this->securityContext  = $securityContext;
         $this->defaultBlockType = $defaultBlockType;
-    }
-
-    /**
-     * Returns the current page.
-     *
-     * @return PageInterface|null
-     */
-    public function getCurrentPage()
-    {
-        if (false === $this->currentPage) {
-            $this->currentPage = null;
-            if (null !== $request = $this->requestStack->getCurrentRequest()) {
-                /** @var \Ekyna\Bundle\CmsBundle\Entity\PageRepository $repo */
-                $repo = $this->manager->getRepository($this->pageClass);
-                $this->currentPage = $repo->findOneByRequest($request);
-            }
-        }
-        return $this->currentPage;
     }
 
     /**

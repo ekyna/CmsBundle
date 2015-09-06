@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Twig;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Entity\Menu;
 use Ekyna\Bundle\CmsBundle\Entity\Seo;
+use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Menu\MenuProvider;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
@@ -43,7 +44,12 @@ class CmsExtension extends \Twig_Extension
     /**
      * @var Helper
      */
-    protected $helper;
+    protected $menuHelper;
+
+    /**
+     * @var PageHelper
+     */
+    private $pageHelper;
 
     /**
      * @var EventDispatcherInterface
@@ -72,7 +78,8 @@ class CmsExtension extends \Twig_Extension
      * @param SettingsManagerInterface $settings
      * @param Editor                   $editor
      * @param MenuProvider             $menuProvider
-     * @param Helper                   $helper
+     * @param Helper                   $menuHelper
+     * @param PageHelper               $pageHelper
      * @param EventDispatcherInterface $eventDispatcher
      * @param FragmentHandler          $fragmentHandler
      * @param array                    $config
@@ -81,7 +88,8 @@ class CmsExtension extends \Twig_Extension
         SettingsManagerInterface $settings,
         Editor $editor,
         MenuProvider $menuProvider,
-        Helper $helper,
+        Helper $menuHelper,
+        PageHelper $pageHelper,
         EventDispatcherInterface $eventDispatcher,
         FragmentHandler $fragmentHandler,
         array $config = array()
@@ -89,7 +97,8 @@ class CmsExtension extends \Twig_Extension
         $this->settings = $settings;
         $this->editor = $editor;
         $this->menuProvider = $menuProvider;
-        $this->helper = $helper;
+        $this->menuHelper = $menuHelper;
+        $this->pageHelper = $pageHelper;
         $this->eventDispatcher = $eventDispatcher;
         $this->fragmentHandler = $fragmentHandler;
 
@@ -155,7 +164,7 @@ class CmsExtension extends \Twig_Extension
      */
     public function getPage()
     {
-        return $this->editor->getCurrentPage();
+        return $this->pageHelper->getCurrent();
     }
 
     /**
@@ -425,7 +434,7 @@ class CmsExtension extends \Twig_Extension
             ))
         );
 
-        return $this->helper->render($name, $options, $renderer);
+        return $this->menuHelper->render($name, $options, $renderer);
     }
 
     /**
@@ -437,7 +446,7 @@ class CmsExtension extends \Twig_Extension
      */
     public function renderBreadcrumb(array $options = array())
     {
-        return $this->helper->render('breadcrumb', array_merge(array(
+        return $this->menuHelper->render('breadcrumb', array_merge(array(
             'template' => 'EkynaCmsBundle:Cms:breadcrumb.html.twig',
             //'currentAsLink' => false,
             'depth' => 1,
