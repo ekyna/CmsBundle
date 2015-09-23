@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class TagsType
@@ -30,10 +30,10 @@ class TagsType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setDefaults(array(
+            ->setDefaults([
                 'label' => 'ekyna_core.field.tags',
                 'class' => $this->tagClass,
                 'multiple' => true,
@@ -41,10 +41,10 @@ class TagsType extends AbstractType
                 'allow_new' => true,
                 'allow_list' => true,
                 'empty_value' => 'ekyna_core.field.tags',
-                'attr' => array(
+                'attr' => [
                     'placeholder' => 'ekyna_core.field.tags',
-                ),
-            ))
+                ],
+            ])
         ;
     }
 

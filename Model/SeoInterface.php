@@ -10,7 +10,7 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  *
- * @method \Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface translate($locale = null, $create = false)
+ * @method SeoTranslationInterface translate($locale = null, $create = false)
  */
 interface SeoInterface extends TaggedEntityInterface, TranslatableInterface
 {
@@ -20,13 +20,6 @@ interface SeoInterface extends TaggedEntityInterface, TranslatableInterface
      * @return array
      */
     public static function getChangefreqs();
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId();
 
     /**
      * Set title

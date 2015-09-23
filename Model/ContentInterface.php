@@ -14,13 +14,6 @@ use Ekyna\Bundle\CoreBundle\Model\TimestampableInterface;
 interface ContentInterface extends TimestampableInterface, TaggedEntityInterface
 {
     /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId();
-
-    /**
      * Set blocks
      *
      * @param ArrayCollection|BlockInterface[] $blocks

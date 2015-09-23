@@ -41,14 +41,14 @@ class PageType extends ResourceFormType
     {
         $builder
             ->add('seo', 'ekyna_cms_seo')
-            ->add('translations', 'a2lix_translationsForms', array(
+            ->add('translations', 'a2lix_translationsForms', [
                 'form_type' => new PageTranslationType(),
                 'label'     => false,
                 'error_bubbling' => false,
-                'attr' => array(
+                'attr' => [
                     'widget_col' => 12,
-                ),
-            ))
+                ],
+            ])
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
@@ -56,24 +56,24 @@ class PageType extends ResourceFormType
             $form = $event->getForm();
 
             if ($page->getStatic()) {
-                $form->add('name', 'text', array(
+                $form->add('name', 'text', [
                     'label' => 'ekyna_core.field.name',
                 	'disabled' => true,
-                ));
-                $form->add('parent', 'entity', array(
+                ]);
+                $form->add('parent', 'entity', [
                     'label' => 'ekyna_core.field.parent',
                 	'class' => $this->dataClass,
                     'property' => 'name',
                     'empty_value' => 'Racine',
                 	'disabled' => true,
-                ));
+                ]);
             } else {
                 $form
-                    ->add('name', 'text', array(
+                    ->add('name', 'text', [
                         'label' => 'ekyna_core.field.name',
                         'required' => true,
-                    ))
-                    ->add('parent', 'entity', array(
+                    ])
+                    ->add('parent', 'entity', [
                         'label' => 'ekyna_core.field.parent',
                         'class' => $this->dataClass,
                         'query_builder' => function(EntityRepository $er) use ($page) {
@@ -93,7 +93,7 @@ class PageType extends ResourceFormType
                         },
                         'property' => 'name',
                         'required' => true,
-                    ))
+                    ])
                 ;
 
                 $controllers = [];
@@ -101,11 +101,11 @@ class PageType extends ResourceFormType
                     $controllers[$name] = $config['title'];
                 }
 
-                $form->add('controller', 'choice', array(
+                $form->add('controller', 'choice', [
                     'label' => 'ekyna_cms.page.field.controller',
                     'choices' => $controllers,
                     'required' => true,
-                ));
+                ]);
             }
         });
     }

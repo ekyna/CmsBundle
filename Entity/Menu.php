@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
 use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
+use Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 
@@ -13,7 +14,7 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  *
- * @method \Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface translate($locale = null, $create = false)
+ * @method MenuTranslationInterface translate($locale = null, $create = false)
  */
 class Menu extends AbstractTranslatable implements MenuInterface
 {
@@ -280,7 +281,6 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setTitle($title)
     {
         $this->translate()->setTitle($title);
-
         return $this;
     }
 
@@ -298,7 +298,6 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setDescription($description)
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -315,7 +314,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
      */
     public function setPath($path)
     {
-        $this->path = $path;
+        $this->translate()->setPath($path);
         return $this;
     }
 
@@ -347,7 +346,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function setParameters(array $parameters = array())
+    public function setParameters(array $parameters = [])
     {
         $this->parameters = $parameters;
         return $this;
@@ -364,7 +363,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function setAttributes(array $attributes = array())
+    public function setAttributes(array $attributes = [])
     {
         $this->attributes = $attributes;
         return $this;

@@ -18,17 +18,17 @@ class SeoType extends ResourceTableType
     public function buildTable(TableBuilderInterface $builder, array $options)
     {
         $builder
-            ->addColumn('id', 'number', array(
+            ->addColumn('id', 'number', [
 //                'sortable' => true,
-            ))
-            ->addColumn('title', 'text', array(
+            ])
+            ->addColumn('title', 'text', [
                 'label' => 'ekyna_core.field.name',
 //                'sortable' => true,
 //                'route_name' => 'ekyna_cms_tag_admin_show',
 //                'route_parameters_map' => array(
 //                    'tagId' => 'id'
 //                ),
-            ))
+            ])
             /*->addColumn('actions', 'admin_actions', array(
                 'buttons' => array(
                     array(

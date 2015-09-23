@@ -17,8 +17,8 @@ abstract class DataFixtureLoader extends BaseLoader
      */
     protected function getProcessors()
     {
-        return array(
+        return [
             new CmsProcessor($this->container),
-        );
+        ];
     }
 }

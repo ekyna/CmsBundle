@@ -165,12 +165,12 @@ class PageEventListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
-            PageEvents::PRE_CREATE  => array('onPreCreate', 0),
-            PageEvents::POST_CREATE => array('onPostCreate', 0),
-            PageEvents::PRE_UPDATE  => array('onPreUpdate', 0),
-            PageEvents::POST_UPDATE => array('onPostUpdate', 0),
-            PageEvents::POST_DELETE => array('onPostDelete', 0),
-        );
+        return [
+            PageEvents::PRE_CREATE  => ['onPreCreate', 0],
+            PageEvents::POST_CREATE => ['onPostCreate', 0],
+            PageEvents::PRE_UPDATE  => ['onPreUpdate', 0],
+            PageEvents::POST_UPDATE => ['onPostUpdate', 0],
+            PageEvents::POST_DELETE => ['onPostDelete', 0],
+        ];
     }
 }

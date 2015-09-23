@@ -69,7 +69,7 @@ class PageProvider extends AbstractProvider
         /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
         foreach($pages as $page) {
             try {
-                $location = $this->urlGenerator->generate($page->getRoute(), array(), UrlGeneratorInterface::ABSOLUTE_URL);
+                $location = $this->urlGenerator->generate($page->getRoute(), [], UrlGeneratorInterface::ABSOLUTE_URL);
             } catch(\Exception $e) {
                 continue;
             }

@@ -7,7 +7,7 @@ use Ekyna\Bundle\AdminBundle\Form\Type\ResourceFormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class MenuType
@@ -22,23 +22,23 @@ class MenuType extends ResourceFormType
     protected $pageClass;
 
     /**
-     * @var SecurityContextInterface
+     * @var AuthorizationCheckerInterface
      */
-    protected $securityContext;
+    protected $authorization;
 
 
     /**
      * Constructor.
      *
-     * @param SecurityContextInterface $securityContext
-     * @param string                   $menuClass
-     * @param string                   $pageClass
+     * @param AuthorizationCheckerInterface $authorization
+     * @param string                        $menuClass
+     * @param string                        $pageClass
      */
-    public function __construct(SecurityContextInterface $securityContext, $menuClass, $pageClass)
+    public function __construct(AuthorizationCheckerInterface $authorization, $menuClass, $pageClass)
     {
         parent::__construct($menuClass);
 
-        $this->securityContext = $securityContext;
+        $this->authorization = $authorization;
         $this->pageClass = $pageClass;
     }
 
@@ -48,24 +48,24 @@ class MenuType extends ResourceFormType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('translations', 'a2lix_translationsForms', array(
+            ->add('translations', 'a2lix_translationsForms', [
                 'form_type' => new MenuTranslationType(),
                 'label'     => false,
-                'attr' => array(
+                'attr' => [
                     'widget_col' => 12,
-                ),
-            ))
-            ->add('description', 'textarea', array(
+                ],
+            ])
+            ->add('description', 'textarea', [
                 'label'    => 'ekyna_core.field.description',
                 'required' => false
-            ))
+            ])
         ;
 
-        if ($this->securityContext->isGranted('ROLE_SUPER_ADMIN')) {
-            $builder->add('attributes', 'ekyna_key_value_collection', array(
+        if ($this->authorization->isGranted('ROLE_SUPER_ADMIN')) {
+            $builder->add('attributes', 'ekyna_key_value_collection', [
                 'label'           => 'ekyna_core.field.attributes',
                 'add_button_text' => 'ekyna_core.button.add_attribute',
-            ));
+            ]);
         }
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
@@ -75,12 +75,12 @@ class MenuType extends ResourceFormType
             $disabled = $menu->getLocked();
 
             $form
-                ->add('name', 'text', array(
+                ->add('name', 'text', [
                     'label'    => 'ekyna_core.field.name',
                     'required' => true,
                     'disabled' => $disabled,
-                ))
-                ->add('parent', 'entity', array(
+                ])
+                ->add('parent', 'entity', [
                     'label'         => 'ekyna_core.field.parent',
                     'property'      => 'title',
                     'required'      => true,
@@ -103,33 +103,33 @@ class MenuType extends ResourceFormType
                         }
                         return $qb;
                     },
-                ))
-                ->add('path', 'text', array(
+                ])
+                ->add('path', 'text', [
                     'label'        => 'ekyna_core.field.url',
                     'admin_helper' => 'CMS_MENU_PATH',
                     'required'     => false,
                     'disabled'     => $disabled,
-                ))
+                ])
             ;
 
-            if ($this->securityContext->isGranted('ROLE_SUPER_ADMIN')) {
+            if ($this->authorization->isGranted('ROLE_SUPER_ADMIN')) {
                 $form
-                    ->add('route', 'text', array(
+                    ->add('route', 'text', [
                         'label'        => 'ekyna_core.field.route',
                         'admin_helper' => 'CMS_MENU_ROUTE',
                         'required'     => false,
                         'disabled'     => $disabled,
-                    ))
-                    ->add('parameters', 'ekyna_key_value_collection', array(
+                    ])
+                    ->add('parameters', 'ekyna_key_value_collection', [
                         'label'           => 'ekyna_core.field.parameters',
                         'add_button_text' => 'ekyna_core.button.add_parameter',
-                    ))
+                    ])
                 ;
             }
 
             if (!$disabled) {
                 $form
-                    ->add('page', 'entity', array(
+                    ->add('page', 'entity', [
                         'label'         => 'ekyna_cms.page.label.singular',
                         'admin_helper'  => 'CMS_MENU_PAGE',
                         'property'      => 'name',
@@ -144,7 +144,7 @@ class MenuType extends ResourceFormType
                             ;
                             return $qb;
                         },
-                    ))
+                    ])
                 ;
             }
         });

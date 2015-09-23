@@ -15,7 +15,7 @@
         {%- endif -%}
     ]]>
     </editor>
-    {% if cookie_consent is not sameas(null) -%}
+    {% if cookie_consent is not same as(null) -%}
         {%- if cookie_consent -%}
             {%- set cookie_mode = get_setting('cookies.mode') -%}
             <cookie mode="{{ cookie_mode }}" close="{{ 'ekyna_cms.settings.cookies.close'|trans }}" learn="{{ 'ekyna_cms.settings.cookies.learn'|trans }}">

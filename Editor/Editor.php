@@ -7,7 +7,6 @@ use Ekyna\Bundle\CmsBundle\Entity\Content;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
-use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -33,11 +32,6 @@ class Editor
     private $validator;
 
     /**
-     * @var SecurityContext
-     */
-    private $securityContext;
-
-    /**
      * @var string
      */
     private $defaultBlockType;
@@ -59,20 +53,17 @@ class Editor
      * @param PluginRegistry         $registry
      * @param EntityManager          $manager
      * @param ValidatorInterface     $validator
-     * @param SecurityContext        $securityContext
      * @param string                 $defaultBlockType
      */
     public function __construct(
         PluginRegistry     $registry,
         EntityManager      $manager,
         ValidatorInterface $validator,
-        SecurityContext    $securityContext,
         $defaultBlockType  = 'tinymce'
     ) {
         $this->registry         = $registry;
         $this->manager          = $manager;
         $this->validator        = $validator;
-        $this->securityContext  = $securityContext;
         $this->defaultBlockType = $defaultBlockType;
     }
 
@@ -129,7 +120,7 @@ class Editor
      *
      * @return BlockInterface
      */
-    private function createDefaultBlock($type, array $datas = array())
+    private function createDefaultBlock($type, array $datas = [])
     {
         $plugin = $this->registry->get($type);
 
@@ -161,7 +152,7 @@ class Editor
      * @return array
      * @throws \InvalidArgumentException
      */
-    public function createBlock(array $datas = array())
+    public function createBlock(array $datas = [])
     {
         if (null === $this->content) {
             throw new \InvalidArgumentException('No Content selected.');
@@ -179,10 +170,10 @@ class Editor
         $this->manager->persist($this->content);
         $this->manager->flush();
 
-        return array(
+        return [
     	    'datas' => $block->getInitDatas(),
     	    'innerHtml' => $plugin->getInnerHtml($block),
-        );
+        ];
     }
 
     /**
@@ -191,7 +182,7 @@ class Editor
      * @param array $datas
      * @return array
      */
-    public function updateBlock(array $datas = array())
+    public function updateBlock(array $datas = [])
     {
         $block = $this->findBlock($datas);
 
@@ -207,10 +198,10 @@ class Editor
         $this->manager->persist($block);
         $this->manager->flush();
 
-        return array(
+        return [
             'id' => $block->getId(),
             'innerHtml' => $plugin->getInnerHtml($block),
-        );
+        ];
     }
 
     /**
@@ -220,7 +211,7 @@ class Editor
      * @return array
      * @throws \InvalidArgumentException
      */
-    public function removeBlocks(array $datas = array())
+    public function removeBlocks(array $datas = [])
     {
         if (null === $this->content) {
             throw new \InvalidArgumentException('No Content selected.');
@@ -228,10 +219,10 @@ class Editor
 
         // Don't remove if there is only one block
         if (1 == $this->content->getBlocks()->count()) {
-            return array();
+            return [];
         }
 
-        $removedIds = array();
+        $removedIds = [];
         foreach($datas as $blockDatas) {
             $block = $this->findBlock($blockDatas);
     
@@ -248,9 +239,9 @@ class Editor
         $this->manager->persist($this->content);
         $this->manager->flush();
 
-        return array(
+        return [
             'ids' => $removedIds,
-        );
+        ];
     }
 
     /**
@@ -259,7 +250,7 @@ class Editor
      * @param array $datas
      * @throws \InvalidArgumentException
      */
-    public function updateLayout(array $datas = array())
+    public function updateLayout(array $datas = [])
     {
         if (null === $this->content) {
             throw new \InvalidArgumentException('No Content selected.');
@@ -281,7 +272,7 @@ class Editor
      * @param BlockInterface $block
      * @param array          $datas
      */
-    private function updateBlockCoords(BlockInterface $block, array $datas = array())
+    private function updateBlockCoords(BlockInterface $block, array $datas = [])
     {
         if (array_key_exists('row', $datas)) {
             $block->setRow($datas['row']);
@@ -302,12 +293,12 @@ class Editor
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    private function findBlock(array $datas = array())
+    private function findBlock(array $datas = [])
     {
         if (! array_key_exists('id', $datas) || 0 >= ($blockId = intval($datas['id']))) {
             throw new \InvalidArgumentException('Block "id" is mandatory.');
         }
-        $parameters = array('id' => $blockId);
+        $parameters = ['id' => $blockId];
         if (null !== $this->content) {
             $parameters['content'] = $this->content;
         }
@@ -330,14 +321,14 @@ class Editor
      *
      * @return BlockInterface
      */
-    public function findBlockByName($name, $type = null, array $datas = array())
+    public function findBlockByName($name, $type = null, array $datas = [])
     {
         if (null === $type) {
             $type = $this->defaultBlockType;
         }
 
         $repository = $this->manager->getRepository('Ekyna\Bundle\CmsBundle\Entity\AbstractBlock');
-        if (null === $block = $repository->findOneBy(array('name' => $name, 'content' => null))) {
+        if (null === $block = $repository->findOneBy(['name' => $name, 'content' => null])) {
             $block = $this->createDefaultBlock($type, $datas);
             $block->setName($name);
 

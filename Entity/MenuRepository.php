@@ -26,15 +26,15 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
         if (0 < strpos($name, ':')) {
             list($rootName, $menuName) = explode(':', $name);
             /** @var \Ekyna\Bundle\CmsBundle\Model\MenuInterface $root */
-            if (null === $root = $this->findOneBy(array('name' => $rootName))) {
+            if (null === $root = $this->findOneBy(['name' => $rootName])) {
                 throw new \InvalidArgumentException(sprintf('Root menu "%s" not found.', $rootName));
             }
-            return $this->findOneBy(array(
+            return $this->findOneBy([
                 'name' => $menuName,
                 'root' => $root->getId(),
-            ));
+            ]);
         }
 
-        return $this->findOneBy(array('name' => $name));
+        return $this->findOneBy(['name' => $name]);
     }
 }

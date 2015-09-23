@@ -16,6 +16,9 @@ class ContentGrid extends Constraint
     public $row_too_large   = 'ekyna_cms.content.row_too_large';
     public $block_too_small = 'ekyna_cms.content.block_too_small';
 
+    /**
+     * {@inheritdoc}
+     */
     public function getTargets()
     {
         return self::CLASS_CONSTRAINT;

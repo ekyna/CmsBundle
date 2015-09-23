@@ -21,7 +21,7 @@ abstract class AbstractPlugin implements PluginInterface
      *
      * @param array $config
      */
-    public function __construct(array $config = array())
+    public function __construct(array $config = [])
     {
         $this->config = $config;
     }

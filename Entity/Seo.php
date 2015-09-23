@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+use Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 
 /**
@@ -11,7 +12,7 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  *
- * @method \Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface translate($locale = null, $create = false)
+ * @method SeoTranslationInterface translate($locale = null, $create = false)
  */
 class Seo extends AbstractTranslatable implements SeoInterface
 {
@@ -207,7 +208,7 @@ class Seo extends AbstractTranslatable implements SeoInterface
      */
     public static function getChangefreqs()
     {
-        return array('hourly', 'monthly', 'yearly');
+        return ['hourly', 'monthly', 'yearly'];
     }
 
     /**

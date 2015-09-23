@@ -4,7 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Table\Type;
 
 use Ekyna\Bundle\AdminBundle\Table\Type\ResourceTableType;
 use Ekyna\Component\Table\TableBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class PageType
@@ -19,66 +19,66 @@ class PageType extends ResourceTableType
     public function buildTable(TableBuilderInterface $builder, array $options)
     {
         $builder
-            ->addColumn('name', 'nested_anchor', array(
+            ->addColumn('name', 'nested_anchor', [
                 'label' => 'ekyna_core.field.name',
                 'route_name' => 'ekyna_cms_page_admin_show',
-                'route_parameters_map' => array(
+                'route_parameters_map' => [
                     'pageId' => 'id'
-                ),
-            ))
+                ],
+            ])
             /*->addColumn('seo.title', 'text', array(
                 'label' => 'ekyna_core.field.title',
             ))*/
-            ->addColumn('actions', 'admin_nested_actions', array(
+            ->addColumn('actions', 'admin_nested_actions', [
                 'disable_property_path' => 'locked',
                 'new_child_route' => 'ekyna_cms_page_admin_new_child',
                 'move_up_route' => 'ekyna_cms_page_admin_move_up',
                 'move_down_route' => 'ekyna_cms_page_admin_move_down',
-                'routes_parameters_map' => array(
+                'routes_parameters_map' => [
                     'pageId' => 'id'
-                ),
-                'buttons' => array(
-                    array(
+                ],
+                'buttons' => [
+                    [
                         'label' => 'ekyna_core.button.edit',
                         'icon' => 'pencil',
                         'class' => 'warning',
                         'route_name' => 'ekyna_cms_page_admin_edit',
-                        'route_parameters_map' => array(
+                        'route_parameters_map' => [
                             'pageId' => 'id'
-                        ),
+                        ],
                         'permission' => 'edit',
-                    ),
-                    array(
+                    ],
+                    [
                         'label' => 'ekyna_core.button.remove',
                         'icon' => 'trash',
                         'class' => 'danger',
                         'route_name' => 'ekyna_cms_page_admin_remove',
-                        'route_parameters_map' => array(
+                        'route_parameters_map' => [
                             'pageId' => 'id'
-                        ),
+                        ],
                         'disable_property_path' => 'static',
                         'permission' => 'delete',
-                    ),
-                ),
-            ))
+                    ],
+                ],
+            ])
         ;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
 
-        $resolver->setDefaults(array(
-            'default_sorts' => array('left asc'),
+        $resolver->setDefaults([
+            'default_sorts' => ['left asc'],
             'max_per_page'  => 100,
             /*'customize_qb' => function(QueryBuilder $qb, $alias) {
                 $qb->select(array($alias, 's'))
                     ->join($alias.'.seo', 's');
             },*/
-        ));
+        ]);
     }
 
     /**

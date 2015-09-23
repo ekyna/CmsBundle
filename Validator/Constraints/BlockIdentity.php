@@ -13,6 +13,9 @@ class BlockIdentity extends Constraint
 {
     public $message = 'ekyna_cms.block.identity';
 
+    /**
+     * {@inheritdoc}
+     */
     public function getTargets()
     {
         return self::CLASS_CONSTRAINT;

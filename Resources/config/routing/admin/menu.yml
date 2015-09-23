@@ -1,59 +1,56 @@
 ekyna_cms_menu_admin_home:
-    path: /
+    path: ""
     defaults: { _controller: "ekyna_cms.menu.controller:homeAction" }
-    requirements:
-        _method: GET
+    methods: [GET]
 
 ekyna_cms_menu_admin_list:
     path: /list
     defaults: { _controller: "ekyna_cms.menu.controller:listAction" }
-    requirements:
-        _method: GET|POST
+    methods: [GET|POST]
 
 ekyna_cms_menu_admin_new:
     path: /new
     defaults: { _controller: "ekyna_cms.menu.controller:newAction" }
-    requirements:
-        _method: GET|POST
+    methods: [GET|POST]
 
 ekyna_cms_menu_admin_new_child:
     path: /{menuId}/new-child
     defaults: { _controller: "ekyna_cms.menu.controller:newChildAction" }
+    methods: [GET|POST]
     requirements:
-        _method: GET|POST
         menuId:  \d+
 
 ekyna_cms_menu_admin_show:
     path: /{menuId}/show
     defaults: { _controller: "ekyna_cms.menu.controller:showAction" }
+    methods: [GET]
     requirements:
-        _method: GET
         menuId:  \d+
 
 ekyna_cms_menu_admin_edit:
     path: /{menuId}/edit
     defaults: { _controller: "ekyna_cms.menu.controller:editAction" }
+    methods: [GET|POST]
     requirements:
-        _method: GET|POST
         menuId:  \d+
 
 ekyna_cms_menu_admin_move_up:
     path: /{menuId}/moveup
     defaults: { _controller: "ekyna_cms.menu.controller:moveUpAction" }
+    methods: [GET]
     requirements:
-        _method: GET
         menuId:  \d+
 
 ekyna_cms_menu_admin_move_down:
     path: /{menuId}/movedown
     defaults: { _controller: "ekyna_cms.menu.controller:moveDownAction" }
+    methods: [GET]
     requirements:
-        _method: GET
         menuId:  \d+
 
 ekyna_cms_menu_admin_remove:
     path: /{menuId}/remove
     defaults: { _controller: "ekyna_cms.menu.controller:removeAction" }
+    methods: [GET|POST]
     requirements:
-        _method: GET|POST
         menuId:  \d+

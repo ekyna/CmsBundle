@@ -31,7 +31,7 @@ class TinymcePlugin extends AbstractPlugin
     /**
      * {@inheritDoc}
      */
-    public function create(array $datas = array())
+    public function create(array $datas = [])
     {
     	$block = new TinymceBlock();
         $defaultContent = array_key_exists('default_content', $this->config) ? $this->config['default_content'] : '';
@@ -47,7 +47,7 @@ class TinymcePlugin extends AbstractPlugin
     /**
      * {@inheritDoc}
      */
-    public function update(BlockInterface $block, array $datas = array())
+    public function update(BlockInterface $block, array $datas = [])
     {
         /** @var TinymceBlock $block */
         if (array_key_exists('html', $datas)) {

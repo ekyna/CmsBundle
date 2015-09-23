@@ -38,10 +38,10 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('controllers')
-                            ->defaultValue(array('default' => array(
+                            ->defaultValue(['default' => [
                                 'title' => 'Par défaut',
                                 'value' => 'EkynaCmsBundle:Cms:default',
-                            )))
+                            ]])
                             ->useAttributeAsKey('name')
                             ->prototype('array')
                                 ->children()
@@ -56,10 +56,10 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('roots')
-                            ->defaultValue(array('main' => array(
+                            ->defaultValue(['main' => [
                                 'title' => 'Navigation principale',
                                 'description' => 'Barre de navigation principale',
-                            )))
+                            ]])
                             ->useAttributeAsKey('name')
                             ->prototype('array')
                                 ->children()
@@ -137,7 +137,7 @@ class Configuration implements ConfigurationInterface
                                         ->scalarNode('repository')->end()
                                         ->arrayNode('fields')
                                             ->prototype('scalar')->end()
-                                            ->defaultValue(array('title', 'description'))
+                                            ->defaultValue(['title', 'description'])
                                         ->end()
                                     ->end()
                                 ->end()
@@ -146,7 +146,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('page')
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->variableNode('templates')->defaultValue(array(
+                                ->variableNode('templates')->defaultValue([
                                     '_form.html'     => 'EkynaCmsBundle:Admin/Page:_form.html',
                                     'list.html'      => 'EkynaCmsBundle:Admin/Page:list.html',
                                     'new.html'       => 'EkynaCmsBundle:Admin/Page:new.html',
@@ -154,7 +154,7 @@ class Configuration implements ConfigurationInterface
                                     'show.html'      => 'EkynaCmsBundle:Admin/Page:show.html',
                                     'edit.html'      => 'EkynaCmsBundle:Admin/Page:edit.html',
                                     'remove.html'    => 'EkynaCmsBundle:Admin/Page:remove.html',
-                                ))->end()
+                                ])->end()
                                 ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Page')->end()
                                 ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\PageController')->end()
                                 ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\PageRepository')->end()
@@ -169,7 +169,7 @@ class Configuration implements ConfigurationInterface
                                         ->scalarNode('repository')->end()
                                         ->arrayNode('fields')
                                             ->prototype('scalar')->end()
-                                            ->defaultValue(array('title', 'html', 'path'))
+                                            ->defaultValue(['title', 'html', 'path'])
                                         ->end()
                                     ->end()
                                 ->end()
@@ -178,7 +178,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('menu')
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->variableNode('templates')->defaultValue(array(
+                                ->variableNode('templates')->defaultValue([
                                     '_form.html'     => 'EkynaCmsBundle:Admin/Menu:_form.html',
                                     'list.html'      => 'EkynaCmsBundle:Admin/Menu:list.html',
                                     'new.html'       => 'EkynaCmsBundle:Admin/Menu:new.html',
@@ -186,7 +186,7 @@ class Configuration implements ConfigurationInterface
                                     'show.html'      => 'EkynaCmsBundle:Admin/Menu:show.html',
                                     'edit.html'      => 'EkynaCmsBundle:Admin/Menu:edit.html',
                                     'remove.html'    => 'EkynaCmsBundle:Admin/Menu:remove.html',
-                                ))->end()
+                                ])->end()
                                 ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Menu')->end()
                                 ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\MenuController')->end()
                                 ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\MenuRepository')->end()
@@ -200,7 +200,7 @@ class Configuration implements ConfigurationInterface
                                         ->scalarNode('repository')->end()
                                         ->arrayNode('fields')
                                             ->prototype('scalar')->end()
-                                            ->defaultValue(array('title'))
+                                            ->defaultValue(['title'])
                                         ->end()
                                     ->end()
                                 ->end()

@@ -62,7 +62,7 @@ class AbstractBlockListener
         if (null !== $content = $block->getContent()) {
             $this->eventDispatcher->dispatch(
                 HttpCacheEvents::INVALIDATE_TAG,
-                new HttpCacheEvent(array($content->getEntityTag()))
+                new HttpCacheEvent([$content->getEntityTag()])
             );
         }
     }

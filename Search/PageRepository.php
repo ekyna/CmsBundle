@@ -28,7 +28,7 @@ class PageRepository extends Repository implements SearchRepositoryInterface
             $query = new Query\MultiMatch();
             $query
                 ->setQuery($text)
-                ->setFields(array('title', 'seo.title', 'seo.description', 'content.content'))
+                ->setFields(['title', 'seo.title', 'seo.description', 'content.content'])
             ;
         }
 

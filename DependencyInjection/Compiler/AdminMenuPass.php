@@ -12,6 +12,9 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
  */
 class AdminMenuPass implements CompilerPassInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('ekyna_admin.menu.pool')) {
@@ -20,32 +23,32 @@ class AdminMenuPass implements CompilerPassInterface
 
         $pool = $container->getDefinition('ekyna_admin.menu.pool');
 
-        $pool->addMethodCall('createGroup', array(array(
+        $pool->addMethodCall('createGroup', [[
             'name'     => 'content',
             'label'    => 'ekyna_core.field.content',
             'icon'     => 'file',
             'position' => 20,
-        )));
-        $pool->addMethodCall('createEntry', array('content', array(
+        ]]);
+        $pool->addMethodCall('createEntry', ['content', [
             'name'     => 'pages',
             'route'    => 'ekyna_cms_page_admin_home',
             'label'    => 'ekyna_cms.page.label.plural',
             'resource' => 'ekyna_cms_page',
             'position' => 1,
-        )));
-        $pool->addMethodCall('createEntry', array('content', array(
+        ]]);
+        $pool->addMethodCall('createEntry', ['content', [
             'name'     => 'menus',
             'route'    => 'ekyna_cms_menu_admin_home',
             'label'    => 'ekyna_cms.menu.label.plural',
             'resource' => 'ekyna_cms_menu',
             'position' => 90,
-        )));
-        $pool->addMethodCall('createEntry', array('content', array(
+        ]]);
+        $pool->addMethodCall('createEntry', ['content', [
             'name'     => 'tags',
             'route'    => 'ekyna_cms_tag_admin_home',
             'label'    => 'ekyna_cms.tag.label.plural',
             'resource' => 'ekyna_cms_tag',
             'position' => 100,
-        )));
+        ]]);
     }
 }

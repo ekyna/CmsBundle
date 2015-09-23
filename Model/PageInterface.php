@@ -11,7 +11,7 @@ use Ekyna\Bundle\CoreBundle\Model\TimestampableInterface;
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  *
- * @method \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface translate($locale = null, $create = false)
+ * @method PageTranslationInterface translate($locale = null, $create = false)
  */
 interface PageInterface extends
     ContentSubjectInterface,
@@ -20,13 +20,6 @@ interface PageInterface extends
     TaggedEntityInterface,
     TranslatableInterface
 {
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId();
-
     /**
      * Set parent
      *

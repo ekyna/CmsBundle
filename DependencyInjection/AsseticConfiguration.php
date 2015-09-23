@@ -17,7 +17,7 @@ class AsseticConfiguration
      */
     public function build(array $config)
     {
-        $output = array();
+        $output = [];
 
         // Fix path in output dir
         if ('/' !== substr($config['output_dir'], -1) && strlen($config['output_dir']) > 0) {
@@ -36,15 +36,15 @@ class AsseticConfiguration
      */
     protected function buildCss(array $config)
     {
-        $inputs = array(
+        $inputs = [
             '@EkynaCmsBundle/Resources/asset/css/editor.css',
-        );
+        ];
 
-        return array(
+        return [
             'inputs'  => $inputs,
-            'filters' => array('yui_css'),
+            'filters' => ['yui_css'],
             'output'  => $config['output_dir'].'css/cms-editor.css',
             'debug'   => false,
-        );
+        ];
     }
 }

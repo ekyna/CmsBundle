@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Settings;
 
 use Ekyna\Bundle\SettingBundle\Schema\AbstractSchema;
-use Ekyna\Bundle\SettingBundle\Schema\SettingsBuilderInterface;
+use Ekyna\Bundle\SettingBundle\Schema\SettingsBuilder;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints;
 
@@ -17,19 +17,17 @@ class SeoSettingsSchema extends AbstractSchema
     /**
      * {@inheritdoc}
      */
-    public function buildSettings(SettingsBuilderInterface $builder)
+    public function buildSettings(SettingsBuilder $builder)
     {
         $builder
-            ->setDefaults(array_merge(array(
+            ->setDefaults(array_merge([
                 'title'       => 'Page default title',
                 'description' => 'Page default description',
                 'locale'      => 'fr',
-            ), $this->defaults))
-            ->setAllowedTypes(array(
-                'title'       => array('string'),
-                'description' => array('string'),
-                'locale'      => array('string'),
-            ))
+            ], $this->defaults))
+            ->setAllowedTypes('title',        'string')
+            ->setAllowedTypes('description',  'string')
+            ->setAllowedTypes('locale',       'string')
         ;
     }
 
@@ -39,25 +37,25 @@ class SeoSettingsSchema extends AbstractSchema
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', 'text', array(
+            ->add('title', 'text', [
                 'label'       => 'ekyna_core.field.title',
-                'constraints' => array(
+                'constraints' => [
                     new Constraints\NotBlank()
-                )
-            ))
-            ->add('description', 'textarea', array(
+                ]
+            ])
+            ->add('description', 'textarea', [
                 'label'       => 'ekyna_core.field.description',
-                'constraints' => array(
+                'constraints' => [
                     new Constraints\NotBlank()
-                )
-            ))
-            ->add('locale', 'locale', array(
+                ]
+            ])
+            ->add('locale', 'locale', [
                 'label'       => 'ekyna_core.field.locale',
-                'constraints' => array(
+                'constraints' => [
                     new Constraints\NotBlank(),
                     new Constraints\Locale(),
-                )
-            ))
+                ]
+            ])
         ;
     }
 

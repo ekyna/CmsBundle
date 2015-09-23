@@ -12,13 +12,6 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
 interface BlockInterface extends TaggedEntityInterface
 {
     /**
-     * Returns the id.
-     *
-     * @return int
-     */
-    public function getId();
-
-    /**
      * Set content
      *
      * @param ContentInterface $content

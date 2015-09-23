@@ -31,7 +31,7 @@ class EditorController extends Controller
         $response = new Response();
         $response->setPrivate();
 
-        if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $response->setContent($this->renderView('EkynaCmsBundle:Editor:editor.html.twig'));
         }
 
@@ -52,7 +52,7 @@ class EditorController extends Controller
         }
 
         // TODO improve security with acls
-        if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedHttpException('Expected administrator.');
         }
 
@@ -61,7 +61,7 @@ class EditorController extends Controller
             $editor->initContent($contentId);
         }
 
-        $responseDatas = array();
+        $responseDatas = [];
 
         // Update layout
         if (null !== $layoutDatas = $request->request->get('layout', null)) {

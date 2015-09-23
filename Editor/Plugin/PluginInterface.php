@@ -18,7 +18,7 @@ interface PluginInterface
      *
      * @return BlockInterface
      */
-    public function create(array $datas = array());
+    public function create(array $datas = []);
 
     /**
      * Updates a block.
@@ -26,7 +26,7 @@ interface PluginInterface
      * @param BlockInterface $block
      * @param array          $datas
      */
-    public function update(BlockInterface $block, array $datas = array());
+    public function update(BlockInterface $block, array $datas = []);
 
     /**
      * Removes a block.

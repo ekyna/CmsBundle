@@ -4,7 +4,6 @@ namespace Ekyna\Bundle\CmsBundle\Menu;
 
 use Doctrine\ORM\Query\Expr;
 use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
-use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -89,7 +88,7 @@ class MenuBuilder
      * 
      * @throws \RuntimeException
      */
-    public function breadcrumbAppend($name, $label, $route = null, array $parameters = array())
+    public function breadcrumbAppend($name, $label, $route = null, array $parameters = [])
     {
         if (null === $this->breadcrumb) {
             $this->createBreadcrumb();
@@ -97,7 +96,7 @@ class MenuBuilder
 
         $this
             ->breadcrumb
-            ->addChild($name, array('route' => $route, 'routeParameters' => $parameters))
+            ->addChild($name, ['route' => $route, 'routeParameters' => $parameters])
             ->setLabel($label)
         ;
     }
@@ -153,9 +152,9 @@ class MenuBuilder
                 // Fill the menu
                 foreach ($pages as $page) {
                     if ($page['dynamicPath']) {
-                        $params = array('uri' => null);
+                        $params = ['uri' => null];
                     } else {
-                        $params = array('route' => $page['route']);
+                        $params = ['route' => $page['route']];
                     }
                     $this->breadcrumb
                         ->addChild('page-'.$page['id'], $params)
@@ -177,11 +176,11 @@ class MenuBuilder
             if (null === $home = $this->pageRepository->findOneByRoute($this->homeRouteName)) {
                 throw new \RuntimeException('Home page not found.');
             }
-            $this->breadcrumb = $this->factory->createItem('root', array(
-                'childrenAttributes' => array(
+            $this->breadcrumb = $this->factory->createItem('root', [
+                'childrenAttributes' => [
                     'class' => 'breadcrumb hidden-xs'
-                )
-            ));
+                ]
+            ]);
         }
     }
 }

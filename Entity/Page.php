@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectTrait;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectTrait;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
@@ -15,7 +16,7 @@ use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  *
- * @method \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface translate($locale = null, $create = false)
+ * @method PageTranslationInterface translate($locale = null, $create = false)
  */
 class Page extends AbstractTranslatable implements PageInterface
 {

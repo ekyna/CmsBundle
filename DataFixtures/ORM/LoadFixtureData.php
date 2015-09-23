@@ -20,7 +20,7 @@ class LoadFixtureData extends Loader implements OrderedFixtureInterface
     {
         // TODO clear image directory
 
-        return array(__DIR__.'/fixtures.yml');
+        return [__DIR__.'/fixtures.yml'];
     }
 
     /**

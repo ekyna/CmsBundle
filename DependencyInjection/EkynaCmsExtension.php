@@ -65,9 +65,9 @@ class EkynaCmsExtension extends AbstractExtension
      */
     private function configureTwigBundle(ContainerBuilder $container)
     {
-        $container->prependExtensionConfig('twig', array(
-            'form' => array('resources' => array('EkynaCmsBundle:Form:form_div_layout.html.twig')),
-        ));
+        $container->prependExtensionConfig('twig', [
+            'form' => ['resources' => ['EkynaCmsBundle:Form:form_div_layout.html.twig']],
+        ]);
     }
 
     /**
@@ -79,10 +79,10 @@ class EkynaCmsExtension extends AbstractExtension
     private function configureAsseticBundle(ContainerBuilder $container, array $config)
     {
         $asseticConfig = new AsseticConfiguration;
-        $container->prependExtensionConfig('assetic', array(
+        $container->prependExtensionConfig('assetic', [
             'assets' => $asseticConfig->build($config),
-            'bundles' => array('EkynaCmsBundle')
-        ));
+            'bundles' => ['EkynaCmsBundle']
+        ]);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Doctrine\ORM\QueryBuilder;
 use Ekyna\Bundle\AdminBundle\Doctrine\ORM\TranslatableResourceRepositoryInterface;
 use Ekyna\Bundle\AdminBundle\Doctrine\ORM\Util\TranslatableResourceRepositoryTrait;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
@@ -19,15 +18,11 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
     use TranslatableResourceRepositoryTrait;
 
     /**
-     * Creates a new QueryBuilder instance.
-     *
-     * @param string $alias
-     *
-     * @return QueryBuilder
+     * {@inheritdoc}
      */
-    public function createQueryBuilder($alias)
+    public function createQueryBuilder($alias, $indexBy = null)
     {
-        return parent::createQueryBuilder($alias)
+        return parent::createQueryBuilder($alias, $indexBy)
             ->innerJoin($alias.'.seo', 'seo');
     }
 
@@ -58,8 +53,8 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
             ->andWhere($qb->expr()->eq('p.route', $qb->expr()->literal($routeName)))
             ->setMaxResults(1)
             ->getQuery()
-            ->useResultCache(true, 3600, 'ekyna_cms.page[route:'.$routeName.']')
         ;
+        $query->useResultCache(true, 3600, 'ekyna_cms.page[route:'.$routeName.']');
         return $query->getOneOrNullResult();
     }
 
@@ -76,8 +71,8 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
             ->andWhere($qb->expr()->eq('p.id', $pageId))
             ->setMaxResults(1)
             ->getQuery()
-            ->useResultCache(true, 3600, 'ekyna_cms.page[id:'.$pageId.']')
         ;
+        $query->useResultCache(true, 3600, 'ekyna_cms.page[id:'.$pageId.']');
         return $query->getOneOrNullResult();
     }
 

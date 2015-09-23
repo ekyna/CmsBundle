@@ -81,7 +81,7 @@ class RouteDefinition
         $this->position = $options['position'];
         $this->seo      = $options['seo'];
 
-        $this->children = array();
+        $this->children = [];
     }
 
     /**
@@ -160,7 +160,7 @@ class RouteDefinition
      * @param array $menus
      * @return RouteDefinition
      */
-    public function setMenus(array $menus = array())
+    public function setMenus(array $menus = [])
     {
         $this->menus = $menus;
         return $this;

@@ -11,17 +11,10 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  *
- * @method \Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface translate($locale = null, $create = false)
+ * @method MenuTranslationInterface translate($locale = null, $create = false)
  */
 interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
 {
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId();
-
     /**
      * Sets the parent.
      *
@@ -212,7 +205,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * @param array $parameters
      * @return MenuInterface|$this
      */
-    public function setParameters(array $parameters = array());
+    public function setParameters(array $parameters = []);
 
     /**
      * Returns the route parameters.
@@ -227,7 +220,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * @param array $attributes
      * @return MenuInterface|$this
      */
-    public function setAttributes(array $attributes = array());
+    public function setAttributes(array $attributes = []);
 
     /**
      * Returns the route attributes.

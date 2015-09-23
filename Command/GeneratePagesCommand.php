@@ -84,13 +84,13 @@ class GeneratePagesCommand extends ContainerAwareCommand
         $connection->beginTransaction();
         try {
             $connection->query('SET FOREIGN_KEY_CHECKS=0');
-            $q = $dbPlatform->getTruncateTableSql($cmd->getTableName());
+            $q = $dbPlatform->getTruncateTableSQL($cmd->getTableName());
             $connection->executeUpdate($q);
             $connection->query('SET FOREIGN_KEY_CHECKS=1');
             $connection->commit();
         } catch (\Exception $e) {
             $output->writeln(sprintf('<error>Failed to truncate table for class %s.</error>', $class));
-            $connection->rollback();
+            $connection->rollBack();
         }
 
         $output->writeln(sprintf('<info>%s</info> pages removed.', $count));

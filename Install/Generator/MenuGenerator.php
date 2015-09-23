@@ -100,6 +100,6 @@ class MenuGenerator
      */
     public function findMenuByName($name)
     {
-        return $this->repository->findOneBy(array('name' => $name));
+        return $this->repository->findOneBy(['name' => $name]);
     }
 }

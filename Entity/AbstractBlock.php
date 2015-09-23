@@ -165,12 +165,12 @@ abstract class AbstractBlock implements BlockInterface
      */
     public function getInitDatas()
     {
-        return array(
+        return [
         	'id'     => $this->id,
             'type'   => $this->getType(),
         	'row'    => intval($this->row),
         	'column' => intval($this->column),
         	'size'   => intval($this->size)            
-        );
+        ];
     }
 }

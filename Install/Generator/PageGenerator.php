@@ -128,73 +128,65 @@ class PageGenerator
 
         /** @noinspection PhpUnusedParameterInspection */
         $seoOptionResolver
-            ->setDefaults(array(
+            ->setDefaults([
                 'changefreq' => 'monthly',
                 'priority'   => 0.5,
                 'follow'     => true,
                 'index'      => true,
                 'canonical'  => null,
-            ))
-            ->setAllowedTypes(array(
-                'changefreq' => 'string',
-                'priority'   => 'float',
-                'follow'     => 'bool',
-                'index'      => 'bool',
-                'canonical'  => array('string', 'null'),
-            ))
-            ->setAllowedValues(array(
-                'changefreq' => Seo::getChangefreqs(),
-            ))
-            ->setNormalizers(array(
-                'priority' => function (Options $options, $value) {
-                    if (0 > $value) {
-                        return 0;
-                    }
-                    if (1 < $value) {
-                        return 1;
-                    }
-                    return $value;
-                },
-            ))
+            ])
+            ->setAllowedTypes('changefreq',  'string')
+            ->setAllowedTypes('priority',    'float')
+            ->setAllowedTypes('follow',      'bool')
+            ->setAllowedTypes('index',       'bool')
+            ->setAllowedTypes('canonical',   ['string', 'null'])
+            ->setAllowedValues('changefreq', Seo::getChangefreqs())
+            ->setNormalizer('priority', function (Options $options, $value) {
+                if (0 > $value) {
+                    return 0;
+                }
+                if (1 < $value) {
+                    return 1;
+                }
+                return $value;
+            })
         ;
 
         $this->optionsResolver = new OptionsResolver();
 
         /** @noinspection PhpUnusedParameterInspection */
         $this->optionsResolver
-            ->setDefaults(array(
+            ->setDefaults([
                 'name' => null,
                 'path' => null,
                 'parent' => null,
                 'locked' => true,
-                'menus' => array(),
+                'menus' => [],
                 'advanced' => false,
                 'seo' => null,
                 'position' => 0,
-            ))
-            ->setAllowedTypes(array(
-                'name' => 'string',
-                'path' => 'string',
-                'parent' => array('string', 'null'),
-                'locked' => 'bool',
-                'menus' => 'array',
-                'advanced' => 'bool',
-                'seo' => array('null', 'array'),
-                'position' => 'int',
-            ))
-            ->setRequired(array('name', 'path'))
-            ->setNormalizers(array(
-                'locked' => function (Options $options, $value) {
-                    // Lock pages with parameters in path
-                    if (preg_match('#\{.*\}#', $options['path'])) {
-                        return true;
-                    }
-                    return $value;
-                },
-                'seo' => function (Options $options, $value) use ($seoOptionResolver) {
-                    return $seoOptionResolver->resolve((array) $value);
-                },
-            ))
+            ])
+            ->setRequired(['name', 'path'])
+
+            ->setAllowedTypes('name',  'string')
+            ->setAllowedTypes('path',  'string')
+            ->setAllowedTypes('parent',  ['string', 'null'])
+            ->setAllowedTypes('locked',  'bool')
+            ->setAllowedTypes('menus',  'array')
+            ->setAllowedTypes('advanced',  'bool')
+            ->setAllowedTypes('seo',  ['null', 'array'])
+            ->setAllowedTypes('position',  'int')
+
+            ->setNormalizer('locked', function (Options $options, $value) {
+                // Lock pages with parameters in path
+                if (preg_match('#\{.*\}#', $options['path'])) {
+                    return true;
+                }
+                return $value;
+            })
+            ->setNormalizer('seo', function (Options $options, $value) use ($seoOptionResolver) {
+                return $seoOptionResolver->resolve((array) $value);
+            })
         ;
     }
 
@@ -211,7 +203,7 @@ class PageGenerator
         if (null === $cmsOptions = $route->getOption('_cms')) {
             throw new \InvalidArgumentException(sprintf('Route "%s" does not have "_cms" defaults attributes.', $routeName));
         }
-        return $this->optionsResolver->resolve(array_merge($cmsOptions, array('path' => $route->getPath())));
+        return $this->optionsResolver->resolve(array_merge($cmsOptions, ['path' => $route->getPath()]));
     }
 
     /**
@@ -303,7 +295,7 @@ class PageGenerator
      */
     private function findPageByRouteName($routeName)
     {
-        return $this->pageRepository->findOneBy(array('route' => $routeName));
+        return $this->pageRepository->findOneBy(['route' => $routeName]);
     }
 
     /**
@@ -338,7 +330,7 @@ class PageGenerator
             // Watch for paths update
             foreach ($this->locales as $locale) {
                 if ($routeName === $path = $this->translator->trans(
-                        $routeName, array(), $this->routesTranslationDomain, $locale
+                        $routeName, [], $this->routesTranslationDomain, $locale
                     )) {
                     $path = $definition->getPath();
                 }
@@ -398,7 +390,7 @@ class PageGenerator
                 ;
 
                 if ($routeName === $path = $this->translator->trans(
-                        $routeName, array(), $this->routesTranslationDomain, $locale
+                        $routeName, [], $this->routesTranslationDomain, $locale
                     )) {
                     $path = $definition->getPath();
                 }
@@ -455,7 +447,7 @@ class PageGenerator
                 }
 
                 $name = $page->getRoute();
-                if (null === $this->menuRepository->findOneBy(array('name' => $name, 'parent' => $parent))) {
+                if (null === $this->menuRepository->findOneBy(['name' => $name, 'parent' => $parent])) {
                     /** @var \Ekyna\Bundle\CmsBundle\Model\MenuInterface $menu */
                     $menu = $this->menuRepository->createNew();
                     $menu
@@ -505,7 +497,7 @@ class PageGenerator
      */
     private function validate($element)
     {
-        $violationList = $this->validator->validate($element, null, array('Generator'));
+        $violationList = $this->validator->validate($element, null, ['Generator']);
         if (0 < $violationList->count()) {
             $this->output->writeln('<error>Invalid element</error>');
             /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */

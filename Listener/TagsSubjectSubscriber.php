@@ -45,28 +45,28 @@ class TagsSubjectSubscriber implements EventSubscriber
             ->getNamingStrategy()
         ;
 
-        $metadata->mapManyToMany(array(
+        $metadata->mapManyToMany([
             'fieldName'     => 'tags',
             'targetEntity'  => self::TAG_FQCN,
-            'cascade'       => array('persist'),
-            'joinTable'     => array(
+            'cascade'       => ['persist'],
+            'joinTable'     => [
                 'name'        => sprintf('%s_tag', strtolower($metadata->getTableName())),
-                'joinColumns' => array(
-                    array(
+                'joinColumns' => [
+                    [
                         'name'                  => $namingStrategy->joinKeyColumnName($metadata->getName()),
                         'referencedColumnName'  => $namingStrategy->referenceColumnName(),
                         'onDelete'              => 'CASCADE',
-                    ),
-                ),
-                'inverseJoinColumns'    => array(
-                    array(
+                    ],
+                ],
+                'inverseJoinColumns'    => [
+                    [
                         'name'                  => 'tag_id',
                         'referencedColumnName'  => $namingStrategy->referenceColumnName(),
                         'onDelete'              => 'CASCADE',
-                    ),
-                ),
-            ),
-        ));
+                    ],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -74,8 +74,8 @@ class TagsSubjectSubscriber implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return array(
+        return [
             Events::loadClassMetadata,
-        );
+        ];
     }
 }

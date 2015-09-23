@@ -9,16 +9,14 @@ ekyna_cms_editor:
 ekyna_cms_flashes:
     path: /cms/flashes
     defaults: { _controller: "EkynaCmsBundle:Cms:flashes" }
-    requirements:
-        _method: GET
+    methods: [GET]
     options:
         expose: true
 
 ekyna_cms_init:
     path: /cms/init
     defaults: { _controller: "EkynaCmsBundle:Cms:init" }
-    requirements:
-        _method: POST
+    methods: [POST]
     options:
         expose: true
 

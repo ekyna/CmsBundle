@@ -106,7 +106,7 @@ class RouteProvider implements RouteProviderInterface
      *
      * @return array|Route[]
      */
-    public function getRoutesByNames($names, $parameters = array())
+    public function getRoutesByNames($names, $parameters = [])
     {
         $qb = $this->pageRepository->createQueryBuilder('p');
         $qb
@@ -137,7 +137,7 @@ class RouteProvider implements RouteProviderInterface
      *
      * @return null|Route
      */
-    public function getRouteByName($name, $parameters = array())
+    public function getRouteByName($name, $parameters = [])
     {
         $qb = $this->pageRepository->createQueryBuilder('p');
         $qb
@@ -169,7 +169,7 @@ class RouteProvider implements RouteProviderInterface
      */
     protected function transformResultsToRoutes(array $results)
     {
-        $routes = array();
+        $routes = [];
         foreach ($results as $result) {
             $name = $result['route'];
             if (array_key_exists($name, $routes)) {
@@ -183,10 +183,10 @@ class RouteProvider implements RouteProviderInterface
                 if (!array_key_exists($result['controller'], $this->config['controllers'])) {
                     throw new \RuntimeException(sprintf('Undefined controller "%s".', $result['controller']));
                 }
-                $paths = array($result['locale'] => $result['path']);
+                $paths = [$result['locale'] => $result['path']];
                 $route
                     ->setDefault('_controller', $this->config['controllers'][$result['controller']]['value'])
-                    ->setMethods(array('GET'))
+                    ->setMethods(['GET'])
                     ->setOption('i18n_paths', $paths)
                 ;
                 $routes[$name] = $route;

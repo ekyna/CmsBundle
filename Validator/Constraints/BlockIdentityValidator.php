@@ -14,6 +14,9 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class BlockIdentityValidator extends ConstraintValidator
 {
+    /**
+     * {@inheritdoc}
+     */
     public function validate($block, Constraint $constraint)
     {
         if (!$constraint instanceof BlockIdentity) {

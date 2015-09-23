@@ -45,18 +45,18 @@ class ContentSubjectSubscriber implements EventSubscriber
             ->getNamingStrategy()
         ;
 
-        $metadata->mapOneToOne(array(
+        $metadata->mapOneToOne([
             'fieldName'     => 'content',
             'targetEntity'  => self::CONTENT_FQCN,
-            'cascade'       => array('all'),
-            'joinColumn' => array(
-                array(
+            'cascade'       => ['all'],
+            'joinColumn' => [
+                [
                     'name'                  => $namingStrategy->joinKeyColumnName($metadata->getName()),
                     'referencedColumnName'  => $namingStrategy->referenceColumnName(),
                     'onDelete'              => 'CASCADE',
-                ),
-            ),
-        ));
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -64,8 +64,8 @@ class ContentSubjectSubscriber implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return array(
+        return [
             Events::loadClassMetadata,
-        );
+        ];
     }
 }

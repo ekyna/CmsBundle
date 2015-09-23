@@ -30,9 +30,9 @@ class EkynaCmsBundle extends AbstractBundle
      */
     protected function getModelInterfaces()
     {
-        return array(
+        return [
             'Ekyna\Bundle\CmsBundle\Model\PageInterface' => 'ekyna_cms.page.class',
             'Ekyna\Bundle\CmsBundle\Model\MenuInterface' => 'ekyna_cms.menu.class',
-        );
+        ];
     }
 }

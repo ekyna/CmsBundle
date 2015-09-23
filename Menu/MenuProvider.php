@@ -60,7 +60,7 @@ class MenuProvider implements MenuProviderInterface
      * @param array $options
      * @return bool
      */
-    public function has($name, array $options = array())
+    public function has($name, array $options = [])
     {
         return null !== $this->findByName($name);
     }
@@ -101,15 +101,15 @@ class MenuProvider implements MenuProviderInterface
      * @return \Knp\Menu\ItemInterface
      * @throws \InvalidArgumentException
      */
-    public function get($name, array $options = array())
+    public function get($name, array $options = [])
     {
         if (null === $menu = $this->findByName($name)) {
             throw new \InvalidArgumentException(sprintf('The menu "%s" is not defined.', $name));
         }
 
-        return $this->buildItem($menu, array_merge(array(
-            'attributes' => array('id' => $menu['name'].'-nav') // Root css id
-        ), $options));
+        return $this->buildItem($menu, array_merge([
+            'attributes' => ['id' => $menu['name'].'-nav'] // Root css id
+        ], $options));
     }
 
     /**
@@ -119,11 +119,11 @@ class MenuProvider implements MenuProviderInterface
      * @param array $options
      * @return \Knp\Menu\ItemInterface
      */
-    private function buildItem(array $data, array $options = array())
+    private function buildItem(array $data, array $options = [])
     {
-        $options = array_merge($options, array(
+        $options = array_merge($options, [
             'label' => $data['title'],
-        ));
+        ]);
         if (!empty($data['attributes'])) {
             $options['attributes'] = $data['attributes'];
         }

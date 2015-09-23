@@ -46,21 +46,21 @@ class RoutingLoader extends Loader
 
         if ($this->config['enable']) {
             $cookiesPolicy = new Route('/cookies-privacy-policy');
-            $cookiesPolicy->setDefaults(array(
+            $cookiesPolicy->setDefaults([
                 '_controller' => $this->config['controller'],
-            ));
-            $cookiesPolicy->setOptions(array(
+            ]);
+            $cookiesPolicy->setOptions([
                 'expose' => true,
-                '_cms' => array(
+                '_cms' => [
                     'name' => 'Utilisation des cookies',
                     'advanced' => true,
                     'position' => 999,
-                    'seo' => array(
+                    'seo' => [
                         'index'  => false,
                         'follow' => false,
-                    ),
-                ),
-            ));
+                    ],
+                ],
+            ]);
             $collection->add('cookies_privacy_policy', $cookiesPolicy);
         }
 

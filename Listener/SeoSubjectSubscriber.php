@@ -39,21 +39,21 @@ class SeoSubjectSubscriber implements EventSubscriber
             return;
         }
 
-        $metadata->mapOneToOne(array(
+        $metadata->mapOneToOne([
             'fieldName'     => 'seo',
             'targetEntity'  => self::SEO_FQCN,
-            'cascade'       => array('all'),
+            'cascade'       => ['all'],
 //            'fetch' => ClassMetadataInfo::FETCH_EAGER,
             'orphanRemoval' => true,
-            'joinColumns' => array(
-                array(
+            'joinColumns' => [
+                [
                     'name'                  => 'seo_id',
                     'referencedColumnName'  => 'id',
                     'onDelete'              => 'RESTRICT',
                     'nullable'              => false,
-                ),
-            ),
-        ));
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -61,8 +61,8 @@ class SeoSubjectSubscriber implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return array(
+        return [
             Events::loadClassMetadata,
-        );
+        ];
     }
 }

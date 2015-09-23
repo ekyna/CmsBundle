@@ -17,6 +17,6 @@ class BlockRepository extends EntityRepository
      */
     public function findOneByName($name)
     {
-        return $this->findOneBy(array('name' => $name, 'content' => null));
+        return $this->findOneBy(['name' => $name, 'content' => null]);
     }
 }

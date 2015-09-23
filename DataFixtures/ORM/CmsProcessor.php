@@ -10,7 +10,6 @@ use Ekyna\Bundle\MediaBundle\Model as MediaModel;
 use Faker\Factory;
 use Nelmio\Alice\ProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Class CmsProcessor
@@ -41,8 +40,6 @@ class CmsProcessor implements ProcessorInterface
     {
         $this->container = $container;
         $this->faker = Factory::create($container->getParameter('hautelook_alice.locale'));
-
-        $this->loadImagesFiles();
     }
 
     /**
@@ -128,81 +125,6 @@ class CmsProcessor implements ProcessorInterface
     }
 
     /**
-     * Find some images.
-     *
-     * @param int $limit
-     * @return MediaEntity\Image[]
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    private function findImages($limit = 1)
-    {
-        if ($limit < 1) {
-            $limit = 1;
-        }
-
-        $images = [];
-
-        if (rand(0, 10) > 5) {
-            $qb = $this->container
-                ->get('ekyna_media.image.repository')
-                ->createQueryBuilder('i');
-
-            $query = $qb
-                ->addSelect('RAND() as HIDDEN rand')
-                ->orderBy('rand')
-                ->setMaxResults($limit)
-                ->getQuery();
-
-            if ($limit == 1 && null !== $image = $query->getOneOrNullResult()) {
-                $images = array($image);
-            } else {
-                $images = $query->getResult();
-            }
-        }
-
-        if (count($images) < $limit) {
-            $images = array_merge($images, $this->createImages($limit - count($images)));
-        }
-
-        return $images;
-    }
-
-    /**
-     * Creates some images.
-     *
-     * @param int $number
-     * @return array
-     */
-    private function createImages($number = 1)
-    {
-        $images = [];
-
-        for ($j = 0; $j < $number; $j++) {
-            $image = new MediaEntity\Image();
-            $image
-                ->setFile($this->images[rand(0, 5)])
-                ->setRename($this->faker->sentence(3))
-                ->setAlt($this->faker->sentence(5));
-
-            $images[] = $image;
-        }
-
-        return $images;
-    }
-
-    /**
-     * Loads the fixtures images files.
-     */
-    private function loadImagesFiles()
-    {
-        $this->images = [];
-        $imagesDir = realpath(__DIR__.'/../../Resources/fixtures/images/');
-        for ($i = 1; $i < 7; $i++) {
-            $this->images[] = new File($imagesDir.'/0'.$i.'.jpg');
-        }
-    }
-
-    /**
      * Returns the string representation of the given object.
      *
      * @param $object
@@ -216,7 +138,7 @@ class CmsProcessor implements ProcessorInterface
             return (string)$object;
         }
 
-        foreach (array('getName', 'getTitle') as $getter) {
+        foreach (['getName', 'getTitle'] as $getter) {
             if ($r->hasMethod($getter)) {
                 try {
                     return $object->{$getter}();

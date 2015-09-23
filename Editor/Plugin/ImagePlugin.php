@@ -14,7 +14,7 @@ class ImagePlugin extends AbstractPlugin
     /**
      * {@inheritDoc}
      */
-    public function create(array $datas = array())
+    public function create(array $datas = [])
     {
     	
     }
@@ -22,7 +22,7 @@ class ImagePlugin extends AbstractPlugin
     /**
      * {@inheritDoc}
      */
-    public function update(BlockInterface $block, array $datas = array())
+    public function update(BlockInterface $block, array $datas = [])
     {
     	
     }

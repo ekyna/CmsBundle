@@ -21,7 +21,7 @@ class PluginRegistry
      */
     public function __construct()
     {
-        $this->plugins = array();
+        $this->plugins = [];
     }
 
     /**

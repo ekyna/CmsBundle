@@ -13,6 +13,9 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class EditorPluginPass implements CompilerPassInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('ekyna_cms.editor.plugin_registry')) {
@@ -27,15 +30,15 @@ class EditorPluginPass implements CompilerPassInterface
             foreach ($tagAttributes as $attributes) {
                 $registry->addMethodCall(
                     'register',
-                    array($attributes["alias"], new Reference($id))
+                    [$attributes["alias"], new Reference($id)]
                 );
             }
         }
 
-        $mapping = array(
+        $mapping = [
             'Ekyna\Bundle\CmsBundle\Entity\TinymceBlock' => 'Ekyna\Bundle\CmsBundle\Entity\TinymceBlockTranslation',
             'Ekyna\Bundle\CmsBundle\Entity\TinymceBlockTranslation' => 'Ekyna\Bundle\CmsBundle\Entity\TinymceBlock',
-        );
+        ];
         if ($container->hasParameter('ekyna_admin.translation_mapping')) {
             $mapping = array_merge($container->getParameter('ekyna_admin.translation_mapping'), $mapping);
         }

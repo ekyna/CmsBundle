@@ -53,7 +53,7 @@ class CmsController extends Controller
         }
 
         // Does editor must be rendered ?
-        if ($request->request->get('editor', false) && $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+        if ($request->request->get('editor', false) && $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $data['editor'] = true;
         } else {
             $data['editor'] = false;
@@ -71,7 +71,7 @@ class CmsController extends Controller
         }
 
         $response = $this->render('EkynaCmsBundle:Cms:init.xml.twig', $data);
-        $response->headers->add(array('Content-Type' => 'application/xml'));
+        $response->headers->add(['Content-Type' => 'application/xml']);
 
         return $response;
     }
