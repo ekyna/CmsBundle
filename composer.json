@@ -18,8 +18,8 @@
 	],
 	"require" : {
 		"php" : ">=5.4.0",
-		"ekyna/media-bundle" : "0.3.*@dev",
-		"ekyna/sitemap-bundle" : "0.3.*@dev"
+		"ekyna/media-bundle" : "0.3.x-dev",
+		"ekyna/sitemap-bundle" : "0.3.x-dev"
 	},
 	"autoload" : {
 		"psr-4" : {
