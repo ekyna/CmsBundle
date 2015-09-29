@@ -397,10 +397,13 @@ class CmsExtension extends \Twig_Extension
         $this->editor->setEnabled(true);
 
         // Tags the response as Block relative
-        $this->eventDispatcher->dispatch(
-            HttpCacheEvents::TAG_RESPONSE,
-            new HttpCacheEvent($block->getEntityTag())
-        );
+        // Only if the block do not belongs to a content object
+        if (null === $block->getContent()) {
+            $this->eventDispatcher->dispatch(
+                HttpCacheEvents::TAG_RESPONSE,
+                new HttpCacheEvent($block->getEntityTag())
+            );
+        }
 
         return $this->template->renderBlock('cms_block', [
             'block' => $block,

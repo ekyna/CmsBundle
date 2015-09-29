@@ -49,11 +49,11 @@
 
         <!-- Doctrine entity listeners -->
         <service id="ekyna_core.menu.listener" class="Ekyna\Bundle\CmsBundle\Listener\MenuListener">
-            <tag name="doctrine.entity_listener" />
+            <tag name="doctrine.orm.entity_listener" />
         </service>
         <service id="ekyna_core.abstract_block.listener" class="Ekyna\Bundle\CmsBundle\Listener\AbstractBlockListener">
             <argument type="service" id="event_dispatcher" />
-            <tag name="doctrine.entity_listener" />
+            <tag name="doctrine.orm.entity_listener" />
         </service>
 
         <!-- Doctrine subscriber -->
