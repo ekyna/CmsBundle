@@ -104,7 +104,6 @@ class Page extends AbstractTranslatable implements PageInterface
         parent::__construct();
 
         $this->children    = new ArrayCollection();
-        $this->contents    = new ArrayCollection();
         $this->seo         = new Seo();
 
         $this->static      = false;
@@ -122,16 +121,6 @@ class Page extends AbstractTranslatable implements PageInterface
     {
         return $this->getName();
     }
-
-    /**
-     * {@inheritdoc
-     */
-    /*public function translate($locale = null, $create = false)
-    {
-        $this->seo->translate($locale);
-
-        return parent::translate($locale, $create);
-    }*/
 
     /**
      * {@inheritdoc}
