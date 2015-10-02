@@ -88,7 +88,7 @@ class MenuGenerator
 
             $this->menuOperator->persist($menu);
 
-            $this->output->writeln('done.');
+            $this->output->writeln('created.');
         }
     }
 
