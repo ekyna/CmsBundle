@@ -18,7 +18,7 @@ class MenuProvider implements MenuProviderInterface
     /**
      * @var FactoryInterface
      */
-    protected $factory = null;
+    protected $factory;
 
     /**
      * @var MenuRepository

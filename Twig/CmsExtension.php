@@ -11,6 +11,7 @@ use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvent;
 use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvents;
 use Ekyna\Bundle\SettingBundle\Manager\SettingsManagerInterface;
@@ -170,13 +171,17 @@ class CmsExtension extends \Twig_Extension
     /**
      * Generates document title and metas tags from the given Seo object or form the current page.
      *
-     * @param SeoInterface $seo
+     * @param mixed $seoOrSubject
      * @return string
      * @deprecated use renderSeo()
      */
-    public function renderMetas(SeoInterface $seo = null)
+    public function renderMetas($seoOrSubject = null)
     {
-        return $this->renderSeo($seo);
+        if ($seoOrSubject instanceof SeoSubjectInterface) {
+            $seoOrSubject = $seoOrSubject->getSeo();
+        }
+
+        return $this->renderSeo($seoOrSubject);
     }
 
     /**
