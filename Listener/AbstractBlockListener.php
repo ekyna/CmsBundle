@@ -4,9 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Listener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
-use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvent;
-use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvents;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 
 /**
  * Class AbstractBlockListener
@@ -16,18 +14,19 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class AbstractBlockListener
 {
     /**
-     * @var EventDispatcherInterface
+     * @var TagManager
      */
-    private $eventDispatcher;
+    private $tagManager;
+
 
     /**
      * Constructor.
      *
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param TagManager $tagManager
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(TagManager $tagManager)
     {
-        $this->eventDispatcher = $eventDispatcher;
+        $this->tagManager = $tagManager;
     }
 
     /**
@@ -60,10 +59,7 @@ class AbstractBlockListener
     private function invalidateBlockContent(BlockInterface $block)
     {
         if (null !== $content = $block->getContent()) {
-            $this->eventDispatcher->dispatch(
-                HttpCacheEvents::INVALIDATE_TAG,
-                new HttpCacheEvent(array($content->getEntityTag()))
-            );
+            $this->tagManager->invalidateTags($content->getEntityTag());
         }
     }
 }
