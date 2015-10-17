@@ -61,28 +61,28 @@ class EditorController extends Controller
             $editor->initContent($contentId);
         }
 
-        $responseDatas = array();
+        $responseData = array();
 
         // Update layout
-        if (null !== $layoutDatas = $request->request->get('layout', null)) {
-            $editor->updateLayout($layoutDatas);
+        if (null !== $layoutData = $request->request->get('layout', null)) {
+            $editor->updateLayout($layoutData);
         }
 
         // Remove blocks
-        if (null !== $removeDatas = $request->request->get('removeBlocks', null)) {
-            $responseDatas['removed'] = $editor->removeBlocks($removeDatas);
+        if (null !== $removeData = $request->request->get('removeBlocks', null)) {
+            $responseData['removed'] = $editor->removeBlocks($removeData);
         }
 
         // Update block
-        if (null !== $updateDatas = $request->request->get('updateBlock', null)) {
-            $responseDatas['updated'] = $editor->updateBlock($updateDatas);
+        if (null !== $updateData = $request->request->get('updateBlock', null)) {
+            $responseData['updated'] = $editor->updateBlock($updateData);
         }
 
         // Create block
-        if (null !== $createDatas = $request->request->get('createBlock', null)) {
-            $responseDatas['created'] = $editor->createBlock($createDatas);
+        if (null !== $createData = $request->request->get('createBlock', null)) {
+            $responseData['created'] = $editor->createBlock($createData);
         }
 
-        return new JsonResponse($responseDatas);
+        return new JsonResponse($responseData);
     }
 }
