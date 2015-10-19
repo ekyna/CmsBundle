@@ -12,11 +12,9 @@ use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
-use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvent;
-use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvents;
+use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 use Ekyna\Bundle\SettingBundle\Manager\SettingsManagerInterface;
 use Knp\Menu\Twig\Helper;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 
@@ -50,12 +48,12 @@ class CmsExtension extends \Twig_Extension
     /**
      * @var PageHelper
      */
-    private $pageHelper;
+    protected $pageHelper;
 
     /**
-     * @var EventDispatcherInterface
+     * @var TagManager
      */
-    protected $eventDispatcher;
+    protected $tagManager;
 
     /**
      * @var FragmentHandler
@@ -81,7 +79,7 @@ class CmsExtension extends \Twig_Extension
      * @param MenuProvider             $menuProvider
      * @param Helper                   $menuHelper
      * @param PageHelper               $pageHelper
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param TagManager               $tagManager
      * @param FragmentHandler          $fragmentHandler
      * @param array                    $config
      */
@@ -91,7 +89,7 @@ class CmsExtension extends \Twig_Extension
         MenuProvider $menuProvider,
         Helper $menuHelper,
         PageHelper $pageHelper,
-        EventDispatcherInterface $eventDispatcher,
+        TagManager $tagManager,
         FragmentHandler $fragmentHandler,
         array $config = []
     ) {
@@ -100,7 +98,7 @@ class CmsExtension extends \Twig_Extension
         $this->menuProvider = $menuProvider;
         $this->menuHelper = $menuHelper;
         $this->pageHelper = $pageHelper;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->tagManager = $tagManager;
         $this->fragmentHandler = $fragmentHandler;
 
         $this->config = array_merge([
@@ -225,10 +223,7 @@ class CmsExtension extends \Twig_Extension
 
             // Tags the response as Seo relative
             if ($seo->getId()) {
-                $this->eventDispatcher->dispatch(
-                    HttpCacheEvents::TAG_RESPONSE,
-                    new HttpCacheEvent($seo->getEntityTag())
-                );
+                $this->tagManager->addTags($seo->getEntityTag());
             }
         } else {
             $metas = '<title>Undefined</title>' . $this->renderMeta('robots', 'follow,noindex');
@@ -264,10 +259,7 @@ class CmsExtension extends \Twig_Extension
             $content = $page->getTitle();
 
             // Tags the response as Page relative
-            $this->eventDispatcher->dispatch(
-                HttpCacheEvents::TAG_RESPONSE,
-                new HttpCacheEvent($page->getEntityTag())
-            );
+            $this->tagManager->addTags($page->getEntityTag());
         }
 
         if (0 == strlen($content)) {
@@ -347,10 +339,7 @@ class CmsExtension extends \Twig_Extension
 
         // Tag response as Content relative
         if (null !== $content->getId()) {
-            $this->eventDispatcher->dispatch(
-                HttpCacheEvents::TAG_RESPONSE,
-                new HttpCacheEvent($content->getEntityTag())
-            );
+            $this->tagManager->addTags($content->getEntityTag());
         }
 
         return $this->template->renderBlock('cms_block_content', [
@@ -384,16 +373,16 @@ class CmsExtension extends \Twig_Extension
      *
      * @param BlockInterface|string $block The block or the block name
      * @param string $type the block type
-     * @param array $datas the block datas
+     * @param array $data  the block data
      *
      * @throws \RuntimeException
      *
      * @return string
      */
-    public function renderBlock($block, $type = null, array $datas = [])
+    public function renderBlock($block, $type = null, array $data = [])
     {
         if (is_string($block)) {
-            $block = $this->editor->findBlockByName($block, $type, $datas);
+            $block = $this->editor->findBlockByName($block, $type, $data);
         }
         if (!$block instanceof BlockInterface) {
             throw new \InvalidArgumentException('Expected instance of Ekyna\Bundle\CmsBundle\Model\BlockInterface');
@@ -402,13 +391,7 @@ class CmsExtension extends \Twig_Extension
         $this->editor->setEnabled(true);
 
         // Tags the response as Block relative
-        // Only if the block do not belongs to a content object
-        if (null === $block->getContent()) {
-            $this->eventDispatcher->dispatch(
-                HttpCacheEvents::TAG_RESPONSE,
-                new HttpCacheEvent($block->getEntityTag())
-            );
-        }
+        $this->tagManager->addTags($block->getEntityTag());
 
         return $this->template->renderBlock('cms_block', [
             'block' => $block,
@@ -434,13 +417,10 @@ class CmsExtension extends \Twig_Extension
         }
 
         // Tags the response as Menu relative
-        $this->eventDispatcher->dispatch(
-            HttpCacheEvents::TAG_RESPONSE,
-            new HttpCacheEvent([
-                Menu::getEntityTagPrefix(),
-                sprintf('%s[id:%s]', Menu::getEntityTagPrefix(), $menu['id'])
-            ])
-        );
+        $this->tagManager->addTags(array(
+            Menu::getEntityTagPrefix(),
+            sprintf('%s[id:%s]', Menu::getEntityTagPrefix(), $menu['id'])
+        ));
 
         return $this->menuHelper->render($name, $options, $renderer);
     }

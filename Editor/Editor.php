@@ -116,15 +116,15 @@ class Editor
      * Creates a default block.
      *
      * @param string $type
-     * @param array $datas
+     * @param array $data
      *
      * @return BlockInterface
      */
-    private function createDefaultBlock($type, array $datas = [])
+    private function createDefaultBlock($type, array $data = [])
     {
         $plugin = $this->registry->get($type);
 
-        return $plugin->create($datas);
+        return $plugin->create($data);
     }
 
     /**
@@ -147,24 +147,24 @@ class Editor
 
     /**
      * Creates a block.
-     * 
-     * @param array $datas
+     *
+     * @param array $data
      * @return array
      * @throws \InvalidArgumentException
      */
-    public function createBlock(array $datas = [])
+    public function createBlock(array $data = [])
     {
         if (null === $this->content) {
             throw new \InvalidArgumentException('No Content selected.');
         }
-        if (! array_key_exists('type', $datas)) {
+        if (! array_key_exists('type', $data)) {
             throw new \InvalidArgumentException('"type" field is mandatory.');
         }
 
-        $plugin = $this->registry->get($datas['type']);
-        $block = $plugin->create($datas);
+        $plugin = $this->registry->get($data['type']);
+        $block = $plugin->create($data);
 
-        $this->updateBlockCoords($block, $datas);
+        $this->updateBlockCoordinates($block, $data);
         $this->content->addBlock($block);
 
         $this->manager->persist($this->content);
@@ -178,19 +178,22 @@ class Editor
 
     /**
      * Updates a block.
-     * 
-     * @param array $datas
+     *
+     * @param array $data
      * @return array
      */
-    public function updateBlock(array $datas = [])
+    public function updateBlock(array $data = [])
     {
-        $block = $this->findBlock($datas);
+        $block = $this->findBlock($data);
 
         $plugin = $this->registry->get($block->getType());
-        $plugin->update($block, $datas);
+        $plugin->update($block, $data);
 
         if (null !== $this->content) {
-            $this->updateBlockCoords($block, $datas);
+            $this->updateBlockCoordinates($block, $data);
+
+            $this->content->setUpdatedAt(new \DateTime());
+            $this->manager->persist($this->content);
         }
 
         // TODO content validation
@@ -206,12 +209,12 @@ class Editor
 
     /**
      * Removes blocks.
-     * 
-     * @param array $datas
+     *
+     * @param array $data
      * @return array
      * @throws \InvalidArgumentException
      */
-    public function removeBlocks(array $datas = [])
+    public function removeBlocks(array $data = [])
     {
         if (null === $this->content) {
             throw new \InvalidArgumentException('No Content selected.');
@@ -223,12 +226,12 @@ class Editor
         }
 
         $removedIds = [];
-        foreach($datas as $blockDatas) {
-            $block = $this->findBlock($blockDatas);
-    
+        foreach($data as $blockData) {
+            $block = $this->findBlock($blockData);
+
             $plugin = $this->registry->get($block->getType());
             $plugin->remove($block);
-    
+
             $removedIds[] = $block->getId();
             $this->content->removeBlock($block);
             $this->manager->remove($block);
@@ -246,18 +249,18 @@ class Editor
 
     /**
      * Updates the layout.
-     * 
-     * @param array $datas
+     *
+     * @param array $data
      * @throws \InvalidArgumentException
      */
-    public function updateLayout(array $datas = [])
+    public function updateLayout(array $data = [])
     {
         if (null === $this->content) {
             throw new \InvalidArgumentException('No Content selected.');
         }
-        foreach($datas as $coords) {
-            $block = $this->findBlock($coords);
-            $this->updateBlockCoords($block, $coords);
+        foreach($data as $coordinates) {
+            $block = $this->findBlock($coordinates);
+            $this->updateBlockCoordinates($block, $coordinates);
             $this->manager->persist($block);
         }
 
@@ -268,34 +271,34 @@ class Editor
 
     /**
      * Updates coordinates of the given block.
-     * 
+     *
      * @param BlockInterface $block
-     * @param array          $datas
+     * @param array          $coordinates
      */
-    private function updateBlockCoords(BlockInterface $block, array $datas = [])
+    private function updateBlockCoordinates(BlockInterface $block, array $coordinates = [])
     {
-        if (array_key_exists('row', $datas)) {
-            $block->setRow($datas['row']);
+        if (array_key_exists('row', $coordinates)) {
+            $block->setRow($coordinates['row']);
         }
-        if (array_key_exists('column', $datas)) {
-            $block->setColumn($datas['column']);
+        if (array_key_exists('column', $coordinates)) {
+            $block->setColumn($coordinates['column']);
         }
-        if (array_key_exists('size', $datas)) {
-            $block->setSize($datas['size']);
+        if (array_key_exists('size', $coordinates)) {
+            $block->setSize($coordinates['size']);
         }
     }
 
     /**
      * Finds a block.
-     * 
-     * @param array $datas
+     *
+     * @param array $data
      * @return BlockInterface
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    private function findBlock(array $datas = [])
+    private function findBlock(array $data = [])
     {
-        if (! array_key_exists('id', $datas) || 0 >= ($blockId = intval($datas['id']))) {
+        if (! array_key_exists('id', $data) || 0 >= ($blockId = intval($data['id']))) {
             throw new \InvalidArgumentException('Block "id" is mandatory.');
         }
         $parameters = ['id' => $blockId];
@@ -317,11 +320,11 @@ class Editor
      *
      * @param string $name the block name
      * @param string $type the block type
-     * @param array $datas the block datas
+     * @param array $data the block datas
      *
      * @return BlockInterface
      */
-    public function findBlockByName($name, $type = null, array $datas = [])
+    public function findBlockByName($name, $type = null, array $data = [])
     {
         if (null === $type) {
             $type = $this->defaultBlockType;
@@ -329,7 +332,7 @@ class Editor
 
         $repository = $this->manager->getRepository('Ekyna\Bundle\CmsBundle\Entity\AbstractBlock');
         if (null === $block = $repository->findOneBy(['name' => $name, 'content' => null])) {
-            $block = $this->createDefaultBlock($type, $datas);
+            $block = $this->createDefaultBlock($type, $data);
             $block->setName($name);
 
             $this->manager->persist($block);
