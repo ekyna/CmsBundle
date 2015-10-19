@@ -43,6 +43,7 @@
         <!-- Event listeners -->
         <service id="ekyna_cms.page.event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\PageEventListener">
             <argument>%locales%</argument>
+            <argument>%ekyna_cms.page.config%</argument>
             <argument type="service" id="doctrine.orm.default_result_cache" on-invalid="null" />
             <tag name="kernel.event_subscriber" />
         </service>

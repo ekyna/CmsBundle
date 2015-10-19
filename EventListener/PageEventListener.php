@@ -22,6 +22,11 @@ class PageEventListener implements EventSubscriberInterface
     private $locales;
 
     /**
+     * @var array
+     */
+    private $config;
+
+    /**
      * @var CacheProvider
      */
     private $cache;
@@ -31,11 +36,13 @@ class PageEventListener implements EventSubscriberInterface
      * Constructor.
      *
      * @param array $locales
+     * @param array $config
      * @param CacheProvider $cache
      */
-    public function __construct(array $locales, CacheProvider $cache = null)
+    public function __construct(array $locales, array $config, CacheProvider $cache = null)
     {
         $this->locales = $locales;
+        $this->config  = $config;
         $this->cache   = $cache;
     }
 
@@ -56,6 +63,9 @@ class PageEventListener implements EventSubscriberInterface
         // Handle paths.
         $this->generateTranslationPaths($page);
         $this->watchDynamicPaths($page);
+
+        // Handle advanced
+        $this->watchAdvanced($page);
     }
 
     /**
@@ -80,6 +90,9 @@ class PageEventListener implements EventSubscriberInterface
         // Handle paths.
         $this->generateTranslationPaths($page);
         $this->watchDynamicPaths($page);
+
+        // Handle advanced
+        $this->watchAdvanced($page);
     }
 
     /**
@@ -158,6 +171,21 @@ class PageEventListener implements EventSubscriberInterface
             }
         }
         $page->setDynamicPath(false);
+    }
+
+    /**
+     * @param PageInterface $page
+     */
+    private function watchAdvanced(PageInterface $page)
+    {
+        if (null !== $controller = $page->getController()) {
+            if (array_key_exists($controller, $this->config['controllers'])) {
+                $advanced = $this->config['controllers'][$controller]['advanced'];
+                if ($page->getAdvanced() != $advanced) {
+                    $page->setAdvanced($advanced);
+                }
+            }
+        }
     }
 
     /**

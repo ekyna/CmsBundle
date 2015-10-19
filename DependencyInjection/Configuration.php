@@ -39,14 +39,16 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->arrayNode('controllers')
                             ->defaultValue(array('default' => array(
-                                'title' => 'Par défaut',
-                                'value' => 'EkynaCmsBundle:Cms:default',
+                                'title'    => 'Par défaut',
+                                'value'    => 'EkynaCmsBundle:Cms:default',
+                                'advanced' => true,
                             )))
                             ->useAttributeAsKey('name')
                             ->prototype('array')
                                 ->children()
                                     ->scalarNode('title')->isRequired()->cannotBeEmpty()->end()
                                     ->scalarNode('value')->isRequired()->cannotBeEmpty()->end()
+                                    ->booleanNode('advanced')->defaultFalse()->end()
                                 ->end()
                             ->end()
                         ->end()
