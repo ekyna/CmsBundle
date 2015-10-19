@@ -149,12 +149,18 @@ class PageEventListener implements EventSubscriberInterface
         if (!$page->getStatic()) {
             $parentPage = $page->getParent();
             foreach ($this->locales as $locale) {
+                $tmp = $path = $page->translate($locale)->getPath();
                 $parentPath = $parentPage->translate($locale)->getPath();
-                $path = $page->translate($locale)->getPath();
-                if (strlen($path) == 0) {
-                    $path = $page->translate($locale)->getTitle();
+                if (0 === strpos($tmp, $parentPath)) {
+                    $tmp = substr($tmp, strlen($parentPath) + 1);
                 }
-                $page->translate($locale)->setPath(rtrim($parentPath, '/').'/'.Transliterator::urlize(trim($path, '/')));
+                if (strlen($tmp) == 0) {
+                    $tmp = $page->translate($locale)->getTitle();
+                }
+                $tmp = rtrim($parentPath, '/').'/'.Transliterator::urlize(trim($tmp, '/'));
+                if ($tmp != $path) {
+                    $page->translate($locale)->setPath($tmp);
+                }
             }
         }
     }
