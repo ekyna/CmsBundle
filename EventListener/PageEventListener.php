@@ -57,6 +57,7 @@ class PageEventListener implements EventSubscriberInterface
 
         // Generate random route name.
         if (null === $page->getRoute()) {
+            // TODO check unicity
             $page->setRoute(sprintf('cms_page_%s', uniqid()));
         }
 
@@ -66,16 +67,6 @@ class PageEventListener implements EventSubscriberInterface
 
         // Handle advanced
         $this->watchAdvanced($page);
-    }
-
-    /**
-     * Post create event handler.
-     *
-     * @param PageEvent $event
-     */
-    public function onPostCreate(PageEvent $event)
-    {
-        $this->savePageCache($event->getPage());
     }
 
     /**
@@ -102,7 +93,7 @@ class PageEventListener implements EventSubscriberInterface
      */
     public function onPostUpdate(PageEvent $event)
     {
-        $this->savePageCache($event->getPage());
+        $this->deletePageCache($event->getPage());
     }
 
     /**
@@ -113,19 +104,6 @@ class PageEventListener implements EventSubscriberInterface
     public function onPostDelete(PageEvent $event)
     {
         $this->deletePageCache($event->getPage());
-    }
-
-    /**
-     * Saves the page in doctrine cache.
-     *
-     * @param PageInterface $page
-     */
-    private function savePageCache(PageInterface $page)
-    {
-        if (null !== $this->cache) {
-            $this->cache->save('ekyna_cms.page[id:' . $page->getId() . ']', $page);
-            $this->cache->save('ekyna_cms.page[route:' . $page->getRoute() . ']', $page);
-        }
     }
 
     /**
@@ -201,7 +179,6 @@ class PageEventListener implements EventSubscriberInterface
     {
         return array(
             PageEvents::PRE_CREATE  => array('onPreCreate', 0),
-            PageEvents::POST_CREATE => array('onPostCreate', 0),
             PageEvents::PRE_UPDATE  => array('onPreUpdate', 0),
             PageEvents::POST_UPDATE => array('onPostUpdate', 0),
             PageEvents::POST_DELETE => array('onPostDelete', 0),
