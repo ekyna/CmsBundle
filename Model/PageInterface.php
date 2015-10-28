@@ -171,6 +171,21 @@ interface PageInterface extends
     public function getTitle();
 
     /**
+     * Set breadcrumb
+     *
+     * @param string $breadcrumb
+     * @return PageInterface|$this
+     */
+    public function setBreadcrumb($breadcrumb);
+
+    /**
+     * Get breadcrumb
+     *
+     * @return string
+     */
+    public function getBreadcrumb();
+
+    /**
      * Set html
      *
      * @param string $html

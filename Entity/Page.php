@@ -310,6 +310,24 @@ class Page extends AbstractTranslatable implements Cms\PageInterface
     /**
      * {@inheritdoc}
      */
+    public function setBreadcrumb($breadcrumb)
+    {
+        $this->translate()->setBreadcrumb($breadcrumb);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBreadcrumb()
+    {
+        return $this->translate()->getBreadcrumb();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setHtml($html)
     {
         $this->translate()->setHtml($html);
