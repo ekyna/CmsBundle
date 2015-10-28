@@ -25,6 +25,11 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     /**
      * @var string
      */
+    protected $breadcrumb;
+
+    /**
+     * @var string
+     */
     protected $html;
 
     /**
@@ -56,6 +61,23 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setBreadcrumb($breadcrumb)
+    {
+        $this->breadcrumb = $breadcrumb;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBreadcrumb()
+    {
+        return $this->breadcrumb;
     }
 
     /**

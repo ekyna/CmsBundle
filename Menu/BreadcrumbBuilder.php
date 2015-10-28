@@ -3,19 +3,18 @@
 namespace Ekyna\Bundle\CmsBundle\Menu;
 
 use Doctrine\ORM\Query\Expr;
-use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
-use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
+use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
 use Knp\Menu\FactoryInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Class MenuBuilder
+ * Class BreadcrumbBuilder
  * @package Ekyna\Bundle\CmsBundle\Menu
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class MenuBuilder
+class BreadcrumbBuilder
 {
     /**
      * @var FactoryInterface
@@ -28,9 +27,9 @@ class MenuBuilder
     protected $router;
 
     /**
-     * @var PageRepository
+     * @var PageHelper
      */
-    protected $pageRepository;
+    protected $pageHelper;
 
     /**
      * @var LocaleProviderInterface
@@ -38,14 +37,9 @@ class MenuBuilder
     protected $localeProvider;
 
     /**
-     * @var RequestStack
+     * @var TagManager
      */
-    protected $requestStack;
-
-    /**
-     * @var string
-     */
-    protected $homeRouteName;
+    protected $tagManager;
 
     /**
      * @var \Knp\Menu\ItemInterface
@@ -58,25 +52,22 @@ class MenuBuilder
      * 
      * @param FactoryInterface        $factory
      * @param RouterInterface         $router
-     * @param PageRepository          $pageRepository
+     * @param PageHelper              $pageHelper
      * @param LocaleProviderInterface $localeProvider
-     * @param RequestStack            $requestStack
-     * @param string                  $homeRouteName
+     * @param TagManager              $tagManager
      */
     public function __construct(
         FactoryInterface        $factory,
         RouterInterface         $router,
-        PageRepository          $pageRepository,
+        PageHelper              $pageHelper,
         LocaleProviderInterface $localeProvider,
-        RequestStack            $requestStack,
-        $homeRouteName        = 'home'
+        TagManager              $tagManager
     ) {
         $this->factory         = $factory;
         $this->router          = $router;
-        $this->pageRepository  = $pageRepository;
+        $this->pageHelper      = $pageHelper;
         $this->localeProvider  = $localeProvider;
-        $this->requestStack    = $requestStack;
-        $this->homeRouteName   = $homeRouteName;
+        $this->tagManager      = $tagManager;
     }
 
     /**
@@ -113,34 +104,32 @@ class MenuBuilder
             $this->createBreadcrumbRoot();
 
             // Retrieve the current page.
-            $currentPage = null;
-            if (null !== $request = $this->requestStack->getCurrentRequest()) {
-                $currentPage = $this->pageRepository->findOneByRequest($request);
+            $currentPage = $this->pageHelper->getCurrent();
 
-                // If not found look for a parent
-                if (null === $currentPage) {
-                    // TODO create a route finder ? (same in AdminBundle ResourceHelper)
-                    $routeName = $request->attributes->get('_route');
-                    $i18nRouterClass = 'JMS\I18nRoutingBundle\Router\I18nRouterInterface';
-                    if (interface_exists($i18nRouterClass) && $this->router instanceof $i18nRouterClass) {
-                        $route = $this->router->getOriginalRouteCollection()->get($routeName);
-                    } else {
-                        $route = $this->router->getRouteCollection()->get($routeName);
-                    }
-                    if (null !== $route) {
-                        $cmsOptions = $route->getOption('_cms');
-                        if (null !== $cmsOptions && array_key_exists('parent', $cmsOptions) && 0 < strlen($cmsOptions['parent'])) {
-                            $currentPage = $this->pageRepository->findOneByRoute($cmsOptions['parent']);
-                        }
+            // If not found look for a parent
+            if (null === $currentPage && null !== $request = $this->pageHelper->getRequest()) {
+                // TODO create a route finder ? (same in AdminBundle ResourceHelper)
+                $routeName = $request->attributes->get('_route');
+                $i18nRouterClass = 'JMS\I18nRoutingBundle\Router\I18nRouterInterface';
+                if (interface_exists($i18nRouterClass) && $this->router instanceof $i18nRouterClass) {
+                    $route = $this->router->getOriginalRouteCollection()->get($routeName);
+                } else {
+                    $route = $this->router->getRouteCollection()->get($routeName);
+                }
+                if (null !== $route) {
+                    $cmsOptions = $route->getOption('_cms');
+                    if (null !== $cmsOptions && array_key_exists('parent', $cmsOptions) && 0 < strlen($cmsOptions['parent'])) {
+                        $currentPage = $this->pageHelper->findByRoute($cmsOptions['parent']);
                     }
                 }
             }
 
             // If found, build the breadcrumb
             if (null !== $currentPage) {
-                $qb = $this->pageRepository->createQueryBuilder('p');
+                $repository = $this->pageHelper->getPageRepository();
+                $qb = $repository->createQueryBuilder('p');
                 $qb
-                    ->select('p.id, p.route, p.dynamicPath, t.title')
+                    ->select('p.id, p.route, p.dynamicPath, t.breadcrumb')
                     ->join('p.translations', 't', Expr\Join::WITH, $qb->expr()->eq('t.locale',
                         $qb->expr()->literal($this->localeProvider->getCurrentLocale())
                     ))
@@ -151,6 +140,7 @@ class MenuBuilder
                 $pages = $qb->getQuery()->getArrayResult();
 
                 // Fill the menu
+                $tagPrefix = call_user_func($repository->getClassName().'::getEntityTagPrefix');
                 foreach ($pages as $page) {
                     if ($page['dynamicPath']) {
                         $params = array('uri' => null);
@@ -159,8 +149,9 @@ class MenuBuilder
                     }
                     $this->breadcrumb
                         ->addChild('page-'.$page['id'], $params)
-                        ->setLabel($page['title'])
+                        ->setLabel($page['breadcrumb'])
                     ;
+                    $this->tagManager->addTags(sprintf('%s[id:%s]', $tagPrefix, $page['id']));
                 }
             }
         }
@@ -174,7 +165,7 @@ class MenuBuilder
     private function createBreadcrumbRoot()
     {
         if (null === $this->breadcrumb) {
-            if (null === $home = $this->pageRepository->findOneByRoute($this->homeRouteName)) {
+            if (null === $home = $this->pageHelper->getHomePage()) {
                 throw new \RuntimeException('Home page not found.');
             }
             $this->breadcrumb = $this->factory->createItem('root', array(
@@ -182,6 +173,7 @@ class MenuBuilder
                     'class' => 'breadcrumb hidden-xs'
                 )
             ));
+            $this->tagManager->addTags($home->getEntityTag());
         }
     }
 }

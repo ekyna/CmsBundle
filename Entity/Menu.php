@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
 use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
+use Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 
@@ -13,7 +14,7 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  *
- * @method \Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface translate($locale = null, $create = false)
+ * @method MenuTranslationInterface translate($locale = null, $create = false)
  */
 class Menu extends AbstractTranslatable implements MenuInterface
 {
@@ -85,6 +86,11 @@ class Menu extends AbstractTranslatable implements MenuInterface
     protected $locked;
 
     /**
+     * @var boolean
+     */
+    protected $enabled;
+
+    /**
      * @var array
      */
     protected $options;
@@ -102,10 +108,11 @@ class Menu extends AbstractTranslatable implements MenuInterface
     {
         parent::__construct();
 
-        $this->children = new ArrayCollection();
+        $this->children   = new ArrayCollection();
         $this->parameters = [];
         $this->attributes = [];
-        $this->locked = false;
+        $this->locked     = false;
+        $this->enabled    = true;
     }
 
     /**
@@ -315,7 +322,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
      */
     public function setPath($path)
     {
-        $this->path = $path;
+        $this->translate()->setPath($path);
         return $this;
     }
 
@@ -393,6 +400,23 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function getLocked()
     {
         return $this->locked;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEnabled()
+    {
+        return $this->enabled;
     }
 
     /**

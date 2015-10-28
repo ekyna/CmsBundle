@@ -26,9 +26,13 @@ class PageType extends ResourceTableType
                     'pageId' => 'id'
                 ),
             ))
-            /*->addColumn('seo.title', 'text', array(
-                'label' => 'ekyna_core.field.title',
-            ))*/
+            ->addColumn('enabled', 'boolean', array(
+                'disable_property_path' => 'static',
+                'label' => 'ekyna_core.field.enabled',
+                'route_name' => 'ekyna_cms_page_admin_toggle',
+                'route_parameters' => array('field' => 'enabled'),
+                'route_parameters_map' => array('pageId' => 'id'),
+            ))
             ->addColumn('actions', 'admin_nested_actions', array(
                 'disable_property_path' => 'locked',
                 'new_child_route' => 'ekyna_cms_page_admin_new_child',
@@ -73,11 +77,7 @@ class PageType extends ResourceTableType
 
         $resolver->setDefaults(array(
             'default_sorts' => array('left asc'),
-            'max_per_page'  => 100,
-            /*'customize_qb' => function(QueryBuilder $qb, $alias) {
-                $qb->select(array($alias, 's'))
-                    ->join($alias.'.seo', 's');
-            },*/
+            'max_per_page'  => 200,
         ));
     }
 

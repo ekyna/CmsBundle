@@ -195,6 +195,7 @@ class Configuration implements ConfigurationInterface
                                 ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\MenuType')->end()
                                 ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\MenuType')->end()
                                 ->scalarNode('parent')->end()
+                                ->scalarNode('event')->defaultValue('Ekyna\Bundle\CmsBundle\Event\MenuEvent')->end()
                                 ->arrayNode('translation')
                                     ->addDefaultsIfNotSet()
                                     ->children()

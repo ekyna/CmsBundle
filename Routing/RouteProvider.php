@@ -78,16 +78,15 @@ class RouteProvider implements RouteProviderInterface
 
         // Fetch pages by IDs
         $qb = $this->pageRepository->createQueryBuilder('p');
-        $qb
+        $results = $qb
             ->select('p.route, p.controller, t.path, t.locale')
             ->join('p.translations', 't')
             ->andWhere($qb->expr()->eq('p.static', 0))
             ->andWhere($qb->expr()->in('p.id', $ids))
-        ;
-        $results = $qb
             ->getQuery()
             ->getArrayResult()
         ;
+
         $routes =  $this->transformResultsToRoutes($results);
 
         // Build collection
@@ -120,11 +119,7 @@ class RouteProvider implements RouteProviderInterface
             $qb->andWhere($qb->expr()->eq('p.route', $qb->expr()->literal($names)));
         }
 
-        $results = $qb
-            ->getQuery()
-            // TODO cache
-            ->getArrayResult()
-        ;
+        $results = $qb->getQuery()->getArrayResult();
 
         return $this->transformResultsToRoutes($results);
     }
@@ -140,22 +135,18 @@ class RouteProvider implements RouteProviderInterface
     public function getRouteByName($name, $parameters = array())
     {
         $qb = $this->pageRepository->createQueryBuilder('p');
-        $qb
+        $results = $qb
             ->select('p.route, p.controller, t.path, t.locale')
             ->join('p.translations', 't')
             ->andWhere($qb->expr()->eq('p.static', 0))
             ->andWhere($qb->expr()->eq('p.route', $qb->expr()->literal($name)))
-        ;
-
-        $results = $qb
             ->getQuery()
-            // TODO cache
             ->getArrayResult()
         ;
 
         $routes = $this->transformResultsToRoutes($results);
         if (count($routes) == 1) {
-            return $routes[0];
+            return current($routes);
         }
 
         return null;

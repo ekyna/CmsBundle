@@ -51,6 +51,14 @@ ekyna_cms_menu_admin_move_down:
         _method: GET
         menuId:  \d+
 
+ekyna_cms_menu_admin_toggle:
+    path: /{menuId}/toggle/{field}
+    defaults: { _controller: "ekyna_cms.menu.controller:toggleAction", field: "enabled" }
+    requirements:
+        _method: GET
+        menuId:  \d+
+        field:  \w+
+
 ekyna_cms_menu_admin_remove:
     path: /{menuId}/remove
     defaults: { _controller: "ekyna_cms.menu.controller:removeAction" }

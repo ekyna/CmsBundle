@@ -24,48 +24,46 @@ class SeoType extends ResourceFormType
             ->add('translations', 'a2lix_translationsForms', array(
                 'form_type' => new SeoTranslationType(),
                 'label'     => false,
-                'attr' => array(
+                'attr'      => array(
                     'widget_col' => 12,
                 ),
-            ))
-        ;
+            ));
 
         if ($options['advanced']) {
             $builder
                 ->add('changefreq', 'choice', array(
-                    'label' => 'ekyna_core.field.changefreq',
-                    'choices' => array(
-                        'hourly' => 'ekyna_core.changefreq.hourly',
+                    'label'        => 'ekyna_core.field.changefreq',
+                    'admin_helper' => 'CMS_SEO_CHANGEFREQ',
+                    'choices'      => array(
+                        'hourly'  => 'ekyna_core.changefreq.hourly',
                         'monthly' => 'ekyna_core.changefreq.monthly',
-                        'yearly' => 'ekyna_core.changefreq.yearly',
+                        'yearly'  => 'ekyna_core.changefreq.yearly',
                     ),
-                    'required' => true,
-                    'admin_helper' => 'SEO_CHANGEFREQ',
+                    'required'     => true,
                 ))
                 ->add('priority', 'number', array(
-                    'label' => 'ekyna_core.field.priority',
-                    'precision' => 1,
-                    'required' => true,
-                    'admin_helper' => 'SEO_PRIORITY',
+                    'label'        => 'ekyna_core.field.priority',
+                    'admin_helper' => 'CMS_SEO_PRIORITY',
+                    'precision'    => 1,
+                    'required'     => true,
                 ))
                 ->add('follow', 'checkbox', array(
-                    'label' => 'ekyna_core.field.follow',
-                    'required' => false,
-                    'attr' => array('align_with_widget' => true),
-                    'admin_helper' => 'SEO_FOLLOW',
+                    'label'        => 'ekyna_core.field.follow',
+                    'admin_helper' => 'CMS_SEO_FOLLOW',
+                    'required'     => false,
+                    'attr'         => array('align_with_widget' => true),
                 ))
                 ->add('index', 'checkbox', array(
-                    'label' => 'ekyna_core.field.index',
-                    'required' => false,
-                    'attr' => array('align_with_widget' => true),
-                    'admin_helper' => 'SEO_INDEX',
+                    'label'        => 'ekyna_core.field.index',
+                    'admin_helper' => 'CMS_SEO_INDEX',
+                    'required'     => false,
+                    'attr'         => array('align_with_widget' => true),
                 ))
                 ->add('canonical', 'url', array(
-                    'label' => 'ekyna_core.field.canonical_url',
-                    'required' => false,
-                    'admin_helper' => 'SEO_CANONICAL',
-                ))
-            ;
+                    'admin_helper' => 'CMS_SEO_CANONICAL',
+                    'label'        => 'ekyna_core.field.canonical_url',
+                    'required'     => false,
+                ));
         }
     }
 
@@ -86,15 +84,14 @@ class SeoType extends ResourceFormType
 
         $resolver
             ->setDefaults(array(
-                'label' => false,
-                'attr' => array('widget_col' => 12),
-                'advanced' => true,
+                'label'             => false,
+                'attr'              => array('widget_col' => 12),
+                'advanced'          => true,
                 'validation_groups' => array($this->dataClass),
             ))
             ->setAllowedTypes(array(
                 'advanced' => 'bool',
-            ))
-        ;
+            ));
 
     }
 
@@ -103,6 +100,6 @@ class SeoType extends ResourceFormType
      */
     public function getName()
     {
-    	return 'ekyna_cms_seo';
+        return 'ekyna_cms_seo';
     }
 }

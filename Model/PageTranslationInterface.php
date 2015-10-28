@@ -34,6 +34,21 @@ interface PageTranslationInterface extends TranslationInterface
     public function getTitle();
 
     /**
+     * Sets the breadcrumb.
+     *
+     * @param string $breadcrumb
+     * @return PageTranslationInterface|$this
+     */
+    public function setBreadcrumb($breadcrumb);
+
+    /**
+     * Returns the breadcrumb.
+     *
+     * @return string
+     */
+    public function getBreadcrumb();
+
+    /**
      * Sets the html.
      *
      * @param string $html

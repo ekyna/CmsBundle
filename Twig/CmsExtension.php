@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Twig;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Entity\Menu;
 use Ekyna\Bundle\CmsBundle\Entity\Seo;
+use Ekyna\Bundle\CmsBundle\Entity\SeoRepository;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Menu\MenuProvider;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
@@ -50,6 +51,11 @@ class CmsExtension extends \Twig_Extension
     protected $pageHelper;
 
     /**
+     * @var SeoRepository
+     */
+    protected $seoRepository;
+
+    /**
      * @var TagManager
      */
     protected $tagManager;
@@ -78,26 +84,29 @@ class CmsExtension extends \Twig_Extension
      * @param MenuProvider             $menuProvider
      * @param Helper                   $menuHelper
      * @param PageHelper               $pageHelper
+     * @param SeoRepository            $seoRepository
      * @param TagManager               $tagManager
      * @param FragmentHandler          $fragmentHandler
      * @param array                    $config
      */
     public function __construct(
         SettingsManagerInterface $settings,
-        Editor $editor,
-        MenuProvider $menuProvider,
-        Helper $menuHelper,
-        PageHelper $pageHelper,
-        TagManager $tagManager,
-        FragmentHandler $fragmentHandler,
+        Editor                   $editor,
+        MenuProvider             $menuProvider,
+        Helper                   $menuHelper,
+        PageHelper               $pageHelper,
+        SeoRepository            $seoRepository,
+        TagManager               $tagManager,
+        FragmentHandler          $fragmentHandler,
         array $config = array()
     ) {
-        $this->settings = $settings;
-        $this->editor = $editor;
-        $this->menuProvider = $menuProvider;
-        $this->menuHelper = $menuHelper;
-        $this->pageHelper = $pageHelper;
-        $this->tagManager = $tagManager;
+        $this->settings        = $settings;
+        $this->editor          = $editor;
+        $this->menuProvider    = $menuProvider;
+        $this->menuHelper      = $menuHelper;
+        $this->pageHelper      = $pageHelper;
+        $this->tagManager      = $tagManager;
+        $this->seoRepository   = $seoRepository;
         $this->fragmentHandler = $fragmentHandler;
 
         $this->config = array_merge(array(
@@ -129,7 +138,7 @@ class CmsExtension extends \Twig_Extension
     public function getGlobals()
     {
         return array(
-            'ekyna_cms_home_route' => $this->config['home_route'],
+            'ekyna_cms_home_route'       => $this->config['home_route'],
             'ekyna_cms_seo_title_append' => $this->config['seo']['title_append'],
         );
     }
@@ -189,7 +198,8 @@ class CmsExtension extends \Twig_Extension
             if (null !== $page = $this->getPage()) {
                 $seo = $page->getSeo();
             } else {
-                $seo = new Seo();
+                /** @var SeoInterface $seo */
+                $seo = $this->seoRepository->createNew();
                 $seo
                     ->setTitle($this->settings->getParameter('seo.title'))
                     ->setDescription($this->settings->getParameter('seo.description'))

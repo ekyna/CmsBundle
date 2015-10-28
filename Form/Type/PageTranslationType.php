@@ -22,12 +22,15 @@ class PageTranslationType extends AbstractType
     {
         $builder
             ->add('title', 'text', array(
-                'label' => 'ekyna_core.field.title',
-                'admin_helper' => 'PAGE_TITLE',
+                'label'        => 'ekyna_core.field.title',
+                'admin_helper' => 'CMS_PAGE_TITLE',
             ))
-        ;
+            ->add('breadcrumb', 'text', array(
+                'label'        => 'ekyna_core.field.breadcrumb',
+                'admin_helper' => 'CMS_PAGE_BREADCRUMB',
+            ));
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             $translation = $event->getData();
             if (null === $translation) {
@@ -35,18 +38,18 @@ class PageTranslationType extends AbstractType
                 $page = $form->getParent()->getParent()->getData();
                 if (null !== $page && null !== $parent = $page->getParent()) {
                     $form->add('path', 'text', array(
-                        'label' => 'ekyna_core.field.url',
-                        'admin_helper' => 'PAGE_PATH',
-                        'required' => false,
-                        'attr' => array('input_group' => array(
-                            'prepend' => rtrim($parent->translate($form->getName())->getPath(), '/').'/')
+                        'label'        => 'ekyna_core.field.url',
+                        'admin_helper' => 'CMS_PAGE_PATH',
+                        'required'     => false,
+                        'attr'         => array('input_group' => array(
+                            'prepend' => rtrim($parent->translate($form->getName())->getPath(), '/') . '/')
                         ),
                     ));
                 } else {
                     $form->add('path', 'text', array(
-                        'label' => 'ekyna_core.field.url',
-                        'admin_helper' => 'PAGE_PATH',
-                        'required' => false,
+                        'label'        => 'ekyna_core.field.url',
+                        'admin_helper' => 'CMS_PAGE_PATH',
+                        'required'     => false,
                     ));
                 }
             } else {
@@ -54,14 +57,16 @@ class PageTranslationType extends AbstractType
                 if (null !== $page = $translation->getTranslatable()) {
                     if (!$page->getAdvanced()) {
                         $form->add('html', 'tinymce', array(
-                            'label' => 'ekyna_core.field.content',
-                            'theme' => 'advanced',
+                            'label'        => 'ekyna_core.field.content',
+                            'admin_helper' => 'CMS_PAGE_CONTENT',
+                            'theme'        => 'advanced',
                         ));
                     }
                 }
                 $form->add('path', 'text', array(
-                    'label' => 'ekyna_core.field.url',
-                    'disabled' => true,
+                    'label'        => 'ekyna_core.field.url',
+                    'admin_helper' => 'CMS_PAGE_PATH',
+                    'disabled'     => true,
                 ));
             }
         });
@@ -75,8 +80,7 @@ class PageTranslationType extends AbstractType
         $resolver
             ->setDefaults(array(
                 'data_class' => 'Ekyna\Bundle\CmsBundle\Entity\PageTranslation',
-            ))
-        ;
+            ));
     }
 
     /**

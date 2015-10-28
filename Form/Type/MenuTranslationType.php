@@ -20,10 +20,10 @@ class MenuTranslationType extends AbstractType
     {
         $builder
             ->add('title', 'text', array(
-                'label' => 'ekyna_core.field.title',
-                'required' => true,
-            ))
-        ;
+                'label'        => 'ekyna_core.field.title',
+                'admin_helper' => 'CMS_MENU_TITLE',
+                'required'     => true,
+            ));
     }
 
     /**
@@ -34,8 +34,7 @@ class MenuTranslationType extends AbstractType
         $resolver
             ->setDefaults(array(
                 'data_class' => 'Ekyna\Bundle\CmsBundle\Entity\MenuTranslation',
-            ))
-        ;
+            ));
     }
 
     /**

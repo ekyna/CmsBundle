@@ -31,6 +31,13 @@ class MenuType extends ResourceTableType
                 'label' => 'ekyna_core.field.name',
                 'sortable' => true,
             ))
+            ->addColumn('enabled', 'boolean', array(
+                'disable_property_path' => 'locked',
+                'label' => 'ekyna_core.field.enabled',
+                'route_name' => 'ekyna_cms_menu_admin_toggle',
+                'route_parameters' => array('field' => 'enabled'),
+                'route_parameters_map' => array('menuId' => 'id'),
+            ))
             ->addColumn('actions', 'admin_nested_actions', array(
                 'disable_property_path' => 'locked',
                 'new_child_route' => 'ekyna_cms_menu_admin_new_child',
@@ -75,7 +82,7 @@ class MenuType extends ResourceTableType
 
         $resolver->setDefaults(array(
             'default_sorts' => array('root asc', 'left asc'),
-            'max_per_page'  => 100,
+            'max_per_page'  => 200,
         ));
     }
 

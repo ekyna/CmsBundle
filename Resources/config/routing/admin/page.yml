@@ -61,7 +61,7 @@ ekyna_cms_page_admin_move_down:
 
 ekyna_cms_page_admin_toggle:
     path: /{pageId}/toggle/{field}
-    defaults: { _controller: "ekyna_cms.page.controller:toggleAction", field: "menu" }
+    defaults: { _controller: "ekyna_cms.page.controller:toggleAction", field: "enabled" }
     requirements:
         _method: GET
         pageId:  \d+

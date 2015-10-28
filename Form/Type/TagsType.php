@@ -34,18 +34,17 @@ class TagsType extends AbstractType
     {
         $resolver
             ->setDefaults(array(
-                'label' => 'ekyna_core.field.tags',
-                'class' => $this->tagClass,
-                'multiple' => true,
-                'property' => 'name',
-                'allow_new' => true,
-                'allow_list' => true,
+                'label'       => 'ekyna_core.field.tags',
+                'class'       => $this->tagClass,
+                'multiple'    => true,
+                'property'    => 'name',
+                'allow_new'   => true,
+                'allow_list'  => true,
                 'empty_value' => 'ekyna_core.field.tags',
-                'attr' => array(
+                'attr'        => array(
                     'placeholder' => 'ekyna_core.field.tags',
                 ),
-            ))
-        ;
+            ));
     }
 
     /**

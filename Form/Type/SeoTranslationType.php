@@ -20,16 +20,15 @@ class SeoTranslationType extends AbstractType
     {
         $builder
             ->add('title', 'text', array(
-                'label' => 'ekyna_core.field.title',
-                'required' => true,
-                'admin_helper' => 'SEO_TITLE',
+                'label'        => 'ekyna_core.field.title',
+                'required'     => true,
+                'admin_helper' => 'CMS_SEO_TITLE',
             ))
             ->add('description', 'textarea', array(
-                'label' => 'ekyna_core.field.description',
-                'required' => true,
-                'admin_helper' => 'SEO_DESCRIPTION',
-            ))
-        ;
+                'label'        => 'ekyna_core.field.description',
+                'required'     => true,
+                'admin_helper' => 'CMS_SEO_DESCRIPTION',
+            ));
     }
 
     /**
@@ -40,8 +39,7 @@ class SeoTranslationType extends AbstractType
         $resolver
             ->setDefaults(array(
                 'data_class' => 'Ekyna\Bundle\CmsBundle\Entity\SeoTranslation',
-            ))
-        ;
+            ));
     }
 
     /**

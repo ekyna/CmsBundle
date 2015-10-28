@@ -36,6 +36,7 @@
 
         <field name="attributes" type="array" column="attributes" />
         <field name="locked" type="boolean" column="locked" />
+        <field name="enabled" column="enabled" type="boolean" />
 
         <field name="left" column="lft" type="integer">
             <gedmo:tree-left />

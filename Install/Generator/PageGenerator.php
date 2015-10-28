@@ -406,6 +406,7 @@ class PageGenerator
                 $pageTranslation = $page->translate($locale, true);
                 $pageTranslation
                     ->setTitle($title)
+                    ->setBreadcrumb($title)
                     ->setHtml('<p></p>') // TODO default content
                     ->setPath($path)
                 ;
