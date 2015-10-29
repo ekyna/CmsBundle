@@ -32,6 +32,8 @@
         <field name="controller" column="controller" type="string" length="64" nullable="true" />
         <field name="advanced" column="advanced" type="boolean" />
         <field name="dynamicPath" column="dynamic_path" type="boolean" />
+        <field name="enabled" column="enabled" type="boolean" />
+
         <field name="left" column="lft" type="integer">
             <gedmo:tree-left />
         </field>

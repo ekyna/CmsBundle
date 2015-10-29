@@ -159,6 +159,7 @@ class MenuProvider implements MenuProviderInterface
                 ->join('m.translations', 't', Expr\Join::WITH, $qb->expr()->eq('t.locale',
                     $qb->expr()->literal($this->localeProvider->getCurrentLocale())
                 ))
+                ->andWhere($qb->expr()->eq('m.enabled', true))
                 ->orderBy('m.left', 'asc')
             ;
             $this->menus = $qb->getQuery()->getArrayResult();

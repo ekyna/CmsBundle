@@ -19,50 +19,57 @@ class MenuType extends ResourceTableType
     public function buildTable(TableBuilderInterface $builder, array $options)
     {
         $builder
-            ->addColumn('title', 'nested_anchor', [
+            ->addColumn('title', 'nested_anchor', array(
                 'label' => 'ekyna_core.field.title',
                 'sortable' => true,
                 'route_name' => 'ekyna_cms_menu_admin_show',
-                'route_parameters_map' => [
+                'route_parameters_map' => array(
                     'menuId' => 'id'
-                ],
-            ])
-            ->addColumn('name', 'text', [
+                ),
+            ))
+            ->addColumn('name', 'text', array(
                 'label' => 'ekyna_core.field.name',
                 'sortable' => true,
-            ])
-            ->addColumn('actions', 'admin_nested_actions', [
+            ))
+            ->addColumn('enabled', 'boolean', array(
+                'disable_property_path' => 'locked',
+                'label' => 'ekyna_core.field.enabled',
+                'route_name' => 'ekyna_cms_menu_admin_toggle',
+                'route_parameters' => array('field' => 'enabled'),
+                'route_parameters_map' => array('menuId' => 'id'),
+            ))
+            ->addColumn('actions', 'admin_nested_actions', array(
                 'disable_property_path' => 'locked',
                 'new_child_route' => 'ekyna_cms_menu_admin_new_child',
                 'move_up_route' => 'ekyna_cms_menu_admin_move_up',
                 'move_down_route' => 'ekyna_cms_menu_admin_move_down',
-                'routes_parameters_map' => [
+                'routes_parameters_map' => array(
                     'menuId' => 'id'
-                ],
-                'buttons' => [
-                    [
+                ),
+                'buttons' => array(
+                    array(
                         'label' => 'ekyna_core.button.edit',
                         'icon' => 'pencil',
                         'class' => 'warning',
                         'route_name' => 'ekyna_cms_menu_admin_edit',
-                        'route_parameters_map' => [
+                        'route_parameters_map' => array(
                             'menuId' => 'id'
-                        ],
+                        ),
                         'permission' => 'edit',
-                    ],
-                    [
+                    ),
+                    array(
                         'label' => 'ekyna_core.button.remove',
                         'icon' => 'trash',
                         'class' => 'danger',
                         'route_name' => 'ekyna_cms_menu_admin_remove',
-                        'route_parameters_map' => [
+                        'route_parameters_map' => array(
                             'menuId' => 'id'
-                        ],
+                        ),
                         'disable_property_path' => 'locked',
                         'permission' => 'delete',
-                    ],
-                ],
-            ])
+                    ),
+                ),
+            ))
         ;
     }
 
@@ -73,10 +80,10 @@ class MenuType extends ResourceTableType
     {
         parent::configureOptions($resolver);
 
-        $resolver->setDefaults([
-            'default_sorts' => ['root asc', 'left asc'],
-            'max_per_page'  => 100,
-        ]);
+        $resolver->setDefaults(array(
+            'default_sorts' => array('root asc', 'left asc'),
+            'max_per_page'  => 200,
+        ));
     }
 
     /**

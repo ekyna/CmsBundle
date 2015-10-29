@@ -6,7 +6,9 @@
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Ekyna\Bundle\CmsBundle\Entity\Content" table="cms_content">
+    <entity name="Ekyna\Bundle\CmsBundle\Entity\Content"
+            repository-class="Ekyna\Bundle\CmsBundle\Entity\ContentRepository"
+            table="cms_content">
 
 	    <id name="id" type="integer" column="id">
 	        <generator strategy="AUTO" />

@@ -4,7 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Helper;
 
 use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class PageHelper
@@ -14,14 +14,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class PageHelper
 {
     /**
-     * @var RequestStack
+     * @var Request
      */
-    private $requestStack;
+    private $request;
 
     /**
      * @var PageRepository
      */
-    private $repository;
+    private $pageRepository;
 
     /**
      * @var string
@@ -42,15 +42,53 @@ class PageHelper
     /**
      * Constructor.
      *
-     * @param RequestStack   $requestStack
-     * @param PageRepository $repository
-     * @param string         $homeRoute
+     * @param PageRepository           $pageRepository
+     * @param string                   $homeRoute
      */
-    public function __construct(RequestStack $requestStack, PageRepository $repository, $homeRoute)
+    public function __construct(
+        PageRepository           $pageRepository,
+        $homeRoute
+    ) {
+        $this->pageRepository  = $pageRepository;
+        $this->homeRoute       = $homeRoute;
+    }
+
+    /**
+     * Initializes the helper.
+     *
+     * @param Request $request
+     * @return PageInterface|null
+     */
+    public function init(Request $request)
     {
-        $this->requestStack = $requestStack;
-        $this->repository   = $repository;
-        $this->homeRoute    = $homeRoute;
+        $this->request = $request;
+
+        return $this->getCurrent();
+    }
+
+    /**
+     * Finds the page by route.
+     *
+     * @param Request $request
+     * @return PageInterface|null
+     */
+    public function findByRequest(Request $request)
+    {
+        if (null !== $route = $request->attributes->get('_route', null)) {
+            return $this->findByRoute($route);
+        }
+        return null;
+    }
+
+    /**
+     * Finds the page by route.
+     *
+     * @param string $route
+     * @return PageInterface|null
+     */
+    public function findByRoute($route)
+    {
+        return $this->pageRepository->findOneByRoute($route);
     }
 
     /**
@@ -61,9 +99,12 @@ class PageHelper
     public function getCurrent()
     {
         if (false === $this->currentPage) {
+            if (null === $this->request) {
+                throw new \RuntimeException('The page helper must be initialized first.');
+            }
             $this->currentPage = null;
-            if (null !== $request = $this->requestStack->getCurrentRequest()) {
-                $this->currentPage = $this->repository->findOneByRequest($request);
+            if (null !== $route = $this->request->attributes->get('_route', null)) {
+                $this->currentPage = $this->findByRoute($route);
             }
         }
         return $this->currentPage;
@@ -77,8 +118,28 @@ class PageHelper
     public function getHomePage()
     {
         if (false === $this->homePage) {
-            $this->homePage = $this->repository->findOneByRoute($this->homeRoute);
+            $this->homePage = $this->findByRoute($this->homeRoute);
         }
         return $this->homePage;
+    }
+
+    /**
+     * Returns the request.
+     *
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Returns the page repository.
+     *
+     * @return PageRepository
+     */
+    public function getPageRepository()
+    {
+        return $this->pageRepository;
     }
 }

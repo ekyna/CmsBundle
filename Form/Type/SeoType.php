@@ -21,51 +21,50 @@ class SeoType extends ResourceFormType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('translations', 'a2lix_translationsForms', [
+            ->add('translations', 'a2lix_translationsForms', array(
                 'form_type' => new SeoTranslationType(),
                 'label'     => false,
-                'attr' => [
+                'attr'      => array(
                     'widget_col' => 12,
-                ],
-            ])
+                ),
+            ))
         ;
 
         if ($options['advanced']) {
             $builder
-                ->add('changefreq', 'choice', [
-                    'label' => 'ekyna_core.field.changefreq',
-                    'choices' => [
-                        'hourly' => 'ekyna_core.changefreq.hourly',
+                ->add('changefreq', 'choice', array(
+                    'label'        => 'ekyna_core.field.changefreq',
+                    'admin_helper' => 'CMS_SEO_CHANGEFREQ',
+                    'choices'      => array(
+                        'hourly'  => 'ekyna_core.changefreq.hourly',
                         'monthly' => 'ekyna_core.changefreq.monthly',
-                        'yearly' => 'ekyna_core.changefreq.yearly',
-                    ],
-                    'required' => true,
-                    'admin_helper' => 'SEO_CHANGEFREQ',
-                ])
-                ->add('priority', 'number', [
-                    'label' => 'ekyna_core.field.priority',
-                    'precision' => 1,
-                    'required' => true,
-                    'admin_helper' => 'SEO_PRIORITY',
-                ])
-                ->add('follow', 'checkbox', [
-                    'label' => 'ekyna_core.field.follow',
-                    'required' => false,
-                    'attr' => ['align_with_widget' => true],
-                    'admin_helper' => 'SEO_FOLLOW',
-                ])
-                ->add('index', 'checkbox', [
-                    'label' => 'ekyna_core.field.index',
-                    'required' => false,
-                    'attr' => ['align_with_widget' => true],
-                    'admin_helper' => 'SEO_INDEX',
-                ])
-                ->add('canonical', 'url', [
-                    'label' => 'ekyna_core.field.canonical_url',
-                    'required' => false,
-                    'admin_helper' => 'SEO_CANONICAL',
-                ])
-            ;
+                        'yearly'  => 'ekyna_core.changefreq.yearly',
+                    ),
+                    'required'     => true,
+                ))
+                ->add('priority', 'number', array(
+                    'label'        => 'ekyna_core.field.priority',
+                    'admin_helper' => 'CMS_SEO_PRIORITY',
+                    'precision'    => 1,
+                    'required'     => true,
+                ))
+                ->add('follow', 'checkbox', array(
+                    'label'        => 'ekyna_core.field.follow',
+                    'admin_helper' => 'CMS_SEO_FOLLOW',
+                    'required'     => false,
+                    'attr'         => array('align_with_widget' => true),
+                ))
+                ->add('index', 'checkbox', array(
+                    'label'        => 'ekyna_core.field.index',
+                    'admin_helper' => 'CMS_SEO_INDEX',
+                    'required'     => false,
+                    'attr'         => array('align_with_widget' => true),
+                ))
+                ->add('canonical', 'url', array(
+                    'admin_helper' => 'CMS_SEO_CANONICAL',
+                    'label'        => 'ekyna_core.field.canonical_url',
+                    'required'     => false,
+                ));
         }
     }
 
@@ -85,14 +84,13 @@ class SeoType extends ResourceFormType
         parent::configureOptions($resolver);
 
         $resolver
-            ->setDefaults([
-                'label' => false,
-                'attr' => ['widget_col' => 12],
-                'advanced' => true,
-                'validation_groups' => [$this->dataClass],
-            ])
-            ->setAllowedTypes('advanced', 'bool')
-        ;
+            ->setDefaults(array(
+                'label'             => false,
+                'attr'              => array('widget_col' => 12),
+                'advanced'          => true,
+                'validation_groups' => array($this->dataClass),
+            ))
+            ->setAllowedTypes('advanced', 'bool');
 
     }
 
@@ -101,6 +99,6 @@ class SeoType extends ResourceFormType
      */
     public function getName()
     {
-    	return 'ekyna_cms_seo';
+        return 'ekyna_cms_seo';
     }
 }

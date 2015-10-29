@@ -86,6 +86,11 @@ class Menu extends AbstractTranslatable implements MenuInterface
     protected $locked;
 
     /**
+     * @var boolean
+     */
+    protected $enabled;
+
+    /**
      * @var array
      */
     protected $options;
@@ -103,10 +108,11 @@ class Menu extends AbstractTranslatable implements MenuInterface
     {
         parent::__construct();
 
-        $this->children = new ArrayCollection();
+        $this->children   = new ArrayCollection();
         $this->parameters = [];
         $this->attributes = [];
-        $this->locked = false;
+        $this->locked     = false;
+        $this->enabled    = true;
     }
 
     /**
@@ -392,6 +398,23 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function getLocked()
     {
         return $this->locked;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEnabled()
+    {
+        return $this->enabled;
     }
 
     /**
