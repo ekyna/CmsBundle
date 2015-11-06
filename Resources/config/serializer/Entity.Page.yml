@@ -4,8 +4,6 @@ Ekyna\Bundle\CmsBundle\Entity\Page:
         id:
             expose: true
             groups: [Search, Default]
-        title:
-            expose: true
         content:
             expose: true
         seo:

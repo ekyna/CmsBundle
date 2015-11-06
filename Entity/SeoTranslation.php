@@ -8,7 +8,7 @@ use Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface;
 /**
  * Class SeoTranslation
  * @package Ekyna\Bundle\CmsBundle\Entity
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class SeoTranslation extends AbstractTranslation implements SeoTranslationInterface
 {
@@ -26,6 +26,7 @@ class SeoTranslation extends AbstractTranslation implements SeoTranslationInterf
      * @var string
      */
     protected $description;
+
 
     /**
      * {@inheritdoc}

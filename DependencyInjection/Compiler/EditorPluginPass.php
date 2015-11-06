@@ -9,10 +9,13 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * Class EditorPluginPass
  * @package Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class EditorPluginPass implements CompilerPassInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('ekyna_cms.editor.plugin_registry')) {
@@ -33,7 +36,7 @@ class EditorPluginPass implements CompilerPassInterface
         }
 
         $mapping = array(
-            'Ekyna\Bundle\CmsBundle\Entity\TinymceBlock' => 'Ekyna\Bundle\CmsBundle\Entity\TinymceBlockTranslation',
+            'Ekyna\Bundle\CmsBundle\Entity\TinymceBlock'            => 'Ekyna\Bundle\CmsBundle\Entity\TinymceBlockTranslation',
             'Ekyna\Bundle\CmsBundle\Entity\TinymceBlockTranslation' => 'Ekyna\Bundle\CmsBundle\Entity\TinymceBlock',
         );
         if ($container->hasParameter('ekyna_admin.translation_mapping')) {

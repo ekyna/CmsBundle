@@ -3,7 +3,9 @@ Ekyna\Bundle\CmsBundle\Entity\Content:
     properties:
         id:
             expose: true
-    virtual_properties:
-        getIndexableContent:
+        blocks:
             expose: true
-            serialized_name: content
+#    virtual_properties:
+#        getIndexableContents:
+#            expose: true
+#            serialized_name: contents

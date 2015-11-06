@@ -113,9 +113,9 @@ interface BlockInterface extends TaggedEntityInterface
     public function isIndexable();
 
     /**
-     * Returns the indexable content.
+     * Returns the indexable contents indexed by locales.
      *
-     * @return string
+     * @return array
      */
-    public function getIndexableContent();
+    public function getIndexableContents();
 }

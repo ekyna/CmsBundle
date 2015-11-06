@@ -87,6 +87,12 @@
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
+        <service id="ekyna_cms.page.elastica_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\PageElasticaSubscriber">
+            <argument id="fos_elastica.object_persister.search.ekyna_cms_page" type="service" />
+            <argument>%ekyna_cms.page.class%</argument>
+            <tag name="doctrine.event_subscriber"/>
+        </service>
+
 
         <!-- Settings Schema -->
         <service id="ekyna_cms.settings.seo" class="Ekyna\Bundle\CmsBundle\Settings\SeoSettingsSchema" public="false">
@@ -146,7 +152,7 @@
 
         <!-- Routing loader -->
         <service id="ekyna_cms.routing_loader" class="Ekyna\Bundle\CmsBundle\Routing\RoutingLoader">
-            <argument>%ekyna_cms.cookie_consent.config%</argument>
+            <argument>%ekyna_cms.page.config%</argument>
             <tag name="routing.loader" />
         </service>
 
@@ -200,6 +206,26 @@
 	        <argument type="service" id="request_stack" />
 	        <tag name="knp_menu.menu" alias="breadcrumb" />
 	    </service>
+
+        <!-- Serializer handlers -->
+        <service id="ekyna_cms.serializer.content_handler" class="Ekyna\Bundle\CmsBundle\Serializer\ContentHandler">
+            <tag name="jms_serializer.subscribing_handler" />
+        </service>
+
+        <!-- Search -->
+        <service id="ekyna_cms.wide_search" class="Ekyna\Bundle\CmsBundle\Search\Wide\Search">
+            <argument type="collection" />
+        </service>
+        <service id="ekyna_cms.search.page"
+                 class="Ekyna\Bundle\CmsBundle\Search\PageRepository"
+                 factory-service="fos_elastica.manager"
+                 factory-method="getRepository">
+            <argument>%ekyna_cms.page.class%</argument>
+            <call method="setLocaleProvider">
+                <argument id="ekyna_core.locale_provider.request" type="service" />
+            </call>
+            <tag name="ekyna_cms.wide_search.provider" />
+        </service>
 
         <!-- Twig extensions -->
         <service id="ekyna_cms.twig.cms_extension" class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">

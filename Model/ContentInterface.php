@@ -55,9 +55,9 @@ interface ContentInterface extends TimestampableInterface, TaggedEntityInterface
     public function getBlocks();
 
     /**
-     * Returns the indexable content.
+     * Returns the indexable contents indexed by locale.
      *
-     * @return string
+     * @return array
      */
-    public function getIndexableContent();
+    public function getIndexableContents();
 }
