@@ -164,6 +164,21 @@ interface PageInterface extends
     public function getTitle();
 
     /**
+     * Set breadcrumb
+     *
+     * @param string $breadcrumb
+     * @return PageInterface|$this
+     */
+    public function setBreadcrumb($breadcrumb);
+
+    /**
+     * Get breadcrumb
+     *
+     * @return string
+     */
+    public function getBreadcrumb();
+
+    /**
      * Set html
      *
      * @param string $html
@@ -283,6 +298,21 @@ interface PageInterface extends
      * @return boolean
      */
     public function getDynamicPath();
+
+    /**
+     * Sets the enabled.
+     *
+     * @param boolean $enabled
+     * @return PageInterface|$this
+     */
+    public function setEnabled($enabled);
+
+    /**
+     * Returns the enabled.
+     *
+     * @return boolean
+     */
+    public function getEnabled();
 
     /**
      * Returns whether the exhibitor should be indexed or not by elasticsearch.

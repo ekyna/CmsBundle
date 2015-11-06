@@ -4,12 +4,9 @@
     {{ cms_metas() }}
 {% endblock metas %}
 
-{% block body %}
+{% block content %}
     <div class="container">
-        {{ cms_flashes() }}
-        {{ cms_breadcrumb() }}
-
         {{ cms_title() }}
         {{ cms_content() }}
     </div>
-{% endblock body %}
+{% endblock content %}

@@ -17,24 +17,38 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
 
     /**
      * Finds the menu by his name, optionally filtered by root ("rootName:menuName" notation).
+     *
      * @param string $name
      * @return \Ekyna\Bundle\CmsBundle\Model\MenuInterface|null
      * @throws \InvalidArgumentException
      */
     public function findOneByName($name)
     {
+        $qb = $this->createQueryBuilder('m');
+
+        $qb->andWhere($qb->expr()->eq('m.name', ':name'));
+        $parameters = array('name' => $name);
+
         if (0 < strpos($name, ':')) {
             list($rootName, $menuName) = explode(':', $name);
+
             /** @var \Ekyna\Bundle\CmsBundle\Model\MenuInterface $root */
             if (null === $root = $this->findOneBy(['name' => $rootName])) {
                 throw new \InvalidArgumentException(sprintf('Root menu "%s" not found.', $rootName));
             }
-            return $this->findOneBy([
+
+            $qb->andWhere($qb->expr()->eq('m.root', ':root'));
+            $parameters = array(
                 'name' => $menuName,
-                'root' => $root->getId(),
-            ]);
+                'root' => $root,
+            );
         }
 
-        return $this->findOneBy(['name' => $name]);
+        return $qb
+            ->getQuery()
+            ->setMaxResults(1)
+            ->setParameters($parameters)
+            ->getOneOrNullResult()
+        ;
     }
 }

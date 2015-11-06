@@ -245,6 +245,21 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
     public function getLocked();
 
     /**
+     * Sets the enabled.
+     *
+     * @param boolean $enabled
+     * @return MenuInterface|$this
+     */
+    public function setEnabled($enabled);
+
+    /**
+     * Returns the enabled.
+     *
+     * @return boolean
+     */
+    public function getEnabled();
+
+    /**
      * Sets the page (non mapped).
      *
      * @param PageInterface $page

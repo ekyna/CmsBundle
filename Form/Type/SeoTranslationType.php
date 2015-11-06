@@ -19,17 +19,16 @@ class SeoTranslationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', 'text', [
-                'label' => 'ekyna_core.field.title',
-                'required' => true,
-                'admin_helper' => 'SEO_TITLE',
-            ])
-            ->add('description', 'textarea', [
-                'label' => 'ekyna_core.field.description',
-                'required' => true,
-                'admin_helper' => 'SEO_DESCRIPTION',
-            ])
-        ;
+            ->add('title', 'text', array(
+                'label'        => 'ekyna_core.field.title',
+                'required'     => true,
+                'admin_helper' => 'CMS_SEO_TITLE',
+            ))
+            ->add('description', 'textarea', array(
+                'label'        => 'ekyna_core.field.description',
+                'required'     => true,
+                'admin_helper' => 'CMS_SEO_DESCRIPTION',
+            ));
     }
 
     /**
@@ -38,9 +37,9 @@ class SeoTranslationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setDefaults([
+            ->setDefaults(array(
                 'data_class' => 'Ekyna\Bundle\CmsBundle\Entity\SeoTranslation',
-            ])
+            ))
         ;
     }
 

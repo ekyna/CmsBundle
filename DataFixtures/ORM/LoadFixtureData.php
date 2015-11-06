@@ -18,9 +18,9 @@ class LoadFixtureData extends Loader implements OrderedFixtureInterface
      */
     protected function getFixtures()
     {
-        // TODO clear image directory
+        return array();
 
-        return [__DIR__.'/fixtures.yml'];
+        //return [__DIR__.'/fixtures.yml'];
     }
 
     /**

@@ -41,9 +41,25 @@
         </service>
 
         <!-- Event listeners -->
-        <service id="ekyna_cms.page.event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\PageEventListener">
+        <service id="ekyna_cms.kernel_event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\KernelEventListener">
+                <argument id="ekyna_cms.helper.page" type="service"/>
+                <argument id="security.context" type="service"/>
+                <argument id="session" type="service"/>
+            <tag name="kernel.event_subscriber" />
+        </service>
+        <service id="ekyna_cms.page_event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\PageEventListener">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="ekyna_core.cache.tag_manager" />
             <argument>%locales%</argument>
+            <argument>%ekyna_cms.page.config%</argument>
+            <argument>%ekyna_cms.menu.class%</argument>
             <argument type="service" id="doctrine.orm.default_result_cache" on-invalid="null" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+        <service id="ekyna_cms.menu_event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\MenuEventListener">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument>%ekyna_cms.menu.class%</argument>
+            <argument>%ekyna_cms.page.class%</argument>
             <tag name="kernel.event_subscriber" />
         </service>
 
@@ -52,8 +68,8 @@
             <tag name="doctrine.orm.entity_listener" />
         </service>
         <service id="ekyna_core.abstract_block.listener" class="Ekyna\Bundle\CmsBundle\Listener\AbstractBlockListener">
-            <argument type="service" id="event_dispatcher" />
-            <tag name="doctrine.orm.entity_listener" />
+            <argument type="service" id="ekyna_core.cache.tag_manager" />
+            <tag name="doctrine.entity_listener" />
         </service>
 
         <!-- Doctrine subscriber -->
@@ -71,6 +87,12 @@
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
+        <service id="ekyna_cms.page.elastica_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\PageElasticaSubscriber">
+            <argument id="fos_elastica.object_persister.search.ekyna_cms_page" type="service" />
+            <argument>%ekyna_cms.page.class%</argument>
+            <tag name="doctrine.event_subscriber"/>
+        </service>
+
 
         <!-- Settings Schema -->
         <service id="ekyna_cms.settings.seo" class="Ekyna\Bundle\CmsBundle\Settings\SeoSettingsSchema" public="false">
@@ -130,13 +152,12 @@
 
         <!-- Routing loader -->
         <service id="ekyna_cms.routing_loader" class="Ekyna\Bundle\CmsBundle\Routing\RoutingLoader">
-            <argument>%ekyna_cms.cookie_consent.config%</argument>
+            <argument>%ekyna_cms.page.config%</argument>
             <tag name="routing.loader" />
         </service>
 
         <!-- Page Helper -->
         <service id="ekyna_cms.helper.page" class="Ekyna\Bundle\CmsBundle\Helper\PageHelper">
-            <argument id="request_stack" type="service" />
             <argument id="ekyna_cms.page.repository" type="service" />
             <argument>%ekyna_cms.home_route%</argument>
         </service>
@@ -164,37 +185,56 @@
         </service>
 
         <!-- Menus -->
-        <service id="ekyna_cms.menu.provider" class="Ekyna\Bundle\CmsBundle\Menu\MenuProvider">
+        <service id="ekyna_cms.menu.menu_provider" class="Ekyna\Bundle\CmsBundle\Menu\MenuProvider">
 	        <argument type="service" id="knp_menu.factory" />
 	        <argument type="service" id="ekyna_cms.menu.repository" />
 	        <argument type="service" id="ekyna_core.locale_provider.request" />
             <tag name="knp_menu.provider" />
 	    </service>
-        <service id="ekyna_cms.menu.builder" class="Ekyna\Bundle\CmsBundle\Menu\MenuBuilder">
+        <service id="ekyna_cms.menu.breadcrumb_builder" class="Ekyna\Bundle\CmsBundle\Menu\BreadcrumbBuilder">
 	        <argument type="service" id="knp_menu.factory" />
 	        <argument type="service" id="router" />
-	        <argument type="service" id="ekyna_cms.page.repository" />
+	        <argument type="service" id="ekyna_cms.helper.page" />
             <argument type="service" id="ekyna_core.locale_provider.request" />
-	        <argument type="service" id="request_stack" />
-	        <argument>%ekyna_cms.home_route%</argument>
+	        <argument type="service" id="ekyna_core.cache.tag_manager" />
 	    </service>
 	    <service id="ekyna_cms.breadcrumb"
-	        class="Knp\Menu\MenuItem"
-	        factory-service="ekyna_cms.menu.builder"
-	        factory-method="createBreadcrumb"
-	        scope="request">
-	        <argument type="service" id="request" />
+                 class="Knp\Menu\MenuItem"
+                 factory-service="ekyna_cms.menu.breadcrumb_builder"
+                 factory-method="createBreadcrumb">
+	        <argument type="service" id="request_stack" />
 	        <tag name="knp_menu.menu" alias="breadcrumb" />
 	    </service>
+
+        <!-- Serializer handlers -->
+        <service id="ekyna_cms.serializer.content_handler" class="Ekyna\Bundle\CmsBundle\Serializer\ContentHandler">
+            <tag name="jms_serializer.subscribing_handler" />
+        </service>
+
+        <!-- Search -->
+        <service id="ekyna_cms.wide_search" class="Ekyna\Bundle\CmsBundle\Search\Wide\Search">
+            <argument type="collection" />
+        </service>
+        <service id="ekyna_cms.search.page"
+                 class="Ekyna\Bundle\CmsBundle\Search\PageRepository"
+                 factory-service="fos_elastica.manager"
+                 factory-method="getRepository">
+            <argument>%ekyna_cms.page.class%</argument>
+            <call method="setLocaleProvider">
+                <argument id="ekyna_core.locale_provider.request" type="service" />
+            </call>
+            <tag name="ekyna_cms.wide_search.provider" />
+        </service>
 
         <!-- Twig extensions -->
         <service id="ekyna_cms.twig.cms_extension" class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
             <argument type="service" id="ekyna_setting.manager" />
             <argument type="service" id="ekyna_cms.editor" />
-            <argument type="service" id="ekyna_cms.menu.provider" />
+            <argument type="service" id="ekyna_cms.menu.menu_provider" />
             <argument type="service" id="knp_menu.helper" />
             <argument type="service" id="ekyna_cms.helper.page" />
-            <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="ekyna_cms.seo.repository" />
+            <argument type="service" id="ekyna_core.cache.tag_manager" />
             <argument type="service" id="fragment.handler" />
             <argument type="collection">
                 <argument key="home_route">%ekyna_cms.home_route%</argument>

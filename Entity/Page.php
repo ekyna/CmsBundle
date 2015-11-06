@@ -4,26 +4,22 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
-use Ekyna\Bundle\CmsBundle\Model\ContentSubjectTrait;
-use Ekyna\Bundle\CmsBundle\Model\PageInterface;
-use Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface;
-use Ekyna\Bundle\CmsBundle\Model\SeoSubjectTrait;
-use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
-use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
+use Ekyna\Bundle\CmsBundle\Model as Cms;
+use Ekyna\Bundle\CoreBundle\Model as Core;
 
 /**
  * Class Page
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  *
- * @method PageTranslationInterface translate($locale = null, $create = false)
+ * @method Cms\PageTranslationInterface translate($locale = null, $create = false)
  */
-class Page extends AbstractTranslatable implements PageInterface
+class Page extends AbstractTranslatable implements Cms\PageInterface
 {
-    use ContentSubjectTrait;
-    use SeoSubjectTrait;
-    use TimestampableTrait;
-    use TaggedEntityTrait;
+    use Cms\ContentSubjectTrait,
+        Cms\SeoSubjectTrait,
+        Core\TimestampableTrait,
+        Core\TaggedEntityTrait;
 
     /**
      * @var integer
@@ -31,7 +27,7 @@ class Page extends AbstractTranslatable implements PageInterface
     protected $id;
 
     /**
-     * @var PageInterface
+     * @var Cms\PageInterface
      */
     protected $parent;
 
@@ -56,7 +52,7 @@ class Page extends AbstractTranslatable implements PageInterface
     protected $level;
 
     /**
-     * @var ArrayCollection|PageInterface[]
+     * @var ArrayCollection|Cms\PageInterface[]
      */
     protected $children;
 
@@ -95,6 +91,11 @@ class Page extends AbstractTranslatable implements PageInterface
      */
     protected $dynamicPath;
 
+    /**
+     * @var boolean
+     */
+    protected $enabled;
+
 
     /**
      * Constructor
@@ -110,6 +111,7 @@ class Page extends AbstractTranslatable implements PageInterface
         $this->locked      = false;
         $this->advanced    = false;
         $this->dynamicPath = false;
+        $this->enabled     = true;
     }
 
     /**
@@ -133,7 +135,7 @@ class Page extends AbstractTranslatable implements PageInterface
     /**
      * {@inheritdoc}
      */
-    public function setParent(PageInterface $parent = null)
+    public function setParent(Cms\PageInterface $parent = null)
     {
         $this->parent = $parent;
 
@@ -223,7 +225,7 @@ class Page extends AbstractTranslatable implements PageInterface
     /**
      * {@inheritdoc}
      */
-    public function hasChild(PageInterface $child)
+    public function hasChild(Cms\PageInterface $child)
     {
         return $this->children->contains($child);
     }
@@ -231,7 +233,7 @@ class Page extends AbstractTranslatable implements PageInterface
     /**
      * {@inheritdoc}
      */
-    public function addChild(PageInterface $child)
+    public function addChild(Cms\PageInterface $child)
     {
         if (!$this->hasChild($child)) {
             $this->children->add($child);
@@ -243,7 +245,7 @@ class Page extends AbstractTranslatable implements PageInterface
     /**
      * {@inheritdoc}
      */
-    public function removeChild(PageInterface $child)
+    public function removeChild(Cms\PageInterface $child)
     {
         if ($this->hasChild($child)) {
             $this->children->removeElement($child);
@@ -302,6 +304,24 @@ class Page extends AbstractTranslatable implements PageInterface
     public function getTitle()
     {
         return $this->translate()->getTitle();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setBreadcrumb($breadcrumb)
+    {
+        $this->translate()->setBreadcrumb($breadcrumb);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBreadcrumb()
+    {
+        return $this->translate()->getBreadcrumb();
     }
 
     /**
@@ -450,9 +470,26 @@ class Page extends AbstractTranslatable implements PageInterface
     /**
      * {@inheritdoc}
      */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isIndexable()
     {
-        return $this->seo->getIndex();
+        return $this->enabled && $this->seo->getIndex();
     }
 
     /**

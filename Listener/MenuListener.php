@@ -28,7 +28,7 @@ class MenuListener
             $menu->setRoute($page->getRoute());
         }
         if (!preg_match(self::NAME_REGEX, $menu->getName())) {
-            $menu->setName(Transliterator::urlize($menu->getName(), '_'));
+            $menu->setName(Transliterator::urlize(strtolower($menu->getName()), '_'));
         }
     }
 
@@ -44,7 +44,7 @@ class MenuListener
             $event->setNewValue('route', $page->getRoute());
         }
         if ($event->hasChangedField('name') && !preg_match(self::NAME_REGEX, $name = $event->getNewValue('name'))) {
-            $event->setNewValue('name', Transliterator::urlize($name, '_'));
+            $event->setNewValue('name', Transliterator::urlize(strtolower($name), '_'));
         }
     }
 }

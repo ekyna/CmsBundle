@@ -31,8 +31,19 @@ ekyna_cms:
             remove: Supprimer la page
         field:
             controller: Gabarit
+        value:
+            root: Racine
         alert:
             no_item: Aucune page configuré
+            do_not_remove_static: Cette page ne peut être supprimée.
+            children_disabled: Les sous-pages ont été désactivées.
+            menus_disabled: Les menus liés à cette page ont été désactivés.
+            disabled:
+                allow_as_admin: >
+                    Cette page est désactivé.<br>
+                    En tant qu'administrateur, vous êtes autorisé à la consulter.
+                temporary_redirect: >
+                    La page à laquelle vous tentiez d'accéder est temporairement désactivée.
     menu:
         label:
             singular: Menu
@@ -52,6 +63,7 @@ ekyna_cms:
             remove: Supprimer le menu
         alert:
             no_item: Aucun menu configuré
+            cant_enable_as_disabled_page: Ce menu ne peut être activé car la page ciblée est inactive.
     tag:
         label:
             singular: Tag
@@ -79,3 +91,6 @@ ekyna_cms:
         footer_menu: Menu pied de page
         show_main_menu: Afficher dans le menu principal
         show_footer_menu: Afficher dans le menu du pied de page
+    wide_search:
+        placeholder: Rechercher ...
+        title: Résultats de votre recherche sur "{{expression}}"

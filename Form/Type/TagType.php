@@ -18,11 +18,10 @@ class TagType extends ResourceFormType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', 'text', [
-                'label' => 'ekyna_core.field.name',
+            ->add('name', 'text', array(
+                'label'    => 'ekyna_core.field.name',
                 'required' => true
-            ])
-        ;
+            ));
     }
 
     /**
@@ -30,6 +29,6 @@ class TagType extends ResourceFormType
      */
     public function getName()
     {
-    	return 'ekyna_cms_tag';
+        return 'ekyna_cms_tag';
     }
 }

@@ -18,17 +18,12 @@
 	],
 	"require" : {
 		"php" : ">=5.4.0",
-		"ekyna/media-bundle" : "1.0.x-dev",
-		"ekyna/sitemap-bundle" : "1.0.x-dev"
+		"ekyna/media-bundle" : "dev-master",
+		"ekyna/sitemap-bundle" : "dev-master"
 	},
 	"autoload" : {
 		"psr-4" : {
 			"Ekyna\\Bundle\\CmsBundle\\" : ""
-		}
-	},
-	"extra" : {
-		"branch-alias" : {
-			"dev-master" : "1.0.x-dev"
 		}
 	}
 }

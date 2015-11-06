@@ -1,10 +1,11 @@
 {% spaceless %}
-<!DOCTYPE hmtl>
-<html>
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
 
     {% block metas %}{% endblock metas %}
 
@@ -25,11 +26,31 @@
     {{ require_js(not app.debug) }}
 </head>
 <body>
-    {% block body %}{% endblock body %}
+{% block body %}
 
-    {% block javascripts -%}
-        <script type="text/javascript">require(['bundles/ekynacms/js/main']);</script>
-    {%- endblock javascripts %}
+    {% include 'EkynaCmsBundle:Cms/Fragment:navbar.html.twig' %}
+
+    {% block breadcrumb -%}
+        <div class="container">
+            {{ cms_flashes() }}
+            {{ cms_breadcrumb() }}
+        </div>
+    {%- endblock breadcrumb %}
+
+    {% block content %}{% endblock content %}
+
+    <div class="container" id="footer">
+        {{ render_esi(controller('EkynaCmsBundle:Cms:footer', {'locale': app.request.locale})) }}
+        <div>
+            {{ ui_locale_switcher() }}
+        </div>
+    </div>
+
+{% endblock body %}
+
+{% block javascripts -%}
+    <script type="text/javascript">require(['bundles/ekynacms/js/main']);</script>
+{%- endblock javascripts %}
 </body>
 </html>
 {% endspaceless %}

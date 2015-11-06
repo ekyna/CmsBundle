@@ -48,88 +48,98 @@ class MenuType extends ResourceFormType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('translations', 'a2lix_translationsForms', [
+            ->add('translations', 'a2lix_translationsForms', array(
                 'form_type' => new MenuTranslationType(),
                 'label'     => false,
-                'attr' => [
+                'attr'      => array(
                     'widget_col' => 12,
-                ],
-            ])
-            ->add('description', 'textarea', [
-                'label'    => 'ekyna_core.field.description',
-                'required' => false
-            ])
-        ;
+                ),
+            ))
+            ->add('description', 'textarea', array(
+                'label'        => 'ekyna_core.field.description',
+                'admin_helper' => 'CMS_MENU_DESCRIPTION',
+                'required'     => false
+            ));
 
         if ($this->authorization->isGranted('ROLE_SUPER_ADMIN')) {
             $builder->add('attributes', 'ekyna_key_value_collection', [
                 'label'           => 'ekyna_core.field.attributes',
+                'admin_helper'    => 'CMS_MENU_ATTRIBUTES',
                 'add_button_text' => 'ekyna_core.button.add_attribute',
             ]);
         }
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             /** @var \Ekyna\Bundle\CmsBundle\Entity\Menu $menu */
             $menu = $event->getData();
             $form = $event->getForm();
             $disabled = $menu->getLocked();
 
             $form
-                ->add('name', 'text', [
-                    'label'    => 'ekyna_core.field.name',
-                    'required' => true,
-                    'disabled' => $disabled,
-                ])
-                ->add('parent', 'entity', [
+                ->add('name', 'text', array(
+                    'label'        => 'ekyna_core.field.name',
+                    'admin_helper' => 'CMS_MENU_NAME',
+                    'required'     => true,
+                    'disabled'     => $disabled,
+                ))
+                ->add('parent', 'entity', array(
                     'label'         => 'ekyna_core.field.parent',
+                    'admin_helper'  => 'CMS_MENU_PARENT',
                     'property'      => 'title',
                     'required'      => true,
                     'disabled'      => $disabled,
                     'class'         => $this->dataClass,
-                    'query_builder' => function(EntityRepository $er) use ($menu) {
+                    'query_builder' => function (EntityRepository $er) use ($menu) {
                         $qb = $er->createQueryBuilder('m');
                         $qb->addOrderBy('m.left', 'ASC');
                         if (null !== $parent = $menu->getParent()) {
                             $qb
                                 ->andWhere('m.root = :root')
-                                ->setParameter('root', $parent->getRoot())
-                            ;
+                                ->setParameter('root', $parent->getRoot());
                         }
                         if (0 < $menu->getId()) {
                             $qb
                                 ->andWhere('m.id != :id')
-                                ->setParameter('id', $menu->getId())
-                            ;
+                                ->setParameter('id', $menu->getId());
                         }
                         return $qb;
                     },
-                ])
-                ->add('path', 'text', [
+                ))
+                ->add('path', 'text', array(
                     'label'        => 'ekyna_core.field.url',
                     'admin_helper' => 'CMS_MENU_PATH',
                     'required'     => false,
                     'disabled'     => $disabled,
-                ])
-            ;
+                ))
+                ->add('enabled', 'checkbox', array(
+                    'label'        => 'ekyna_core.field.enabled',
+                    'admin_helper' => 'CMS_MENU_ENABLED',
+                    'required'     => false,
+                    'disabled'     => $disabled,
+                    'attr'         => array(
+                        'align_with_widget' => true,
+                    ),
+                ));
 
             if ($this->authorization->isGranted('ROLE_SUPER_ADMIN')) {
                 $form
-                    ->add('route', 'text', [
+                    ->add('route', 'text', array(
                         'label'        => 'ekyna_core.field.route',
                         'admin_helper' => 'CMS_MENU_ROUTE',
                         'required'     => false,
                         'disabled'     => $disabled,
-                    ])
-                    ->add('parameters', 'ekyna_key_value_collection', [
+                    ))
+                    ->add('parameters', 'ekyna_key_value_collection', array(
                         'label'           => 'ekyna_core.field.parameters',
+                        'admin_helper'    => 'CMS_MENU_PARAMETERS',
                         'add_button_text' => 'ekyna_core.button.add_parameter',
-                    ])
+                    ))
                 ;
             }
 
             if (!$disabled) {
                 $form
-                    ->add('page', 'entity', [
+                    ->add('page', 'entity', array(
                         'label'         => 'ekyna_cms.page.label.singular',
                         'admin_helper'  => 'CMS_MENU_PAGE',
                         'property'      => 'name',
@@ -144,7 +154,7 @@ class MenuType extends ResourceFormType
                             ;
                             return $qb;
                         },
-                    ])
+                    ))
                 ;
             }
         });

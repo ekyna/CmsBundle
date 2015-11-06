@@ -4,18 +4,17 @@ namespace Ekyna\Bundle\CmsBundle\Twig;
 
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Entity\Menu;
-use Ekyna\Bundle\CmsBundle\Entity\Seo;
+use Ekyna\Bundle\CmsBundle\Entity\SeoRepository;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Menu\MenuProvider;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
-use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvent;
-use Ekyna\Bundle\CoreBundle\Event\HttpCacheEvents;
+use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
+use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 use Ekyna\Bundle\SettingBundle\Manager\SettingsManagerInterface;
 use Knp\Menu\Twig\Helper;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 
@@ -49,12 +48,17 @@ class CmsExtension extends \Twig_Extension
     /**
      * @var PageHelper
      */
-    private $pageHelper;
+    protected $pageHelper;
 
     /**
-     * @var EventDispatcherInterface
+     * @var SeoRepository
      */
-    protected $eventDispatcher;
+    protected $seoRepository;
+
+    /**
+     * @var TagManager
+     */
+    protected $tagManager;
 
     /**
      * @var FragmentHandler
@@ -80,41 +84,44 @@ class CmsExtension extends \Twig_Extension
      * @param MenuProvider             $menuProvider
      * @param Helper                   $menuHelper
      * @param PageHelper               $pageHelper
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param SeoRepository            $seoRepository
+     * @param TagManager               $tagManager
      * @param FragmentHandler          $fragmentHandler
      * @param array                    $config
      */
     public function __construct(
         SettingsManagerInterface $settings,
-        Editor $editor,
-        MenuProvider $menuProvider,
-        Helper $menuHelper,
-        PageHelper $pageHelper,
-        EventDispatcherInterface $eventDispatcher,
-        FragmentHandler $fragmentHandler,
-        array $config = []
+        Editor                   $editor,
+        MenuProvider             $menuProvider,
+        Helper                   $menuHelper,
+        PageHelper               $pageHelper,
+        SeoRepository            $seoRepository,
+        TagManager               $tagManager,
+        FragmentHandler          $fragmentHandler,
+        array $config = array()
     ) {
-        $this->settings = $settings;
-        $this->editor = $editor;
-        $this->menuProvider = $menuProvider;
-        $this->menuHelper = $menuHelper;
-        $this->pageHelper = $pageHelper;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->settings        = $settings;
+        $this->editor          = $editor;
+        $this->menuProvider    = $menuProvider;
+        $this->menuHelper      = $menuHelper;
+        $this->pageHelper      = $pageHelper;
+        $this->tagManager      = $tagManager;
+        $this->seoRepository   = $seoRepository;
         $this->fragmentHandler = $fragmentHandler;
 
-        $this->config = array_merge([
+        $this->config = array_merge(array(
             'template' => 'EkynaCmsBundle:Editor:content.html.twig',
             'home_route' => 'home',
-            'seo' => [
+            'seo' => array(
                 'no_follow' => true,
                 'no_index' => true,
                 'title_append' => null,
-            ],
-            'page' => [
-                'controllers' => [],
-            ],
+            ),
+            'page' => array(
+                'controllers' => array(),
+            ),
             'esi_flashes' => false,
-        ], $config);
+        ), $config);
     }
 
     /**
@@ -130,10 +137,10 @@ class CmsExtension extends \Twig_Extension
      */
     public function getGlobals()
     {
-        return [
-            'ekyna_cms_home_route' => $this->config['home_route'],
+        return array(
+            'ekyna_cms_home_route'       => $this->config['home_route'],
             'ekyna_cms_seo_title_append' => $this->config['seo']['title_append'],
-        ];
+        );
     }
 
     /**
@@ -141,20 +148,20 @@ class CmsExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return [
-            new \Twig_SimpleFunction('cms_page', [$this, 'getPage']),
-            new \Twig_SimpleFunction('cms_metas', [$this, 'renderMetas'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_seo', [$this, 'renderSeo'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_meta', [$this, 'renderMeta'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_title', [$this, 'renderTitle'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_content', [$this, 'renderContent'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_content_block', [$this, 'renderContentBlock'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_block', [$this, 'renderBlock'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_menu', [$this, 'renderMenu'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_breadcrumb', [$this, 'renderBreadcrumb'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_flashes', [$this, 'renderFlashes'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_page_controller', [$this, 'getPageControllerTitle'], ['is_safe' => ['html']]),
-        ];
+        return array(
+            new \Twig_SimpleFunction('cms_page', array($this, 'getPage')),
+            new \Twig_SimpleFunction('cms_metas', array($this, 'renderMetas'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_seo', array($this, 'renderSeo'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_meta', array($this, 'renderMeta'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_title', array($this, 'renderTitle'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_content', array($this, 'renderContent'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_content_block', array($this, 'renderContentBlock'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_block', array($this, 'renderBlock'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_menu', array($this, 'renderMenu'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_breadcrumb', array($this, 'renderBreadcrumb'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_flashes', array($this, 'renderFlashes'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('cms_page_controller', array($this, 'getPageControllerTitle'), array('is_safe' => array('html'))),
+        );
     }
 
     /**
@@ -170,13 +177,17 @@ class CmsExtension extends \Twig_Extension
     /**
      * Generates document title and metas tags from the given Seo object or form the current page.
      *
-     * @param SeoInterface $seo
+     * @param mixed $seoOrSubject
      * @return string
      * @deprecated use renderSeo()
      */
-    public function renderMetas(SeoInterface $seo = null)
+    public function renderMetas($seoOrSubject = null)
     {
-        return $this->renderSeo($seo);
+        if ($seoOrSubject instanceof SeoSubjectInterface) {
+            $seoOrSubject = $seoOrSubject->getSeo();
+        }
+
+        return $this->renderSeo($seoOrSubject);
     }
 
     /**
@@ -191,7 +202,8 @@ class CmsExtension extends \Twig_Extension
             if (null !== $page = $this->getPage()) {
                 $seo = $page->getSeo();
             } else {
-                $seo = new Seo();
+                /** @var SeoInterface $seo */
+                $seo = $this->seoRepository->createNew();
                 $seo
                     ->setTitle($this->settings->getParameter('seo.title'))
                     ->setDescription($this->settings->getParameter('seo.description'))
@@ -212,18 +224,15 @@ class CmsExtension extends \Twig_Extension
             ;
 
             if (0 < strlen($canonical = $seo->getCanonical())) {
-                $metas .= "\n" .$this->renderTag('link', null, [
+                $metas .= "\n" .$this->renderTag('link', null, array(
                     'rel' => 'canonical',
                     'href' => $canonical,
-                ]);
+                ));
             }
 
             // Tags the response as Seo relative
             if ($seo->getId()) {
-                $this->eventDispatcher->dispatch(
-                    HttpCacheEvents::TAG_RESPONSE,
-                    new HttpCacheEvent($seo->getEntityTag())
-                );
+                $this->tagManager->addTags($seo->getEntityTag());
             }
         } else {
             $metas = '<title>Undefined</title>' . $this->renderMeta('robots', 'follow,noindex');
@@ -242,7 +251,7 @@ class CmsExtension extends \Twig_Extension
      */
     public function renderMeta($name, $content)
     {
-        return $this->renderTag('meta', null, ['name' => $name, 'content' => $content]);
+        return $this->renderTag('meta', null, array('name' => $name, 'content' => $content));
     }
 
     /**
@@ -259,10 +268,7 @@ class CmsExtension extends \Twig_Extension
             $content = $page->getTitle();
 
             // Tags the response as Page relative
-            $this->eventDispatcher->dispatch(
-                HttpCacheEvents::TAG_RESPONSE,
-                new HttpCacheEvent($page->getEntityTag())
-            );
+            $this->tagManager->addTags($page->getEntityTag());
         }
 
         if (0 == strlen($content)) {
@@ -281,7 +287,7 @@ class CmsExtension extends \Twig_Extension
      *
      * @return string
      */
-    private function renderTag($tag, $content = null, array $attributes = [])
+    private function renderTag($tag, $content = null, array $attributes = array())
     {
         $attr = [];
 
@@ -342,16 +348,13 @@ class CmsExtension extends \Twig_Extension
 
         // Tag response as Content relative
         if (null !== $content->getId()) {
-            $this->eventDispatcher->dispatch(
-                HttpCacheEvents::TAG_RESPONSE,
-                new HttpCacheEvent($content->getEntityTag())
-            );
+            $this->tagManager->addTags($content->getEntityTag());
         }
 
-        return $this->template->renderBlock('cms_block_content', [
+        return $this->template->renderBlock('cms_block_content', array(
             'content' => $content,
             'editable' => $this->editor->getEnabled()
-        ]);
+        ));
     }
 
     /**
@@ -371,7 +374,7 @@ class CmsExtension extends \Twig_Extension
             throw new \RuntimeException('Unable to find "%s" twig block.', $blockName);
         }
 
-        return trim($this->template->renderBlock($blockName, ['block' => $block]));
+        return trim($this->template->renderBlock($blockName, array('block' => $block)));
     }
 
     /**
@@ -379,16 +382,16 @@ class CmsExtension extends \Twig_Extension
      *
      * @param BlockInterface|string $block The block or the block name
      * @param string $type the block type
-     * @param array $datas the block datas
+     * @param array $data  the block data
      *
      * @throws \RuntimeException
      *
      * @return string
      */
-    public function renderBlock($block, $type = null, array $datas = [])
+    public function renderBlock($block, $type = null, array $data = array())
     {
         if (is_string($block)) {
-            $block = $this->editor->findBlockByName($block, $type, $datas);
+            $block = $this->editor->findBlockByName($block, $type, $data);
         }
         if (!$block instanceof BlockInterface) {
             throw new \InvalidArgumentException('Expected instance of Ekyna\Bundle\CmsBundle\Model\BlockInterface');
@@ -397,18 +400,12 @@ class CmsExtension extends \Twig_Extension
         $this->editor->setEnabled(true);
 
         // Tags the response as Block relative
-        // Only if the block do not belongs to a content object
-        if (null === $block->getContent()) {
-            $this->eventDispatcher->dispatch(
-                HttpCacheEvents::TAG_RESPONSE,
-                new HttpCacheEvent($block->getEntityTag())
-            );
-        }
+        $this->tagManager->addTags($block->getEntityTag());
 
-        return $this->template->renderBlock('cms_block', [
+        return $this->template->renderBlock('cms_block', array(
             'block' => $block,
             'editable' => $this->editor->getEnabled()
-        ]);
+        ));
     }
 
     /**
@@ -422,20 +419,17 @@ class CmsExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function renderMenu($name, array $options = [], $renderer = null)
+    public function renderMenu($name, array $options = array(), $renderer = null)
     {
         if (null === $menu = $this->menuProvider->findByName($name)) {
             throw new \InvalidArgumentException(sprintf('Menu named "%s" not found.', $name));
         }
 
         // Tags the response as Menu relative
-        $this->eventDispatcher->dispatch(
-            HttpCacheEvents::TAG_RESPONSE,
-            new HttpCacheEvent([
-                Menu::getEntityTagPrefix(),
-                sprintf('%s[id:%s]', Menu::getEntityTagPrefix(), $menu['id'])
-            ])
-        );
+        $this->tagManager->addTags(array(
+            Menu::getEntityTagPrefix(),
+            sprintf('%s[id:%s]', Menu::getEntityTagPrefix(), $menu['id'])
+        ));
 
         return $this->menuHelper->render($name, $options, $renderer);
     }
@@ -447,13 +441,13 @@ class CmsExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function renderBreadcrumb(array $options = [])
+    public function renderBreadcrumb(array $options = array())
     {
-        return $this->menuHelper->render('breadcrumb', array_merge([
+        return $this->menuHelper->render('breadcrumb', array_merge(array(
             'template' => 'EkynaCmsBundle:Cms:breadcrumb.html.twig',
             //'currentAsLink' => false,
             'depth' => 1,
-        ], $options));
+        ), $options));
     }
 
     /**

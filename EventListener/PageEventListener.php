@@ -4,9 +4,13 @@ namespace Ekyna\Bundle\CmsBundle\EventListener;
 
 use Behat\Transliterator\Transliterator;
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
+use Ekyna\Bundle\AdminBundle\Event\ResourceMessage;
 use Ekyna\Bundle\CmsBundle\Event\PageEvent;
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -17,9 +21,29 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class PageEventListener implements EventSubscriberInterface
 {
     /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    /**
+     * @var TagManager
+     */
+    private $tm;
+
+    /**
      * @var array
      */
     private $locales;
+
+    /**
+     * @var array
+     */
+    private $config;
+
+    /**
+     * @var string
+     */
+    private $menuClass;
 
     /**
      * @var CacheProvider
@@ -30,13 +54,27 @@ class PageEventListener implements EventSubscriberInterface
     /**
      * Constructor.
      *
-     * @param array $locales
-     * @param CacheProvider $cache
+     * @param EntityManagerInterface $em
+     * @param TagManager             $tm
+     * @param array                  $locales
+     * @param array                  $config
+     * @param string                 $menuClass
+     * @param CacheProvider          $cache
      */
-    public function __construct(array $locales, CacheProvider $cache = null)
-    {
-        $this->locales = $locales;
-        $this->cache   = $cache;
+    public function __construct(
+        EntityManagerInterface $em,
+        TagManager $tm,
+        array $locales,
+        array $config,
+        $menuClass,
+        CacheProvider $cache = null
+    ) {
+        $this->em        = $em;
+        $this->tm        = $tm;
+        $this->locales   = $locales;
+        $this->config    = $config;
+        $this->menuClass = $menuClass;
+        $this->cache     = $cache;
     }
 
     /**
@@ -50,22 +88,27 @@ class PageEventListener implements EventSubscriberInterface
 
         // Generate random route name.
         if (null === $page->getRoute()) {
-            $page->setRoute(sprintf('cms_page_%s', uniqid()));
+            $class = get_class($page);
+            $query = $this->em->createQuery("SELECT p.id FROM {$class} p WHERE p.route = :route");
+            $query->setMaxResults(1);
+
+            do {
+                $route = sprintf('cms_page_%s', uniqid());
+                $result = $query
+                    ->setParameter('route', $route)
+                    ->getOneOrNullResult(Query::HYDRATE_SCALAR)
+                ;
+            } while(null !== $result);
+
+            $page->setRoute($route);
         }
 
         // Handle paths.
         $this->generateTranslationPaths($page);
         $this->watchDynamicPaths($page);
-    }
 
-    /**
-     * Post create event handler.
-     *
-     * @param PageEvent $event
-     */
-    public function onPostCreate(PageEvent $event)
-    {
-        $this->savePageCache($event->getPage());
+        // Handle advanced
+        $this->watchAdvanced($page);
     }
 
     /**
@@ -80,6 +123,29 @@ class PageEventListener implements EventSubscriberInterface
         // Handle paths.
         $this->generateTranslationPaths($page);
         $this->watchDynamicPaths($page);
+
+        // Handle advanced
+        $this->watchAdvanced($page);
+
+        // Don't disable if static
+        if (!$page->getEnabled() && $page->getStatic()) {
+            $page->setEnabled(true);
+        }
+
+        // Bubble disable
+        if ($this->disablePageChildren($page)) {
+            $event->addMessage(new ResourceMessage(
+                'ekyna_cms.page.alert.children_disabled',
+                ResourceMessage::TYPE_WARNING
+            ));
+        }
+        if ($this->disablePageRelativeMenus($page)) {
+            $event->addMessage(new ResourceMessage(
+                'ekyna_cms.page.alert.menus_disabled',
+                ResourceMessage::TYPE_WARNING
+            ));
+            $this->tm->addTags(call_user_func($this->menuClass . '::getEntityTagPrefix'));
+        }
     }
 
     /**
@@ -89,7 +155,22 @@ class PageEventListener implements EventSubscriberInterface
      */
     public function onPostUpdate(PageEvent $event)
     {
-        $this->savePageCache($event->getPage());
+        $this->deletePageCache($event->getPage());
+    }
+
+    /**
+     * Pre delete event handler.
+     *
+     * @param PageEvent $event
+     */
+    public function onPreDelete(PageEvent $event)
+    {
+        if ($event->getPage()->getStatic()) {
+            $event->addMessage(new ResourceMessage(
+                'ekyna_cms.page.alert.do_not_remove_static',
+                ResourceMessage::TYPE_ERROR
+            ));
+        }
     }
 
     /**
@@ -107,23 +188,9 @@ class PageEventListener implements EventSubscriberInterface
      *
      * @param PageInterface $page
      */
-    private function savePageCache(PageInterface $page)
-    {
-        if (null !== $this->cache) {
-            $this->cache->save('ekyna_cms.page[id:' . $page->getId() . ']', $page);
-            $this->cache->save('ekyna_cms.page[route:' . $page->getRoute() . ']', $page);
-        }
-    }
-
-    /**
-     * Saves the page in doctrine cache.
-     *
-     * @param PageInterface $page
-     */
     private function deletePageCache(PageInterface $page)
     {
         if (null !== $this->cache) {
-            $this->cache->delete('ekyna_cms.page[id:' . $page->getId() . ']');
             $this->cache->delete('ekyna_cms.page[route:' . $page->getRoute() . ']');
         }
     }
@@ -136,12 +203,18 @@ class PageEventListener implements EventSubscriberInterface
         if (!$page->getStatic()) {
             $parentPage = $page->getParent();
             foreach ($this->locales as $locale) {
+                $tmp = $path = $page->translate($locale)->getPath();
                 $parentPath = $parentPage->translate($locale)->getPath();
-                $path = $page->translate($locale)->getPath();
-                if (strlen($path) == 0) {
-                    $path = $page->translate($locale)->getTitle();
+                if (0 === strpos($tmp, $parentPath)) {
+                    $tmp = substr($tmp, strlen($parentPath) + 1);
                 }
-                $page->translate($locale)->setPath(rtrim($parentPath, '/').'/'.Transliterator::urlize(trim($path, '/')));
+                if (strlen($tmp) == 0) {
+                    $tmp = $page->translate($locale)->getTitle();
+                }
+                $tmp = rtrim($parentPath, '/').'/'.Transliterator::urlize(trim($tmp, '/'));
+                if ($tmp != $path) {
+                    $page->translate($locale)->setPath($tmp);
+                }
             }
         }
     }
@@ -161,16 +234,103 @@ class PageEventListener implements EventSubscriberInterface
     }
 
     /**
+     * @param PageInterface $page
+     */
+    private function watchAdvanced(PageInterface $page)
+    {
+        if (null !== $controller = $page->getController()) {
+            if (array_key_exists($controller, $this->config['controllers'])) {
+                $advanced = $this->config['controllers'][$controller]['advanced'];
+                if ($page->getAdvanced() != $advanced) {
+                    $page->setAdvanced($advanced);
+                }
+            }
+        }
+    }
+
+    /**
+     * Disables the page children if needed.
+     *
+     * @param PageInterface $page
+     * @return bool
+     */
+    private function disablePageChildren(PageInterface $page)
+    {
+        $childrenDisabled = false;
+        if (!$page->getEnabled()) {
+            if (0 < $page->getChildren()->count()) {
+                foreach ($page->getChildren() as $child) {
+                    if ($child->getEnabled()) {
+                        $child->setEnabled(false);
+                        $childrenDisabled = true;
+
+                        $this->em->persist($child);
+                        $this->deletePageCache($page);
+                        $this->tm->addTags($page->getEntityTag());
+                    }
+
+                    $this->disablePageRelativeMenus($child);
+
+                    $childrenDisabled |= $this->disablePageChildren($child);
+                }
+            }
+        }
+        return $childrenDisabled;
+    }
+
+    /**
+     * Disable the page relative menus if needed.
+     *
+     * @param PageInterface $page
+     * @return bool
+     */
+    private function disablePageRelativeMenus(PageInterface $page)
+    {
+        $disabledMenus = false;
+        if (!$page->getEnabled()) {
+
+            // Disable menu children query
+            $disableChildrenQuery = $this->em->createQuery(sprintf(
+                'UPDATE %s m SET m.enabled = 0 WHERE m.root = :root AND m.left > :left AND m.right < :right',
+                $this->menuClass
+            ));
+
+            // Disable pointing menus
+            /** @var \Ekyna\Bundle\CmsBundle\Model\MenuInterface[] $menus */
+            $menus = $this->em
+                ->createQuery("SELECT m FROM {$this->menuClass} m WHERE m.route = :route")
+                ->setParameter('route', $page->getRoute())
+                ->getResult()
+            ;
+            if (!empty($menus)) {
+                foreach ($menus as $menu) {
+                    if ($menu->getEnabled()) {
+                        $menu->setEnabled(false);
+                        $this->em->persist($menu);
+                        $disabledMenus = true;
+
+                        $disableChildrenQuery->execute(array(
+                            'root'  => $menu->getRoot(),
+                            'left'  => $menu->getLeft(),
+                            'right' => $menu->getRight(),
+                        ));
+                    }
+                }
+            }
+        }
+        return $disabledMenus;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
-        return [
-            PageEvents::PRE_CREATE  => ['onPreCreate', 0],
-            PageEvents::POST_CREATE => ['onPostCreate', 0],
-            PageEvents::PRE_UPDATE  => ['onPreUpdate', 0],
-            PageEvents::POST_UPDATE => ['onPostUpdate', 0],
-            PageEvents::POST_DELETE => ['onPostDelete', 0],
-        ];
+        return array(
+            PageEvents::PRE_CREATE  => array('onPreCreate',  -1024),
+            PageEvents::PRE_UPDATE  => array('onPreUpdate',  -1024),
+            PageEvents::POST_UPDATE => array('onPostUpdate', -1024),
+            PageEvents::POST_DELETE => array('onPostDelete', -1024),
+        );
     }
 }

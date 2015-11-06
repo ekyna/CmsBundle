@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * Class CmsController
  * @package Ekyna\Bundle\CmsBundle\Controller
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class CmsController extends Controller
 {
@@ -25,16 +25,28 @@ class CmsController extends Controller
 
     /**
      * (Wide site) Search action.
+     *
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function searchAction()
+    public function searchAction(Request $request)
     {
-        // TODO site wide search providers
+        $expression = $request->request->get('expression');
+
+        $results = $this->get('ekyna_cms.wide_search')->search($expression);
+
+        return $this->render('EkynaCmsBundle:Cms:search.html.twig', array(
+            'expression' => $expression,
+            'results'    => $results,
+        ))->setPrivate();
     }
 
     /**
      * Renders the cms init (xhr only).
      *
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function initAction(Request $request)
@@ -61,11 +73,9 @@ class CmsController extends Controller
 
         // Does cookie consent must be rendered ?
         if ($request->request->get('cookie', false)) {
-            if ($this->container->getParameter('ekyna_cms.cookie_consent.config')['enable']) {
-                $data['cookie_consent'] = true;
-            } else {
-                $data['cookie_consent'] = false;
-            }
+            $data['cookie_consent'] = $this
+                ->container
+                ->getParameter('ekyna_cms.page.config')['cookie_consent']['enable'];
         } else {
             $data['cookie_consent'] = null;
         }
@@ -85,7 +95,22 @@ class CmsController extends Controller
     {
         return $this
             ->render('EkynaCmsBundle:Cms:flashes.html.twig')
-            ->setPrivate()
-        ;
+            ->setPrivate();
+    }
+
+    /**
+     * Renders the footer fragment.
+     *
+     * @param string $locale
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function footerAction($locale)
+    {
+        $this->get('request_stack')->getCurrentRequest()->setLocale($locale);
+
+        return $this
+            ->render('EkynaCmsBundle:Cms/Fragment:footer.html.twig')
+            ->setSharedMaxAge(3600);
     }
 }

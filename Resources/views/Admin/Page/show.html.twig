@@ -11,7 +11,7 @@
 {% block main %}
 <div class="actions">
     {% if not page.getDynamicPath %}
-        {{ ui_button('ekyna_core.button.show_front', {'type': 'link', 'icon': 'eye-open', 'path': path(page.route)}) }}
+        {{ ui_button('ekyna_core.button.show_front', {'type': 'link', 'icon': 'eye-open', 'path': path(page.route)}, {'target': '_blank'}) }}
     {% endif %}
 	{{ admin_resource_btn(page, 'edit') }}
 	{{ admin_resource_btn(page, 'remove') }}
@@ -25,11 +25,14 @@
         <div class="tab-content">
             <div class="tab-pane active" id="general">
                 {{ show_row(page.name, 'text', 'ekyna_core.field.name') }}
-                {{ show_row(page.title, 'text', 'ekyna_core.field.title') }}
-                {{ show_row(page.path, 'text', 'ekyna_core.field.url') }}
+                {{ show_row(page.parent, 'entity', 'ekyna_core.field.parent', {'field': 'name', 'route': 'ekyna_cms_page_admin_show', 'route_params_map': {'pageId': 'id'}}) }}
+                {{ show_row(page.enabled, 'checkbox', 'ekyna_core.field.enabled') }}
                 {% if not page.static %}
                     {{ show_row(cms_page_controller(page.controller), 'text', 'ekyna_cms.page.field.controller') }}
                 {% endif %}
+                {{ show_row(page.title, 'text', 'ekyna_core.field.title') }}
+                {{ show_row(page.breadcrumb, 'text', 'ekyna_core.field.breadcrumb') }}
+                {{ show_row(page.path, 'text', 'ekyna_core.field.url') }}
                 {% if not page.advanced %}
                 {{ show_row(path('ekyna_cms_page_admin_tinymce', identifiers|merge({'pageId': page.id})), 'tinymce', 'ekyna_core.field.content') }}
                 {% endif %}

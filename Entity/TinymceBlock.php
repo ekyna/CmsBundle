@@ -49,9 +49,7 @@ class TinymceBlock extends AbstractBlock implements TranslatableInterface
     }
 
     /**
-     * Returns whether the exhibitor should be indexed or not by elasticsearch.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isIndexable()
     {
@@ -59,13 +57,16 @@ class TinymceBlock extends AbstractBlock implements TranslatableInterface
     }
 
     /**
-     * Returns the indexable content.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getIndexableContent()
+    public function getIndexableContents()
     {
-        return strip_tags($this->getHtml());
+        $contents = [];
+        /** @var TinymceBlockTranslation $translation */
+        foreach ($this->getTranslations() as $translation) {
+            $contents[$translation->getLocale()] = strip_tags($translation->getHtml());
+        }
+        return $contents;
     }
 
     /**

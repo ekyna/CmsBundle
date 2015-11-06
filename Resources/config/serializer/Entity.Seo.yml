@@ -4,10 +4,6 @@ Ekyna\Bundle\CmsBundle\Entity\Seo:
         id:
             expose: true
             groups: [Search, Default]
-        title:
-            expose: true
-        description:
-            expose: true
     virtual_properties:
         __toString:
             expose: true
