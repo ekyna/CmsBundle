@@ -89,15 +89,20 @@ class Content implements ContentInterface
     /**
      * {@inheritdoc}
      */
-    public function getIndexableContent()
+    public function getIndexableContents()
     {
-        $content = '';
+        $contents = array();
         foreach ($this->blocks as $block) {
             if ($block->isIndexable()) {
-                $content .= $block->getIndexableContent() . ' ';
+                foreach ($block->getIndexableContents() as $locale => $content) {
+                    if (!array_key_exists($locale, $contents)) {
+                        $contents[$locale] = array('content' => '');
+                    }
+                    $contents[$locale]['content'] .= $content;
+                }
             }
         }
-        return $content;
+        return $contents;
     }
 
     /**

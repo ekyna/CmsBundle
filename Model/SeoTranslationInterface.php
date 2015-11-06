@@ -2,12 +2,14 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+use Ekyna\Bundle\AdminBundle\Model\TranslationInterface;
+
 /**
  * Interface SeoTranslationInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-interface SeoTranslationInterface
+interface SeoTranslationInterface extends TranslationInterface
 {
     /**
      * Returns the id.

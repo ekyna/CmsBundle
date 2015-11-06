@@ -44,24 +44,48 @@ class RoutingLoader extends Loader
 
         $collection = new RouteCollection();
 
-        if ($this->config['enable']) {
+        $cookiesPolicyConfig = $this->config['cookie_consent'];
+        if ($cookiesPolicyConfig['enable']) {
             $cookiesPolicy = new Route('/cookies-privacy-policy');
-            $cookiesPolicy->setDefaults([
-                '_controller' => $this->config['controller'],
-            ]);
-            $cookiesPolicy->setOptions([
+            $cookiesPolicy->setDefaults(array(
+                '_controller' => $cookiesPolicyConfig['controller'],
+            ));
+            $cookiesPolicy->setOptions(array(
                 'expose' => true,
-                '_cms' => [
+                '_cms' => array(
                     'name' => 'Utilisation des cookies',
                     'advanced' => true,
                     'position' => 999,
-                    'seo' => [
+                    'seo' => array(
                         'index'  => false,
                         'follow' => false,
-                    ],
-                ],
-            ]);
+                    ),
+                ),
+            ));
+            $cookiesPolicy->setMethods(array('GET'));
             $collection->add('cookies_privacy_policy', $cookiesPolicy);
+        }
+
+        $wideSearchConfig = $this->config['wide_search'];
+        if ($wideSearchConfig['enable']) {
+            $wideSearch = new Route('/search');
+            $wideSearch->setDefaults(array(
+                '_controller' => $wideSearchConfig['controller'],
+            ));
+            $wideSearch->setOptions(array(
+                'expose' => true,
+                '_cms' => array(
+                    'name' => 'Rechercher',
+                    'advanced' => true,
+                    'position' => 998,
+                    'seo' => array(
+                        'index'  => false,
+                        'follow' => false,
+                    ),
+                ),
+            ));
+            $wideSearch->setMethods(array('GET', 'POST'));
+            $collection->add('wide_search', $wideSearch);
         }
 
         $this->loaded = true;

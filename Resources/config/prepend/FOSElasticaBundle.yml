@@ -5,19 +5,26 @@ fos_elastica:
                 ekyna_cms_page:
                     _all: {enabled: false}
                     indexable_callback: 'isIndexable'
-                    serializer:
-                        groups: [Default]
-                    mappings:
-                        title: {boost: 5, search_analyzer: fr_search, index_analyzer: fr_index}
-                        seo:
-                            type: "object"
-                            properties:
-                                title: {boost: 2, search_analyzer: fr_search, index_analyzer: fr_index}
-                                description: {boost: 2, search_analyzer: fr_search, index_analyzer: fr_index}
-                        content:
-                            type: "object"
-                            properties:
-                                content: {search_analyzer: fr_search, index_analyzer: fr_index}
+                    dynamic_templates:
+                        en_title:
+                            match_mapping_type: string
+                            path_match: "*.en.title"
+                            mapping: {type: string, boost: 3, search_analyzer: en_search, index_analyzer: en_index}
+                        fr_title:
+                            match_mapping_type: string
+                            path_match: "*.fr.title"
+                            mapping: {type: string, boost: 3, search_analyzer: fr_search, index_analyzer: fr_index}
+                        en_default:
+                            match_mapping_type: string
+                            path_match: "*.en.*"
+                            mapping: {type: string, search_analyzer: en_search, index_analyzer: en_index}
+                        fr_default:
+                            match_mapping_type: string
+                            path_match: "*.fr.*"
+                            mapping: {type: string, search_analyzer: fr_search, index_analyzer: fr_index}
+                        default:
+                            match_mapping_type: string
+                            mapping: {type: string, search_analyzer: search, index_analyzer: index}
                     persistence:
                         driver: orm
                         model: %ekyna_cms.page.class%

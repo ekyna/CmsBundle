@@ -3,13 +3,14 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\AdminBundle\Model\AbstractTranslation;
+use Ekyna\Bundle\CmsBundle\Model\BlockTranslationInterface;
 
 /**
  * Class TinymceBlockTranslation
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class TinymceBlockTranslation extends AbstractTranslation
+class TinymceBlockTranslation extends AbstractTranslation implements BlockTranslationInterface
 {
     /**
      * @var integer

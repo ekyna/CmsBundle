@@ -91,3 +91,6 @@ ekyna_cms:
         footer_menu: Menu pied de page
         show_main_menu: Afficher dans le menu principal
         show_footer_menu: Afficher dans le menu du pied de page
+    wide_search:
+        placeholder: Rechercher ...
+        title: Résultats de votre recherche sur "{{expression}}"

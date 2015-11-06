@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * Class EkynaCmsBundle
  * @package Ekyna\Bundle\CmsBundle
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class EkynaCmsBundle extends AbstractBundle
 {
@@ -22,6 +22,7 @@ class EkynaCmsBundle extends AbstractBundle
 
         $container->addCompilerPass(new Pass\AdminMenuPass());
         $container->addCompilerPass(new Pass\EditorPluginPass());
+        $container->addCompilerPass(new Pass\WideSearchProviderPass());
     }
 
     /**

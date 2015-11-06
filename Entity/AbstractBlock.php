@@ -155,9 +155,9 @@ abstract class AbstractBlock implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function getIndexableContent()
+    public function getIndexableContents()
     {
-        return '';
+        return array();
     }
 
     /**
