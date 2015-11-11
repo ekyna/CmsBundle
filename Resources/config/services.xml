@@ -63,16 +63,7 @@
             <tag name="kernel.event_subscriber" />
         </service>
 
-        <!-- Doctrine entity listeners -->
-        <service id="ekyna_core.menu.listener" class="Ekyna\Bundle\CmsBundle\Listener\MenuListener">
-            <tag name="doctrine.entity_listener" />
-        </service>
-        <service id="ekyna_core.abstract_block.listener" class="Ekyna\Bundle\CmsBundle\Listener\AbstractBlockListener">
-            <argument type="service" id="ekyna_core.cache.tag_manager" />
-            <tag name="doctrine.entity_listener" />
-        </service>
-
-        <!-- Doctrine subscriber -->
+        <!-- Doctrine subscribers/listeners -->
         <!-- TODO merge metadata subscriber -->
         <service id="ekyna_cms.content.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber" public="false">
             <tag name="doctrine.event_subscriber" connection="default" />
@@ -87,10 +78,17 @@
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
-        <service id="ekyna_cms.page.elastica_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\PageElasticaSubscriber">
+        <service id="ekyna_cms.page.elastica_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\PageElasticaSubscriber" public="false">
             <argument id="fos_elastica.object_persister.search.ekyna_cms_page" type="service" />
             <argument>%ekyna_cms.page.class%</argument>
             <tag name="doctrine.event_subscriber"/>
+        </service>
+        <service id="ekyna_core.menu.listener" class="Ekyna\Bundle\CmsBundle\Listener\MenuListener">
+            <tag name="doctrine.orm.entity_listener" />
+        </service>
+        <service id="ekyna_core.abstract_block.listener" class="Ekyna\Bundle\CmsBundle\Listener\AbstractBlockListener">
+            <argument type="service" id="ekyna_core.cache.tag_manager" />
+            <tag name="doctrine.orm.entity_listener" />
         </service>
 
 
