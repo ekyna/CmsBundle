@@ -87,7 +87,7 @@
             <argument id="event_dispatcher" type="service" />
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%locales%</argument>
-            <tag name="doctrine.orm.entity_listener" />
+            <tag name="doctrine.entity_listener" />
         </service>
         <service id="ekyna_core.page_translation.listener" class="Ekyna\Bundle\CmsBundle\Listener\PageTranslationListener">
             <argument id="event_dispatcher" type="service" />
