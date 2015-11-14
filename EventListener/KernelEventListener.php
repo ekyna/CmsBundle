@@ -7,6 +7,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\SecurityContextInterface;
@@ -66,7 +67,7 @@ class KernelEventListener implements EventSubscriberInterface
                 }
 
                 $this->session->getFlashBag()->add('warning', 'ekyna_cms.page.alert.disabled.temporary_redirect');
-                $event->setResponse(new RedirectResponse('/'));
+                throw new NotFoundHttpException('Disabled page.');
             }
         }
     }

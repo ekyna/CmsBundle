@@ -36,6 +36,7 @@ ekyna_cms:
         alert:
             no_item: Aucune page configuré
             do_not_remove_static: Cette page ne peut être supprimée.
+            parent_disabled: Cette page ne peut être activée car une page parent est désactivée.
             children_disabled: Les sous-pages ont été désactivées.
             menus_disabled: Les menus liés à cette page ont été désactivés.
             disabled:

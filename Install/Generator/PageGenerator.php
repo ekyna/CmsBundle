@@ -399,7 +399,6 @@ class PageGenerator
                 $pageTranslation
                     ->setTitle($title)
                     ->setBreadcrumb($title)
-                    ->setHtml('<p></p>') // TODO default content
                     ->setPath($path)
                 ;
             }

@@ -102,7 +102,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
      */
     public function setPath($path)
     {
-        $this->path = '/'.trim($path, '/');
+        $this->path = $path;
         return $this;
     }
 
