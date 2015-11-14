@@ -83,6 +83,16 @@
             <argument>%ekyna_cms.page.class%</argument>
             <tag name="doctrine.event_subscriber"/>
         </service>
+        <service id="ekyna_core.page.listener" class="Ekyna\Bundle\CmsBundle\Listener\PageListener">
+            <argument id="event_dispatcher" type="service" />
+            <argument>%ekyna_cms.page.config%</argument>
+            <argument>%locales%</argument>
+            <tag name="doctrine.orm.entity_listener" />
+        </service>
+        <service id="ekyna_core.page_translation.listener" class="Ekyna\Bundle\CmsBundle\Listener\PageTranslationListener">
+            <argument id="event_dispatcher" type="service" />
+            <tag name="doctrine.event_subscriber" />
+        </service>
         <service id="ekyna_core.menu.listener" class="Ekyna\Bundle\CmsBundle\Listener\MenuListener">
             <tag name="doctrine.entity_listener" />
         </service>
@@ -90,7 +100,6 @@
             <argument type="service" id="ekyna_core.cache.tag_manager" />
             <tag name="doctrine.entity_listener" />
         </service>
-
 
         <!-- Settings Schema -->
         <service id="ekyna_cms.settings.seo" class="Ekyna\Bundle\CmsBundle\Settings\SeoSettingsSchema" public="false">
@@ -246,6 +255,7 @@
 
         <!-- Validators -->
         <service id="ekyna_cms.page.validator" class="Ekyna\Bundle\CmsBundle\Validator\Constraints\PageValidator">
+            <argument>%ekyna_cms.page.config%</argument>
             <argument>%locales%</argument>
             <tag name="validator.constraint_validator" alias="ekyna_cms.page" />
         </service>

@@ -2,11 +2,20 @@
 <doctrine-mapping 
     xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping"
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <entity name="Ekyna\Bundle\CmsBundle\Entity\PageTranslation"
             table="cms_page_translation">
+
+        <unique-constraints>
+            <unique-constraint name="unique_path" columns="path,locale" />
+        </unique-constraints>
+
+        <entity-listeners>
+            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\PageTranslationListener" />
+        </entity-listeners>
 
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO" />
@@ -15,7 +24,23 @@
         <field name="title" column="title" type="string" length="255" />
         <field name="breadcrumb" column="breadcrumb" type="string" length="255" />
         <field name="html" column="html" type="text" nullable="true" />
-        <field name="path" column="path" type="string" length="255" nullable="true" />
+        <field name="path" column="path" type="string" length="255" nullable="true">
+            <gedmo:slug unique="true" updatable="false" fields="title">
+                <gedmo:handler class="Ekyna\Bundle\AdminBundle\Doctrine\Handler\TreeTranslationSlugHandler">
+                    <gedmo:handler-option name="skipExpression" value="object.getTranslatable().getStatic() or object.getTranslatable().getLevel() === 0" />
+                    <gedmo:handler-option name="relationField" value="translatable" />
+
+                    <gedmo:handler-option name="parentSkipExpression" value="parent.getLevel() === 0" />
+                    <gedmo:handler-option name="relationParentRelationField" value="parent" />
+                    <gedmo:handler-option name="parentFieldMethod" value="getPath" />
+
+                    <gedmo:handler-option name="translate" value="translate" />
+                    <gedmo:handler-option name="locale" value="locale" />
+                    <gedmo:handler-option name="prefix" value="/" />
+                    <!--<gedmo:handler-option name="replaceChildren" value="1" />-->
+                </gedmo:handler>
+            </gedmo:slug>
+        </field>
 
     </entity>
 

@@ -384,7 +384,7 @@ class Page extends AbstractTranslatable implements Cms\PageInterface
      */
     public function setStatic($static)
     {
-        $this->static = $static;
+        $this->static = (bool) $static;
 
         return $this;
     }
@@ -402,7 +402,7 @@ class Page extends AbstractTranslatable implements Cms\PageInterface
      */
     public function setLocked($locked)
     {
-        $this->locked = $locked;
+        $this->locked = (bool) $locked;
 
         return $this;
     }
@@ -456,7 +456,7 @@ class Page extends AbstractTranslatable implements Cms\PageInterface
      */
     public function setDynamicPath($dynamicPath)
     {
-        $this->dynamicPath = $dynamicPath;
+        $this->dynamicPath = (bool) $dynamicPath;
         return $this;
     }
 
@@ -473,7 +473,7 @@ class Page extends AbstractTranslatable implements Cms\PageInterface
      */
     public function setEnabled($enabled)
     {
-        $this->enabled = $enabled;
+        $this->enabled = (bool) $enabled;
         return $this;
     }
 

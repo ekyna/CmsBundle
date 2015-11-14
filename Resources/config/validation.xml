@@ -45,10 +45,20 @@
         <property name="translations">
             <constraint name="Valid" />
         </property>
-        <!-- TODO validate controller -->
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\PageTranslation">
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>path</value>
+                <value>locale</value>
+            </option>
+            <option name="message">ekyna_cms.page.unique_path</option>
+            <option name="groups">
+                <value>Default</value>
+                <value>Generator</value>
+            </option>
+        </constraint>
         <property name="title">
             <constraint name="NotBlank">
                 <option name="groups">
@@ -59,6 +69,38 @@
             <constraint name="Length">
                 <option name="min">2</option>
                 <option name="max">64</option>
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
+            </constraint>
+        </property>
+        <property name="breadcrumb">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
+            </constraint>
+            <constraint name="Length">
+                <option name="min">2</option>
+                <option name="max">64</option>
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
+            </constraint>
+        </property>
+        <property name="path">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>Default</value>
+                    <value>Generator</value>
+                </option>
+            </constraint>
+            <constraint name="Length">
+                <option name="min">1</option>
+                <option name="max">255</option>
                 <option name="groups">
                     <value>Default</value>
                     <value>Generator</value>

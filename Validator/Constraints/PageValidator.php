@@ -10,10 +10,15 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 /**
  * Class PageValidator
  * @package Ekyna\Bundle\CmsBundle\Validator\Constraints
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class PageValidator extends ConstraintValidator
 {
+    /**
+     * @var array
+     */
+    private $pageConfig;
+
     /**
      * @var array
      */
@@ -21,10 +26,14 @@ class PageValidator extends ConstraintValidator
 
 
     /**
+     * Constructor.
+     *
+     * @param array $pageConfig
      * @param array $locales
      */
-    public function __construct(array $locales)
+    public function __construct(array $pageConfig, array $locales)
     {
+        $this->pageConfig = $pageConfig;
         $this->locales = $locales;
     }
 
@@ -34,26 +43,35 @@ class PageValidator extends ConstraintValidator
     public function validate($page, Constraint $constraint)
     {
         if (!$constraint instanceof Page) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Page');
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\Page');
         }
         if (!$page instanceof PageInterface) {
             throw new UnexpectedTypeException($page, 'Ekyna\Bundle\CmsBundle\Model\PageInterface');
         }
 
-        if (0 === $page->getLevel() || $page->getLocked() || $page->getStatic()) {
-            return;
-        }
-
         /**
          * @var PageInterface $page
-         * @var Page $constraint
+         * @var Page          $constraint
          */
-        foreach ($this->locales as $locale) {
-            if (0 === strlen($page->translate($locale, true)->getTitle())) {
-                $this->context->addViolationAt('translations[' . $locale . '].title', $constraint->invalid_title);
-                return;
+
+        // Validates the translations title
+        if (!in_array('Generator', $constraint->groups)) {
+            foreach ($this->locales as $locale) {
+                if (0 === strlen($page->translate($locale, true)->getTitle())) {
+                    $this->context->addViolationAt('translations[' . $locale . '].title', $constraint->titleIsMandatory);
+                    return;
+                }
             }
         }
-        // TODO unique title by translatable->parent
+
+        // Validates the controller
+        if (!$page->getStatic()) {
+            if (null === $controller = $page->getController()) {
+                $this->context->addViolationAt('controller', $constraint->controllerIsMandatory);
+            }
+            if (!array_key_exists($controller, $this->pageConfig['controllers'])) {
+                $this->context->addViolationAt('controller', $constraint->invalidController);
+            }
+        }
     }
 }
