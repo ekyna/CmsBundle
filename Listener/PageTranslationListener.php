@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Listener;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
@@ -42,65 +42,64 @@ class PageTranslationListener implements EventSubscriber
     }
 
     /**
-     * On flush event handler.
+     * Pre update event handler.
      *
-     * @param OnFlushEventArgs $event
+     * @param PageTranslationInterface $translation
+     * @param PreUpdateEventArgs       $eventArgs
      */
-    public function onFlush(OnFlushEventArgs $event)
+    public function preUpdate(PageTranslationInterface $translation, PreUpdateEventArgs $eventArgs)
     {
-        $em = $event->getEntityManager();
-        $uow = $em->getUnitOfWork();
+        if ($eventArgs->hasChangedField('path')) {
+            $em = $eventArgs->getEntityManager();
+            $uow = $em->getUnitOfWork();
 
-        // Handle update pages paths.
-        foreach ($uow->getScheduledEntityUpdates() as $entity) {
-            if ($entity instanceof PageTranslationInterface) {
-                $changeSet = $uow->getEntityChangeSet($entity);
-                if (array_key_exists('path', $changeSet)) {
-                    $locale = $entity->getLocale();
-                    // TODO use url generator or i18n routing prefix strategy
-                    $localePrefix = $locale != 'fr' ? '/' . $locale : '';
-                    $this->redirections[] = array(
-                        'from' => $from = $localePrefix . $changeSet['path'][0],
-                        'to'   => $to = $localePrefix . $changeSet['path'][1],
-                    );
+            $locale = $translation->getLocale();
+            $from = $eventArgs->getOldValue('path');
+            $to   = $eventArgs->getNewValue('path');
 
-                    /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
-                    $page = $entity->getTranslatable();
-                    // Update the children pages translations paths.
-                    if ($page->hasChildren()) {
-                        $metadata = $em->getClassMetadata(get_class($entity));
-                        $this->updateChildrenPageTranslationPath(
-                            $page, $uow, $metadata, $from, $to, $locale
-                        );
-                    }
-                }
-            }
-        }
-
-        // Handle deleted pages paths.
-        foreach ($uow->getScheduledEntityDeletions() as $entity) {
-            if ($entity instanceof PageTranslationInterface) {
-                $from = $entity->getPath();
-                $locale = $entity->getLocale();
+            if (0 < strlen($from) && 0 < strlen($to) && $from != $to) {
                 // TODO use url generator or i18n routing prefix strategy
                 $localePrefix = $locale != 'fr' ? '/' . $locale : '';
+                $this->redirections[] = array(
+                    'from' => $localePrefix . $from,
+                    'to'   => $localePrefix . $to,
+                );
+            }
 
-                /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $parentPage */
-                $parentPage = $entity->getTranslatable();
-                while (null !== $parentPage = $parentPage->getParent()) {
-                    // Look for a non-deleted parent page.
-                    if (!$uow->isScheduledForDelete($parentPage)) {
-                        // Redirect to this parent page.
-                        $to = $parentPage->translate($locale)->getPath();
-                        if (0 < strlen($to)) {
-                            $redirection[] = array(
-                                'from' => $localePrefix . $from,
-                                'to'   => $localePrefix . $to,
-                            );
-                        }
-                        break;
-                    }
-                }
+            /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
+            $page = $translation->getTranslatable();
+            // Update the children pages translations paths.
+            if ($page->hasChildren()) {
+                $metadata = $em->getClassMetadata(get_class($translation));
+                $this->updateChildrenPageTranslationPath(
+                    $page, $uow, $metadata, $from, $to, $locale
+                );
+            }
+        }
+    }
+
+    /**
+     * Pre remove event handler.
+     *
+     * @param PageTranslationInterface $translation
+     */
+    public function preRemove(PageTranslationInterface $translation)
+    {
+        /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $translatable */
+        $translatable = $translation->getTranslatable();
+        if (null !== $parentPage = $translatable->getParent()) {
+            $from = $translation->getPath();
+            $locale = $translation->getLocale();
+            // TODO use url generator or i18n routing prefix strategy
+            $localePrefix = $locale != 'fr' ? '/' . $locale : '';
+
+            // Redirect to this parent page.
+            $to = $parentPage->translate($locale)->getPath();
+            if (0 < strlen($from) && 0 < strlen($to) && $from != $to) {
+                $this->redirections[] = array(
+                    'from' => $localePrefix . $from,
+                    'to'   => $localePrefix . $to,
+                );
             }
         }
     }
@@ -133,10 +132,12 @@ class PageTranslationListener implements EventSubscriber
                 $translation->setPath($newPath);
                 $uow->recomputeSingleEntityChangeSet($metadata, $translation);
 
-                $this->redirections[] = array(
-                    'from' => $localePrefix. $oldPath,
-                    'to'   => $localePrefix. $newPath,
-                );
+                if (0 < strlen($oldPath) && 0 < strlen($newPath) && $oldPath != $newPath) {
+                    $this->redirections[] = array(
+                        'from' => $localePrefix . $oldPath,
+                        'to'   => $localePrefix . $newPath,
+                    );
+                }
 
                 // Update the children pages translations paths.
                 if ($child->hasChildren()) {
@@ -167,7 +168,6 @@ class PageTranslationListener implements EventSubscriber
     public function getSubscribedEvents()
     {
         return array(
-            Events::onFlush,
             Events::postFlush,
         );
     }

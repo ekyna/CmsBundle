@@ -25,7 +25,7 @@
         <field name="breadcrumb" column="breadcrumb" type="string" length="255" />
         <field name="html" column="html" type="text" nullable="true" />
         <field name="path" column="path" type="string" length="255" nullable="true">
-            <gedmo:slug unique="true" updatable="false" fields="title">
+            <gedmo:slug unique="true" updatable="true" fields="title">
                 <gedmo:handler class="Ekyna\Bundle\AdminBundle\Doctrine\Handler\TreeTranslationSlugHandler">
                     <gedmo:handler-option name="skipExpression" value="object.getTranslatable().getStatic() or object.getTranslatable().getLevel() === 0" />
                     <gedmo:handler-option name="relationField" value="translatable" />
