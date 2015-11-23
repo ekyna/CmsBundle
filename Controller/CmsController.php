@@ -83,7 +83,7 @@ class CmsController extends Controller
         $response = $this->render('EkynaCmsBundle:Cms:init.xml.twig', $data);
         $response->headers->add(array('Content-Type' => 'application/xml'));
 
-        return $response;
+        return $response->setPrivate();
     }
 
     /**
