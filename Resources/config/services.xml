@@ -91,6 +91,7 @@
         </service>
         <service id="ekyna_core.page_translation.listener" class="Ekyna\Bundle\CmsBundle\Listener\PageTranslationListener">
             <argument id="event_dispatcher" type="service" />
+            <tag name="doctrine.entity_listener" />
             <tag name="doctrine.event_subscriber" />
         </service>
         <service id="ekyna_core.menu.listener" class="Ekyna\Bundle\CmsBundle\Listener\MenuListener">

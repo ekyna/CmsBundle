@@ -94,7 +94,6 @@
         <property name="path">
             <constraint name="NotBlank">
                 <option name="groups">
-                    <value>Default</value>
                     <value>Generator</value>
                 </option>
             </constraint>
@@ -102,7 +101,6 @@
                 <option name="min">1</option>
                 <option name="max">255</option>
                 <option name="groups">
-                    <value>Default</value>
                     <value>Generator</value>
                 </option>
             </constraint>
