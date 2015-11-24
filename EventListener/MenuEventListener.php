@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
 use Ekyna\Bundle\AdminBundle\Event\ResourceMessage;
 use Ekyna\Bundle\CmsBundle\Event\MenuEvent;
 use Ekyna\Bundle\CmsBundle\Event\MenuEvents;
@@ -61,12 +62,12 @@ class MenuEventListener implements EventSubscriberInterface
 
         // Don't enable if disabled relative page
         if ($menu->getEnabled() && !$menu->getLocked() && 0 < strlen($menu->getRoute())) {
-            $disabledPage = $this->em
+            $disabledPageId = $this->em
                 ->createQuery("SELECT p.id FROM {$this->pageClass} p WHERE p.route = :route AND p.enabled = 0")
                 ->setParameter('route', $menu->getRoute())
-                ->getArrayResult()
+                ->getOneOrNullResult(Query::HYDRATE_SCALAR)
             ;
-            if (null !== $disabledPage) {
+            if (null !== $disabledPageId) {
                 $event->addMessage(new ResourceMessage(
                     'ekyna_cms.menu.alert.cant_enable_as_disabled_page',
                     ResourceMessage::TYPE_ERROR
