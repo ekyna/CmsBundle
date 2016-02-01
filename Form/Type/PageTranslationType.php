@@ -38,19 +38,25 @@ class PageTranslationType extends AbstractType
             /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
             $page = $form->getParent()->getParent()->getData();
             if (null !== $page && null !== $parent = $page->getParent()) {
-                $parentPath = $parent->translate($form->getName())->getPath();
-                if (16 < strlen($parentPath)) {
-                    $parentPath = '&hellip;'.substr($parentPath, -16);
-                }
-                $form->add('path', 'text', array(
+                $pathOptions = [
                     'label'        => 'ekyna_core.field.url',
                     'admin_helper' => 'CMS_PAGE_PATH',
                     'required'     => false,
                     'disabled'     => $page->getStatic(),
-                    'attr'         => array('input_group' => array(
-                        'prepend' => rtrim($parentPath, '/') . '/')
-                    ),
-                ));
+                ];
+
+                $parentPath = $parent->translate($form->getName())->getPath();
+                if (1 < strlen($parentPath)) {
+                    if (16 < strlen($parentPath)) {
+                        $parentPath = '&hellip;' . substr($parentPath, -16);
+                    }
+                    $pathOptions['attr'] = [
+                        'input_group' => [
+                            'prepend' => rtrim($parentPath, '/') . '/'
+                        ],
+                    ];
+                }
+                $form->add('path', 'text', $pathOptions);
             } else {
                 $form->add('path', 'text', array(
                     'label'        => 'ekyna_core.field.url',
@@ -84,7 +90,7 @@ class PageTranslationType extends AbstractType
                     $page = $data->getTranslatable();
                     if (null !== $parent = $page->getParent()) {
                         $parentPath = $parent->translate($data->getLocale())->getPath();
-                        $path = substr($path, strlen($parentPath));
+                        $path = substr($path, strlen(rtrim($parentPath, '/')));
                     }
                     $data->setPath(trim($path, '/'));
                 }
@@ -93,6 +99,24 @@ class PageTranslationType extends AbstractType
             },
             // Reverse transform
             function ($data) {
+                if (null === $data) {
+                    return $data;
+                }
+
+                /**
+                 * @var \Ekyna\Bundle\CmsBundle\Entity\PageTranslation $data
+                 * @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page
+                 */
+                if (0 < strlen($path = $data->getPath())) {
+                    $page = $data->getTranslatable();
+                    $path = '/' . trim($data->getPath(), '/');
+                    if (null !== $parent = $page->getParent()) {
+                        $parentPath = $parent->translate($data->getLocale())->getPath();
+                        $path = rtrim($parentPath, '/') . $path;
+                    }
+                    $data->setPath($path);
+                }
+
                 return $data;
             }
         ));
