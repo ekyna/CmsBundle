@@ -2,7 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
-use Behat\Transliterator\Transliterator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -107,8 +106,8 @@ class PageTranslationType extends AbstractType
                  * @var \Ekyna\Bundle\CmsBundle\Entity\PageTranslation $data
                  * @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page
                  */
-                if (0 < strlen($path = $data->getPath())) {
-                    $page = $data->getTranslatable();
+                // Static pages's slug in not re-built by custom tree handler, need to do it there ...
+                if ((null !== $page = $data->getTranslatable()) && $page->getStatic() && (0 < strlen($path = $data->getPath()))) {
                     $path = '/' . trim($data->getPath(), '/');
                     if (null !== $parent = $page->getParent()) {
                         $parentPath = $parent->translate($data->getLocale())->getPath();
