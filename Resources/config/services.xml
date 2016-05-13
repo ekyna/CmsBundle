@@ -33,17 +33,15 @@
         </service>
 
         <!-- Repositories -->
-        <service id="ekyna_cms.content.repository"
-                 class="Ekyna\Bundle\CmsBundle\Entity\ContentRepository"
-                 factory-service="doctrine.orm.default_entity_manager"
-                 factory-method="getRepository">
+        <service id="ekyna_cms.content.repository" class="Ekyna\Bundle\CmsBundle\Entity\ContentRepository">
+            <factory service="doctrine.orm.default_entity_manager" method="getRepository" />
             <argument>Ekyna\Bundle\CmsBundle\Entity\Content</argument>
         </service>
 
         <!-- Event listeners -->
         <service id="ekyna_cms.kernel_event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\KernelEventListener">
                 <argument id="ekyna_cms.helper.page" type="service"/>
-                <argument id="security.context" type="service"/>
+                <argument id="security.authorization_checker" type="service"/>
                 <argument id="session" type="service"/>
             <tag name="kernel.event_subscriber" />
         </service>
@@ -206,10 +204,8 @@
             <argument type="service" id="ekyna_core.locale_provider.request" />
 	        <argument type="service" id="ekyna_core.cache.tag_manager" />
 	    </service>
-	    <service id="ekyna_cms.breadcrumb"
-                 class="Knp\Menu\MenuItem"
-                 factory-service="ekyna_cms.menu.breadcrumb_builder"
-                 factory-method="createBreadcrumb">
+	    <service id="ekyna_cms.breadcrumb" class="Knp\Menu\MenuItem">
+            <factory service="ekyna_cms.menu.breadcrumb_builder" method="createBreadcrumb" />
 	        <argument type="service" id="request_stack" />
 	        <tag name="knp_menu.menu" alias="breadcrumb" />
 	    </service>
@@ -224,9 +220,8 @@
             <argument type="collection" />
         </service>
         <service id="ekyna_cms.search.page"
-                 class="Ekyna\Bundle\CmsBundle\Search\PageRepository"
-                 factory-service="fos_elastica.manager"
-                 factory-method="getRepository">
+                 class="Ekyna\Bundle\CmsBundle\Search\PageRepository">
+            <factory service="fos_elastica.manager" method="getRepository" />
             <argument>%ekyna_cms.page.class%</argument>
             <call method="setLocaleProvider">
                 <argument id="ekyna_core.locale_provider.request" type="service" />

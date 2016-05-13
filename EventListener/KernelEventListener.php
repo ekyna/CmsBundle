@@ -4,13 +4,12 @@ namespace Ekyna\Bundle\CmsBundle\EventListener;
 
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class KernelEventListener
@@ -25,9 +24,9 @@ class KernelEventListener implements EventSubscriberInterface
     private $pageHelper;
 
     /**
-     * @var SecurityContextInterface
+     * @var AuthorizationCheckerInterface
      */
-    private $securityContext;
+    private $authorizationChecker;
 
     /**
      * @var Session
@@ -37,14 +36,18 @@ class KernelEventListener implements EventSubscriberInterface
 
     /**
      * KernelEventListener constructor.
-     * @param PageHelper $pageHelper
-     * @param SecurityContextInterface $securityContext
-     * @param Session $session
+     *
+     * @param PageHelper                    $pageHelper
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param Session                       $session
      */
-    public function __construct(PageHelper $pageHelper, SecurityContextInterface $securityContext, Session $session)
-    {
+    public function __construct(
+        PageHelper $pageHelper,
+        AuthorizationCheckerInterface $authorizationChecker,
+        Session $session
+    ) {
         $this->pageHelper = $pageHelper;
-        $this->securityContext = $securityContext;
+        $this->authorizationChecker = $authorizationChecker;
         $this->session = $session;
     }
 
@@ -61,7 +64,7 @@ class KernelEventListener implements EventSubscriberInterface
 
         if (null !== $page = $this->pageHelper->init($event->getRequest())) {
             if (!$page->getEnabled()) {
-                if ($this->securityContext->isGranted('ROLE_ADMIN')) {
+                if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                     $this->session->getFlashBag()->add('warning', 'ekyna_cms.page.alert.disabled.allow_as_admin');
                     return;
                 }

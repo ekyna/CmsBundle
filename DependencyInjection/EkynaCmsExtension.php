@@ -65,7 +65,7 @@ class EkynaCmsExtension extends AbstractExtension
     private function configureTwigBundle(ContainerBuilder $container)
     {
         $container->prependExtensionConfig('twig', [
-            'form' => ['resources' => ['EkynaCmsBundle:Form:form_div_layout.html.twig']],
+            'form_themes' => ['EkynaCmsBundle:Form:form_div_layout.html.twig'],
         ]);
     }
 
