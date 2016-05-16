@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Install;
 
 use Ekyna\Bundle\CmsBundle\Install\Generator\MenuGenerator;
 use Ekyna\Bundle\CmsBundle\Install\Generator\PageGenerator;
+use Ekyna\Bundle\InstallBundle\Install\AbstractInstaller;
 use Ekyna\Bundle\InstallBundle\Install\OrderedInstallerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @package Ekyna\Bundle\CmsBundle\Install
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class CmsInstaller implements OrderedInstallerInterface, ContainerAwareInterface
+class CmsInstaller extends AbstractInstaller implements OrderedInstallerInterface, ContainerAwareInterface
 {
     /**
      * @var ContainerInterface
@@ -49,6 +50,9 @@ class CmsInstaller implements OrderedInstallerInterface, ContainerAwareInterface
         $output->writeln('');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getOrder()
     {
         return 512;

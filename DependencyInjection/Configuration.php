@@ -25,7 +25,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('output_dir')->defaultValue('')->cannotBeEmpty()->end()
                 ->booleanNode('esi_flashes')->defaultFalse()->end()
-                ->scalarNode('home_route')->defaultValue('home')->cannotBeEmpty()->end()
+                ->scalarNode('home_route')->defaultNull()->end()
                 ->arrayNode('seo')
                     ->addDefaultsIfNotSet()
                     ->children()

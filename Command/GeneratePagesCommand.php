@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class GeneratePagesCommand
@@ -35,18 +36,11 @@ class GeneratePagesCommand extends ContainerAwareCommand
 
         $output->writeln(sprintf('Loading pages with truncate <info>%s</info>.', $truncate ? 'true' : 'false'));
 
-        /** @var \Symfony\Component\Console\Helper\DialogHelper $dialog */
-        $dialog = $this->getHelperSet()->get('dialog');
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Do you want to continue ? (y/n)[Y]</question>',
-            true
-        )
-        ) {
-            return;
-        }
+        /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
+        $helper = $this->getHelperSet()->get('question');
+        $question = new ConfirmationQuestion('Do you want to continue ?', false);
 
-        if ($truncate) {
+        if ($helper->ask($input, $output, $question)) {
             $this->truncate($output);
         }
 
