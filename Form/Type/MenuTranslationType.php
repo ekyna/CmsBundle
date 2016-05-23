@@ -2,7 +2,9 @@
 
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
+use Ekyna\Bundle\CmsBundle\Entity\MenuTranslation;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,7 +21,7 @@ class MenuTranslationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', 'text', array(
+            ->add('title', TextType::class, array(
                 'label'        => 'ekyna_core.field.title',
                 'admin_helper' => 'CMS_MENU_TITLE',
                 'required'     => true,
@@ -33,15 +35,7 @@ class MenuTranslationType extends AbstractType
     {
         $resolver
             ->setDefaults(array(
-                'data_class' => 'Ekyna\Bundle\CmsBundle\Entity\MenuTranslation',
+                'data_class' => MenuTranslation::class,
             ));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'ekyna_cms_menu_translation';
     }
 }

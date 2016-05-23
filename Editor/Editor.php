@@ -49,7 +49,7 @@ class Editor
 
     /**
      * Constructor.
-     * 
+     *
      * @param PluginRegistry         $registry
      * @param EntityManager          $manager
      * @param ValidatorInterface     $validator
@@ -171,8 +171,8 @@ class Editor
         $this->manager->flush();
 
         return [
-    	    'datas' => $block->getInitDatas(),
-    	    'innerHtml' => $plugin->getInnerHtml($block),
+            'datas' => $block->getInitDatas(),
+            'innerHtml' => $plugin->getInnerHtml($block),
         ];
     }
 

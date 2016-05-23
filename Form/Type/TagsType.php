@@ -40,10 +40,10 @@ class TagsType extends AbstractType
                 'property'    => 'name',
                 'allow_new'   => true,
                 'allow_list'  => true,
-                'empty_value' => 'ekyna_core.field.tags',
-                'attr'        => array(
+                'placeholder' => 'ekyna_core.field.tags',
+                /* TODO ? 'attr'        => array(
                     'placeholder' => 'ekyna_core.field.tags',
-                ),
+                ),*/
             ));
     }
 
@@ -53,13 +53,5 @@ class TagsType extends AbstractType
     public function getParent()
     {
         return 'ekyna_resource';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'ekyna_cms_tags';
     }
 }

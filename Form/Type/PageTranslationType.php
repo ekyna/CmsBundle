@@ -2,8 +2,11 @@
 
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
+use Ekyna\Bundle\CmsBundle\Entity\PageTranslation;
+use Ekyna\Bundle\CoreBundle\Form\Type\TinymceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -22,11 +25,11 @@ class PageTranslationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', 'text', array(
+            ->add('title', TextType::class, array(
                 'label'        => 'ekyna_core.field.title',
                 'admin_helper' => 'CMS_PAGE_TITLE',
             ))
-            ->add('breadcrumb', 'text', array(
+            ->add('breadcrumb', TextType::class, array(
                 'label'        => 'ekyna_core.field.breadcrumb',
                 'admin_helper' => 'CMS_PAGE_BREADCRUMB',
             ));
@@ -55,9 +58,9 @@ class PageTranslationType extends AbstractType
                         ],
                     ];
                 }
-                $form->add('path', 'text', $pathOptions);
+                $form->add('path', TextType::class, $pathOptions);
             } else {
-                $form->add('path', 'text', array(
+                $form->add('path', TextType::class, array(
                     'label'        => 'ekyna_core.field.url',
                     'admin_helper' => 'CMS_PAGE_PATH',
                     'required'     => false,
@@ -66,7 +69,7 @@ class PageTranslationType extends AbstractType
             }
 
             if (!$page->getAdvanced()) {
-                $form->add('html', 'tinymce', array(
+                $form->add('html', TinymceType::class, array(
                     'label'        => 'ekyna_core.field.content',
                     'admin_helper' => 'CMS_PAGE_CONTENT',
                     'theme'        => 'advanced',
@@ -87,6 +90,10 @@ class PageTranslationType extends AbstractType
                  */
                 if (0 < strlen($path = $data->getPath())) {
                     $page = $data->getTranslatable();
+                    // Path field is disabled for static pages : skip transform.
+                    if ($page->getStatic()) {
+                        return $data;
+                    }
                     if (null !== $parent = $page->getParent()) {
                         $parentPath = $parent->translate($data->getLocale())->getPath();
                         $path = substr($path, strlen(rtrim($parentPath, '/')));
@@ -98,23 +105,23 @@ class PageTranslationType extends AbstractType
             },
             // Reverse transform
             function ($data) {
-                if (null === $data) {
+                /*if (null === $data) {
                     return $data;
-                }
+                }*/
 
                 /**
                  * @var \Ekyna\Bundle\CmsBundle\Entity\PageTranslation $data
                  * @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page
                  */
                 // Static pages's slug in not re-built by custom tree handler, need to do it there ...
-                if ((null !== $page = $data->getTranslatable()) && $page->getStatic() && (0 < strlen($path = $data->getPath()))) {
+                /*if ((null !== $page = $data->getTranslatable()) && $page->getStatic() && (0 < strlen($path = $data->getPath()))) {
                     $path = '/' . trim($data->getPath(), '/');
                     if (null !== $parent = $page->getParent()) {
                         $parentPath = $parent->translate($data->getLocale())->getPath();
                         $path = rtrim($parentPath, '/') . $path;
                     }
                     $data->setPath($path);
-                }
+                }*/
 
                 return $data;
             }
@@ -128,16 +135,9 @@ class PageTranslationType extends AbstractType
     {
         $resolver
             ->setDefaults(array(
-                'data_class' => 'Ekyna\Bundle\CmsBundle\Entity\PageTranslation',
+                'data_class' => PageTranslation::class,
             ))
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'ekyna_cms_page_translation';
-    }
 }

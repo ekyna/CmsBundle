@@ -39,52 +39,6 @@ class EkynaCmsExtension extends AbstractExtension
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function prepend(ContainerBuilder $container)
-    {
-        parent::prepend($container);
-
-        $bundles = $container->getParameter('kernel.bundles');
-        $configs = $container->getExtensionConfig($this->getAlias());
-        $config = $this->processConfiguration(new Configuration(), $configs);
-
-        if (array_key_exists('TwigBundle', $bundles)) {
-            $this->configureTwigBundle($container);
-        }
-        if (array_key_exists('AsseticBundle', $bundles)) {
-            $this->configureAsseticBundle($container, $config);
-        }
-    }
-
-    /**
-     * Configures the TwigBundle.
-     *
-     * @param ContainerBuilder $container
-     */
-    private function configureTwigBundle(ContainerBuilder $container)
-    {
-        $container->prependExtensionConfig('twig', [
-            'form_themes' => ['EkynaCmsBundle:Form:form_div_layout.html.twig'],
-        ]);
-    }
-
-    /**
-     * Configures the AsseticBundle.
-     *
-     * @param ContainerBuilder $container
-     * @param array            $config
-     */
-    private function configureAsseticBundle(ContainerBuilder $container, array $config)
-    {
-        $asseticConfig = new AsseticConfiguration;
-        $container->prependExtensionConfig('assetic', [
-            'assets' => $asseticConfig->build($config),
-            'bundles' => ['EkynaCmsBundle']
-        ]);
-    }
-
-    /**
      * Registers the social subject event subscriber.
      *
      * @param ContainerBuilder $container

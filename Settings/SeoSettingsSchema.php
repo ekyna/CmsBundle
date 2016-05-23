@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Settings;
 
 use Ekyna\Bundle\SettingBundle\Schema\AbstractSchema;
 use Ekyna\Bundle\SettingBundle\Schema\SettingsBuilder;
+use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints;
 
@@ -37,19 +38,19 @@ class SeoSettingsSchema extends AbstractSchema
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', 'text', [
+            ->add('title', Type\TextType::class, [
                 'label'       => 'ekyna_core.field.title',
                 'constraints' => [
                     new Constraints\NotBlank()
                 ]
             ])
-            ->add('description', 'textarea', [
+            ->add('description', Type\TextareaType::class, [
                 'label'       => 'ekyna_core.field.description',
                 'constraints' => [
                     new Constraints\NotBlank()
                 ]
             ])
-            ->add('locale', 'locale', [
+            ->add('locale', Type\LocaleType::class, [
                 'label'       => 'ekyna_core.field.locale',
                 'constraints' => [
                     new Constraints\NotBlank(),

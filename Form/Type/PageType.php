@@ -2,8 +2,11 @@
 
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
+use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
 use Doctrine\ORM\EntityRepository;
 use Ekyna\Bundle\AdminBundle\Form\Type\ResourceFormType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -11,7 +14,7 @@ use Symfony\Component\Form\FormEvent;
 /**
  * Class PageType
  * @package Ekyna\Bundle\CmsBundle\Form\Type
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class PageType extends ResourceFormType
 {
@@ -40,56 +43,54 @@ class PageType extends ResourceFormType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('seo', 'ekyna_cms_seo')
-            ->add('translations', 'a2lix_translationsForms', array(
-                'form_type'      => new PageTranslationType(),
+            ->add('seo', SeoType::class)
+            ->add('translations', TranslationsFormsType::class, [
+                'form_type'      => PageTranslationType::class,
                 'label'          => false,
                 'error_bubbling' => false,
-                'attr'           => array(
+                'attr'           => [
                     'widget_col' => 12,
-                ),
-            ))
-        ;
+                ],
+            ]);
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
             $page = $event->getData();
             $form = $event->getForm();
 
             if ($page->getStatic()) {
                 $form
-                    ->add('name', 'text', array(
-                        'label'    => 'ekyna_core.field.name',
+                    ->add('name', Type\TextType::class, [
+                        'label'        => 'ekyna_core.field.name',
                         'admin_helper' => 'CMS_PAGE_NAME',
-                        'disabled' => true,
-                    ))
-                    ->add('parent', 'entity', array(
-                        'label'       => 'ekyna_core.field.parent',
+                        'disabled'     => true,
+                    ])
+                    ->add('parent', EntityType::class, [
+                        'label'        => 'ekyna_core.field.parent',
                         'admin_helper' => 'CMS_PAGE_PARENT',
-                        'class'       => $this->dataClass,
-                        'property'    => 'name',
-                        'empty_value' => 'ekyna_cms.page.value.root',
-                        'disabled'    => true,
-                    ))
-                    ->add('enabled', 'checkbox', array(
+                        'class'        => $this->dataClass,
+                        'choice_label' => 'name',
+                        'placeholder'  => 'ekyna_cms.page.value.root',
+                        'disabled'     => true,
+                    ])
+                    ->add('enabled', Type\CheckboxType::class, [
                         'label'    => 'ekyna_core.field.enabled',
                         'required' => false,
                         'disabled' => true,
-                        'attr'     => array(
+                        'attr'     => [
                             'align_with_widget' => true,
-                        ),
-                    ))
-                ;
+                        ],
+                    ]);
             } else {
                 $form
-                    ->add('name', 'text', array(
-                        'label'    => 'ekyna_core.field.name',
+                    ->add('name', Type\TextType::class, [
+                        'label'        => 'ekyna_core.field.name',
                         'admin_helper' => 'CMS_PAGE_PATH',
-                        'required' => true,
-                    ))
-                    ->add('parent', 'entity', array(
+                        'required'     => true,
+                    ])
+                    ->add('parent', EntityType::class, [
                         'label'         => 'ekyna_core.field.parent',
-                        'admin_helper' => 'CMS_PAGE_PARENT',
+                        'admin_helper'  => 'CMS_PAGE_PARENT',
                         'class'         => $this->dataClass,
                         'property'      => 'name',
                         'required'      => true,
@@ -98,47 +99,37 @@ class PageType extends ResourceFormType
                                 ->createQueryBuilder('p')
                                 ->where('p.locked = :locked')
                                 ->orderBy('p.left', 'ASC')
-                                ->setParameter('locked', false)
-                            ;
+                                ->setParameter('locked', false);
                             if (0 < $page->getId()) {
                                 $qb
                                     ->andWhere('p.id != :id')
-                                    ->setParameter('id', $page->getId())
-                                ;
+                                    ->setParameter('id', $page->getId());
                             }
+
                             return $qb;
                         },
-                    ))
-                    ->add('enabled', 'checkbox', array(
-                        'label'    => 'ekyna_core.field.enabled',
+                    ])
+                    ->add('enabled', Type\CheckboxType::class, [
+                        'label'        => 'ekyna_core.field.enabled',
                         'admin_helper' => 'CMS_PAGE_ENABLE',
-                        'required' => false,
-                        'attr'     => array(
+                        'required'     => false,
+                        'attr'         => [
                             'align_with_widget' => true,
-                        ),
-                    ))
-                ;
+                        ],
+                    ]);
 
                 $controllers = [];
                 foreach ($this->config['controllers'] as $name => $config) {
                     $controllers[$name] = $config['title'];
                 }
 
-                $form->add('controller', 'choice', array(
-                    'label'    => 'ekyna_cms.page.field.controller',
+                $form->add('controller', Type\ChoiceType::class, [
+                    'label'        => 'ekyna_cms.page.field.controller',
                     'admin_helper' => 'CMS_PAGE_CONTROLLER',
-                    'choices'  => $controllers,
-                    'required' => true,
-                ));
+                    'choices'      => $controllers,
+                    'required'     => true,
+                ]);
             }
         });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-    	return 'ekyna_cms_page';
     }
 }

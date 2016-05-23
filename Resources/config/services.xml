@@ -20,16 +20,16 @@
             <argument type="service" id="security.authorization_checker" />
             <argument>%ekyna_cms.menu.class%</argument>
             <argument>%ekyna_cms.page.class%</argument>
-            <tag name="form.type" alias="ekyna_cms_menu" />
+            <tag name="form.type" />
         </service>
         <service id="ekyna_cms.page.form_type" class="%ekyna_cms.page.form_type.class%">
             <argument>%ekyna_cms.page.class%</argument>
             <argument>%ekyna_cms.page.config%</argument>
-            <tag name="form.type" alias="ekyna_cms_page" />
+            <tag name="form.type" />
         </service>
         <service id="ekyna_cms.tags.form_type" class="%ekyna_cms.tags.form_type.class%">
             <argument>%ekyna_cms.tag.class%</argument>
-            <tag name="form.type" alias="ekyna_cms_tags" />
+            <tag name="form.type" />
         </service>
 
         <!-- Repositories -->
@@ -192,23 +192,23 @@
 
         <!-- Menus -->
         <service id="ekyna_cms.menu.menu_provider" class="Ekyna\Bundle\CmsBundle\Menu\MenuProvider">
-	        <argument type="service" id="knp_menu.factory" />
-	        <argument type="service" id="ekyna_cms.menu.repository" />
-	        <argument type="service" id="ekyna_core.locale_provider.request" />
-            <tag name="knp_menu.provider" />
-	    </service>
-        <service id="ekyna_cms.menu.breadcrumb_builder" class="Ekyna\Bundle\CmsBundle\Menu\BreadcrumbBuilder">
-	        <argument type="service" id="knp_menu.factory" />
-	        <argument type="service" id="router" />
-	        <argument type="service" id="ekyna_cms.helper.page" />
+            <argument type="service" id="knp_menu.factory" />
+            <argument type="service" id="ekyna_cms.menu.repository" />
             <argument type="service" id="ekyna_core.locale_provider.request" />
-	        <argument type="service" id="ekyna_core.cache.tag_manager" />
-	    </service>
-	    <service id="ekyna_cms.breadcrumb" class="Knp\Menu\MenuItem">
+            <tag name="knp_menu.provider" />
+        </service>
+        <service id="ekyna_cms.menu.breadcrumb_builder" class="Ekyna\Bundle\CmsBundle\Menu\BreadcrumbBuilder">
+            <argument type="service" id="knp_menu.factory" />
+            <argument type="service" id="router" />
+            <argument type="service" id="ekyna_cms.helper.page" />
+            <argument type="service" id="ekyna_core.locale_provider.request" />
+            <argument type="service" id="ekyna_core.cache.tag_manager" />
+        </service>
+        <service id="ekyna_cms.breadcrumb" class="Knp\Menu\MenuItem">
             <factory service="ekyna_cms.menu.breadcrumb_builder" method="createBreadcrumb" />
-	        <argument type="service" id="request_stack" />
-	        <tag name="knp_menu.menu" alias="breadcrumb" />
-	    </service>
+            <argument type="service" id="request_stack" />
+            <tag name="knp_menu.menu" alias="breadcrumb" />
+        </service>
 
         <!-- Serializer handlers -->
         <service id="ekyna_cms.serializer.content_handler" class="Ekyna\Bundle\CmsBundle\Serializer\ContentHandler">

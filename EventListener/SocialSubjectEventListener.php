@@ -96,7 +96,7 @@ class SocialSubjectEventListener implements EventSubscriberInterface
     private function createSubjectFromPage(PageInterface $page)
     {
         try {
-            $url = $this->urlGenerator->generate($page->getRoute(), [], true);
+            $url = $this->urlGenerator->generate($page->getRoute(), [], UrlGeneratorInterface::ABSOLUTE_URL);
 
             $subject = new Subject();
             $subject->title = $page->getSeo()->getTitle();

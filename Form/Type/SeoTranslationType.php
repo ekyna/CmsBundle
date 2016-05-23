@@ -2,7 +2,9 @@
 
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
+use Ekyna\Bundle\CmsBundle\Entity\SeoTranslation;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,12 +21,12 @@ class SeoTranslationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', 'text', array(
+            ->add('title', Type\TextType::class, array(
                 'label'        => 'ekyna_core.field.title',
                 'required'     => true,
                 'admin_helper' => 'CMS_SEO_TITLE',
             ))
-            ->add('description', 'textarea', array(
+            ->add('description', Type\TextareaType::class, array(
                 'label'        => 'ekyna_core.field.description',
                 'required'     => true,
                 'admin_helper' => 'CMS_SEO_DESCRIPTION',
@@ -38,16 +40,8 @@ class SeoTranslationType extends AbstractType
     {
         $resolver
             ->setDefaults(array(
-                'data_class' => 'Ekyna\Bundle\CmsBundle\Entity\SeoTranslation',
+                'data_class' => SeoTranslation::class,
             ))
         ;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'ekyna_cms_seo_translation';
     }
 }

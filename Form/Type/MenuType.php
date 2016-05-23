@@ -2,8 +2,12 @@
 
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
+use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
 use Doctrine\ORM\EntityRepository;
 use Ekyna\Bundle\AdminBundle\Form\Type\ResourceFormType;
+use Ekyna\Bundle\CoreBundle\Form\Type\KeyValueCollectionType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -12,7 +16,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 /**
  * Class MenuType
  * @package Ekyna\Bundle\CmsBundle\Form\Type
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class MenuType extends ResourceFormType
 {
@@ -48,21 +52,21 @@ class MenuType extends ResourceFormType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('translations', 'a2lix_translationsForms', array(
-                'form_type' => new MenuTranslationType(),
+            ->add('translations', TranslationsFormsType::class, [
+                'form_type' => MenuTranslationType::class,
                 'label'     => false,
-                'attr'      => array(
+                'attr'      => [
                     'widget_col' => 12,
-                ),
-            ))
-            ->add('description', 'textarea', array(
+                ],
+            ])
+            ->add('description', Type\TextareaType::class, [
                 'label'        => 'ekyna_core.field.description',
                 'admin_helper' => 'CMS_MENU_DESCRIPTION',
-                'required'     => false
-            ));
+                'required'     => false,
+            ]);
 
         if ($this->authorization->isGranted('ROLE_SUPER_ADMIN')) {
-            $builder->add('attributes', 'ekyna_key_value_collection', [
+            $builder->add('attributes', KeyValueCollectionType::class, [
                 'label'           => 'ekyna_core.field.attributes',
                 'admin_helper'    => 'CMS_MENU_ATTRIBUTES',
                 'add_button_text' => 'ekyna_core.button.add_attribute',
@@ -76,16 +80,16 @@ class MenuType extends ResourceFormType
             $disabled = $menu->getLocked();
 
             $form
-                ->add('name', 'text', array(
+                ->add('name', Type\TextType::class, [
                     'label'        => 'ekyna_core.field.name',
                     'admin_helper' => 'CMS_MENU_NAME',
                     'required'     => true,
                     'disabled'     => $disabled,
-                ))
-                ->add('parent', 'entity', array(
+                ])
+                ->add('parent', EntityType::class, [
                     'label'         => 'ekyna_core.field.parent',
                     'admin_helper'  => 'CMS_MENU_PARENT',
-                    'property'      => 'title',
+                    'choice_label'  => 'title',
                     'required'      => true,
                     'disabled'      => $disabled,
                     'class'         => $this->dataClass,
@@ -102,47 +106,48 @@ class MenuType extends ResourceFormType
                                 ->andWhere('m.id != :id')
                                 ->setParameter('id', $menu->getId());
                         }
+
                         return $qb;
                     },
-                ))
-                ->add('path', 'text', array(
+                ])
+                ->add('path', Type\TextType::class, [
                     'label'        => 'ekyna_core.field.url',
                     'admin_helper' => 'CMS_MENU_PATH',
                     'required'     => false,
                     'disabled'     => $disabled,
-                ))
-                ->add('enabled', 'checkbox', array(
+                ])
+                ->add('enabled', Type\CheckboxType::class, [
                     'label'        => 'ekyna_core.field.enabled',
                     'admin_helper' => 'CMS_MENU_ENABLED',
                     'required'     => false,
                     'disabled'     => $disabled,
-                    'attr'         => array(
+                    'attr'         => [
                         'align_with_widget' => true,
-                    ),
-                ));
+                    ],
+                ]);
 
             if ($this->authorization->isGranted('ROLE_SUPER_ADMIN')) {
                 $form
-                    ->add('route', 'text', array(
+                    ->add('route', Type\TextType::class, [
                         'label'        => 'ekyna_core.field.route',
                         'admin_helper' => 'CMS_MENU_ROUTE',
                         'required'     => false,
                         'disabled'     => $disabled,
-                    ))
-                    ->add('parameters', 'ekyna_key_value_collection', array(
+                    ])
+                    ->add('parameters', KeyValueCollectionType::class, [
                         'label'           => 'ekyna_core.field.parameters',
                         'admin_helper'    => 'CMS_MENU_PARAMETERS',
                         'add_button_text' => 'ekyna_core.button.add_parameter',
-                    ))
-                ;
+                    ]);
             }
 
             if (!$disabled) {
                 $form
-                    ->add('page', 'entity', array(
+                    ->add('page', EntityType::class, [
                         'label'         => 'ekyna_cms.page.label.singular',
                         'admin_helper'  => 'CMS_MENU_PAGE',
-                        'property'      => 'name',
+                        'choice_label'  => 'name',
+                        'placeholder'   => 'ekyna_core.value.choose',
                         'required'      => false,
                         'class'         => $this->pageClass,
                         'query_builder' => function (EntityRepository $er) {
@@ -150,21 +155,12 @@ class MenuType extends ResourceFormType
                             $qb
                                 ->andWhere($qb->expr()->eq('p.dynamicPath', ':dynamic'))
                                 ->setParameter('dynamic', false)
-                                ->addOrderBy('p.left', 'ASC')
-                            ;
+                                ->addOrderBy('p.left', 'ASC');
+
                             return $qb;
                         },
-                    ))
-                ;
+                    ]);
             }
         });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'ekyna_cms_menu';
     }
 }

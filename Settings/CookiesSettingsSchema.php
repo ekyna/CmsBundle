@@ -4,13 +4,14 @@ namespace Ekyna\Bundle\CmsBundle\Settings;
 
 use Ekyna\Bundle\SettingBundle\Schema\AbstractSchema;
 use Ekyna\Bundle\SettingBundle\Schema\SettingsBuilder;
+use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints;
 
 /**
  * Class CookiesSettingsSchema
  * @package Ekyna\Bundle\CmsBundle\Settings
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class CookiesSettingsSchema extends AbstractSchema
 {
@@ -25,11 +26,10 @@ class CookiesSettingsSchema extends AbstractSchema
                 'header_text' => 'Default header content',
                 'dialog_text' => 'Default dialog content',
             ], $this->defaults))
-            ->setAllowedTypes('mode',         'string')
-            ->setAllowedTypes('header_text',  'string')
-            ->setAllowedTypes('dialog_text',  'string')
-            ->setAllowedValues('mode', ['header', 'dialog'])
-        ;
+            ->setAllowedTypes('mode', 'string')
+            ->setAllowedTypes('header_text', 'string')
+            ->setAllowedTypes('dialog_text', 'string')
+            ->setAllowedValues('mode', ['header', 'dialog']);
     }
 
     /**
@@ -38,33 +38,32 @@ class CookiesSettingsSchema extends AbstractSchema
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('mode', 'choice', [
+            ->add('mode', Type\ChoiceType::class, [
                 'label'       => 'ekyna_cms.settings.cookies.mode.label',
                 'choices'     => [
-                    'header' => 'ekyna_cms.settings.cookies.mode.header',
-                    'dialog' => 'ekyna_cms.settings.cookies.mode.dialog',
+                    'ekyna_cms.settings.cookies.mode.header' => 'header',
+                    'ekyna_cms.settings.cookies.mode.dialog' => 'dialog',
                 ],
                 'constraints' => [
-                    new Constraints\NotNull()
-                ]
+                    new Constraints\NotNull(),
+                ],
             ])
-            ->add('header_text', 'text', [
+            ->add('header_text', Type\TextType::class, [
                 'label'       => 'ekyna_cms.settings.cookies.header_text',
                 'constraints' => [
-                    new Constraints\NotBlank()
-                ]
+                    new Constraints\NotBlank(),
+                ],
             ])
-            ->add('dialog_text', 'textarea', [
+            ->add('dialog_text', Type\TextareaType::class, [
                 'label'       => 'ekyna_cms.settings.cookies.dialog_text',
                 'constraints' => [
                     new Constraints\NotBlank(),
                 ],
-                'attr' => [
-                    'class' => 'tinymce',
+                'attr'        => [
+                    'class'      => 'tinymce',
                     'data-theme' => 'simple',
                 ],
-            ])
-        ;
+            ]);
     }
 
     /**
