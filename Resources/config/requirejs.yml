@@ -1,10 +1,6 @@
 config:
-    shim:
-        'ekyna-cms-editor':
-            deps: ['jquery', 'routing']
-        'ekyna-cms/user':
-            deps: ['jquery', 'routing', 'ekyna-cms/cookie', 'ekyna-cms-editor']
     paths:
+        # TODO ekyna-cms/editor package
         'ekyna-cms-editor': 'bundles/ekynacms/js/editor/editor'
         'ekyna-cms-editor/plugin-base': 'bundles/ekynacms/js/editor/plugin/base'
         'ekyna-cms-editor/tinymce': 'bundles/ekynacms/js/editor/plugin/tinymce'
@@ -13,8 +9,8 @@ config:
         'ekyna-cms/user': 'bundles/ekynacms/js/user'
 build:
     include:
-        - 'ekyna-cms-editor'
-        - 'ekyna-cms-editor/plugin-base'
+#        - 'ekyna-cms-editor'
+#        - 'ekyna-cms-editor/plugin-base'
         - 'ekyna-cms/cookie'
         - 'ekyna-cms/user'
 #    paths:
