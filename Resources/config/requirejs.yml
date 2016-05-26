@@ -1,4 +1,7 @@
 config:
+    shim:
+        backbone:
+            deps: ['underscore']
     paths:
         # TODO ekyna-cms/editor package
         'ekyna-cms-editor': 'bundles/ekynacms/js/editor/editor'
@@ -7,6 +10,8 @@ config:
 #        'ekyna-cms-editor/image': 'bundles/ekynacms/js/editor/plugin/image'
         'ekyna-cms/cookie': 'bundles/ekynacms/js/cookie'
         'ekyna-cms/user': 'bundles/ekynacms/js/user'
+        backbone: 'bundles/ekynacms/lib/backbone'
+        underscore: 'bundles/ekynacms/lib/underscore'
 build:
     include:
 #        - 'ekyna-cms-editor'

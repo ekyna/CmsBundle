@@ -1,3 +1,10 @@
+ekyna_cms_editor_index:
+    path: ""
+    defaults: { _controller: "EkynaCmsBundle:Editor:index" }
+    methods: [GET]
+    options:
+        expose: true
+
 ekyna_cms_editor_init:
     path: /init
     defaults: { _controller: "EkynaCmsBundle:Editor:init" }
@@ -11,4 +18,3 @@ ekyna_cms_editor_request:
     methods: [POST]
     options:
         expose: true
-        

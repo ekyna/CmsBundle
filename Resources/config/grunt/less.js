@@ -1,13 +1,11 @@
 module.exports = function (grunt, options) {
     // @see https://github.com/gruntjs/grunt-contrib-less
     return {
-        /*cms: {
+        cms: {
             files: {
-                'src/Ekyna/Bundle/CmsBundle/Resources/public/tmp/main.css':
-                    'src/Ekyna/Bundle/CmsBundle/Resources/private/less/main.less',
-                'src/Ekyna/Bundle/CmsBundle/Resources/public/tmp/content.css':
-                    'src/Ekyna/Bundle/CmsBundle/Resources/private/less/content.less'
+                'src/Ekyna/Bundle/MediaBundle/Resources/public/tmp/css/editor.css':
+                    'src/Ekyna/Bundle/CmsBundle/Resources/private/less/editor.less'
             }
-        }*/
+        }
     }
 };

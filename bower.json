@@ -1,0 +1,10 @@
+{
+  "name": "ekyna/MediaBundle",
+  "devDependencies": {
+    "bootstrap": "^3.3.6",
+    "backbone": "^1.3.3"
+  },
+  "resolutions": {
+    "jquery": "1.9.1 - 2"
+  }
+}
