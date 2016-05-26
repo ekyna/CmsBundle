@@ -3764,6 +3764,20 @@ body {
 #editor-control-bar > .btn-group:last-child {
   margin-right: 0;
 }
+#editor-control-bar #editor-control-viewport button > span {
+  -webkit-transition: -webkit-transform 0.9s;
+  -moz-transition: -moz-transform 0.9s;
+  -o-transition: -o-transform 0.9s;
+  -ms-transition: -ms-transform 0.9s;
+  transition: transform .9s;
+}
+#editor-control-bar #editor-control-viewport button.rotate > span {
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  transform: rotate(270deg);
+}
 #editor-viewport {
   position: absolute;
   top: 50px;
@@ -3772,8 +3786,12 @@ body {
   right: 0;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
   overflow: hidden;
-  transition: top .6s, bottom .6s, left .6s, right .6s;
   background-color: #ffffff;
+  -webkit-transition: top .2s, bottom .2s, left .2s, right .2s;
+  -moz-transition: top .2s, bottom .2s, left .2s, right .2s;
+  -o-transition: top .2s, bottom .2s, left .2s, right .2s;
+  -ms-transition: top .2s, bottom .2s, left .2s, right .2s;
+  transition: top .2s, bottom .2s, left .2s, right .2s;
 }
 #editor-viewport iframe {
   width: 100%;

@@ -2,6 +2,11 @@ config:
     shim:
         backbone:
             deps: ['underscore']
+            exports: 'Backbone'
+        underscore:
+            exports: '_'
+        handlebars:
+            exports: 'Handlebars'
     paths:
         # TODO ekyna-cms/editor package
         'ekyna-cms-editor': 'bundles/ekynacms/js/editor/editor'
@@ -12,6 +17,7 @@ config:
         'ekyna-cms/user': 'bundles/ekynacms/js/user'
         backbone: 'bundles/ekynacms/lib/backbone'
         underscore: 'bundles/ekynacms/lib/underscore'
+        handlebars: 'bundles/ekynacms/lib/handlebars'
 build:
     include:
 #        - 'ekyna-cms-editor'

@@ -3,7 +3,7 @@ module.exports = function (grunt, options) {
     return {
         cms: {
             files: {
-                'src/Ekyna/Bundle/MediaBundle/Resources/public/tmp/css/editor.css':
+                'src/Ekyna/Bundle/CmsBundle/Resources/public/tmp/css/editor.css':
                     'src/Ekyna/Bundle/CmsBundle/Resources/private/less/editor.less'
             }
         }

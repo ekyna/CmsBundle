@@ -1,13 +1,10 @@
 // Core variables and mixins
 @import "variables.less";
 @import "../../../../../../../bower_components/bootstrap/less/mixins.less";
-
-
 // Reset and dependencies
 @import "../../../../../../../bower_components/bootstrap/less/normalize.less";
 //@import "../../../../../../../bower_components/bootstrap/less/print.less";
 //@import "../../../../../../../bower_components/bootstrap/less/glyphicons.less"; // Available with CoreBundle
-
 // Core CSS
 @import "../../../../../../../bower_components/bootstrap/less/scaffolding.less";
 @import "../../../../../../../bower_components/bootstrap/less/type.less";
@@ -16,7 +13,6 @@
 //@import "../../../../../../../bower_components/bootstrap/less/tables.less";
 @import "../../../../../../../bower_components/bootstrap/less/forms.less";
 @import "../../../../../../../bower_components/bootstrap/less/buttons.less";
-
 // Components
 @import "../../../../../../../bower_components/bootstrap/less/component-animations.less";
 //@import "../../../../../../../bower_components/bootstrap/less/dropdowns.less";
@@ -39,13 +35,11 @@
 @import "../../../../../../../bower_components/bootstrap/less/responsive-embed.less";
 @import "../../../../../../../bower_components/bootstrap/less/wells.less";
 @import "../../../../../../../bower_components/bootstrap/less/close.less";
-
 // Components w/ JavaScript
 @import "../../../../../../../bower_components/bootstrap/less/modals.less";
 //@import "../../../../../../../bower_components/bootstrap/less/tooltip.less";
 //@import "../../../../../../../bower_components/bootstrap/less/popovers.less";
 //@import "../../../../../../../bower_components/bootstrap/less/carousel.less";
-
 // Utility classes
 @import "../../../../../../../bower_components/bootstrap/less/utilities.less";
 @import "../../../../../../../bower_components/bootstrap/less/responsive-utilities.less";
@@ -82,6 +76,23 @@ body {
       margin-right: 0;
     }
   }
+
+  #editor-control-viewport button {
+    & > span {
+      -webkit-transition: -webkit-transform .9s; // Chrome Safari
+      -moz-transition: -moz-transform .9s; // Mozilla
+      -o-transition: -o-transform .9s; // Opéra
+      -ms-transition: -ms-transform .9s; // IE
+      transition: transform .9s;
+    }
+    &.rotate > span {
+      -webkit-transform: rotate(270deg);
+      -moz-transform: rotate(270deg);
+      -o-transform: rotate(270deg);
+      -ms-transform: rotate(270deg);
+      transform: rotate(270deg);
+    }
+  }
 }
 
 #editor-viewport {
@@ -92,8 +103,14 @@ body {
   right: 0;
   box-shadow: 0 0 10px rgba(0, 0, 0, .4);
   overflow: hidden;
-  transition: top .6s, bottom .6s, left .6s, right .6s;
   background-color: #ffffff;
+
+
+  -webkit-transition: top .2s, bottom .2s, left .2s, right .2s; // Chrome Safari
+  -moz-transition: top .2s, bottom .2s, left .2s, right .2s; // Mozilla
+  -o-transition: top .2s, bottom .2s, left .2s, right .2s; // Opéra
+  -ms-transition: top .2s, bottom .2s, left .2s, right .2s; // IE
+  transition: top .2s, bottom .2s, left .2s, right .2s;
 
   iframe {
     width: 100%;

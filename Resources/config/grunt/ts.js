@@ -3,7 +3,7 @@ module.exports = function (grunt, options) {
         cms: {
             files: [
                 {
-                    src: 'src/Ekyna/Bundle/CmsBundle/Resources/private/ts/**/*.ts',
+                    src: 'src/Ekyna/Bundle/CmsBundle/Resources/private/ts/**.ts',
                     dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/js'
                 }
             ],

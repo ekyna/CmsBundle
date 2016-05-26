@@ -17,7 +17,10 @@
 </head>
 <body>
 
-    <div id="editor-control-bar">
+    <div data-controls-placeholder></div>
+    <div data-viewport-placeholder></div>
+
+    {#<div id="editor-control-bar">
 
         <button type="button" class="btn btn-default">
             <span class="fa fa-power-off"></span>
@@ -41,11 +44,11 @@
             </button>
         </div>
 
-    </div>
+    </div>#}
 
-    <div id="editor-viewport">
+    {#<div id="editor-viewport">
         <iframe src="{{ path(ekyna_cms_home_route) }}" frameborder="0"></iframe>
-    </div>
+    </div>#}
 
 
     {% block javascripts -%}

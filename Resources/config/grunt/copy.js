@@ -9,6 +9,10 @@ module.exports = function (grunt, options) {
                 {
                     src: 'bower_components/underscore/underscore-min.js',
                     dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/lib/underscore.js'
+                },
+                {
+                    src: 'bower_components/handlebars/handlebars.amd.min.js',
+                    dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/lib/handlebars.js'
                 }
             ]
         },
