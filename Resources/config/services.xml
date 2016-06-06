@@ -40,6 +40,7 @@
 
         <!-- Event listeners -->
         <service id="ekyna_cms.kernel_event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\KernelEventListener">
+                <argument id="ekyna_cms.editor.editor" type="service"/>
                 <argument id="ekyna_cms.helper.page" type="service"/>
                 <argument id="security.authorization_checker" type="service"/>
                 <argument id="session" type="service"/>
@@ -72,10 +73,10 @@
         <service id="ekyna_cms.tags.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\TagsSubjectSubscriber" public="false">
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
-        <service id="ekyna_cms.abstract_block.subscriber" class="Ekyna\Bundle\CmsBundle\Listener\AbstractBlockSubscriber" public="false">
+        <!--<service id="ekyna_cms.abstract_block.subscriber" class="Ekyna\Bundle\CmsBundle\Listener\AbstractBlockSubscriber" public="false">
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
             <tag name="doctrine.event_subscriber" connection="default" />
-        </service>
+        </service>-->
         <service id="ekyna_cms.page.elastica_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\PageElasticaSubscriber" public="false">
             <argument id="fos_elastica.object_persister.search.ekyna_cms_page" type="service" />
             <argument>%ekyna_cms.page.class%</argument>
@@ -95,7 +96,7 @@
         <service id="ekyna_core.menu.listener" class="Ekyna\Bundle\CmsBundle\Listener\MenuListener">
             <tag name="doctrine.entity_listener" />
         </service>
-        <service id="ekyna_core.abstract_block.listener" class="Ekyna\Bundle\CmsBundle\Listener\AbstractBlockListener">
+        <service id="ekyna_core.block.listener" class="Ekyna\Bundle\CmsBundle\Listener\BlockListener">
             <argument type="service" id="ekyna_core.cache.tag_manager" />
             <tag name="doctrine.entity_listener" />
         </service>
@@ -170,24 +171,36 @@
 
         <!-- Web Editor -->
         <service id="ekyna_cms.editor.plugin_registry" class="Ekyna\Bundle\CmsBundle\Editor\PluginRegistry" />
-        <service id="ekyna_cms.editor" class="Ekyna\Bundle\CmsBundle\Editor\Editor">
+        <service id="ekyna_cms.editor.editor" class="Ekyna\Bundle\CmsBundle\Editor\Editor">
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="validator" />
-            <argument>tinymce</argument>
+            <argument>ekyna_cms_tinymce</argument>
         </service>
+        <service id="ekyna_cms.editor.view_builder" class="Ekyna\Bundle\CmsBundle\Editor\ViewBuilder">
+            <argument type="service" id="ekyna_cms.editor.editor" />
+            <argument type="service" id="ekyna_cms.editor.adapter.bootstrap3" />
+        </service>
+        <!-- TODO factory or something ... -->
+        <service id="ekyna_cms.editor.adapter.bootstrap3" class="Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter" />
 
         <!-- Web Editor plugins -->
-        <service id="ekyna_cms.editor.plugin.tinymce" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\TinymcePlugin">
-            <argument>%ekyna_cms.editor.plugin.tinymce.config%</argument>
+        <service id="ekyna_cms.editor.plugin.abstract" abstract="true">
             <call method="setLocaleProvider">
                 <argument type="service" id="ekyna_core.locale_provider.request" />
             </call>
-            <tag name="ekyna_cms.editor.plugin" alias="tinymce" />
         </service>
-        <service id="ekyna_cms.editor.plugin.image" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\ImagePlugin">
+        <service id="ekyna_cms.editor.plugin.tinymce"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\TinymcePlugin"
+                 parent="ekyna_cms.editor.plugin.abstract">
+            <argument>%ekyna_cms.editor.plugin.tinymce.config%</argument>
+            <tag name="ekyna_cms.editor.plugin" alias="ekyna_cms_tinymce" />
+        </service>
+        <service id="ekyna_cms.editor.plugin.image"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\ImagePlugin"
+                 parent="ekyna_cms.editor.plugin.abstract">
             <argument>%ekyna_cms.editor.plugin.image.config%</argument>
-            <tag name="ekyna_cms.editor.plugin" alias="image" />
+            <tag name="ekyna_cms.editor.plugin" alias="ekyna_cms_image" />
         </service>
 
         <!-- Menus -->
@@ -232,7 +245,6 @@
         <!-- Twig extensions -->
         <service id="ekyna_cms.twig.cms_extension" class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
             <argument type="service" id="ekyna_setting.manager" />
-            <argument type="service" id="ekyna_cms.editor" />
             <argument type="service" id="ekyna_cms.menu.menu_provider" />
             <argument type="service" id="knp_menu.helper" />
             <argument type="service" id="ekyna_cms.helper.page" />
@@ -245,6 +257,12 @@
                 <argument key="page">%ekyna_cms.page.config%</argument>
                 <argument key="esi_flashes">%ekyna_cms.esi_flashes%</argument>
             </argument>
+            <tag name="twig.extension" />
+        </service>
+        <service id="ekyna_cms.twig.editor_extension" class="Ekyna\Bundle\CmsBundle\Twig\EditorExtension">
+            <argument type="service" id="ekyna_cms.editor.editor" />
+            <argument type="service" id="ekyna_cms.helper.page" />
+            <argument type="service" id="ekyna_cms.editor.view_builder" />
             <tag name="twig.extension" />
         </service>
 

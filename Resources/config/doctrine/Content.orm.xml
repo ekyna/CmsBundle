@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<doctrine-mapping 
+<doctrine-mapping
     xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping"
@@ -10,9 +10,9 @@
             repository-class="Ekyna\Bundle\CmsBundle\Entity\ContentRepository"
             table="cms_content">
 
-	    <id name="id" type="integer" column="id">
-	        <generator strategy="AUTO" />
-	    </id>
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO" />
+        </id>
 
         <field name="createdAt" type="datetime" column="created_at">
             <gedmo:timestampable on="create" />
@@ -21,13 +21,12 @@
             <gedmo:timestampable on="update" />
         </field>
 
-        <one-to-many field="blocks" target-entity="Ekyna\Bundle\CmsBundle\Entity\AbstractBlock" mapped-by="content" fetch="EXTRA_LAZY">
+        <one-to-many field="containers" target-entity="Ekyna\Bundle\CmsBundle\Entity\Container" mapped-by="content" fetch="EXTRA_LAZY" orphan-removal="true">
             <cascade>
                 <cascade-all />
             </cascade>
             <order-by>
-                <order-by-field name="row" direction="ASC" />
-                <order-by-field name="column" direction="ASC" />
+                <order-by-field name="position" direction="ASC" />
             </order-by>
         </one-to-many>
 

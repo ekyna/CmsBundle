@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
 
 /**
  * AbstractPlugin.
@@ -17,6 +18,12 @@ abstract class AbstractPlugin implements PluginInterface
     protected $config;
 
     /**
+     * @var LocaleProviderInterface
+     */
+    protected $localeProvider;
+
+
+    /**
      * Constructor.
      *
      * @param array $config
@@ -24,6 +31,16 @@ abstract class AbstractPlugin implements PluginInterface
     public function __construct(array $config = [])
     {
         $this->config = $config;
+    }
+
+    /**
+     * Sets the localeProvider.
+     *
+     * @param LocaleProviderInterface $localeProvider
+     */
+    public function setLocaleProvider(LocaleProviderInterface $localeProvider)
+    {
+        $this->localeProvider = $localeProvider;
     }
 
     /**
@@ -41,7 +58,6 @@ abstract class AbstractPlugin implements PluginInterface
      */
     public function supports(BlockInterface $block)
     {
-        $class = $this->getClass();
-        return $block instanceof $class;
+        return $block->getType() === $this->getType();
     }
 }

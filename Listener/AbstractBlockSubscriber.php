@@ -11,10 +11,11 @@ use Doctrine\ORM\Events;
  * Class AbstractBlockSubscriber
  * @package Ekyna\Bundle\CmsBundle\Listener
  * @author Étienne Dauvergne <contact@ekyna.com>
+ * @TODO remove
  */
 class AbstractBlockSubscriber implements EventSubscriber
 {
-    const BLOCK_FQCN = 'Ekyna\Bundle\CmsBundle\Entity\AbstractBlock';
+    const BLOCK_FQCN = 'Ekyna\Bundle\CmsBundle\Entity\Block';
 
     /**
      * @var PluginRegistry
@@ -24,7 +25,7 @@ class AbstractBlockSubscriber implements EventSubscriber
 
     /**
      * Constructor.
-     * 
+     *
      * @param PluginRegistry $registry
      */
     public function __construct(PluginRegistry $registry)

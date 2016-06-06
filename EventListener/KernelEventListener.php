@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\EventListener;
 
+use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -14,10 +15,15 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 /**
  * Class KernelEventListener
  * @package Ekyna\Bundle\CmsBundle\EventListener
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class KernelEventListener implements EventSubscriberInterface
 {
+    /**
+     * @var Editor
+     */
+    private $editor;
+
     /**
      * @var PageHelper
      */
@@ -37,15 +43,18 @@ class KernelEventListener implements EventSubscriberInterface
     /**
      * KernelEventListener constructor.
      *
+     * @param Editor                        $editor
      * @param PageHelper                    $pageHelper
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param Session                       $session
      */
     public function __construct(
+        Editor $editor,
         PageHelper $pageHelper,
         AuthorizationCheckerInterface $authorizationChecker,
         Session $session
     ) {
+        $this->editor = $editor;
         $this->pageHelper = $pageHelper;
         $this->authorizationChecker = $authorizationChecker;
         $this->session = $session;
@@ -62,10 +71,17 @@ class KernelEventListener implements EventSubscriberInterface
             return;
         }
 
-        if (null !== $page = $this->pageHelper->init($event->getRequest())) {
+        $request = $event->getRequest();
+
+        if (1 === intval($request->query->get('cms-editor-enable', 0))) {
+            $this->editor->setEnabled(true);
+        }
+
+        if (null !== $page = $this->pageHelper->init($request)) {
             if (!$page->getEnabled()) {
                 if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                     $this->session->getFlashBag()->add('warning', 'ekyna_cms.page.alert.disabled.allow_as_admin');
+
                     return;
                 }
 
@@ -80,8 +96,8 @@ class KernelEventListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
-            KernelEvents::REQUEST => array('onKernelRequest', 0),
-        );
+        return [
+            KernelEvents::REQUEST => ['onKernelRequest', 0],
+        ];
     }
 }

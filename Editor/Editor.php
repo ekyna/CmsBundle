@@ -3,8 +3,11 @@
 namespace Ekyna\Bundle\CmsBundle\Editor;
 
 use Doctrine\ORM\EntityManager;
+use Ekyna\Bundle\CmsBundle\Entity\Block;
+use Ekyna\Bundle\CmsBundle\Entity\Container;
 use Ekyna\Bundle\CmsBundle\Entity\Content;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Model\ContainerInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -39,7 +42,7 @@ class Editor
     /**
      * @var ContentInterface
      */
-    private $content;
+    //private $content;
 
     /**
      * @var bool
@@ -59,7 +62,7 @@ class Editor
         PluginRegistry     $registry,
         EntityManager      $manager,
         ValidatorInterface $validator,
-        $defaultBlockType  = 'tinymce'
+        $defaultBlockType  = 'ekyna_cms_tinymce'
     ) {
         $this->registry         = $registry;
         $this->manager          = $manager;
@@ -68,43 +71,59 @@ class Editor
     }
 
     /**
+     * Sets the enabled.
+     *
+     * @param bool $enabled
+     * @return Editor
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = (bool) $enabled;
+        return $this;
+    }
+
+    /**
      * Returns the enabled.
      *
-     * @return boolean
+     * @return bool
      */
-    public function getEnabled()
+    public function isEnabled()
     {
         return $this->enabled;
     }
 
     /**
-     * Sets the enabled.
+     * Returns the plugin by name.
      *
-     * @param boolean $enabled
-     * @return Editor
+     * @param string $name
+     *
+     * @return Plugin\PluginInterface
      */
-    public function setEnabled($enabled)
+    public function getPluginByName($name)
     {
-        $this->enabled = $enabled;
-        return $this;
+        return $this->registry->get($name);
     }
 
     /**
-     * Creates and returns a "default" Content for the given subject.
+     * Creates a default content for the given subject.
      *
      * @param ContentSubjectInterface $subject
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface
+     * @return ContentInterface
      */
     public function createDefaultContent(ContentSubjectInterface $subject)
     {
         $block = $this->createDefaultBlock($this->defaultBlockType);
 
+        $container = new Container();
+        $container->addBlock($block);
+
         $content = new Content();
-        $content->addBlock($block);
+        $content->addContainer($container);
 
         $subject->setContent($content);
 
+//        TODO (in controller)
         $this->manager->persist($content);
         $this->manager->persist($subject);
         $this->manager->flush();
@@ -113,18 +132,53 @@ class Editor
     }
 
     /**
+     * Creates a default container.
+     *
+     * @param array $data
+     * @param ContentInterface $content
+     *
+     * @return ContainerInterface
+     */
+    public function createDefaultContainer(array $data = [], ContentInterface $content = null)
+    {
+        $container = new Container();
+
+        if (null !== $content) {
+            $content->addContainer($container);
+        }
+
+        // TODO $data
+
+        $this->createDefaultBlock(null, [], $container);
+
+        return $container;
+    }
+
+    /**
      * Creates a default block.
      *
      * @param string $type
      * @param array $data
+     * @param ContainerInterface $container
      *
      * @return BlockInterface
      */
-    private function createDefaultBlock($type, array $data = [])
+    private function createDefaultBlock(string $type = null, array $data = [], ContainerInterface $container = null)
     {
+        $block = new Block();
+
+        if (null !== $container) {
+            $container->addBlock($block);
+        }
+
+        if (null === $type) {
+            $type = $this->defaultBlockType;
+        }
+        $block->setType($type);
+
         $plugin = $this->registry->get($type);
 
-        return $plugin->create($data);
+        return $plugin->create($block, $data);
     }
 
     /**
@@ -134,7 +188,7 @@ class Editor
      * @throws \InvalidArgumentException
      * @return Editor
      */
-    public function initContent($id)
+    /*public function initContent($id)
     {
         $repo = $this->manager->getRepository('EkynaCmsBundle:Content');
 
@@ -143,7 +197,7 @@ class Editor
         }
 
         return $this;
-    }
+    }*/
 
     /**
      * Creates a block.
@@ -161,14 +215,18 @@ class Editor
             throw new \InvalidArgumentException('"type" field is mandatory.');
         }
 
+        $block = new Block();
+        $block->setType($data['type']);
+
         $plugin = $this->registry->get($data['type']);
-        $block = $plugin->create($data);
+        $block = $plugin->create($block, $data);
 
         $this->updateBlockCoordinates($block, $data);
         $this->content->addBlock($block);
 
-        $this->manager->persist($this->content);
-        $this->manager->flush();
+//        TODO (in controller)
+//        $this->manager->persist($this->content);
+//        $this->manager->flush();
 
         return [
             'datas' => $block->getInitDatas(),
@@ -198,8 +256,9 @@ class Editor
 
         // TODO content validation
 
-        $this->manager->persist($block);
-        $this->manager->flush();
+//        TODO (in controller)
+//        $this->manager->persist($block);
+//        $this->manager->flush();
 
         return [
             'id' => $block->getId(),
@@ -239,8 +298,9 @@ class Editor
 
         // TODO content validation
 
-        $this->manager->persist($this->content);
-        $this->manager->flush();
+//        TODO (in controller)
+//        $this->manager->persist($this->content);
+//        $this->manager->flush();
 
         return [
             'ids' => $removedIds,
@@ -261,12 +321,13 @@ class Editor
         foreach($data as $coordinates) {
             $block = $this->findBlock($coordinates);
             $this->updateBlockCoordinates($block, $coordinates);
-            $this->manager->persist($block);
+//            $this->manager->persist($block);
         }
 
         // TODO content validation
 
-        $this->manager->flush();
+//        TODO (in controller)
+//        $this->manager->flush();
     }
 
     /**
@@ -306,7 +367,7 @@ class Editor
             $parameters['content'] = $this->content;
         }
         $block = $this->manager
-            ->getRepository('EkynaCmsBundle:AbstractBlock')
+            ->getRepository('EkynaCmsBundle:Block')
             ->findOneBy($parameters)
         ;
         if (null === $block) {
@@ -330,13 +391,14 @@ class Editor
             $type = $this->defaultBlockType;
         }
 
-        $repository = $this->manager->getRepository('Ekyna\Bundle\CmsBundle\Entity\AbstractBlock');
+        $repository = $this->manager->getRepository('Ekyna\Bundle\CmsBundle\Entity\Block');
         if (null === $block = $repository->findOneBy(['name' => $name, 'content' => null])) {
             $block = $this->createDefaultBlock($type, $data);
             $block->setName($name);
 
-            $this->manager->persist($block);
-            $this->manager->flush($block);
+//            TODO (in controller)
+//            $this->manager->persist($block);
+//            $this->manager->flush($block);
         } else {
             // TODO test block type ?
         }

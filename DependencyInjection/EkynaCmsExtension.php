@@ -24,6 +24,7 @@ class EkynaCmsExtension extends AbstractExtension
         $container->setParameter('ekyna_cms.home_route', $config['home_route']);
         $container->setParameter('ekyna_cms.esi_flashes', $config['esi_flashes']);
 
+        // TODO Set config directly by changing services definitions
         $container->setParameter('ekyna_cms.seo.config', $config['seo']);
         $container->setParameter('ekyna_cms.page.config', $config['page']);
         $container->setParameter('ekyna_cms.menu.config', $config['menu']);

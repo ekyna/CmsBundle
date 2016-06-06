@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Model\ContainerInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
@@ -11,7 +11,7 @@ use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
 /**
  * Class Content
  * @package Ekyna\Bundle\CmsBundle\Entity
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class Content implements ContentInterface
 {
@@ -24,9 +24,9 @@ class Content implements ContentInterface
     protected $id;
 
     /**
-     * @var ArrayCollection|BlockInterface[]
+     * @var ArrayCollection|ContainerInterface[]
      */
-    protected $blocks;
+    protected $containers;
 
 
     /**
@@ -34,7 +34,7 @@ class Content implements ContentInterface
      */
     public function __construct()
     {
-        $this->blocks = new ArrayCollection();
+        $this->containers = new ArrayCollection();
     }
 
     /**
@@ -48,21 +48,10 @@ class Content implements ContentInterface
     /**
      * {@inheritdoc}
      */
-    public function addBlock(BlockInterface $block)
+    public function setContainers(ArrayCollection $containers)
     {
-        $block->setContent($this);
-        $this->blocks[] = $block;
-    
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setBlocks(ArrayCollection $blocks)
-    {
-        foreach($blocks as $block) {
-            $this->addBlock($block);
+        foreach ($containers as $container) {
+            $this->addContainer($container);
         }
 
         return $this;
@@ -71,9 +60,10 @@ class Content implements ContentInterface
     /**
      * {@inheritdoc}
      */
-    public function removeBlock(BlockInterface $block)
+    public function addContainer(ContainerInterface $container)
     {
-        $this->blocks->removeElement($block);
+        $container->setContent($this);
+        $this->containers->add($container);
 
         return $this;
     }
@@ -81,18 +71,31 @@ class Content implements ContentInterface
     /**
      * {@inheritdoc}
      */
-    public function getBlocks()
+    public function removeContainer(ContainerInterface $container)
     {
-        return $this->blocks;
+        $container->setContent(null);
+        $this->containers->removeElement($container);
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
+    public function getContainers()
+    {
+        return $this->containers;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @TODO remove as handled by plugins
+     */
     public function getIndexableContents()
     {
-        $contents = array();
-        foreach ($this->blocks as $block) {
+        $contents = [];
+
+        /* TODO foreach ($this->blocks as $block) {
             if ($block->isIndexable()) {
                 foreach ($block->getIndexableContents() as $locale => $content) {
                     if (!array_key_exists($locale, $contents)) {
@@ -101,7 +104,8 @@ class Content implements ContentInterface
                     $contents[$locale]['content'] .= $content;
                 }
             }
-        }
+        }*/
+
         return $contents;
     }
 

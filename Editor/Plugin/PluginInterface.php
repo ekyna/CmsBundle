@@ -13,20 +13,21 @@ interface PluginInterface
 {
     /**
      * Creates a new block.
-     * 
-     * @param array $datas
+     *
+     * @param BlockInterface $block
+     * @param array $data
      *
      * @return BlockInterface
      */
-    public function create(array $datas = []);
+    public function create(BlockInterface $block, array $data = []);
 
     /**
      * Updates a block.
-     * 
+     *
      * @param BlockInterface $block
-     * @param array          $datas
+     * @param array          $data
      */
-    public function update(BlockInterface $block, array $datas = []);
+    public function update(BlockInterface $block, array $data = []);
 
     /**
      * Removes a block.
@@ -37,7 +38,7 @@ interface PluginInterface
 
     /**
      * Returns whether the block is supported.
-     * 
+     *
      * @param BlockInterface $block
      *
      * @return boolean
@@ -45,18 +46,18 @@ interface PluginInterface
     public function supports(BlockInterface $block);
 
     /**
-     * Returns the inner html.
-     * 
+     * Returns the block content.
+     *
      * @param BlockInterface $block
-     * 
+     *
      * @return string
      */
-    public function getInnerHtml(BlockInterface $block);
+    public function render(BlockInterface $block);
 
     /**
-     * Returns the supported block fqcn.
-     * 
+     * Returns the supported block type.
+     *
      * @return string
      */
-    public function getClass();
+    public function getType();
 }

@@ -251,7 +251,7 @@
         </property>
     </class>
 
-    <class name="Ekyna\Bundle\CmsBundle\Entity\AbstractBlock">
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Block">
         <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\BlockIdentity" />
         <property name="row">
             <constraint name="GreaterThanOrEqual">

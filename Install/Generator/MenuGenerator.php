@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Class MenuGenerator
  * @package Ekyna\Bundle\CmsBundle\Install\Generator
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class MenuGenerator
 {
@@ -42,7 +42,7 @@ class MenuGenerator
      * Constructor.
      *
      * @param ContainerInterface $container
-     * @param OutputInterface $output
+     * @param OutputInterface    $output
      */
     public function __construct(ContainerInterface $container, OutputInterface $output)
     {
@@ -76,14 +76,12 @@ class MenuGenerator
             $menu
                 ->setName($name)
                 ->setDescription($config['description'])
-                ->setLocked(true)
-            ;
+                ->setLocked(true);
 
             foreach ($this->locales as $locale) {
                 $menuTranslation = $menu->translate($locale, true);
                 $menuTranslation
-                    ->setTitle($config['title'])
-                ;
+                    ->setTitle($config['title']);
             }
 
             $this->menuOperator->persist($menu);
@@ -96,6 +94,7 @@ class MenuGenerator
      * Finds a menu by his name.
      *
      * @param $name
+     *
      * @return Menu|null
      */
     public function findMenuByName($name)

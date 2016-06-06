@@ -17,7 +17,7 @@
         "MIT"
     ],
     "require" : {
-        "php" : ">=5.5.9",
+        "php" : ">=7.0.0",
         "ekyna/media-bundle" : "0.6.x-dev",
         "ekyna/sitemap-bundle" : "0.6.x-dev"
     },

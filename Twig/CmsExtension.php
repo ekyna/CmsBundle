@@ -2,14 +2,10 @@
 
 namespace Ekyna\Bundle\CmsBundle\Twig;
 
-use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Entity\Menu;
 use Ekyna\Bundle\CmsBundle\Entity\SeoRepository;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Menu\MenuProvider;
-use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
-use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
-use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
 use Ekyna\Bundle\CoreBundle\Cache\TagManager;
@@ -29,11 +25,6 @@ class CmsExtension extends \Twig_Extension
      * @var SettingsManagerInterface
      */
     protected $settings;
-
-    /**
-     * @var Editor
-     */
-    protected $editor;
 
     /**
      * @var MenuProvider
@@ -70,17 +61,11 @@ class CmsExtension extends \Twig_Extension
      */
     protected $config;
 
-    /**
-     * @var \Twig_Template
-     */
-    protected $template;
-
 
     /**
      * Constructor.
      *
      * @param SettingsManagerInterface $settings
-     * @param Editor                   $editor
      * @param MenuProvider             $menuProvider
      * @param Helper                   $menuHelper
      * @param PageHelper               $pageHelper
@@ -91,7 +76,6 @@ class CmsExtension extends \Twig_Extension
      */
     public function __construct(
         SettingsManagerInterface $settings,
-        Editor                   $editor,
         MenuProvider             $menuProvider,
         Helper                   $menuHelper,
         PageHelper               $pageHelper,
@@ -101,7 +85,6 @@ class CmsExtension extends \Twig_Extension
         array $config = array()
     ) {
         $this->settings        = $settings;
-        $this->editor          = $editor;
         $this->menuProvider    = $menuProvider;
         $this->menuHelper      = $menuHelper;
         $this->pageHelper      = $pageHelper;
@@ -110,7 +93,6 @@ class CmsExtension extends \Twig_Extension
         $this->fragmentHandler = $fragmentHandler;
 
         $this->config = array_merge(array(
-            'template' => 'EkynaCmsBundle:Editor:content.html.twig',
             'home_route' => 'home',
             'seo' => array(
                 'no_follow' => true,
@@ -122,14 +104,6 @@ class CmsExtension extends \Twig_Extension
             ),
             'esi_flashes' => false,
         ), $config);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function initRuntime(\Twig_Environment $twig)
-    {
-        $this->template = $twig->loadTemplate($this->config['template']);
     }
 
     /**
@@ -154,9 +128,6 @@ class CmsExtension extends \Twig_Extension
             new \Twig_SimpleFunction('cms_seo', array($this, 'renderSeo'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_meta', array($this, 'renderMeta'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_title', array($this, 'renderTitle'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('cms_content', array($this, 'renderContent'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('cms_content_block', array($this, 'renderContentBlock'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('cms_block', array($this, 'renderBlock'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_menu', array($this, 'renderMenu'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_breadcrumb', array($this, 'renderBreadcrumb'), array('is_safe' => array('html'))),
             new \Twig_SimpleFunction('cms_flashes', array($this, 'renderFlashes'), array('is_safe' => array('html'))),
@@ -300,112 +271,6 @@ class CmsExtension extends \Twig_Extension
         } else {
             return sprintf('<%s%s />', $tag, implode('', $attr));
         }
-    }
-
-    /**
-     * Generates html from given Content.
-     *
-     * @param mixed $subject
-     *
-     * @throws \RuntimeException
-     *
-     * @return string
-     */
-    public function renderContent($subject = null)
-    {
-        $content = null;
-
-        if ($subject instanceOf ContentInterface) {
-            $content = $subject;
-        } elseif ($subject instanceof ContentSubjectInterface) {
-            if (null === $content = $subject->getContent()) {
-                $content = $this->editor->createDefaultContent($subject);
-            }
-        } elseif (null === $subject) {
-            if (null !== $page = $this->getPage()) {
-                if (null === $content = $page->getContent()) {
-                    if ($page->getAdvanced()) {
-                        $content = $this->editor->createDefaultContent($page);
-                    } elseif (0 < strlen($html = $page->getHtml())) {
-                        return $html;
-                    } else {
-                        return '<p></p>'; // TODO default content
-                    }
-                }
-            }
-        }
-
-        if (null === $content) {
-            throw new \RuntimeException('Undefined content.');
-        }
-
-        // TODO : hasBlock() does not use template inheritance.
-        if (!$this->template->hasBlock('cms_block_content')) {
-            throw new \RuntimeException('Unable to find "cms_block_content" twig block.');
-        }
-
-        $this->editor->setEnabled(true);
-
-        // Tag response as Content relative
-        if (null !== $content->getId()) {
-            $this->tagManager->addTags($content->getEntityTag());
-        }
-
-        return $this->template->renderBlock('cms_block_content', array(
-            'content' => $content,
-            'editable' => $this->editor->getEnabled()
-        ));
-    }
-
-    /**
-     * Generates html from given Content Block.
-     *
-     * @param BlockInterface $block
-     *
-     * @throws \RuntimeException
-     *
-     * @return string
-     */
-    public function renderContentBlock(BlockInterface $block)
-    {
-        $blockName = sprintf('cms_block_%s', $block->getType());
-
-        if (!$this->template->hasBlock($blockName)) {
-            throw new \RuntimeException('Unable to find "%s" twig block.', $blockName);
-        }
-
-        return trim($this->template->renderBlock($blockName, array('block' => $block)));
-    }
-
-    /**
-     * Generates html from given Block.
-     *
-     * @param BlockInterface|string $block The block or the block name
-     * @param string $type the block type
-     * @param array $data  the block data
-     *
-     * @throws \RuntimeException
-     *
-     * @return string
-     */
-    public function renderBlock($block, $type = null, array $data = array())
-    {
-        if (is_string($block)) {
-            $block = $this->editor->findBlockByName($block, $type, $data);
-        }
-        if (!$block instanceof BlockInterface) {
-            throw new \InvalidArgumentException('Expected instance of Ekyna\Bundle\CmsBundle\Model\BlockInterface');
-        }
-
-        $this->editor->setEnabled(true);
-
-        // Tags the response as Block relative
-        $this->tagManager->addTags($block->getEntityTag());
-
-        return $this->template->renderBlock('cms_block', array(
-            'block' => $block,
-            'editable' => $this->editor->getEnabled()
-        ));
     }
 
     /**

@@ -4,12 +4,16 @@ module.exports = function (grunt, options) {
             files: [
                 {
                     src: 'src/Ekyna/Bundle/CmsBundle/Resources/private/ts/**.ts',
-                    dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/js'
+                    dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/tmp/js'
                 }
             ],
-            tsconfig: 'src/Ekyna/Bundle/CmsBundle/tsconfig.json',
             options: {
-                fast: 'never'
+                fast: 'never',
+                module: 'amd',
+                noImplicitAny: true,
+                removeComments: true,
+                preserveConstEnums: true,
+                sourceMap: false
             }
         }
     }

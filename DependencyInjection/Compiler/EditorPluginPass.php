@@ -36,8 +36,8 @@ class EditorPluginPass implements CompilerPassInterface
         }
 
         $mapping = array(
-            'Ekyna\Bundle\CmsBundle\Entity\TinymceBlock'            => 'Ekyna\Bundle\CmsBundle\Entity\TinymceBlockTranslation',
-            'Ekyna\Bundle\CmsBundle\Entity\TinymceBlockTranslation' => 'Ekyna\Bundle\CmsBundle\Entity\TinymceBlock',
+            'Ekyna\Bundle\CmsBundle\Entity\Block'            => 'Ekyna\Bundle\CmsBundle\Entity\BlockTranslation',
+            'Ekyna\Bundle\CmsBundle\Entity\BlockTranslation' => 'Ekyna\Bundle\CmsBundle\Entity\Block',
         );
         if ($container->hasParameter('ekyna_admin.translation_mapping')) {
             $mapping = array_merge($container->getParameter('ekyna_admin.translation_mapping'), $mapping);

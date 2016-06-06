@@ -26,6 +26,9 @@ class EditorController extends Controller
         return $this->render('EkynaCmsBundle:Editor:index.html.twig');
     }
 
+
+
+
     /**
      * Toolbar action (front).
      *

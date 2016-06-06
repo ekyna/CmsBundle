@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Route;
 /**
  * Class PageGenerator
  * @package Ekyna\Bundle\CmsBundle\Install\Generator
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class PageGenerator
 {
@@ -87,7 +87,7 @@ class PageGenerator
      * Constructor.
      *
      * @param ContainerInterface $container
-     * @param OutputInterface $output
+     * @param OutputInterface    $output
      */
     public function __construct(ContainerInterface $container, OutputInterface $output)
     {
@@ -135,11 +135,11 @@ class PageGenerator
                 'index'      => true,
                 'canonical'  => null,
             ])
-            ->setAllowedTypes('changefreq',  'string')
-            ->setAllowedTypes('priority',    'float')
-            ->setAllowedTypes('follow',      'bool')
-            ->setAllowedTypes('index',       'bool')
-            ->setAllowedTypes('canonical',   ['string', 'null'])
+            ->setAllowedTypes('changefreq', 'string')
+            ->setAllowedTypes('priority', 'float')
+            ->setAllowedTypes('follow', 'bool')
+            ->setAllowedTypes('index', 'bool')
+            ->setAllowedTypes('canonical', ['string', 'null'])
             ->setAllowedValues('changefreq', Seo::getChangefreqs())
             ->setNormalizer('priority', function (Options $options, $value) {
                 if (0 > $value) {
@@ -148,53 +148,52 @@ class PageGenerator
                 if (1 < $value) {
                     return 1;
                 }
+
                 return $value;
-            })
-        ;
+            });
 
         $this->optionsResolver = new OptionsResolver();
 
         /** @noinspection PhpUnusedParameterInspection */
         $this->optionsResolver
             ->setDefaults([
-                'name' => null,
-                'path' => null,
-                'parent' => null,
-                'locked' => true,
-                'menus' => [],
+                'name'     => null,
+                'path'     => null,
+                'parent'   => null,
+                'locked'   => true,
+                'menus'    => [],
                 'advanced' => false,
-                'seo' => null,
+                'seo'      => null,
                 'position' => 0,
             ])
             ->setRequired(['name', 'path'])
-
-            ->setAllowedTypes('name',  'string')
-            ->setAllowedTypes('path',  'string')
-            ->setAllowedTypes('parent',  ['string', 'null'])
-            ->setAllowedTypes('locked',  'bool')
-            ->setAllowedTypes('menus',  'array')
-            ->setAllowedTypes('advanced',  'bool')
-            ->setAllowedTypes('seo',  ['null', 'array'])
-            ->setAllowedTypes('position',  'int')
-
+            ->setAllowedTypes('name', 'string')
+            ->setAllowedTypes('path', 'string')
+            ->setAllowedTypes('parent', ['string', 'null'])
+            ->setAllowedTypes('locked', 'bool')
+            ->setAllowedTypes('menus', 'array')
+            ->setAllowedTypes('advanced', 'bool')
+            ->setAllowedTypes('seo', ['null', 'array'])
+            ->setAllowedTypes('position', 'int')
             ->setNormalizer('locked', function (Options $options, $value) {
                 // Lock pages with parameters in path
                 if (preg_match('#\{.*\}#', $options['path'])) {
                     return true;
                 }
+
                 return $value;
             })
             ->setNormalizer('seo', function (Options $options, $value) use ($seoOptionResolver) {
-                return $seoOptionResolver->resolve((array) $value);
-            })
-        ;
+                return $seoOptionResolver->resolve((array)$value);
+            });
     }
 
     /**
      * Resolve route options.
      *
-     * @param Route $route
+     * @param Route  $route
      * @param string $routeName
+     *
      * @return array
      * @throws \InvalidArgumentException
      */
@@ -203,6 +202,7 @@ class PageGenerator
         if (null === $cmsOptions = $route->getOption('_cms')) {
             throw new \InvalidArgumentException(sprintf('Route "%s" does not have "_cms" defaults attributes.', $routeName));
         }
+
         return $this->optionsResolver->resolve(array_merge($cmsOptions, ['path' => $route->getPath()]));
     }
 
@@ -231,7 +231,7 @@ class PageGenerator
     /**
      * Creates a route definition
      *
-     * @param string $routeName
+     * @param string                           $routeName
      * @param \Symfony\Component\Routing\Route $route
      *
      * @return RouteDefinition
@@ -251,6 +251,7 @@ class PageGenerator
                 $parentDefinition->appendChild($definition);
             }
         }
+
         return $definition;
     }
 
@@ -268,6 +269,7 @@ class PageGenerator
         if (null === $route = $this->routes->get($name)) {
             throw new \RuntimeException(sprintf('Route "%s" not found.', $name));
         }
+
         return $route;
     }
 
@@ -283,6 +285,7 @@ class PageGenerator
         if ($routeName === $this->homeRouteName) {
             return $this->homeDefinition;
         }
+
         return $this->homeDefinition->findChildByRouteName($routeName);
     }
 
@@ -302,7 +305,7 @@ class PageGenerator
      * Creates a Page from given Route
      *
      * @param RouteDefinition $definition
-     * @param PageInterface $parentPage
+     * @param PageInterface   $parentPage
      *
      * @throws \InvalidArgumentException
      *
@@ -331,7 +334,8 @@ class PageGenerator
             foreach ($this->locales as $locale) {
                 if ($routeName === $path = $this->translator->trans(
                         $routeName, [], $this->routesTranslationDomain, $locale
-                    )) {
+                    )
+                ) {
                     $path = $definition->getPath();
                 }
                 $pageTranslation = $page->translate($locale);
@@ -362,8 +366,7 @@ class PageGenerator
                 ->setPriority($seoDefinition['priority'])
                 ->setFollow($seoDefinition['follow'])
                 ->setIndex($seoDefinition['index'])
-                ->setCanonical($seoDefinition['canonical'])
-            ;
+                ->setCanonical($seoDefinition['canonical']);
 
             // Page
             $page
@@ -374,8 +377,7 @@ class PageGenerator
                 ->setLocked($definition->getLocked())
                 ->setAdvanced($definition->getAdvanced())
                 ->setParent($parentPage)
-                ->setSeo($seo)
-            ;
+                ->setSeo($seo);
 
             foreach ($this->locales as $locale) {
                 $title = $seoTitle = $definition->getPageName();
@@ -391,7 +393,8 @@ class PageGenerator
 
                 if ($routeName === $path = $this->translator->trans(
                         $routeName, [], $this->routesTranslationDomain, $locale
-                    )) {
+                    )
+                ) {
                     $path = $definition->getPath();
                 }
 
@@ -399,8 +402,7 @@ class PageGenerator
                 $pageTranslation
                     ->setTitle($title)
                     ->setBreadcrumb($title)
-                    ->setPath($path)
-                ;
+                    ->setPath($path);
             }
 
             if (!$this->validate($page)) {
@@ -430,7 +432,8 @@ class PageGenerator
      * Creates the menus entries.
      *
      * @param PageInterface $page
-     * @param array $parentNames
+     * @param array         $parentNames
+     *
      * @return bool
      */
     private function createMenus(PageInterface $page, array $parentNames)
@@ -443,6 +446,7 @@ class PageGenerator
                         $parentName,
                         $page->getRoute()
                     ));
+
                     return false;
                 }
 
@@ -453,14 +457,12 @@ class PageGenerator
                     $menu
                         ->setParent($parent)
                         ->setName($name)
-                        ->setRoute($name)
-                    ;
+                        ->setRoute($name);
 
                     foreach ($this->locales as $locale) {
                         $menuTranslation = $menu->translate($locale, true);
                         $menuTranslation
-                            ->setTitle($page->translate($locale)->getTitle())
-                        ;
+                            ->setTitle($page->translate($locale)->getTitle());
                     }
 
                     if (!$this->validate($menu)) {
@@ -471,6 +473,7 @@ class PageGenerator
                 }
             }
         }
+
         return true;
     }
 
@@ -493,6 +496,7 @@ class PageGenerator
      * Validates the element.
      *
      * @param object $element
+     *
      * @return bool
      */
     private function validate($element)
@@ -501,11 +505,13 @@ class PageGenerator
         if (0 < $violationList->count()) {
             $this->output->writeln('<error>Invalid element</error>');
             /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
-            foreach($violationList as $violation) {
+            foreach ($violationList as $violation) {
                 $this->output->writeln(sprintf('<error>%s : %s</error>', $violation->getPropertyPath(), $violation->getMessage()));
             }
+
             return false;
         }
+
         return true;
     }
 

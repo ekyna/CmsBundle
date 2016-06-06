@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+use Ekyna\Bundle\AdminBundle\Model\TranslatableInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
 
 /**
@@ -9,22 +10,22 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-interface BlockInterface extends TaggedEntityInterface
+interface BlockInterface extends TranslatableInterface, TaggedEntityInterface
 {
     /**
-     * Set content
+     * Set container
      *
-     * @param ContentInterface $content
+     * @param ContainerInterface $container
      * @return BlockInterface|$this
      */
-    public function setContent(ContentInterface $content = null);
+    public function setContainer(ContainerInterface $container = null);
 
     /**
-     * Get content
+     * Get container
      *
-     * @return ContentInterface
+     * @return ContainerInterface
      */
-    public function getContent();
+    public function getContainer();
 
     /**
      * Sets the name
@@ -87,21 +88,50 @@ interface BlockInterface extends TaggedEntityInterface
     public function getSize();
 
     /**
-     * Returns the init datas for JS editor.
+     * Sets the type.
+     *
+     * @param string $type
+     *
+     * @return BlockInterface|$this
+     */
+    public function setType($type);
+
+    /**
+     * Returns the type.
+     *
+     * @return string
+     */
+    public function getType();
+
+    /**
+     * Sets the data.
+     *
+     * @param array $data
+     *
+     * @return BlockInterface|$this
+     */
+    public function setData(array $data);
+
+    /**
+     * Returns the data.
      *
      * @return array
      */
-    public function getInitDatas();
+    public function getData();
 
     /**
-     * Returns the type of the block
+     * Returns the init datas for JS editor.
+     *
+     * @return array
+     * @TODO remove as handled by plugins
      */
-    public function getType();
+    public function getInitDatas();
 
     /**
      * Returns whether the exhibitor should be indexed or not by elasticsearch.
      *
      * @return bool
+     * @TODO remove as handled by plugins
      */
     public function isIndexable();
 
@@ -109,6 +139,7 @@ interface BlockInterface extends TaggedEntityInterface
      * Returns the indexable contents indexed by locales.
      *
      * @return array
+     * @TODO remove as handled by plugins
      */
     public function getIndexableContents();
 }

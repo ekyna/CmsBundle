@@ -11,4 +11,19 @@ use Ekyna\Bundle\AdminBundle\Model\TranslationInterface;
  */
 interface BlockTranslationInterface extends TranslationInterface
 {
+    /**
+     * Sets the data.
+     *
+     * @param array $data
+     *
+     * @return BlockTranslationInterface|$this
+     */
+    public function setData(array $data);
+
+    /**
+     * Returns the data.
+     *
+     * @return array
+     */
+    public function getData();
 }

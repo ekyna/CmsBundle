@@ -2,17 +2,20 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Doctrine\ORM\EntityRepository;
+use Ekyna\Bundle\AdminBundle\Doctrine\ORM\TranslatableResourceRepository;
 
 /**
  * Class BlockRepository
  * @package Ekyna\Bundle\CmsBundle\Entity
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class BlockRepository extends EntityRepository
+class BlockRepository extends TranslatableResourceRepository
 {
     /**
-     * @param $name
+     * Finds the block by name
+     *
+     * @param string $name
+     *
      * @return \Ekyna\Bundle\CmsBundle\Model\BlockInterface|null
      */
     public function findOneByName($name)

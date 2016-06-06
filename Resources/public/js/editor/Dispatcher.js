@@ -1,0 +1,1 @@
+define(["require","exports","backbone","underscore"],function(a,b,c,d){"use strict";Object.defineProperty(b,"__esModule",{value:!0}),b["default"]=d.extend({},c.Events)});

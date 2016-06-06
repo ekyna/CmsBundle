@@ -3,54 +3,54 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
-use Ekyna\Bundle\CoreBundle\Model\TimestampableInterface;
+use Ekyna\Bundle\CoreBundle\Model;
 
 /**
  * Interface ContentInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-interface ContentInterface extends TimestampableInterface, TaggedEntityInterface
+interface ContentInterface extends Model\TimestampableInterface, Model\TaggedEntityInterface
 {
     /**
-     * Set blocks
+     * Set containers
      *
-     * @param ArrayCollection|BlockInterface[] $blocks
-     *
-     * @return ContentInterface|$this
-     */
-    public function setBlocks(ArrayCollection $blocks);
-
-    /**
-     * Add block
-     *
-     * @param BlockInterface $block
+     * @param ArrayCollection|ContainerInterface[] $containers
      *
      * @return ContentInterface|$this
      */
-    public function addBlock(BlockInterface $block);
+    public function setContainers(ArrayCollection $containers);
 
     /**
-     * Remove blocks
+     * Add container
      *
-     * @param BlockInterface $block
+     * @param ContainerInterface $container
      *
      * @return ContentInterface|$this
      */
-    public function removeBlock(BlockInterface $block);
+    public function addContainer(ContainerInterface $container);
 
     /**
-     * Get blocks
+     * Remove containers
      *
-     * @return ArrayCollection|BlockInterface[]
+     * @param ContainerInterface $container
+     *
+     * @return ContentInterface|$this
      */
-    public function getBlocks();
+    public function removeContainer(ContainerInterface $container);
+
+    /**
+     * Get containers
+     *
+     * @return ArrayCollection|ContainerInterface[]
+     */
+    public function getContainers();
 
     /**
      * Returns the indexable contents indexed by locale.
      *
      * @return array
+     * @TODO remove as handled by plugins
      */
     public function getIndexableContents();
 }
