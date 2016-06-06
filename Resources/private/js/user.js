@@ -3,19 +3,19 @@
 
     // CommonJS module is defined
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = factory(require('jquery'), require('routing'), require('ekyna-cms/cookie'), require('ekyna-cms-editor'));
+        module.exports = factory(require('jquery'), require('routing'), require('ekyna-cms/cookie'));
     }
     // AMD module is defined
     else if (typeof define === 'function' && define.amd) {
-        define('ekyna-cms/user', ['jquery', 'routing', 'ekyna-cms/cookie', 'ekyna-cms-editor'], function($, Router, Cookie, Editor) {
-            return factory($, Router, Cookie, Editor);
+        define('ekyna-cms/user', ['jquery', 'routing', 'ekyna-cms/cookie'], function($, Router, Cookie) {
+            return factory($, Router, Cookie);
         });
     } else {
         // planted over the root!
-        root.EkynaCmsUser = factory(root.jQuery, root.Routing, root.EkynaCmsCookie, root.EkynaCmsEditor);
+        root.EkynaCmsUser = factory(root.jQuery, root.Routing, root.EkynaCmsCookie);
     }
 
-}(this, function($, Router, Cookie, Editor) {
+}(this, function($, Router, Cookie) {
     "use strict";
 
     var EkynaCmsUser = function() {
@@ -45,13 +45,6 @@
                         $flashesContainer.html($flashes.text());
                     }
                 }
-
-                // Editor
-                /*var $editor = $xml.find('editor');
-                if ($editor.size() > 0) {
-                    $('body').append($editor.text());
-                    Editor.init();
-                }*/
 
                 // Cookie consent
                 var $cookie = $xml.find('cookie');

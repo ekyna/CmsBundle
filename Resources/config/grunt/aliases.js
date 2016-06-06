@@ -12,6 +12,7 @@ module.exports = {
     ],
     'build:cms': [
         'clean:cms_pre',
+        'copy:cms_lib',
         'build:cms_css',
         'build:cms_js',
         'clean:cms_post'
