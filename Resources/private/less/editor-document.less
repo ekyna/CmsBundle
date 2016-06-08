@@ -1,41 +1,40 @@
-.cms-content {
-  /*margin-bottom: 10px;
-  border: 1px dotted transparent;
+@import "editor-variables.less";
 
-  &:hover {
-    border-color: #cccccc;
-  }*/
+.cms-content {
 
   > .cms-container {
     margin-bottom: 10px;
-    border: 1px dotted transparent;
+    border: 1px solid transparent;
 
     &:hover {
-      border-color: rgba(255, 149, 0, 0.4);
+      border: 1px dotted @editor-container-color;
+    }
+    &.selected, &.selected:hover {
+      border: 1px solid @editor-container-color;
     }
 
     > .cms-row {
       margin-bottom: 10px;
-      border: 1px dotted transparent;
+      border: 1px solid transparent;
 
       &:hover {
-        border-color: rgba(255, 38, 0, 0.4);
+        border: 1px dotted @editor-row-color;
+      }
+      &.selected, &.selected:hover {
+        border: 1px solid @editor-row-color;
       }
 
       > .cms-column {
-        /*margin-bottom: 10px;
-        border: 1px dotted transparent;
-
-        &:hover {
-          border-color: rgba(255, 0, 222, 0.4);
-        }*/
 
         > .cms-block {
           margin-bottom: 10px;
           border: 1px dotted transparent;
 
           &:hover {
-            border-color: rgba(1, 0, 255, 0.4);
+            border: 1px dotted @editor-block-color;
+          }
+          &.selected, &.selected:hover {
+            border: 1px solid @editor-block-color;
           }
         }
       }

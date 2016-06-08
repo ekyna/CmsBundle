@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class EditorController extends Controller
 {
     /**
-     * REnders the CMS Editor.
+     * Renders the CMS Editor.
      *
      * @return Response
      */
@@ -26,16 +26,13 @@ class EditorController extends Controller
         return $this->render('EkynaCmsBundle:Editor:index.html.twig');
     }
 
-
-
-
     /**
      * Toolbar action (front).
      *
      * @param Request $request
      * @return Response
      */
-    public function initAction(Request $request)
+    /*public function initAction(Request $request)
     {
         if (!$request->isXmlHttpRequest()) {
             throw new NotFoundHttpException();
@@ -49,7 +46,7 @@ class EditorController extends Controller
         }
 
         return $response;
-    }
+    }*/
 
     /**
      * Handles an editor request.
@@ -58,7 +55,7 @@ class EditorController extends Controller
      * @return JsonResponse
      * @throws NotFoundHttpException
      */
-    public function requestAction(Request $request)
+    /*public function requestAction(Request $request)
     {
         if (!$request->isXmlHttpRequest()) {
             throw new NotFoundHttpException();
@@ -97,5 +94,5 @@ class EditorController extends Controller
         }
 
         return new JsonResponse($responseData);
-    }
+    }*/
 }

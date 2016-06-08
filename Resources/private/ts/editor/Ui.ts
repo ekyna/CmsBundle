@@ -8,7 +8,7 @@ import Dispatcher from './Dispatcher';
 /**
  * Click origin
  */
-export interface ClickOrigin {
+export interface OriginInterface {
     top: number,
     left: number
 }
@@ -212,7 +212,7 @@ export class Toolbar extends Backbone.Model {
     defaults():Backbone.ObjectHash {
         return {
             id: null,
-            origin: <ClickOrigin>{top: 0, left: 0},
+            origin: <OriginInterface>{top: 0, left: 0},
             groups: new Backbone.Collection<ButtonGroup>()
         }
     }
@@ -295,6 +295,15 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
 
     private clear():void {
         this.subViews.forEach((view:ButtonGroupView) => view.remove());
+    }
+
+    applyOriginOffset(origin: OriginInterface):ToolbarView<T> {
+        this.$el.css({
+            top: origin.top + this.model.get('origin').top,
+            left: origin.left + this.model.get('origin').left,
+        });
+
+        return this;
     }
 
     render():ToolbarView<T> {

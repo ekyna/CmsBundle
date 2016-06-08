@@ -5,16 +5,13 @@ namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * Class ContentGrid
+ * Class Block
  * @package Ekyna\Bundle\CmsBundle\Validator\Constraints
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class ContentGrid extends Constraint
+class Block extends Constraint
 {
-    public $missing_row     = 'ekyna_cms.content.missing_row';
-    public $columns_overlap = 'ekyna_cms.content.columns_overlap';
-    public $row_too_large   = 'ekyna_cms.content.row_too_large';
-    public $block_too_small = 'ekyna_cms.content.block_too_small';
+    public $rowOrNameButNotBoth = 'ekyna_cms.block.row_or_name_but_not_both';
 
     /**
      * {@inheritdoc}

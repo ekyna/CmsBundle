@@ -15,32 +15,32 @@ class Bootstrap3Adapter implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function buildContent(Model\ContentInterface $content, View\Content $view)
+    public function buildContent(Model\ContentInterface $content, View\ContentView $view)
     {
-        $view->attributes = array('class' => 'content');
+        $view->attributes = array('classes' => 'content');
     }
 
     /**
      * @inheritDoc
      */
-    public function buildContainer(Model\ContainerInterface $container, View\Container $view)
+    public function buildContainer(Model\ContainerInterface $container, View\ContainerView $view)
     {
-        $view->attributes = array('class' => 'container');
+        $view->attributes = array('classes' => 'container');
     }
 
     /**
      * @inheritDoc
      */
-    public function buildRow(Model\BlockInterface $block, View\Row $view)
+    public function buildRow(Model\RowInterface $row, View\RowView $view)
     {
-        $view->attributes = array('class' => 'row');
+        $view->attributes = array('classes' => 'row');
     }
 
     /**
      * @inheritDoc
      */
-    public function buildBlock(Model\BlockInterface $block, View\Block $view)
+    public function buildBlock(Model\BlockInterface $block, View\BlockView $view)
     {
-        $view->columnAttributes = array('class' => 'col-md-' . $block->getSize());
+        $view->attributes = array('classes' => 'col-md-' . $block->getSize());
     }
 }

@@ -3,20 +3,18 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Model\ContainerInterface;
-use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
-use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
-use Ekyna\Bundle\CoreBundle\Model\TimestampableTrait;
+use Ekyna\Bundle\CmsBundle\Model as Cms;
+use Ekyna\Bundle\CoreBundle\Model as Core;
 
 /**
  * Class Content
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class Content implements ContentInterface
+class Content implements Cms\ContentInterface
 {
-    use TimestampableTrait;
-    use TaggedEntityTrait;
+    use Core\TimestampableTrait,
+        Core\TaggedEntityTrait;
 
     /**
      * @var integer
@@ -24,7 +22,7 @@ class Content implements ContentInterface
     protected $id;
 
     /**
-     * @var ArrayCollection|ContainerInterface[]
+     * @var ArrayCollection|Cms\ContainerInterface[]
      */
     protected $containers;
 
@@ -60,7 +58,7 @@ class Content implements ContentInterface
     /**
      * {@inheritdoc}
      */
-    public function addContainer(ContainerInterface $container)
+    public function addContainer(Cms\ContainerInterface $container)
     {
         $container->setContent($this);
         $this->containers->add($container);
@@ -71,7 +69,7 @@ class Content implements ContentInterface
     /**
      * {@inheritdoc}
      */
-    public function removeContainer(ContainerInterface $container)
+    public function removeContainer(Cms\ContainerInterface $container)
     {
         $container->setContent(null);
         $this->containers->removeElement($container);
@@ -85,6 +83,20 @@ class Content implements ContentInterface
     public function getContainers()
     {
         return $this->containers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sortContainers()
+    {
+        $iterator = $this->containers->getIterator();
+        $iterator->uasort(function (Cms\ContainerInterface $a, Cms\ContainerInterface $b) {
+            return ($a->getPosition() < $b->getPosition()) ? -1 : 1;
+        });
+        $this->containers = new ArrayCollection(iterator_to_array($iterator));
+
+        return $this;
     }
 
     /**

@@ -1,13 +1,13 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Editor;
+namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
 use Ekyna\Bundle\CmsBundle\Model\ContainerInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
 
 /**
  * Class ContainerManager
- * @package Ekyna\Bundle\CmsBundle\Editor
+ * @package Ekyna\Bundle\CmsBundle\Editor\Manager
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
 class ContainerManager

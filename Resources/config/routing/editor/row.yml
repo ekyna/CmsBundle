@@ -1,0 +1,17 @@
+ekyna_cms_editor_row_create_block:
+    path: /{rowId}/create-block
+    defaults: { _controller: "EkynaCmsBundle:Editor/Row:createBlock" }
+    methods: [POST]
+    requirements:
+        rowId: \d+
+    options:
+        expose: true
+
+ekyna_cms_editor_row_update_layout:
+    path: /{rowId}/update-layout
+    defaults: { _controller: "EkynaCmsBundle:Editor/Row:updateLayout" }
+    methods: [POST]
+    requirements:
+        rowId: \d+
+    options:
+        expose: true

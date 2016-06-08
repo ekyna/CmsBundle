@@ -3,26 +3,21 @@
 namespace Ekyna\Bundle\CmsBundle\Editor;
 
 use Doctrine\ORM\EntityManager;
-use Ekyna\Bundle\CmsBundle\Entity\Block;
-use Ekyna\Bundle\CmsBundle\Entity\Container;
-use Ekyna\Bundle\CmsBundle\Entity\Content;
-use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
-use Ekyna\Bundle\CmsBundle\Model\ContainerInterface;
-use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
-use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
+use Ekyna\Bundle\CmsBundle\Entity;
+use Ekyna\Bundle\CmsBundle\Model;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Class Editor
  * @package Ekyna\Bundle\CmsBundle\Editor
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class Editor
 {
     /**
      * @var PluginRegistry
      */
-    private $registry;
+    private $pluginRegistry;
 
     /**
      * @var EntityManager
@@ -40,45 +35,80 @@ class Editor
     private $defaultBlockType;
 
     /**
-     * @var ContentInterface
-     */
-    //private $content;
-
-    /**
      * @var bool
      */
     private $enabled;
+
+    /**
+     * @var Manager\BlockManager
+     */
+    private $blockManager;
+
+    /**
+     * @var Manager\RowManager
+     */
+    private $rowManager;
 
 
     /**
      * Constructor.
      *
-     * @param PluginRegistry         $registry
-     * @param EntityManager          $manager
-     * @param ValidatorInterface     $validator
-     * @param string                 $defaultBlockType
+     * @param PluginRegistry     $pluginRegistry
+     * @param EntityManager      $manager
+     * @param ValidatorInterface $validator
+     * @param string             $defaultBlockType
      */
     public function __construct(
-        PluginRegistry     $registry,
-        EntityManager      $manager,
+        PluginRegistry $pluginRegistry,
+        EntityManager $manager,
         ValidatorInterface $validator,
-        $defaultBlockType  = 'ekyna_cms_tinymce'
+        $defaultBlockType = 'ekyna_cms_tinymce'
     ) {
-        $this->registry         = $registry;
-        $this->manager          = $manager;
-        $this->validator        = $validator;
+        $this->pluginRegistry = $pluginRegistry;
+        $this->manager = $manager;
+        $this->validator = $validator;
         $this->defaultBlockType = $defaultBlockType;
+    }
+
+    /**
+     * Returns the block manager.
+     *
+     * @return Manager\BlockManager
+     */
+    public function getBlockManager()
+    {
+        if (null === $this->blockManager) {
+            $this->blockManager = new Manager\BlockManager($this->pluginRegistry);
+        }
+
+        return $this->blockManager;
+    }
+
+    /**
+     * Returns the row manager.
+     *
+     * @return Manager\RowManager
+     */
+    public function getRowManager()
+    {
+        if (null === $this->rowManager) {
+            $this->rowManager = new Manager\RowManager();
+        }
+
+        return $this->rowManager;
     }
 
     /**
      * Sets the enabled.
      *
      * @param bool $enabled
+     *
      * @return Editor
      */
     public function setEnabled($enabled)
     {
-        $this->enabled = (bool) $enabled;
+        $this->enabled = (bool)$enabled;
+
         return $this;
     }
 
@@ -101,25 +131,20 @@ class Editor
      */
     public function getPluginByName($name)
     {
-        return $this->registry->get($name);
+        return $this->pluginRegistry->get($name);
     }
 
     /**
      * Creates a default content for the given subject.
      *
-     * @param ContentSubjectInterface $subject
+     * @param Model\ContentSubjectInterface $subject
      *
-     * @return ContentInterface
+     * @return Model\ContentInterface
      */
-    public function createDefaultContent(ContentSubjectInterface $subject)
+    public function createDefaultContent(Model\ContentSubjectInterface $subject)
     {
-        $block = $this->createDefaultBlock($this->defaultBlockType);
-
-        $container = new Container();
-        $container->addBlock($block);
-
-        $content = new Content();
-        $content->addContainer($container);
+        $content = new Entity\Content();
+        $this->createDefaultContainer([], $content);
 
         $subject->setContent($content);
 
@@ -134,14 +159,14 @@ class Editor
     /**
      * Creates a default container.
      *
-     * @param array $data
-     * @param ContentInterface $content
+     * @param array                  $data
+     * @param Model\ContentInterface $content
      *
-     * @return ContainerInterface
+     * @return Model\ContainerInterface
      */
-    public function createDefaultContainer(array $data = [], ContentInterface $content = null)
+    public function createDefaultContainer(array $data = [], Model\ContentInterface $content = null)
     {
-        $container = new Container();
+        $container = new Entity\Container();
 
         if (null !== $content) {
             $content->addContainer($container);
@@ -149,7 +174,30 @@ class Editor
 
         // TODO $data
 
-        $this->createDefaultBlock(null, [], $container);
+        $this->createDefaultRow([], $container);
+
+        return $container;
+    }
+
+    /**
+     * Creates a default row.
+     *
+     * @param array                    $data
+     * @param Model\ContainerInterface $container
+     *
+     * @return Model\RowInterface
+     */
+    public function createDefaultRow(array $data = [], Model\ContainerInterface $container = null)
+    {
+        $row = new Entity\Row();
+
+        if (null !== $container) {
+            $container->addRow($row);
+        }
+
+        // TODO $data
+
+        $this->createDefaultBlock(null, [], $row);
 
         return $container;
     }
@@ -157,68 +205,44 @@ class Editor
     /**
      * Creates a default block.
      *
-     * @param string $type
-     * @param array $data
-     * @param ContainerInterface $container
+     * @param string             $type
+     * @param array              $data
+     * @param Model\RowInterface $row
      *
-     * @return BlockInterface
+     * @return Model\BlockInterface
      */
-    private function createDefaultBlock(string $type = null, array $data = [], ContainerInterface $container = null)
+    public function createDefaultBlock(string $type = null, array $data = [], Model\RowInterface $row = null)
     {
-        $block = new Block();
-
-        if (null !== $container) {
-            $container->addBlock($block);
+        $block = $this->getBlockManager()->create($row, $type, $data);
+        if ($row) {
+            $this->getRowManager()->fixLayout($row);
         }
 
-        if (null === $type) {
-            $type = $this->defaultBlockType;
-        }
-        $block->setType($type);
-
-        $plugin = $this->registry->get($type);
-
-        return $plugin->create($block, $data);
+        return $block;
     }
 
-    /**
-     * Initializes the content.
-     *
-     * @param integer $id
-     * @throws \InvalidArgumentException
-     * @return Editor
-     */
-    /*public function initContent($id)
-    {
-        $repo = $this->manager->getRepository('EkynaCmsBundle:Content');
-
-        if (null === $this->content = $repo->find($id)) {
-            throw new \InvalidArgumentException('Content not found.');
-        }
-
-        return $this;
-    }*/
 
     /**
      * Creates a block.
      *
      * @param array $data
+     *
      * @return array
      * @throws \InvalidArgumentException
      */
-    public function createBlock(array $data = [])
+    /*public function createBlock(array $data = [])
     {
         if (null === $this->content) {
             throw new \InvalidArgumentException('No Content selected.');
         }
-        if (! array_key_exists('type', $data)) {
+        if (!array_key_exists('type', $data)) {
             throw new \InvalidArgumentException('"type" field is mandatory.');
         }
 
-        $block = new Block();
+        $block = new Entity\Block();
         $block->setType($data['type']);
 
-        $plugin = $this->registry->get($data['type']);
+        $plugin = $this->pluginRegistry->get($data['type']);
         $block = $plugin->create($block, $data);
 
         $this->updateBlockCoordinates($block, $data);
@@ -229,22 +253,23 @@ class Editor
 //        $this->manager->flush();
 
         return [
-            'datas' => $block->getInitDatas(),
+            'datas'     => $block->getInitDatas(),
             'innerHtml' => $plugin->getInnerHtml($block),
         ];
-    }
+    }*/
 
     /**
      * Updates a block.
      *
      * @param array $data
+     *
      * @return array
      */
-    public function updateBlock(array $data = [])
+    /*public function updateBlock(array $data = [])
     {
         $block = $this->findBlock($data);
 
-        $plugin = $this->registry->get($block->getType());
+        $plugin = $this->pluginRegistry->get($block->getType());
         $plugin->update($block, $data);
 
         if (null !== $this->content) {
@@ -261,19 +286,20 @@ class Editor
 //        $this->manager->flush();
 
         return [
-            'id' => $block->getId(),
+            'id'        => $block->getId(),
             'innerHtml' => $plugin->getInnerHtml($block),
         ];
-    }
+    }*/
 
     /**
      * Removes blocks.
      *
      * @param array $data
+     *
      * @return array
      * @throws \InvalidArgumentException
      */
-    public function removeBlocks(array $data = [])
+    /*public function removeBlocks(array $data = [])
     {
         if (null === $this->content) {
             throw new \InvalidArgumentException('No Content selected.');
@@ -285,10 +311,10 @@ class Editor
         }
 
         $removedIds = [];
-        foreach($data as $blockData) {
+        foreach ($data as $blockData) {
             $block = $this->findBlock($blockData);
 
-            $plugin = $this->registry->get($block->getType());
+            $plugin = $this->pluginRegistry->get($block->getType());
             $plugin->remove($block);
 
             $removedIds[] = $block->getId();
@@ -305,20 +331,21 @@ class Editor
         return [
             'ids' => $removedIds,
         ];
-    }
+    }*/
 
     /**
      * Updates the layout.
      *
      * @param array $data
+     *
      * @throws \InvalidArgumentException
      */
-    public function updateLayout(array $data = [])
+    /*public function updateLayout(array $data = [])
     {
         if (null === $this->content) {
             throw new \InvalidArgumentException('No Content selected.');
         }
-        foreach($data as $coordinates) {
+        foreach ($data as $coordinates) {
             $block = $this->findBlock($coordinates);
             $this->updateBlockCoordinates($block, $coordinates);
 //            $this->manager->persist($block);
@@ -328,7 +355,7 @@ class Editor
 
 //        TODO (in controller)
 //        $this->manager->flush();
-    }
+    }*/
 
     /**
      * Updates coordinates of the given block.
@@ -336,7 +363,7 @@ class Editor
      * @param BlockInterface $block
      * @param array          $coordinates
      */
-    private function updateBlockCoordinates(BlockInterface $block, array $coordinates = [])
+    /*private function updateBlockCoordinates(BlockInterface $block, array $coordinates = [])
     {
         if (array_key_exists('row', $coordinates)) {
             $block->setRow($coordinates['row']);
@@ -347,19 +374,20 @@ class Editor
         if (array_key_exists('size', $coordinates)) {
             $block->setSize($coordinates['size']);
         }
-    }
+    }*/
 
     /**
      * Finds a block.
      *
      * @param array $data
+     *
      * @return BlockInterface
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    private function findBlock(array $data = [])
+    /*private function findBlock(array $data = [])
     {
-        if (! array_key_exists('id', $data) || 0 >= ($blockId = intval($data['id']))) {
+        if (!array_key_exists('id', $data) || 0 >= ($blockId = intval($data['id']))) {
             throw new \InvalidArgumentException('Block "id" is mandatory.');
         }
         $parameters = ['id' => $blockId];
@@ -368,24 +396,24 @@ class Editor
         }
         $block = $this->manager
             ->getRepository('EkynaCmsBundle:Block')
-            ->findOneBy($parameters)
-        ;
+            ->findOneBy($parameters);
         if (null === $block) {
             throw new \RuntimeException('Block not found.');
         }
+
         return $block;
-    }
+    }*/
 
     /**
      * Finds a block by name or creates if not exists.
      *
      * @param string $name the block name
      * @param string $type the block type
-     * @param array $data the block datas
+     * @param array  $data the block datas
      *
      * @return BlockInterface
      */
-    public function findBlockByName($name, $type = null, array $data = [])
+    /*public function findBlockByName($name, $type = null, array $data = [])
     {
         if (null === $type) {
             $type = $this->defaultBlockType;
@@ -404,5 +432,5 @@ class Editor
         }
 
         return $block;
-    }
+    }*/
 }

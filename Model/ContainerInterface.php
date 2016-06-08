@@ -43,38 +43,45 @@ interface ContainerInterface extends Model\SortableInterface, Model\Timestampabl
     public function getName();
 
     /**
-     * Set blocks
+     * Set rows
      *
-     * @param ArrayCollection|BlockInterface[] $blocks
-     *
-     * @return ContentInterface|$this
-     */
-    public function setBlocks(ArrayCollection $blocks);
-
-    /**
-     * Add block
-     *
-     * @param BlockInterface $block
+     * @param ArrayCollection|RowInterface[] $rows
      *
      * @return ContentInterface|$this
      */
-    public function addBlock(BlockInterface $block);
+    public function setRows(ArrayCollection $rows);
 
     /**
-     * Remove block
+     * Add row
      *
-     * @param BlockInterface $block
+     * @param RowInterface $row
      *
      * @return ContentInterface|$this
      */
-    public function removeBlock(BlockInterface $block);
+    public function addRow(RowInterface $row);
 
     /**
-     * Get blocks
+     * Remove row
      *
-     * @return ArrayCollection|BlockInterface[]
+     * @param RowInterface $row
+     *
+     * @return ContentInterface|$this
      */
-    public function getBlocks();
+    public function removeRow(RowInterface $row);
+
+    /**
+     * Get rows
+     *
+     * @return ArrayCollection|RowInterface[]
+     */
+    public function getRows();
+
+    /**
+     * Sort the rows by position.
+     *
+     * @return ContentInterface|$this
+     */
+    public function sortRows();
 
     /**
      * Returns the indexable contents indexed by locale.

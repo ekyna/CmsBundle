@@ -8,34 +8,34 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
- * Class BlockIdentityValidator
+ * Class BlockValidator
  * @package Ekyna\Bundle\CmsBundle\Validator\Constraints
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class BlockIdentityValidator extends ConstraintValidator
+class BlockValidator extends ConstraintValidator
 {
     /**
      * {@inheritdoc}
      */
     public function validate($block, Constraint $constraint)
     {
-        if (!$constraint instanceof BlockIdentity) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\BlockIdentity');
+        if (!$constraint instanceof Block) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Block');
         }
-        if (!$constraint instanceof BlockInterface) {
+        if (!$block instanceof BlockInterface) {
             throw new UnexpectedTypeException($block, 'Ekyna\Bundle\CmsBundle\Model\BlockInterface');
         }
 
         /**
          * @var BlockInterface $block
-         * @var BlockIdentity $constraint
+         * @var Block          $constraint
          */
-        $content = $block->getContent();
-        $name    = $block->getName();
+        $row = $block->getRow();
+        $name = $block->getName();
 
         // Checks that Content or Name is set, but not both.
-        if ((null === $content && 0 === strlen($name)) || (null !== $content && 0 < strlen($name))) {
-            $this->context->addViolation($constraint->message);
+        if ((null === $row && 0 === strlen($name)) || (null !== $row && 0 < strlen($name))) {
+            $this->context->addViolation($constraint->rowOrNameButNotBoth);
         }
     }
 }

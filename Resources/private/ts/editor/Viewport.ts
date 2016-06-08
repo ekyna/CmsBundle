@@ -5,7 +5,7 @@ import Backbone = require('backbone');
 import _ = require('underscore');
 
 import Dispatcher from './Dispatcher';
-import {Button} from './Ui';
+import {OriginInterface, Button} from './Ui';
 
 /**
  * SizeInterface
@@ -44,9 +44,9 @@ export class ViewportView extends Backbone.View<ViewportModel> {
     }
 
     initialize(options?:Backbone.ViewOptions<ViewportModel>) {
-        _.bindAll(this, 'resizeViewport', 'reload');
-        this.model.bind('change:size', this.resizeViewport);
-        $(window).resize(this.resizeViewport);
+        _.bindAll(this, 'resize', 'reload');
+        this.model.bind('change:size', this.resize);
+        $(window).resize(this.resize);
 
         Dispatcher.on('controls.reload.click', () => this.reload());
         Dispatcher.on('controls.viewport.click', (button:Button) => this.onViewportButtonClick(button));
@@ -60,7 +60,7 @@ export class ViewportView extends Backbone.View<ViewportModel> {
     /**
      * Resizes the viewport.
      */
-    private resizeViewport():void {
+    private resize():void {
         var size:SizeInterface = this.model.get('size'),
             css:any = {};
 
@@ -96,6 +96,8 @@ export class ViewportView extends Backbone.View<ViewportModel> {
         }
 
         this.$el.removeAttr('style').css(css);
+
+        Dispatcher.trigger('viewport.resize', <OriginInterface>{top: css.top, left: css.left});
     }
 
     onViewportButtonClick(button:Button):void {

@@ -8,13 +8,6 @@
     {%- endif -%}
     ]]>
     </flashes>
-    <editor>
-    <![CDATA[
-        {%- if editor -%}
-            {%- include 'EkynaCmsBundle:Editor:editor.html.twig' -%}
-        {%- endif -%}
-    ]]>
-    </editor>
     {% if cookie_consent is not same as(null) -%}
         {%- if cookie_consent -%}
             {%- set cookie_mode = get_setting('cookies.mode') -%}

@@ -1,6 +1,13 @@
 {% block attributes %}
-    {# TODO single/double quotes #}
-    {%- for attrname, attrvalue in attr %} {{ attrname }}='{{ attrvalue }}'{% endfor -%}
+    {%- for attrname, attrvalue in attr %}
+        {% if attrname == 'classes' %}
+            class="{{ attrvalue }}"
+        {% elseif attrname == 'data' %}
+            data-cms='{{ attrvalue|json_encode }}'
+        {% else %}
+            {{ attrname }}="{{ attrvalue }}"
+        {% endif %}
+    {% endfor -%}
 {% endblock attributes %}
 
 {% block cms_content %}
@@ -19,22 +26,28 @@
     {% set attr = container.attributes %}
     <div{{ block('attributes') }}>
         {% for row in container.rows %}
-            {% set attr = row.attributes %}
-            <div{{ block('attributes') }}>
-                {% for block in row.blocks %}
-                    {% set attr = block.columnAttributes %}
-                    <div{{ block('attributes') }}>
-                         {{ cms_block(block) }}
-                    </div>
-                {% endfor %}
-            </div>
+            {{ cms_row(row) }}
         {% endfor %}
     </div>
 {% endspaceless %}
 {% endblock cms_container %}
 
+{% block cms_row %}
+{% spaceless %}
+    {% set attr = row.attributes %}
+    <div{{ block('attributes') }}>
+        {% for block in row.blocks %}
+            {% set attr = block.attributes %}
+            <div{{ block('attributes') }}>
+                 {{ cms_block(block) }}
+            </div>
+        {% endfor %}
+    </div>
+{% endspaceless %}
+{% endblock cms_row %}
+
 {% block cms_block %}
-    {% set attr = block.blockAttributes %}
+    {% set attr = block.pluginAttributes %}
     <div{{ block('attributes') }}>
         {{ block.content|raw }}
     </div>

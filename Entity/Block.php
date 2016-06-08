@@ -3,18 +3,19 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
-use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
-use Ekyna\Bundle\CmsBundle\Model\ContainerInterface;
-use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
+use Ekyna\Bundle\CmsBundle\Model as Cms;
+use Ekyna\Bundle\CoreBundle\Model as Core;
 
 /**
  * Class Block
  * @package Ekyna\Bundle\CmsBundle\Entity
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class Block extends AbstractTranslatable implements BlockInterface
+class Block extends AbstractTranslatable implements Cms\BlockInterface
 {
-    use TaggedEntityTrait;
+    use Core\SortableTrait,
+        Core\TimestampableTrait,
+        Core\TaggedEntityTrait;
 
     /**
      * @var integer
@@ -22,24 +23,15 @@ class Block extends AbstractTranslatable implements BlockInterface
     protected $id;
 
     /**
-     * @var ContainerInterface
+     * @var Cms\RowInterface
      */
-    protected $container;
+    protected $row;
 
     /**
      * @var string
      */
     protected $name;
 
-    /**
-     * @var integer
-     */
-    protected $row = 1;
-
-    /**
-     * @var integer
-     */
-    protected $column = 1;
 
     /**
      * @var integer
@@ -68,9 +60,9 @@ class Block extends AbstractTranslatable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function setRow(Cms\RowInterface $row = null)
     {
-        $this->container = $container;
+        $this->row = $row;
 
         return $this;
     }
@@ -78,9 +70,9 @@ class Block extends AbstractTranslatable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function getContainer()
+    public function getRow()
     {
-        return $this->container;
+        return $this->row;
     }
 
     /**
@@ -99,42 +91,6 @@ class Block extends AbstractTranslatable implements BlockInterface
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRow($row)
-    {
-        $this->row = $row;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRow()
-    {
-        return $this->row;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setColumn($column)
-    {
-        $this->column = $column;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getColumn()
-    {
-        return $this->column;
     }
 
     /**
@@ -216,7 +172,7 @@ class Block extends AbstractTranslatable implements BlockInterface
      */
     public function getIndexableContents()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -226,11 +182,11 @@ class Block extends AbstractTranslatable implements BlockInterface
     public function getInitDatas()
     {
         return [
-        	'id'     => $this->id,
+            'id'     => $this->id,
             'type'   => $this->getType(),
-        	'row'    => intval($this->row),
-        	'column' => intval($this->column),
-        	'size'   => intval($this->size)
+            'row'    => intval($this->row),
+            'column' => intval($this->column),
+            'size'   => intval($this->size),
         ];
     }
 }

@@ -3,11 +3,11 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\View;
 
 /**
- * Class Content
+ * Class ContainerView
  * @package Ekyna\Bundle\CmsBundle\Editor\View
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class Content
+class ContainerView
 {
     /**
      * @var array
@@ -15,7 +15,7 @@ class Content
     public $attributes = [];
 
     /**
-     * @var array|Container[]
+     * @var array|RowView[]
      */
-    public $containers = [];
+    public $rows = [];
 }

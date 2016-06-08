@@ -64,13 +64,6 @@ class CmsController extends Controller
             $data['flashes'] = false;
         }
 
-        // Does editor must be rendered ?
-        if ($request->request->get('editor', false) && $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
-            $data['editor'] = true;
-        } else {
-            $data['editor'] = false;
-        }
-
         // Does cookie consent must be rendered ?
         if ($request->request->get('cookie', false)) {
             $data['cookie_consent'] = $this

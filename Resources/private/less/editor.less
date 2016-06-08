@@ -1,5 +1,5 @@
 // Core variables and mixins
-@import "variables.less";
+@import "bs-variables.less";
 @import "../../../../../../../bower_components/bootstrap/less/mixins.less";
 // Reset and dependencies
 @import "../../../../../../../bower_components/bootstrap/less/normalize.less";
@@ -44,7 +44,8 @@
 @import "../../../../../../../bower_components/bootstrap/less/utilities.less";
 @import "../../../../../../../bower_components/bootstrap/less/responsive-utilities.less";
 
-@editor-controls-margin: 8px;
+
+@import "editor-variables.less";
 
 html {
   width: 100%;
@@ -70,6 +71,12 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, .4);
   border-radius: 4px;
 
+  -webkit-transition: top @viewport-transition-speed, left @viewport-transition-speed;
+  -moz-transition: top @viewport-transition-speed, left @viewport-transition-speed;
+  -o-transition: top @viewport-transition-speed, left @viewport-transition-speed;
+  -ms-transition: top @viewport-transition-speed, left @viewport-transition-speed;
+  transition: top @viewport-transition-speed, left @viewport-transition-speed;
+
   > .btn, > .btn-group {
     margin-right: @editor-controls-margin;
 
@@ -79,11 +86,11 @@ body {
   }
 
   .btn > span {
-    -webkit-transition: -webkit-transform .9s; // Chrome Safari
-    -moz-transition: -moz-transform .9s; // Mozilla
-    -o-transition: -o-transform .9s; // Opéra
-    -ms-transition: -ms-transform .9s; // IE
-    transition: transform .9s;
+    -webkit-transition: -webkit-transform @button-rotate-speed;
+    -moz-transition: -moz-transform @button-rotate-speed;
+    -o-transition: -o-transform @button-rotate-speed;
+    -ms-transition: -ms-transform @button-rotate-speed;
+    transition: transform @button-rotate-speed;
   }
   .btn.rotate > span {
     -webkit-transform: rotate(270deg);
@@ -116,11 +123,11 @@ body {
   overflow: hidden;
   background-color: #ffffff;
 
-  -webkit-transition: all .2s; // Chrome Safari
-  -moz-transition: all .2s; // Mozilla
-  -o-transition: all .2s; // Opéra
-  -ms-transition: all .2s; // IE
-  transition: all .2s;
+  -webkit-transition: all @viewport-transition-speed;
+  -moz-transition: all @viewport-transition-speed;
+  -o-transition: all @viewport-transition-speed;
+  -ms-transition: all @viewport-transition-speed;
+  transition: all @viewport-transition-speed;
 
   iframe {
     width: 100%;

@@ -16,8 +16,6 @@ interface PluginInterface
      *
      * @param BlockInterface $block
      * @param array $data
-     *
-     * @return BlockInterface
      */
     public function create(BlockInterface $block, array $data = []);
 

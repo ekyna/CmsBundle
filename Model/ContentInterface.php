@@ -47,6 +47,13 @@ interface ContentInterface extends Model\TimestampableInterface, Model\TaggedEnt
     public function getContainers();
 
     /**
+     * Sorts the containers by position.
+     *
+     * @return ContentInterface|$this
+     */
+    public function sortContainers();
+
+    /**
      * Returns the indexable contents indexed by locale.
      *
      * @return array

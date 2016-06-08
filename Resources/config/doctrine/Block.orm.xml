@@ -1,33 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <doctrine-mapping
-    xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+        xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping"
+        xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <entity name="Ekyna\Bundle\CmsBundle\Entity\Block"
             repository-class="Ekyna\Bundle\CmsBundle\Entity\BlockRepository"
             table="cms_block">
 
-        <!--<entity-listeners>-->
-            <!--<entity-listener class="Ekyna\Bundle\CmsBundle\Listener\AbstractBlockListener" />-->
-        <!--</entity-listeners>-->
-
         <id name="id" type="integer" column="id">
-            <generator strategy="AUTO" />
+            <generator strategy="AUTO"/>
         </id>
 
-        <field name="name" type="string" column="name"  nullable="true" />
+        <field name="name" type="string" column="name" nullable="true"/>
+        <field name="position" type="smallint" column="position">
+            <gedmo:sortable-position/>
+        </field>
+        <field name="size" type="smallint" column="size"/>
 
-        <field name="row" type="smallint" column="row_num" />
-        <field name="column" type="smallint" column="col_num" />
-        <field name="size" type="smallint" column="size" />
+        <field name="type" type="string" column="type" length="32"/>
+        <field name="data" type="object" column="data"/>
 
-        <field name="type" type="string" column="type" length="32" />
-        <field name="data" type="object" column="data" />
+        <field name="createdAt" type="datetime" column="created_at">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" type="datetime" column="updated_at" nullable="true">
+            <gedmo:timestampable on="update"/>
+        </field>
 
-        <many-to-one field="container" target-entity="Ekyna\Bundle\CmsBundle\Entity\Container" inversed-by="blocks">
-            <join-column name="container_id" referenced-column-name="id" on-delete="CASCADE" nullable="true" />
+        <many-to-one field="row" target-entity="Ekyna\Bundle\CmsBundle\Entity\Row" inversed-by="blocks">
+            <join-column name="row_id" referenced-column-name="id" on-delete="CASCADE" nullable="true"/>
+            <gedmo:sortable-group/>
         </many-to-one>
 
     </entity>

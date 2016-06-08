@@ -58,6 +58,7 @@ class EditorExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction('cms_content', [$this, 'renderContent'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_container', [$this, 'renderContainer'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_row', [$this, 'renderRow'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_block', [$this, 'renderBlock'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_static_container', [$this, 'renderStaticContainer'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_static_block', [$this, 'renderStaticBlock'], ['is_safe' => ['html']]),
@@ -90,7 +91,7 @@ class EditorExtension extends \Twig_Extension
     /**
      * Renders the content.
      *
-     * @param Model\ContentSubjectInterface|Model\ContentInterface|View\Content|null $subjectOrContentOrView
+     * @param Model\ContentSubjectInterface|Model\ContentInterface|View\ContentView|null $subjectOrContentOrView
      *
      * @return string
      */
@@ -123,10 +124,10 @@ class EditorExtension extends \Twig_Extension
             }*/
             $subjectOrContentOrView = $this->viewBuilder->buildContent($subjectOrContentOrView);
         }
-        if (!$subjectOrContentOrView instanceof View\Content) {
+        if (!$subjectOrContentOrView instanceof View\ContentView) {
             throw new \InvalidArgumentException(
                 'Expected instance of ' . Model\ContentSubjectInterface::class . ', ' .
-                Model\ContentInterface::class . ' or ' . View\Content::class
+                Model\ContentInterface::class . ' or ' . View\ContentView::class
             );
         }
 
@@ -139,7 +140,7 @@ class EditorExtension extends \Twig_Extension
     /**
      * Renders the container.
      *
-     * @param Model\ContainerInterface|View\Container $containerOrView
+     * @param Model\ContainerInterface|View\ContainerView $containerOrView
      *
      * @return string
      */
@@ -173,9 +174,45 @@ class EditorExtension extends \Twig_Extension
     }
 
     /**
+     * Renders the row.
+     *
+     * @param Model\RowInterface|View\RowView $rowOrView
+     *
+     * @return string
+     */
+    public function renderRow($rowOrView)
+    {
+        if ($rowOrView instanceof Model\RowInterface) {
+            // TODO Tags the response as Row relative
+            //$this->tagManager->addTags($containerOrView->getEntityTag());
+
+            $rowOrView = $this->viewBuilder->buildRow($rowOrView);
+        }
+
+        /** @noinspection PhpInternalEntityUsedInspection */
+        return $this->template->renderBlock('cms_row', [
+            'row' => $rowOrView,
+        ]);
+    }
+
+    /**
+     * Renders the static row.
+     *
+     * @param string $name
+     * @param null $data
+     *
+     * @return string
+     */
+    public function renderStaticRow($name, $data = null)
+    {
+        // TODO
+        return '<p>[TODO]</p>';
+    }
+
+    /**
      * Renders the block.
      *
-     * @param Model\BlockInterface|View\Block $blockOrView
+     * @param Model\BlockInterface|View\BlockView $blockOrView
      *
      * @return string
      */

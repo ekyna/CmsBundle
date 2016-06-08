@@ -3,11 +3,11 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\View;
 
 /**
- * Class Row
+ * Class RowView
  * @package Ekyna\Bundle\CmsBundle\Editor\View
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class Row
+class RowView
 {
     /**
      * @var array
@@ -15,7 +15,7 @@ class Row
     public $attributes = [];
 
     /**
-     * @var array|Block
+     * @var array|BlockView[]
      */
-    public $blocks;
+    public $blocks = [];
 }

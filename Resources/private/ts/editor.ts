@@ -43,6 +43,7 @@ class Editor {
         this.viewport.initIFrame('http://sf.jessie2.dev/app_dev.php/');
 
 
+
         return this;
     }
 }

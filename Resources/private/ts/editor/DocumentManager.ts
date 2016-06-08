@@ -1,17 +1,250 @@
 /// <reference path="../../../../../../../typings/tsd.d.ts" />
+/// <reference path="../../../../../../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/ts/router.d.ts" />
+
 
 import $ = require('jquery');
 
+declare var require:(moduleId:string) => any;
+var Router:FOS.Router = require('routing');
+
 import Dispatcher from './Dispatcher';
-import {ClickOrigin, Button, Toolbar, ToolbarView} from './Ui';
+import {OriginInterface, Button, Toolbar, ToolbarView} from './Ui';
+
+interface ElementAttributes {
+    id: string;
+    classes: string;
+    data: Object;
+}
+interface BlockData {
+    attributes: ElementAttributes;
+    plugin_attributes: ElementAttributes;
+    content: string;
+}
+interface RowData {
+    attributes: ElementAttributes;
+    blocks: Array<BlockData>;
+}
+interface ContainerData {
+    attributes: ElementAttributes;
+    rows: Array<RowData>;
+}
+interface ContentData {
+    attributes: ElementAttributes;
+    containers: Array<ContainerData>;
+}
+
+interface ResponseData {
+    content?: ContentData;
+    containers?: Array<ContainerData>;
+    rows: Array<RowData>;
+    blocks: Array<BlockData>;
+}
+
+class BaseManager {
+    static $document:JQuery;
+
+    static setDocument($document:JQuery):void {
+        this.$document = $document;
+    }
+
+    static findElementById(id:string):JQuery {
+        return this.$document.find('#' + id);
+    }
+
+    static createElement(id:string, $parent:JQuery):JQuery {
+        if (!$parent) {
+            throw "Undefined parent.";
+        }
+        return $('<div></div>').attr('id', id).appendTo($parent);
+    }
+
+    static findOrCreateElement(id:string, $parent:JQuery) {
+        var $element = this.findElementById(id);
+        if (0 == $element.length) {
+            $element = this.createElement(id, $parent);
+        }
+        return $element;
+    }
+
+    static setElementAttributes($element:JQuery, attributes:ElementAttributes):void {
+        $element
+            .removeAttr('class').attr('class', attributes.classes)
+            .removeAttr('data-cms').data('cms', attributes.data);
+    }
+
+    static sortChildren($element:JQuery) {
+        let $children:JQuery = $element.children();
+        $children.detach().get().sort(function(a, b) {
+            let aPos = $(a).data('cms').position,
+                bPos = $(b).data('cms').position;
+            return (aPos == bPos) ? (aPos > bPos) ? 1 : -1 : 0;
+        });
+        $element.append($children);
+    }
+
+
+    static request(url:string) {
+        $.ajax({
+            url: url,
+            method: 'POST'
+        }).done(function(data:ResponseData) {
+            if (data.hasOwnProperty('content')) {
+                ContentManager.parse(data.content);
+            } else if (data.hasOwnProperty('containers')) {
+                ContainerManager.parse(data.containers);
+            } else if (data.hasOwnProperty('rows')) {
+                RowManager.parse(data.rows);
+            } else if (data.hasOwnProperty('blocks')) {
+                BlockManager.parse(data.blocks);
+            }
+            Dispatcher.trigger('base_manager.response_parsed');
+        }).fail(function() {
+            console.log('Editor request failed.');
+        });
+    }
+}
+
+class ContentManager {
+    static parse(content:ContentData) {
+        // TODO parse layout
+
+        // Parse children
+        if (content.hasOwnProperty('containers')) {
+            ContainerManager.parse(content.containers);
+        }
+
+        // TODO reorder containers
+        //BaseManager.sortChildren($content);
+    }
+}
+
+class ContainerManager {
+    static parse(containers:Array<ContainerData>) {
+        containers.forEach((container:ContainerData) => {
+            // TODO parse layout
+
+            // Parse children
+            if (container.hasOwnProperty('rows')) {
+                RowManager.parse(container.rows);
+            }
+
+            // TODO reorder rows
+            //BaseManager.sortChildren($container);
+        });
+    }
+}
+
+class RowManager {
+    static parse(rows:Array<RowData>, $container?:JQuery) {
+        rows.forEach((row:RowData) => {
+            // Parse layout
+            if (!row.hasOwnProperty('attributes')) {
+                throw 'Unexpected row data';
+            }
+            var $row:JQuery = BaseManager.findOrCreateElement(row.attributes.id, $container);
+            BaseManager.setElementAttributes($row, row.attributes);
+
+            // Parse children
+            if (row.hasOwnProperty('blocks')) {
+                BlockManager.parse(row.blocks, $row);
+            }
+
+            // Reorder blocks
+            BaseManager.sortChildren($row);
+        });
+    }
+}
+
+class BlockManager {
+    static parse(blocks:Array<BlockData>, $row?:JQuery) {
+        blocks.forEach((block:BlockData) => {
+            // Parse layout
+            if (!block.hasOwnProperty('attributes')) {
+                throw 'Unexpected block data';
+            }
+            var $column:JQuery = BaseManager.findOrCreateElement(block.attributes.id, $row);
+            BaseManager.setElementAttributes($column, block.attributes);
+
+            // Parse block
+            if (block.hasOwnProperty('plugin_attributes')) {
+                var $block:JQuery = BaseManager.findOrCreateElement(block.plugin_attributes.id, $column);
+                BaseManager.setElementAttributes($block, block.plugin_attributes);
+
+                // Parse content
+                if (block.hasOwnProperty('content')) {
+                    $block.html(block.content);
+                }
+            }
+        });
+    }
+
+    static edit($block:JQuery) {
+
+    }
+
+    static remove($block:JQuery) {
+
+    }
+
+    static add($block:JQuery) {
+        var $row = $block.closest('.cms-row');
+        if (1 != $row.length) {
+            throw 'Block row not found.';
+        }
+        var id = $row.data('cms').id;
+        if (!id) {
+            throw 'Invalid id';
+        }
+        BaseManager.request(Router.generate('ekyna_cms_editor_row_create_block', {'rowId': id}));
+    }
+
+    static moveLeft($block:JQuery) {
+
+    }
+
+    static moveRight($block:JQuery) {
+
+    }
+
+    static moveUp($block:JQuery) {
+
+    }
+
+    static moveDown($block:JQuery) {
+
+    }
+
+    static expand($block:JQuery) {
+
+    }
+
+    static compress($block:JQuery) {
+
+    }
+}
+
+Dispatcher.on('block.edit', (button:Button) => BlockManager.edit(button.get('data').$block));
+Dispatcher.on('block.remove', (button:Button) => BlockManager.remove(button.get('data').$block));
+Dispatcher.on('block.add', (button:Button) => BlockManager.add(button.get('data').$block));
+Dispatcher.on('block.move-left', (button:Button) => BlockManager.moveLeft(button.get('data').$block));
+Dispatcher.on('block.move-right', (button:Button) => BlockManager.moveRight(button.get('data').$block));
+Dispatcher.on('block.move-up', (button:Button) => BlockManager.moveUp(button.get('data').$block));
+Dispatcher.on('block.move-down', (button:Button) => BlockManager.moveDown(button.get('data').$block));
+Dispatcher.on('block.expand', (button:Button) => BlockManager.expand(button.get('data').$block));
+Dispatcher.on('block.compress', (button:Button) => BlockManager.compress(button.get('data').$block));
+
+
 
 /**
  * DocumentManager
  */
 export class DocumentManager {
 
-    private $document:JQuery;
     private hostname:string;
+
+    private viewportOrigin:OriginInterface;
+    private $document:JQuery;
+    private selectionId:string;
 
     private enabled:boolean = false;
     private toolbar:ToolbarView<Toolbar>;
@@ -23,7 +256,10 @@ export class DocumentManager {
 
     constructor(hostname:string) {
         this.hostname = hostname;
+
+        this.viewportOrigin = {top: 50, left:0};
         this.$document = null;
+        this.selectionId = null;
 
         this.powerClickHandler = (button:Button) => this.onPowerClick(button);
         this.viewportLoadHandler = (doc:Document) => this.onViewportLoad(doc);
@@ -35,6 +271,10 @@ export class DocumentManager {
         Dispatcher.on('controls.power.click', this.powerClickHandler);
         Dispatcher.on('viewport_iframe.load', this.viewportLoadHandler);
         Dispatcher.on('viewport_iframe.unload', this.viewportUnloadHandler);
+
+        Dispatcher.on('viewport.resize', (origin:OriginInterface) => this.onViewportResize(origin));
+
+        Dispatcher.on('base_manager.response_parsed', () => this.highlightSelection());
     }
 
     private onPowerClick(button:Button) {
@@ -50,10 +290,17 @@ export class DocumentManager {
         }
     }
 
+    private highlightSelection() {
+        if (this.selectionId) {
+            this.$document.find('#' + this.selectionId).addClass('selected');
+        }
+    }
+
+
     private onDocumentClick(e:JQueryEventObject):void {
-        var origin:ClickOrigin = {left: e.clientX, top: e.clientY},
+        var origin:OriginInterface = {top: e.clientY, left: e.clientX},
             $target:JQuery = $(e.target),
-            $selection:JQuery;
+            toolbar:Toolbar;
 
         /* Do nothing on Toolbar click */
         if (0 < $target.closest('#editor-document-toolbar').length) {
@@ -68,33 +315,51 @@ export class DocumentManager {
         if (this.toolbar) {
             this.toolbar.remove();
         }
+        // Clear selection
+        if (this.selectionId) {
+            this.$document.find('#' + this.selectionId).removeClass('selected');
+            this.selectionId = null;
+        }
 
         // Block test
-        $selection = $target.closest('.cms-block');
+        var $selection = $target.closest('.cms-block');
         if (1 == $selection.length) {
             console.log('Block selection');
-            this.displayBlockToolbar(origin, $selection);
-            return;
+            toolbar = this.createBlockToolbar(origin, $selection);
+        } else {
+            // Row test
+            $selection = $target.closest('.cms-row');
+            if (1 == $selection.length) {
+                console.log('Row selection');
+                toolbar = this.createRowToolbar(origin, $selection);
+            } else {
+                // Container test
+                $selection = $target.closest('.cms-container');
+                if (1 == $selection.length) {
+                    console.log('Container selection');
+                    toolbar = this.createContainerToolbar(origin, $selection);
+                }
+            }
+        }
+        // Store the selection id and highlight selection
+        if ($selection.length) {
+            this.selectionId = $selection.attr('id');
+            this.highlightSelection();
         }
 
-        // Row test
-        $selection = $target.closest('.cms-row');
-        if (1 == $selection.length) {
-            console.log('Row selection');
-            this.displayRowToolbar(origin, $selection);
-            return;
-        }
+        // Create and render the toolbar view
+        if (toolbar) {
+            this.toolbar = new ToolbarView<Toolbar>({
+                model: toolbar
+            });
 
-        // Container test
-        $selection = $target.closest('.cms-container');
-        if (1 == $selection.length) {
-            this.displayContainerToolbar(origin, $selection);
-            console.log('Container selection');
-            return;
+            $(document).find('body').append(
+                this.toolbar.render().applyOriginOffset(this.viewportOrigin).$el
+            );
         }
     }
 
-    private displayBlockToolbar(origin:ClickOrigin, $block:JQuery):DocumentManager {
+    private createBlockToolbar(origin:OriginInterface, $block:JQuery):Toolbar {
         var toolbar = new Toolbar({
             origin: origin
         });
@@ -104,14 +369,14 @@ export class DocumentManager {
             name: 'edit',
             title: 'Edit',
             icon: 'pencil',
-            event: 'edit-block',
+            event: 'block.edit',
             data: {$block: $block}
         }));
         toolbar.addButton('default', new Button({
             name: 'add',
             title: 'Add',
             icon: 'plus',
-            event: 'add-block',
+            event: 'block.add',
             data: {$block: $block}
         }));
         // Remove
@@ -119,7 +384,7 @@ export class DocumentManager {
             name: 'remove',
             title: 'Remove',
             icon: 'remove',
-            event: 'remove-block',
+            event: 'block.remove',
             data: {$block: $block}
         }));
         // Move left
@@ -127,7 +392,7 @@ export class DocumentManager {
             name: 'move-left',
             title: 'Move left',
             icon: 'arrow-left',
-            event: 'move-block-left',
+            event: 'block.move-left',
             data: {$block: $block}
         }));
         // Move right
@@ -135,7 +400,7 @@ export class DocumentManager {
             name: 'move-right',
             title: 'Move right',
             icon: 'arrow-right',
-            event: 'move-block-right',
+            event: 'document.move-right',
             data: {$block: $block}
         }));
         // Move top
@@ -143,7 +408,7 @@ export class DocumentManager {
             name: 'move-up',
             title: 'Move up',
             icon: 'arrow-up',
-            event: 'move-block-up',
+            event: 'block.move-up',
             data: {$block: $block}
         }));
         // Move bottom
@@ -151,7 +416,7 @@ export class DocumentManager {
             name: 'move-down',
             title: 'Move down',
             icon: 'arrow-down',
-            event: 'move-block-down',
+            event: 'block.move-down',
             data: {$block: $block}
         }));
         // Grow
@@ -159,7 +424,7 @@ export class DocumentManager {
             name: 'expand',
             title: 'Expand size',
             icon: 'expand',
-            event: 'expand-block',
+            event: 'block.expand',
             data: {$block: $block}
         }));
         // Reduce
@@ -167,21 +432,14 @@ export class DocumentManager {
             name: 'compress',
             title: 'Compress size',
             icon: 'compress',
-            event: 'compress-block',
+            event: 'block.compress',
             data: {$block: $block}
         }));
 
-
-        this.toolbar = new ToolbarView<Toolbar>({
-            model: toolbar
-        });
-
-        $(document).find('body').append(this.toolbar.render().$el);
-
-        return this;
+        return toolbar;
     }
 
-    private displayRowToolbar(origin:ClickOrigin, $row:JQuery):DocumentManager {
+    private createRowToolbar(origin:OriginInterface, $row:JQuery):Toolbar {
         var toolbar = new Toolbar({
             origin: origin
         });
@@ -211,17 +469,10 @@ export class DocumentManager {
             data: {$row: $row}
         }));
 
-
-        this.toolbar = new ToolbarView<Toolbar>({
-            model: toolbar
-        });
-
-        $(document).find('body').append(this.toolbar.render().$el);
-
-        return this;
+        return toolbar;
     }
 
-    private displayContainerToolbar(origin:ClickOrigin, $container:JQuery):DocumentManager {
+    private createContainerToolbar(origin:OriginInterface, $container:JQuery):Toolbar {
         var toolbar = new Toolbar({
             origin: origin
         });
@@ -251,12 +502,7 @@ export class DocumentManager {
             data: {$container: $container}
         }));
 
-        this.toolbar = new ToolbarView<Toolbar>({
-            model: toolbar
-        });
-
-        $(document).find('body').append(this.toolbar.render().$el);
-        return this;
+        return toolbar;
     }
 
     /**
@@ -266,6 +512,8 @@ export class DocumentManager {
      */
     private onViewportLoad(doc:Document):DocumentManager {
         this.$document = $(doc);
+
+        BaseManager.setDocument(this.$document);
 
         // Intercept anchors click
         this.$document.find('a[href]').off('click').on('click', (e:Event) => {
@@ -290,6 +538,18 @@ export class DocumentManager {
 
     private onViewportUnload():DocumentManager {
         this.$document = null;
+
+        BaseManager.setDocument(null);
+
+        return this;
+    }
+
+    private onViewportResize(origin:OriginInterface):DocumentManager {
+        this.viewportOrigin = origin;
+
+        if (this.toolbar) {
+            this.toolbar.applyOriginOffset(origin);
+        }
 
         return this;
     }

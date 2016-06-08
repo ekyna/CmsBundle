@@ -1,11 +1,4 @@
 ekyna_cms:
-    content:
-        missing_row: Ligne manquante.
-        columns_overlap: Chevauchement de colonnes.
-        row_too_large: La ligne est trop large.
-        block_too_small: Le dernier block est trop petit.
-    block:
-        identity: L'identité du block n'est pas correctement définie.
     seo:
         unique_title: Une page est déjà définie avec ce titre.
     page:
@@ -17,3 +10,12 @@ ekyna_cms:
     menu:
         invalid_routing: Vous devez spécifier un et seulement un des champs "Page" ou "Route", ou tous les champs "Url" des traductions.
         unique_name: Veuillez saisir un nom unique.
+    container:
+        content_or_name_but_not_both: Un conteneur doit être lié à un contenu ou avoir un nom mais pas les deux.
+    row:
+        container_or_name_but_not_both: Une ligne doit être lié à un conteneur ou avoir un nom mais pas les deux.
+        bad_column_index: Mauvaise indexation des colonnes.
+        too_large_row: La ligne est trop large.
+        too_small_row: La ligne est trop petite.
+    block:
+        row_or_name_but_not_both: Un bloc doit être lié à une ligne ou avoir un nom mais pas les deux.

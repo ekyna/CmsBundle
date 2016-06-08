@@ -8,30 +8,30 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
- * Class ContentGridValidator
+ * Class ContentValidator
  * @package Ekyna\Bundle\CmsBundle\Validator\Constraints
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class ContentGridValidator extends ConstraintValidator
+class ContentValidator extends ConstraintValidator
 {
     public function validate($content, Constraint $constraint)
     {
-        if (!$constraint instanceof ContentGrid) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\ContentGrid');
+        if (!$constraint instanceof Content) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Content');
         }
-        if (!$constraint instanceof ContentInterface) {
+        if (!$content instanceof ContentInterface) {
             throw new UnexpectedTypeException($content, 'Ekyna\Bundle\CmsBundle\Model\ContentInterface');
         }
 
         /**
          * @var ContentInterface $content
-         * @var ContentGrid $constraint
+         * @var Content          $constraint
          */
-        $currentColumn = 1;
+        /*$currentColumn = 1;
         $currentRow = 1;
         $columnSize = 0;
 
-        foreach($content->getBlocks() as $block) {
+        foreach ($content->getBlocks() as $block) {
             if ($currentRow != $block->getRow()) {
                 // Row is missing
                 $this->context->addViolation($constraint->missing_row);
@@ -59,6 +59,6 @@ class ContentGridValidator extends ConstraintValidator
         if ($columnSize != 0) {
             // Last block is too small
             $this->context->addViolation($constraint->block_too_small);
-        }
+        }*/
     }
 }

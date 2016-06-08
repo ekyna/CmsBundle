@@ -33,9 +33,9 @@ class Container implements Cms\ContainerInterface
     protected $name;
 
     /**
-     * @var ArrayCollection|Cms\BlockInterface[]
+     * @var ArrayCollection|Cms\RowInterface[]
      */
-    protected $blocks;
+    protected $rows;
 
 
     /**
@@ -44,7 +44,7 @@ class Container implements Cms\ContainerInterface
     public function __construct()
     {
         $this->position = 0;
-        $this->blocks = new ArrayCollection();
+        $this->rows = new ArrayCollection();
     }
 
     /**
@@ -94,10 +94,10 @@ class Container implements Cms\ContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function setBlocks(ArrayCollection $blocks)
+    public function setRows(ArrayCollection $rows)
     {
-        foreach ($blocks as $block) {
-            $this->addBlock($block);
+        foreach ($rows as $row) {
+            $this->addRow($row);
         }
 
         return $this;
@@ -106,10 +106,10 @@ class Container implements Cms\ContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function addBlock(Cms\BlockInterface $block)
+    public function addRow(Cms\RowInterface $row)
     {
-        $block->setContainer($this);
-        $this->blocks->add($block);
+        $row->setContainer($this);
+        $this->rows->add($row);
 
         return $this;
     }
@@ -117,10 +117,10 @@ class Container implements Cms\ContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function removeBlock(Cms\BlockInterface $block)
+    public function removeRow(Cms\RowInterface $row)
     {
-        $block->setContainer(null);
-        $this->blocks->removeElement($block);
+        $row->setContainer(null);
+        $this->rows->removeElement($row);
 
         return $this;
     }
@@ -128,9 +128,23 @@ class Container implements Cms\ContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function getBlocks()
+    public function getRows()
     {
-        return $this->blocks;
+        return $this->rows;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sortRows()
+    {
+        $iterator = $this->rows->getIterator();
+        $iterator->uasort(function (Cms\RowInterface $a, Cms\RowInterface $b) {
+            return ($a->getPosition() < $b->getPosition()) ? -1 : 1;
+        });
+        $this->rows = new ArrayCollection(iterator_to_array($iterator));
+
+        return $this;
     }
 
     /**

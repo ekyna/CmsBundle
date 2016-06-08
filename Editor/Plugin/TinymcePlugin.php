@@ -23,8 +23,6 @@ class TinymcePlugin extends AbstractPlugin
 
         // TODO $defaultContent
         $block->setData(array());
-
-        return $block;
     }
 
     /**

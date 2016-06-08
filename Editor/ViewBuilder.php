@@ -27,12 +27,12 @@ class ViewBuilder
     /**
      * Constructor.
      *
-     * @param Editor   $editor
+     * @param Editor           $editor
      * @param AdapterInterface $layoutAdapter
      */
     public function __construct(Editor $editor, AdapterInterface $layoutAdapter)
     {
-        $this->editor        = $editor;
+        $this->editor = $editor;
         $this->layoutAdapter = $layoutAdapter;
     }
 
@@ -40,21 +40,22 @@ class ViewBuilder
      * Builds the content view.
      *
      * @param Model\ContentInterface $content
-     * @return View\Content
+     *
+     * @return View\ContentView
      */
     public function buildContent(Model\ContentInterface $content)
     {
-        $view = new View\Content();
+        $view = new View\ContentView();
 
         $this->layoutAdapter->buildContent($content, $view);
 
         if ($this->editor->isEnabled()) {
             $view->attributes['id'] = 'cms-content-' . $content->getId();
-            $view->attributes['data-cms-content'] = json_encode([
-                'id' => $content->getId()
-            ]);
-            $class = array_key_exists('class', $view->attributes) ? $view->attributes['class'] : '';
-            $view->attributes['class'] = trim($class . ' cms-content');
+            $view->attributes['data'] = [
+                'id' => $content->getId(),
+            ];
+            $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
+            $view->attributes['classes'] = trim($classes . ' cms-content');
         }
 
         foreach ($content->getContainers() as $container) {
@@ -68,44 +69,57 @@ class ViewBuilder
      * Builds the container view.
      *
      * @param Model\ContainerInterface $container
-     * @return View\Container
+     *
+     * @return View\ContainerView
      */
     public function buildContainer(Model\ContainerInterface $container)
     {
-        $view = new View\Container();
+        $view = new View\ContainerView();
 
         $this->layoutAdapter->buildContainer($container, $view);
 
         if ($this->editor->isEnabled()) {
             $view->attributes['id'] = 'cms-container-' . $container->getId();
-            $view->attributes['data-cms-container'] = json_encode([
+            $view->attributes['data'] = [
                 'id'       => $container->getId(),
                 'position' => $container->getPosition(),
-            ]);
-            $class = array_key_exists('class', $view->attributes) ? $view->attributes['class'] : '';
-            $view->attributes['class'] = trim($class . ' cms-container');
+            ];
+            $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
+            $view->attributes['classes'] = trim($classes . ' cms-container');
         }
 
-        $size = 0;
-        $row = new View\Row();
-        foreach ($container->getBlocks() as $block) {
-            $row->blocks[] = $this->buildBlock($block);
+        foreach ($container->getRows() as $row) {
+            $view->rows[] = $this->buildRow($row);
+        }
 
-            $size += $block->getSize();
-            if ($size % 12 == 0) {
-                $this->layoutAdapter->buildRow($block, $row);
+        return $view;
+    }
 
-                if ($this->editor->isEnabled()) {
-                    $row->attributes['data-cms-row'] = json_encode([
-                        'position' => $block->getRow(),
-                    ]);
-                    $class = array_key_exists('class', $row->attributes) ? $row->attributes['class'] : '';
-                    $row->attributes['class'] = trim($class . ' cms-row');
-                }
+    /**
+     * Builds the row view.
+     *
+     * @param Model\RowInterface $row
+     *
+     * @return View\RowView
+     */
+    public function buildRow(Model\RowInterface $row)
+    {
+        $view = new View\RowView();
 
-                $view->rows[] = $row;
-                $row = new View\Row();
-            }
+        $this->layoutAdapter->buildRow($row, $view);
+
+        if ($this->editor->isEnabled()) {
+            $view->attributes['id'] = 'cms-row-' . $row->getId();
+            $view->attributes['data'] = [
+                'id'       => $row->getId(),
+                'position' => $row->getPosition(),
+            ];
+            $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
+            $view->attributes['classes'] = trim($classes . ' cms-row');
+        }
+
+        foreach ($row->getBlocks() as $block) {
+            $view->blocks[] = $this->buildBlock($block);
         }
 
         return $view;
@@ -115,33 +129,34 @@ class ViewBuilder
      * Builds the block view.
      *
      * @param Model\BlockInterface $block
-     * @return View\Block
+     *
+     * @return View\BlockView
      */
     public function buildBlock(Model\BlockInterface $block)
     {
-        $view = new View\Block();
+        $view = new View\BlockView();
 
         $this->layoutAdapter->buildBlock($block, $view);
 
         if ($this->editor->isEnabled()) {
             // Column
-            $view->columnAttributes['id'] = 'cms-column-' . $block->getId();
-            $view->columnAttributes['data-cms-column'] = json_encode([
+            $view->attributes['id'] = 'cms-column-' . $block->getId();
+            $view->attributes['data'] = [
                 'id'       => $block->getId(),
-                'position' => $block->getColumn(),
+                'position' => $block->getPosition(),
                 'size'     => $block->getSize(),
-            ]);
-            $class = array_key_exists('class', $view->columnAttributes) ? $view->columnAttributes['class'] : '';
-            $view->columnAttributes['class'] = trim($class . ' cms-column');
+            ];
+            $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
+            $view->attributes['classes'] = trim($classes . ' cms-column');
 
             // Block
-            $view->blockAttributes['id'] = 'cms-block-' . $block->getId();
-            $view->blockAttributes['data-cms-block'] = json_encode([
+            $view->pluginAttributes['id'] = 'cms-block-' . $block->getId();
+            $view->pluginAttributes['data'] = [
                 'id'   => $block->getId(),
-                'type' => $block->getType()
-            ]);
-            $class = array_key_exists('class', $view->blockAttributes) ? $view->blockAttributes['class'] : '';
-            $view->blockAttributes['class'] = trim($class . ' cms-block');
+                'type' => $block->getType(),
+            ];
+            $classes = array_key_exists('classes', $view->pluginAttributes) ? $view->pluginAttributes['classes'] : '';
+            $view->pluginAttributes['classes'] = trim($classes . ' cms-block');
         }
 
         $plugin = $this->editor->getPluginByName($block->getType());

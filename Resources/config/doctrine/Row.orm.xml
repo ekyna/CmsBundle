@@ -6,13 +6,17 @@
         xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Ekyna\Bundle\CmsBundle\Entity\Content"
-            repository-class="Ekyna\Bundle\CmsBundle\Entity\ContentRepository"
-            table="cms_content">
+    <entity name="Ekyna\Bundle\CmsBundle\Entity\Row"
+            table="cms_row">
 
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>
+
+        <field name="name" type="string" column="name" nullable="true"/>
+        <field name="position" type="smallint" column="position">
+            <gedmo:sortable-position/>
+        </field>
 
         <field name="createdAt" type="datetime" column="created_at">
             <gedmo:timestampable on="create"/>
@@ -21,7 +25,7 @@
             <gedmo:timestampable on="update"/>
         </field>
 
-        <one-to-many field="containers" target-entity="Ekyna\Bundle\CmsBundle\Entity\Container" mapped-by="content"
+        <one-to-many field="blocks" target-entity="Ekyna\Bundle\CmsBundle\Entity\Block" mapped-by="row"
                      fetch="EXTRA_LAZY" orphan-removal="true">
             <cascade>
                 <cascade-all/>
@@ -30,6 +34,11 @@
                 <order-by-field name="position" direction="ASC"/>
             </order-by>
         </one-to-many>
+
+        <many-to-one field="container" target-entity="Ekyna\Bundle\CmsBundle\Entity\Container" inversed-by="rows">
+            <join-column name="container_id" referenced-column-name="id" on-delete="CASCADE" nullable="true"/>
+            <gedmo:sortable-group/>
+        </many-to-one>
 
     </entity>
 

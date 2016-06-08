@@ -3,21 +3,21 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\View;
 
 /**
- * Class Block
+ * Class BlockView
  * @package Ekyna\Bundle\CmsBundle\Editor\View
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class Block
+class BlockView
 {
     /**
      * @var array
      */
-    public $columnAttributes = [];
+    public $attributes = [];
 
     /**
      * @var array
      */
-    public $blockAttributes = []; // TODO plugin attributes ?
+    public $pluginAttributes = [];
 
     /**
      * @var string

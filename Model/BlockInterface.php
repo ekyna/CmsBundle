@@ -3,34 +3,40 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Ekyna\Bundle\AdminBundle\Model\TranslatableInterface;
-use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
+use Ekyna\Bundle\CoreBundle\Model as Core;
 
 /**
  * Interface BlockInterface
  * @package Ekyna\Bundle\CmsBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-interface BlockInterface extends TranslatableInterface, TaggedEntityInterface
+interface BlockInterface
+    extends TranslatableInterface,
+            Core\SortableInterface,
+            Core\TimestampableInterface,
+            Core\TaggedEntityInterface
 {
     /**
-     * Set container
+     * Set row
      *
-     * @param ContainerInterface $container
+     * @param RowInterface $row
+     *
      * @return BlockInterface|$this
      */
-    public function setContainer(ContainerInterface $container = null);
+    public function setRow(RowInterface $row = null);
 
     /**
-     * Get container
+     * Get row
      *
-     * @return ContainerInterface
+     * @return RowInterface
      */
-    public function getContainer();
+    public function getRow();
 
     /**
      * Sets the name
      *
      * @param string $name
+     *
      * @return BlockInterface|$this
      */
     public function setName($name);
@@ -43,39 +49,10 @@ interface BlockInterface extends TranslatableInterface, TaggedEntityInterface
     public function getName();
 
     /**
-     * Set row
-     *
-     * @param integer $row
-     * @return BlockInterface|$this
-     */
-    public function setRow($row);
-
-    /**
-     * Get row
-     *
-     * @return integer
-     */
-    public function getRow();
-
-    /**
-     * Set column
-     *
-     * @param integer $column
-     * @return BlockInterface|$this
-     */
-    public function setColumn($column);
-
-    /**
-     * Get column
-     *
-     * @return integer
-     */
-    public function getColumn();
-
-    /**
      * Set size
      *
      * @param integer $size
+     *
      * @return BlockInterface|$this
      */
     public function setSize($size);
