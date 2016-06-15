@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Tests\Editor\Manager;
 
+use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Manager\RowManager;
 use Ekyna\Bundle\CmsBundle\Entity;
 use phpunit\framework\TestCase;
@@ -18,19 +19,25 @@ class RowManagerTest extends TestCase
         $row = new Entity\Row();
 
         $block1 = new Entity\Block();
-        $block1->setSize(6)->setColumn(0);
+        $block1->setSize(6)->setPosition(0);
         $row->addBlock($block1);
 
         $block2 = new Entity\Block();
-        $block2->setSize(4)->setColumn(0);
+        $block2->setSize(4)->setPosition(0);
         $row->addBlock($block2);
 
         $block3 = new Entity\Block();
-        $block3->setSize(4)->setColumn(0);
+        $block3->setSize(4)->setPosition(0);
         $row->addBlock($block3);
 
-        $mng = new RowManager();
-        $mng->fixLayout($row);
+        /** @var Editor $editor */
+        $editor = $this
+            ->getMockBuilder(Editor::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mng = new RowManager($editor);
+        $mng->fixBlockSizes($row);
 
         $size = 0;
         foreach ($row->getBlocks() as $block) {
@@ -45,19 +52,25 @@ class RowManagerTest extends TestCase
         $row = new Entity\Row();
 
         $block1 = new Entity\Block();
-        $block1->setSize(4)->setColumn(0);
+        $block1->setSize(4)->setPosition(0);
         $row->addBlock($block1);
 
         $block2 = new Entity\Block();
-        $block2->setSize(2)->setColumn(0);
+        $block2->setSize(2)->setPosition(0);
         $row->addBlock($block2);
 
         $block3 = new Entity\Block();
-        $block3->setSize(2)->setColumn(0);
+        $block3->setSize(2)->setPosition(0);
         $row->addBlock($block3);
 
-        $mng = new RowManager();
-        $mng->fixLayout($row);
+        /** @var Editor $editor */
+        $editor = $this
+            ->getMockBuilder(Editor::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mng = new RowManager($editor);
+        $mng->fixBlockSizes($row);
 
         $size = 0;
         foreach ($row->getBlocks() as $block) {

@@ -88,7 +88,7 @@ class Container implements Cms\ContainerInterface
      */
     public function getName()
     {
-        return $this->getName();
+        return $this->name;
     }
 
     /**
@@ -131,20 +131,6 @@ class Container implements Cms\ContainerInterface
     public function getRows()
     {
         return $this->rows;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sortRows()
-    {
-        $iterator = $this->rows->getIterator();
-        $iterator->uasort(function (Cms\RowInterface $a, Cms\RowInterface $b) {
-            return ($a->getPosition() < $b->getPosition()) ? -1 : 1;
-        });
-        $this->rows = new ArrayCollection(iterator_to_array($iterator));
-
-        return $this;
     }
 
     /**

@@ -3,15 +3,15 @@
 import Backbone = require('backbone');
 import _ = require('underscore');
 
-import Dispatcher from './Dispatcher';
-import {Button, ButtonGroup, Toolbar, ToolbarView} from './Ui';
+import Dispatcher from './dispatcher';
+import {Button, ButtonGroup, Toolbar, ToolbarView} from './ui';
 
 /**
  * Controls model
  */
-export class ControlsModel extends Toolbar {
+export class MainToolbar extends Toolbar {
     initialize(attributes?:any, options?:any):void {
-        this.set('id', 'editor-control-bar');
+        super.initialize(attributes, options);
 
         this.addButton('default', new Button({
             name: 'power',
@@ -56,10 +56,10 @@ export class ControlsModel extends Toolbar {
 /**
  * Controls view
  */
-export class ControlsView extends ToolbarView<ControlsModel> {
+export class MainToolbarView extends ToolbarView<MainToolbar> {
     template:(data?:Object) => string;
 
-    constructor(options?:Backbone.ViewOptions<ControlsModel>) {
+    constructor(options?:Backbone.ViewOptions<MainToolbar>) {
         super(options);
 
         this.template = _.template(`
@@ -68,7 +68,7 @@ export class ControlsView extends ToolbarView<ControlsModel> {
         `);
     }
 
-    initialize(options?:Backbone.ViewOptions<ControlsModel>) {
+    initialize(options?:Backbone.ViewOptions<MainToolbar>) {
         // Power button click handler
         Dispatcher.on('controls.power.click', (button:Button) => {
             button.set('active', !button.get('active'));
@@ -91,17 +91,16 @@ export class ControlsView extends ToolbarView<ControlsModel> {
                 button.set('active', true);
             }
         });
-
-        // Viewport loading handlers
-        Dispatcher.on('viewport_iframe.unload', () => this.setBusy());
-        Dispatcher.on('viewport_iframe.load', () => this.unsetBusy());
     }
 
-    setBusy() {
+    setBusy(e?:Event):void {
+        if (e && e.defaultPrevented) {
+            return;
+        }
         this.model.getButton('default', 'reload').activate().startSpinning();
     }
 
-    unsetBusy() {
+    unsetBusy():void {
         this.model.getButton('default', 'reload').deactivate().stopSpinning();
     }
 }

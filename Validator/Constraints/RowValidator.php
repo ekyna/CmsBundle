@@ -38,8 +38,6 @@ class RowValidator extends ConstraintValidator
         // Check layout
         $position = 0;
         $size = 0;
-
-        $row->sortBlocks();
         foreach ($row->getBlocks() as $block) {
             if ($position != $block->getPosition()) {
                 $this->context->addViolation($constraint->badColumnIndex);

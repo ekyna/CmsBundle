@@ -22,6 +22,11 @@ class Content implements Cms\ContentInterface
     protected $id;
 
     /**
+     * @var string
+     */
+    protected $name;
+
+    /**
      * @var ArrayCollection|Cms\ContainerInterface[]
      */
     protected $containers;
@@ -41,6 +46,24 @@ class Content implements Cms\ContentInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
@@ -83,20 +106,6 @@ class Content implements Cms\ContentInterface
     public function getContainers()
     {
         return $this->containers;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sortContainers()
-    {
-        $iterator = $this->containers->getIterator();
-        $iterator->uasort(function (Cms\ContainerInterface $a, Cms\ContainerInterface $b) {
-            return ($a->getPosition() < $b->getPosition()) ? -1 : 1;
-        });
-        $this->containers = new ArrayCollection(iterator_to_array($iterator));
-
-        return $this;
     }
 
     /**

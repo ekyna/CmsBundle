@@ -2,13 +2,14 @@
 
 import Backbone = require('backbone');
 import _ = require('underscore');
+import $ = require('jquery');
 
-import Dispatcher from './Dispatcher';
+import Dispatcher from './dispatcher';
 
 /**
- * Click origin
+ * OffsetInterface
  */
-export interface OriginInterface {
+export interface OffsetInterface {
     top: number,
     left: number
 }
@@ -212,7 +213,8 @@ export class Toolbar extends Backbone.Model {
     defaults():Backbone.ObjectHash {
         return {
             id: null,
-            origin: <OriginInterface>{top: 0, left: 0},
+            type: 'vertical',
+            origin: <OffsetInterface>{top: 0, left: 0},
             groups: new Backbone.Collection<ButtonGroup>()
         }
     }
@@ -282,7 +284,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
     constructor(options?:Backbone.ViewOptions<T>) {
         options.tagName = 'div';
         options.attributes = {
-            'class': 'editor-toolbar'
+            'class': 'editor-toolbar ' + options.model.get('type')
         };
         if (0 < String(options.model.get('id')).length) {
             _.extend(options.attributes, {id: options.model.get('id')});
@@ -297,7 +299,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
         this.subViews.forEach((view:ButtonGroupView) => view.remove());
     }
 
-    applyOriginOffset(origin: OriginInterface):ToolbarView<T> {
+    applyOriginOffset(origin: OffsetInterface):ToolbarView<T> {
         this.$el.css({
             top: origin.top + this.model.get('origin').top,
             left: origin.left + this.model.get('origin').left,

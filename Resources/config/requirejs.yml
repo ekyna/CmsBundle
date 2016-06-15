@@ -5,27 +5,37 @@ config:
             exports: 'Backbone'
         underscore:
             exports: '_'
-        'ekyna-cms/editor':
-            deps: ['routing']
-#    packages: TODO
-#        -
-#            name: 'ekyna-cms/editor'
-#            location: 'bundles/ekynacms/js/editor'
-#            main: 'editor'
+        'es6-promise':
+            exports: 'Promise'
+        'ekyna-cms/editor/editor':
+            deps: ['jquery']
+#            deps: ['routing', 'jquery', 'backbone', 'underscore', 'es6-promise']
+        'ekyna-cms/editor/controls':
+            deps: ['backbone', 'underscore']
+        'ekyna-cms/editor/dispatcher':
+            deps: ['backbone', 'underscore']
+        'ekyna-cms/editor/document-manager':
+            deps: ['routing', 'jquery', 'es6-promise']
+        'ekyna-cms/editor/ui':
+            deps: ['jquery', 'backbone', 'underscore']
+        'ekyna-cms/editor/viewport':
+            deps: ['jquery', 'backbone', 'underscore']
+        'ekyna-cms/editor/plugin/base-plugin':
+            deps: ['es6-promise']
+        'ekyna-cms/editor/plugin/block/tinymce-plugin':
+            deps: ['jquery', 'es6-promise']
+    packages:
+        -
+            name: 'ekyna-cms/editor'
+            location: 'bundles/ekynacms/js/editor'
+            main: 'editor'
     paths:
-        'ekyna-cms/editor': 'bundles/ekynacms/js/editor'
-#        'ekyna-cms-editor/plugin-base': 'bundles/ekynacms/js/editor/plugin/base'
-#        'ekyna-cms-editor/tinymce': 'bundles/ekynacms/js/editor/plugin/tinymce'
-#        'ekyna-cms-editor/image': 'bundles/ekynacms/js/editor/plugin/image'
         'ekyna-cms/cookie': 'bundles/ekynacms/js/cookie'
         'ekyna-cms/user': 'bundles/ekynacms/js/user'
         backbone: 'bundles/ekynacms/lib/backbone'
         underscore: 'bundles/ekynacms/lib/underscore'
+        'es6-promise': 'bundles/ekynacms/lib/es6-promise'
 build:
     include:
-#        - 'ekyna-cms-editor'
-#        - 'ekyna-cms-editor/plugin-base'
         - 'ekyna-cms/cookie'
         - 'ekyna-cms/user'
-#    paths:
-#        'routing_data': 'empty:'

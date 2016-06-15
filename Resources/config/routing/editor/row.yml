@@ -7,9 +7,27 @@ ekyna_cms_editor_row_create_block:
     options:
         expose: true
 
-ekyna_cms_editor_row_update_layout:
-    path: /{rowId}/update-layout
-    defaults: { _controller: "EkynaCmsBundle:Editor/Row:updateLayout" }
+ekyna_cms_editor_row_remove:
+    path: /{rowId}/remove
+    defaults: { _controller: "EkynaCmsBundle:Editor/Row:remove" }
+    methods: [POST]
+    requirements:
+        rowId: \d+
+    options:
+        expose: true
+
+ekyna_cms_editor_row_move_up:
+    path: /{rowId}/move-up
+    defaults: { _controller: "EkynaCmsBundle:Editor/Row:moveUp" }
+    methods: [POST]
+    requirements:
+        rowId: \d+
+    options:
+        expose: true
+
+ekyna_cms_editor_row_move_down:
+    path: /{rowId}/move-down
+    defaults: { _controller: "EkynaCmsBundle:Editor/Row:moveDown" }
     methods: [POST]
     requirements:
         rowId: \d+

@@ -136,20 +136,6 @@ class Row implements Cms\RowInterface
     /**
      * {@inheritdoc}
      */
-    public function sortBlocks()
-    {
-        $iterator = $this->blocks->getIterator();
-        $iterator->uasort(function (Cms\BlockInterface $a, Cms\BlockInterface $b) {
-            return ($a->getPosition() < $b->getPosition()) ? -1 : 1;
-        });
-        $this->blocks = new ArrayCollection(iterator_to_array($iterator));
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public static function getEntityTagPrefix()
     {
         return 'ekyna_cms.row';

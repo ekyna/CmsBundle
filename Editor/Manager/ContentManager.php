@@ -2,47 +2,69 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
-use Ekyna\Bundle\CmsBundle\Model\ContentInterface;
-use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
+use Ekyna\Bundle\CmsBundle\Entity;
+use Ekyna\Bundle\CmsBundle\Model;
 
 /**
  * Class ContentManager
  * @package Ekyna\Bundle\CmsBundle\Editor\Manager
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class ContentManager
+class ContentManager extends AbstractManager
 {
     /**
      * Creates a new content.
      *
-     * @param ContentSubjectInterface $subject
+     * @param Model\ContentSubjectInterface|string $subjectOrName
      *
-     * @return ContentInterface
+     * @return Model\ContentInterface
+     * @throws InvalidOperationException
      */
-    public function create(ContentSubjectInterface $subject):ContentInterface
+    public function create($subjectOrName)
     {
+        // Check if container or name is defined
+        if (!$subjectOrName instanceof Model\ContentSubjectInterface
+            || (is_string($subjectOrName) && 0 == strlen($subjectOrName))
+        ) {
+            throw new InvalidOperationException("Excepted instance of ContentSubjectInterface or string.");
+        }
+
         // New instance
+        $content = new Entity\Content();
 
-        // New default container (with new default block)
+        // Create default container
+        $this->getEditor()->getContainerManager()->create($content);
 
-        // Add to subject
+        // Add to container if available
+        if ($subjectOrName instanceof Model\ContentSubjectInterface) {
+            $subjectOrName->setContent($content);
+        } else {
+            $content->setName($subjectOrName);
+        }
 
-        // Return
+        return $content;
     }
 
     /**
-     * Updates a content layout (containers positions).
+     * Fix the container positions.
      *
-     * @param ContentInterface $content
-     * @param array            $layout
+     * @param Model\ContentInterface $content
+     *
+     * @return ContentManager
      */
-    public function updateLayout(ContentInterface $content, array $layout)
+    public function fixContainerPositions(Model\ContentInterface $content)
     {
-        // Validate layout
+        $this->sortChildrenByPosition($content, 'containers');
 
-        // For each container
-            // Set position
+        $containers = $content->getContainers();
 
-        // Reorder containers
+        $position = 0;
+        foreach ($containers as $container) {
+            $container->setPosition($position);
+            $position++;
+        }
+
+        return $this;
     }
 }

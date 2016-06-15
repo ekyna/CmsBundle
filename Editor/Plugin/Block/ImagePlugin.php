@@ -1,12 +1,13 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
+namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class ImagePlugin
- * @package Ekyna\Bundle\CmsBundle\Editor\Plugin
+ * @package Ekyna\Bundle\CmsBundle\Editor\Plugin\Block
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class ImagePlugin extends AbstractPlugin
@@ -22,9 +23,9 @@ class ImagePlugin extends AbstractPlugin
     /**
      * {@inheritDoc}
      */
-    public function update(BlockInterface $block, array $data = [])
+    public function update(BlockInterface $block, Request $request)
     {
-
+        return null;
     }
 
     /**
@@ -49,5 +50,13 @@ class ImagePlugin extends AbstractPlugin
     public function getType()
     {
         return 'ekyna_cms_image';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getJavascriptFilePath()
+    {
+        return 'ekyna-cms/editor/plugin/block/image-plugin';
     }
 }

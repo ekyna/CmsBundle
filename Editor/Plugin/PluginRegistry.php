@@ -1,12 +1,12 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Editor;
+namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 
-use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\PluginInterface;
 
 /**
  * Class PluginRegistry
- * @package Ekyna\Bundle\CmsBundle\Editor
+ * @package Ekyna\Bundle\CmsBundle\Editor\Plugin
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
 class PluginRegistry
@@ -26,10 +26,10 @@ class PluginRegistry
 
     /**
      * Register a plugin.
-     * 
+     *
      * @param string $name
      * @param PluginInterface $plugin
-     * 
+     *
      * @throws \InvalidArgumentException
      */
     public function register($name, PluginInterface $plugin)
@@ -39,9 +39,9 @@ class PluginRegistry
 
     /**
      * Returns whether a plugin is registered or not.
-     * 
+     *
      * @param string $name
-     * 
+     *
      * @return boolean
      */
     public function has($name)
@@ -51,9 +51,9 @@ class PluginRegistry
 
     /**
      * Returns a plugin.
-     * 
+     *
      * @param string $name
-     * 
+     *
      * @throws \InvalidArgumentException
      *
      * @return PluginInterface
@@ -68,7 +68,7 @@ class PluginRegistry
 
     /**
      * Returns the registered plugins.
-     * 
+     *
      * @return PluginInterface[]
      */
     public function getPlugins()

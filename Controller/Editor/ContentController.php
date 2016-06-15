@@ -2,22 +2,44 @@
 
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
-use Ekyna\Bundle\CoreBundle\Controller\Controller;
+use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class ContentController
  * @package Ekyna\Bundle\CmsBundle\Controller\Editor
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class ContentController extends Controller
+class ContentController extends BaseController
 {
-    public function createContainer()
+    /**
+     * Create and append a new container to the content.
+     *
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function createContainerAction(Request $request)
     {
+        $content = $this->findContent(intval($request->attributes->get('contentId')));
 
-    }
+        try {
+            $container = $this->getEditor()->createDefaultContainer([], $content);
+        } catch (EditorException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
 
-    public function updateLayout()
-    {
+        $this->validate($content);
+        $this->persist($content);
 
+        $viewBuilder = $this->getViewBuilder();
+
+        $data = [
+            'created' => $viewBuilder->buildContainer($container)->attributes['id'],
+            'content' => $viewBuilder->buildContent($content),
+        ];
+
+        return $this->buildResponse($data, self::SERIALIZE_FULL);
     }
 }

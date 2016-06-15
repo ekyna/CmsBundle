@@ -1,14 +1,14 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
+namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
 
 /**
- * AbstractPlugin.
- *
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * Class AbstractPlugin
+ * @package Ekyna\Bundle\CmsBundle\Editor\Plugin\Block
+ * @author  Etienne Dauvergne <contact@ekyna.com>
  */
 abstract class AbstractPlugin implements PluginInterface
 {

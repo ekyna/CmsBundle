@@ -14,6 +14,8 @@
             <generator strategy="AUTO"/>
         </id>
 
+        <field name="name" type="string" column="name" nullable="true"/>
+
         <field name="createdAt" type="datetime" column="created_at">
             <gedmo:timestampable on="create"/>
         </field>
@@ -22,7 +24,7 @@
         </field>
 
         <one-to-many field="containers" target-entity="Ekyna\Bundle\CmsBundle\Entity\Container" mapped-by="content"
-                     fetch="EXTRA_LAZY" orphan-removal="true">
+                     orphan-removal="true">
             <cascade>
                 <cascade-all/>
             </cascade>

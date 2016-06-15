@@ -3,17 +3,17 @@ module.exports = function (grunt, options) {
         cms_lib: {
             files: [
                 {
+                    src: 'bower_components/es6-promise/es6-promise.min.js',
+                    dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/lib/es6-promise.js'
+                },
+                {
                     src: 'bower_components/backbone/backbone-min.js',
                     dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/lib/backbone.js'
                 },
                 {
                     src: 'bower_components/underscore/underscore-min.js',
                     dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/lib/underscore.js'
-                }/*,
-                {
-                    src: 'bower_components/handlebars/handlebars.amd.min.js',
-                    dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/lib/handlebars.js'
-                }*/
+                }
             ]
         },
         cms_less: { // For watch:cms_less
@@ -41,7 +41,7 @@ module.exports = function (grunt, options) {
                 {
                     expand: true,
                     cwd: 'src/Ekyna/Bundle/CmsBundle/Resources/public/tmp/js',
-                    src: ['**'],
+                    src: ['**/*.js'],
                     dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/js'
                 }
             ]

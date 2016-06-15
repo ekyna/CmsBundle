@@ -4,8 +4,8 @@ import $ = require('jquery');
 import Backbone = require('backbone');
 import _ = require('underscore');
 
-import Dispatcher from './Dispatcher';
-import {OriginInterface, Button} from './Ui';
+import Dispatcher from './dispatcher';
+import {OffsetInterface, Button} from './ui';
 
 /**
  * SizeInterface
@@ -29,8 +29,11 @@ export class ViewportModel extends Backbone.Model {
  */
 export class ViewportView extends Backbone.View<ViewportModel> {
     template:() => string;
-
     iFrame:HTMLIFrameElement;
+
+    onControlsReloadClickHandler:(button:Button) => void;
+    onControlsViewportClickHandler:(button:Button) => void;
+    onDocumentManagerNavigateHandler:(url:string) => void;
 
     constructor(options?:Backbone.ViewOptions<ViewportModel>) {
         options.tagName = 'div';
@@ -41,16 +44,16 @@ export class ViewportView extends Backbone.View<ViewportModel> {
         super(options);
 
         this.template = _.template('<iframe id="editor-viewport-frame" frameborder="0"></iframe>');
+
+        this.onControlsReloadClickHandler = (button:Button) => this.reload();
+        this.onControlsViewportClickHandler = (button:Button) => this.onViewportButtonClick(button);
+        this.onDocumentManagerNavigateHandler = (url:string) => this.load(url);
     }
 
     initialize(options?:Backbone.ViewOptions<ViewportModel>) {
         _.bindAll(this, 'resize', 'reload');
         this.model.bind('change:size', this.resize);
         $(window).resize(this.resize);
-
-        Dispatcher.on('controls.reload.click', () => this.reload());
-        Dispatcher.on('controls.viewport.click', (button:Button) => this.onViewportButtonClick(button));
-        Dispatcher.on('document_manager.navigate', (url:string) => this.load(url));
     }
 
     private reload():void {
@@ -97,7 +100,7 @@ export class ViewportView extends Backbone.View<ViewportModel> {
 
         this.$el.removeAttr('style').css(css);
 
-        Dispatcher.trigger('viewport.resize', <OriginInterface>{top: css.top, left: css.left});
+        Dispatcher.trigger('viewport.resize', <OffsetInterface>{top: css.top, left: css.left});
     }
 
     onViewportButtonClick(button:Button):void {
@@ -141,10 +144,15 @@ export class ViewportView extends Backbone.View<ViewportModel> {
     initIFrame(url:string):ViewportView {
         this.iFrame = <HTMLIFrameElement>document.getElementById('editor-viewport-frame');
         this.iFrame.onload = () => {
-            Dispatcher.trigger('viewport_iframe.load', this.iFrame.contentDocument);
+            Dispatcher.trigger('viewport_iframe.load', this.iFrame.contentWindow || this.iFrame, this.iFrame.contentDocument);
 
-            this.iFrame.contentWindow.onbeforeunload = () => {
-                Dispatcher.trigger('viewport_iframe.unload');
+            this.iFrame.contentWindow.onbeforeunload = (e:BeforeUnloadEvent) => {
+                Dispatcher.trigger('viewport_iframe.unload', e);
+
+                // https://developer.mozilla.org/fr/docs/Web/Events/beforeunload
+                if (e.returnValue) {
+                    return e.returnValue;
+                }
             }
         };
 

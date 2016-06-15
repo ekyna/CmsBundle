@@ -1,14 +1,14 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Editor;
+namespace Ekyna\Bundle\CmsBundle\Editor\View;
 
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
-use Ekyna\Bundle\CmsBundle\Editor\View;
+use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Model;
 
 /**
  * Class ViewBuilder
- * @package Ekyna\Bundle\CmsBundle\Editor
+ * @package Ekyna\Bundle\CmsBundle\Editor\View
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
 class ViewBuilder
@@ -41,11 +41,11 @@ class ViewBuilder
      *
      * @param Model\ContentInterface $content
      *
-     * @return View\ContentView
+     * @return ContentView
      */
     public function buildContent(Model\ContentInterface $content)
     {
-        $view = new View\ContentView();
+        $view = new ContentView();
 
         $this->layoutAdapter->buildContent($content, $view);
 
@@ -70,11 +70,11 @@ class ViewBuilder
      *
      * @param Model\ContainerInterface $container
      *
-     * @return View\ContainerView
+     * @return ContainerView
      */
     public function buildContainer(Model\ContainerInterface $container)
     {
-        $view = new View\ContainerView();
+        $view = new ContainerView();
 
         $this->layoutAdapter->buildContainer($container, $view);
 
@@ -86,6 +86,11 @@ class ViewBuilder
             ];
             $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
             $view->attributes['classes'] = trim($classes . ' cms-container');
+
+            // Inner container
+            $view->innerAttributes['id'] = 'cms-inner-container-' . $container->getId();
+            $classes = array_key_exists('classes', $view->innerAttributes) ? $view->innerAttributes['classes'] : '';
+            $view->innerAttributes['classes'] = trim($classes . ' cms-inner-container');
         }
 
         foreach ($container->getRows() as $row) {
@@ -100,11 +105,11 @@ class ViewBuilder
      *
      * @param Model\RowInterface $row
      *
-     * @return View\RowView
+     * @return RowView
      */
     public function buildRow(Model\RowInterface $row)
     {
-        $view = new View\RowView();
+        $view = new RowView();
 
         $this->layoutAdapter->buildRow($row, $view);
 
@@ -130,11 +135,11 @@ class ViewBuilder
      *
      * @param Model\BlockInterface $block
      *
-     * @return View\BlockView
+     * @return BlockView
      */
     public function buildBlock(Model\BlockInterface $block)
     {
-        $view = new View\BlockView();
+        $view = new BlockView();
 
         $this->layoutAdapter->buildBlock($block, $view);
 

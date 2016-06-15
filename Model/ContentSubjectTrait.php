@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
+//use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
 
 /**
  * Class ContentSubjectTrait
@@ -48,7 +48,7 @@ trait ContentSubjectTrait
      */
     public function getContentSummary($maxLength = 128)
     {
-        if (null !== $content = $this->getContent()) {
+        /*if (null !== $content = $this->getContent()) {
             $length = 0;
             $blockContents = [];
             foreach ($content->getBlocks() as $block) {
@@ -67,7 +67,7 @@ trait ContentSubjectTrait
             if (!empty($blockContents)) {
                 return implode('<br>', $blockContents);
             }
-        }
+        }*/
         return '';
     }
 }

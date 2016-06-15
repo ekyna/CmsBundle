@@ -13,6 +13,21 @@ use Ekyna\Bundle\CoreBundle\Model;
 interface ContentInterface extends Model\TimestampableInterface, Model\TaggedEntityInterface
 {
     /**
+     * Sets the name
+     *
+     * @param string $name
+     * @return ContentInterface|$this
+     */
+    public function setName($name);
+
+    /**
+     * Returns the name
+     *
+     * @return string
+     */
+    public function getName();
+
+    /**
      * Set containers
      *
      * @param ArrayCollection|ContainerInterface[] $containers
@@ -45,13 +60,6 @@ interface ContentInterface extends Model\TimestampableInterface, Model\TaggedEnt
      * @return ArrayCollection|ContainerInterface[]
      */
     public function getContainers();
-
-    /**
-     * Sorts the containers by position.
-     *
-     * @return ContentInterface|$this
-     */
-    public function sortContainers();
 
     /**
      * Returns the indexable contents indexed by locale.

@@ -25,7 +25,7 @@ class Bootstrap3Adapter implements AdapterInterface
      */
     public function buildContainer(Model\ContainerInterface $container, View\ContainerView $view)
     {
-        $view->attributes = array('classes' => 'container');
+        $view->innerAttributes = array('classes' => 'container');
     }
 
     /**

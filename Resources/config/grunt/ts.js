@@ -3,14 +3,15 @@ module.exports = function (grunt, options) {
         cms: {
             files: [
                 {
-                    src: 'src/Ekyna/Bundle/CmsBundle/Resources/private/ts/**.ts',
+                    src: 'src/Ekyna/Bundle/CmsBundle/Resources/private/ts/**/*.ts',
                     dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/tmp/js'
                 }
             ],
             options: {
                 fast: 'never',
                 module: 'amd',
-                noImplicitAny: true,
+                rootDir: 'src/Ekyna/Bundle/CmsBundle/Resources/private/ts',
+                noImplicitAny: false,
                 removeComments: true,
                 preserveConstEnums: true,
                 sourceMap: false

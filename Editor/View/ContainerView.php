@@ -15,6 +15,11 @@ class ContainerView
     public $attributes = [];
 
     /**
+     * @var array
+     */
+    public $innerAttributes = [];
+
+    /**
      * @var array|RowView[]
      */
     public $rows = [];

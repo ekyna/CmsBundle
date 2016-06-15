@@ -78,11 +78,4 @@ interface RowInterface extends Model\SortableInterface, Model\TimestampableInter
      * @return ArrayCollection|BlockInterface[]
      */
     public function getBlocks();
-
-    /**
-     * Sorts the blocks by position.
-     *
-     * @return RowInterface|$this
-     */
-    public function sortBlocks();
 }

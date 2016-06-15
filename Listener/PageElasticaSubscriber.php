@@ -117,11 +117,11 @@ class PageElasticaSubscriber implements EventSubscriber
 
         // By Content
         $content = null;
-        if ($entity instanceof Cms\BlockTranslationInterface) {
-            /** @var Cms\BlockInterface $block */
-            $block = $entity->getTranslatable();
-            $content = $block->getContent();
-        }
+//       TODO if ($entity instanceof Cms\BlockTranslationInterface) {
+//            /** @var Cms\BlockInterface $block */
+//            $block = $entity->getTranslatable();
+//            $content = $block->getContent();
+//        }
         if (null !== $content) {
             return $this->manager
                 ->createQuery(sprintf('SELECT p FROM %s p WHERE p.content = :content', $this->pageClass))

@@ -27,7 +27,7 @@ class ContentHandler implements SubscribingHandlerInterface
             'id' => $content->getId(),
         );
         /** @var \Ekyna\Bundle\CmsBundle\Model\BlockInterface $block */
-        foreach ($content->getBlocks() as $block) {
+        /* TODO foreach ($content->getBlocks() as $block) {
             if ($block->isIndexable()) {
                 foreach ($block->getIndexableContents() as $locale => $content) {
                     if (!array_key_exists($locale, $result)) {
@@ -36,11 +36,11 @@ class ContentHandler implements SubscribingHandlerInterface
                     $result[$locale]['content'] .= ' ' . $content;
                 }
             }
-        }
+        }*/
 
-        if (null === $visitor->getRoot()) {
+        /* TODO if (null === $visitor->getRoot()) {
             $visitor->setRoot($result);
-        }
+        }*/
 
         return $result;
     }

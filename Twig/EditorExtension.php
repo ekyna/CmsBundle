@@ -4,7 +4,6 @@ namespace Ekyna\Bundle\CmsBundle\Twig;
 
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\View;
-use Ekyna\Bundle\CmsBundle\Editor\ViewBuilder;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Model;
 
@@ -26,7 +25,7 @@ class EditorExtension extends \Twig_Extension
     protected $pageHelper;
 
     /**
-     * @var ViewBuilder
+     * @var View\ViewBuilder
      */
     protected $viewBuilder;
 
@@ -41,9 +40,9 @@ class EditorExtension extends \Twig_Extension
      *
      * @param Editor      $editor
      * @param PageHelper  $pageHelper
-     * @param ViewBuilder $viewBuilder
+     * @param View\ViewBuilder $viewBuilder
      */
-    public function __construct(Editor $editor, PageHelper $pageHelper, ViewBuilder $viewBuilder)
+    public function __construct(Editor $editor, PageHelper $pageHelper, View\ViewBuilder $viewBuilder)
     {
         $this->editor = $editor;
         $this->pageHelper = $pageHelper;

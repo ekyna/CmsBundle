@@ -170,14 +170,14 @@
         </service>
 
         <!-- Web Editor -->
-        <service id="ekyna_cms.editor.plugin_registry" class="Ekyna\Bundle\CmsBundle\Editor\PluginRegistry" />
+        <service id="ekyna_cms.editor.plugin_registry" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry" />
         <service id="ekyna_cms.editor.editor" class="Ekyna\Bundle\CmsBundle\Editor\Editor">
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="validator" />
             <argument>ekyna_cms_tinymce</argument>
         </service>
-        <service id="ekyna_cms.editor.view_builder" class="Ekyna\Bundle\CmsBundle\Editor\ViewBuilder">
+        <service id="ekyna_cms.editor.view_builder" class="Ekyna\Bundle\CmsBundle\Editor\View\ViewBuilder">
             <argument type="service" id="ekyna_cms.editor.editor" />
             <argument type="service" id="ekyna_cms.editor.adapter.bootstrap3" />
         </service>
@@ -191,13 +191,13 @@
             </call>
         </service>
         <service id="ekyna_cms.editor.plugin.tinymce"
-                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\TinymcePlugin"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\TinymcePlugin"
                  parent="ekyna_cms.editor.plugin.abstract">
             <argument>%ekyna_cms.editor.plugin.tinymce.config%</argument>
             <tag name="ekyna_cms.editor.plugin" alias="ekyna_cms_tinymce" />
         </service>
         <service id="ekyna_cms.editor.plugin.image"
-                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\ImagePlugin"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\ImagePlugin"
                  parent="ekyna_cms.editor.plugin.abstract">
             <argument>%ekyna_cms.editor.plugin.image.config%</argument>
             <tag name="ekyna_cms.editor.plugin" alias="ekyna_cms_image" />

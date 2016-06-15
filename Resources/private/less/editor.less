@@ -77,12 +77,30 @@ body {
   -ms-transition: top @viewport-transition-speed, left @viewport-transition-speed;
   transition: top @viewport-transition-speed, left @viewport-transition-speed;
 
-  > .btn, > .btn-group {
-    margin-right: @editor-controls-margin;
+  &.horizontal {
+    > .btn-group {
+      margin-right: @editor-controls-margin;
 
-    &:last-child {
-      margin-right: 0;
+      &:last-child {
+        margin-right: 0;
+      }
     }
+  }
+
+  &.vertical {
+    > .btn-group {
+      display: block;
+      overflow: hidden;
+      margin-bottom: @editor-controls-margin;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .btn {
+    min-width: 40px;
   }
 
   .btn > span {

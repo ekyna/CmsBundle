@@ -13,28 +13,31 @@
       border: 1px solid @editor-container-color;
     }
 
-    > .cms-row {
-      margin-bottom: 10px;
-      border: 1px solid transparent;
+    > .cms-inner-container {
 
-      &:hover {
-        border: 1px dotted @editor-row-color;
-      }
-      &.selected, &.selected:hover {
-        border: 1px solid @editor-row-color;
-      }
+      > .cms-row {
+        margin-bottom: 10px;
+        border: 1px solid transparent;
 
-      > .cms-column {
+        &:hover {
+          border: 1px dotted @editor-row-color;
+        }
+        &.selected, &.selected:hover {
+          border: 1px solid @editor-row-color;
+        }
 
-        > .cms-block {
-          margin-bottom: 10px;
-          border: 1px dotted transparent;
+        > .cms-column {
 
-          &:hover {
-            border: 1px dotted @editor-block-color;
-          }
-          &.selected, &.selected:hover {
-            border: 1px solid @editor-block-color;
+          > .cms-block {
+            margin-bottom: 10px;
+            border: 1px dotted transparent;
+
+            &:hover {
+              border: 1px dotted @editor-block-color;
+            }
+            &.selected, &.selected:hover {
+              border: 1px solid @editor-block-color;
+            }
           }
         }
       }

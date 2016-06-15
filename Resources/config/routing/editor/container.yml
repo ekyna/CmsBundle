@@ -1,0 +1,35 @@
+ekyna_cms_editor_container_create_row:
+    path: /{containerId}/create-row
+    defaults: { _controller: "EkynaCmsBundle:Editor/Container:createRow" }
+    methods: [POST]
+    requirements:
+        containerId: \d+
+    options:
+        expose: true
+
+ekyna_cms_editor_container_remove:
+    path: /{containerId}/remove
+    defaults: { _controller: "EkynaCmsBundle:Editor/Container:remove" }
+    methods: [POST]
+    requirements:
+        containerId: \d+
+    options:
+        expose: true
+
+ekyna_cms_editor_container_move_up:
+    path: /{containerId}/move-up
+    defaults: { _controller: "EkynaCmsBundle:Editor/Container:moveUp" }
+    methods: [POST]
+    requirements:
+        containerId: \d+
+    options:
+        expose: true
+
+ekyna_cms_editor_container_move_down:
+    path: /{containerId}/move-down
+    defaults: { _controller: "EkynaCmsBundle:Editor/Container:moveDown" }
+    methods: [POST]
+    requirements:
+        containerId: \d+
+    options:
+        expose: true

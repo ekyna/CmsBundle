@@ -77,13 +77,6 @@ interface ContainerInterface extends Model\SortableInterface, Model\Timestampabl
     public function getRows();
 
     /**
-     * Sort the rows by position.
-     *
-     * @return ContentInterface|$this
-     */
-    public function sortRows();
-
-    /**
      * Returns the indexable contents indexed by locale.
      *
      * @return array

@@ -6,7 +6,7 @@ Ekyna\Bundle\CmsBundle\Editor\View\BlockView:
             groups: [Layout, Default]
         pluginAttributes:
             expose: true
-            groups: [Plugin, Default]
+            groups: [Content, Default]
         content:
             expose: true
-            groups: [Plugin, Default]
+            groups: [Content, Default]

@@ -9,6 +9,8 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  * Interface BlockInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author  Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @method BlockTranslationInterface translate($locale = null, $create = false)
  */
 interface BlockInterface
     extends TranslatableInterface,

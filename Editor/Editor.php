@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Editor;
 
 use Doctrine\ORM\EntityManager;
+use Ekyna\Bundle\CmsBundle\Editor\Plugin;
 use Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CmsBundle\Model;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -15,7 +16,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class Editor
 {
     /**
-     * @var PluginRegistry
+     * @var Plugin\PluginRegistry
      */
     private $pluginRegistry;
 
@@ -49,17 +50,27 @@ class Editor
      */
     private $rowManager;
 
+    /**
+     * @var Manager\ContainerManager
+     */
+    private $containerManager;
+
+    /**
+     * @var Manager\ContentManager
+     */
+    private $contentManager;
+
 
     /**
      * Constructor.
      *
-     * @param PluginRegistry     $pluginRegistry
+     * @param Plugin\PluginRegistry     $pluginRegistry
      * @param EntityManager      $manager
      * @param ValidatorInterface $validator
      * @param string             $defaultBlockType
      */
     public function __construct(
-        PluginRegistry $pluginRegistry,
+        Plugin\PluginRegistry $pluginRegistry,
         EntityManager $manager,
         ValidatorInterface $validator,
         $defaultBlockType = 'ekyna_cms_tinymce'
@@ -78,7 +89,7 @@ class Editor
     public function getBlockManager()
     {
         if (null === $this->blockManager) {
-            $this->blockManager = new Manager\BlockManager($this->pluginRegistry);
+            $this->blockManager = new Manager\BlockManager($this, $this->pluginRegistry);
         }
 
         return $this->blockManager;
@@ -92,10 +103,38 @@ class Editor
     public function getRowManager()
     {
         if (null === $this->rowManager) {
-            $this->rowManager = new Manager\RowManager();
+            $this->rowManager = new Manager\RowManager($this);
         }
 
         return $this->rowManager;
+    }
+
+    /**
+     * Returns the container manager.
+     *
+     * @return Manager\ContainerManager
+     */
+    public function getContainerManager()
+    {
+        if (null === $this->containerManager) {
+            $this->containerManager = new Manager\ContainerManager($this);
+        }
+
+        return $this->containerManager;
+    }
+
+    /**
+     * Returns the content manager.
+     *
+     * @return Manager\ContentManager
+     */
+    public function getContentManager()
+    {
+        if (null === $this->contentManager) {
+            $this->contentManager = new Manager\ContentManager($this);
+        }
+
+        return $this->contentManager;
     }
 
     /**
@@ -127,7 +166,7 @@ class Editor
      *
      * @param string $name
      *
-     * @return Plugin\PluginInterface
+     * @return Plugin\Block\PluginInterface
      */
     public function getPluginByName($name)
     {
@@ -143,13 +182,10 @@ class Editor
      */
     public function createDefaultContent(Model\ContentSubjectInterface $subject)
     {
-        $content = new Entity\Content();
-        $this->createDefaultContainer([], $content);
-
-        $subject->setContent($content);
+        $content = $this->getContentManager()->create($subject);
 
 //        TODO (in controller)
-        $this->manager->persist($content);
+        //$this->manager->persist($content);
         $this->manager->persist($subject);
         $this->manager->flush();
 
@@ -166,17 +202,7 @@ class Editor
      */
     public function createDefaultContainer(array $data = [], Model\ContentInterface $content = null)
     {
-        $container = new Entity\Container();
-
-        if (null !== $content) {
-            $content->addContainer($container);
-        }
-
-        // TODO $data
-
-        $this->createDefaultRow([], $container);
-
-        return $container;
+        return $this->getContainerManager()->create($content, $data);
     }
 
     /**
@@ -189,17 +215,7 @@ class Editor
      */
     public function createDefaultRow(array $data = [], Model\ContainerInterface $container = null)
     {
-        $row = new Entity\Row();
-
-        if (null !== $container) {
-            $container->addRow($row);
-        }
-
-        // TODO $data
-
-        $this->createDefaultBlock(null, [], $row);
-
-        return $container;
+        return $this->getRowManager()->create($container, $data);
     }
 
     /**
@@ -213,12 +229,7 @@ class Editor
      */
     public function createDefaultBlock(string $type = null, array $data = [], Model\RowInterface $row = null)
     {
-        $block = $this->getBlockManager()->create($row, $type, $data);
-        if ($row) {
-            $this->getRowManager()->fixLayout($row);
-        }
-
-        return $block;
+        return $this->getBlockManager()->create($row, $type, $data);
     }
 
 
