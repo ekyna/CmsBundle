@@ -502,6 +502,7 @@ class ToolbarManager {
         var $column = $block.closest('.cms-column'),
             $row = $column.closest('.cms-row'),
             toolbar = new Toolbar({
+                classes: ['vertical', 'block-toolbar'],
                 origin: origin
             });
 
@@ -600,6 +601,7 @@ class ToolbarManager {
     static createRowToolbar($row:JQuery, origin:OffsetInterface):void {
         var $container:JQuery = $row.closest('.cms-inner-container'),
             toolbar = new Toolbar({
+                classes: ['vertical', 'row-toolbar'],
                 origin: origin
             });
 
@@ -656,6 +658,7 @@ class ToolbarManager {
     static createContainerToolbar($container:JQuery, origin:OffsetInterface):void {
         var $content:JQuery = $container.closest('.cms-content'),
             toolbar = new Toolbar({
+                classes: ['vertical', 'container-toolbar'],
                 origin: origin
             });
 
@@ -698,7 +701,7 @@ class ToolbarManager {
             // Add
             toolbar.addButton('add', new Button({
                 name: 'Add',
-                title: 'Add after',
+                title: 'Create a new container',
                 icon: 'plus',
                 event: 'container.add',
                 data: {$container: $container}
@@ -724,7 +727,14 @@ export class DocumentManager {
 
     private enabled:boolean = false;
 
-    private documentClickHandler:(e:JQueryEventObject) => void;
+    /**
+     * Store the click target between mouseDown and mouseUp handlers
+     * @type {JQuery|null}
+     */
+    private $clickTarget:JQuery = null;
+    private clickOrigin:OffsetInterface = null;
+    private documentMouseDownHandler:(e:JQueryEventObject) => void;
+    private documentMouseUpHandler:() => void;
 
     powerClickHandler:(button:Button) => void;
     viewportLoadHandler:(win:Window, doc:Document) => void;
@@ -738,7 +748,8 @@ export class DocumentManager {
         this.selectionOffset = {top: 0, left: 0}; // Document relative : offset between click origin and element top-left corner
         this.selectionId = null;
 
-        this.documentClickHandler = (e:JQueryEventObject) => this.onDocumentClick(e);
+        this.documentMouseDownHandler = (e:JQueryEventObject) => this.onDocumentMouseDown(e);
+        this.documentMouseUpHandler = () => this.onDocumentMouseUp();
 
         this.powerClickHandler = (button:Button) => this.onPowerClick(button);
         this.viewportLoadHandler = (win:Window, doc:Document) => this.onViewportLoad(win, doc);
@@ -846,28 +857,50 @@ export class DocumentManager {
         return this;
     }
 
-    private onDocumentClick(e:JQueryEventObject):void {
-        var origin:OffsetInterface = {top: e.clientY, left: e.clientX},
-            $target:JQuery = $(e.target),
-            toolbar:Toolbar;
+    private onDocumentMouseDown(e:JQueryEventObject):void {
+        //console.log('onDocumentMouseDown');
+        this.$clickTarget = null;
+        this.clickOrigin = null;
 
-        /* Do nothing on Toolbar click */
+        var origin: OffsetInterface = {top: e.clientY, left: e.clientX},
+            $target:JQuery = $(e.target);
+
+        // Do nothing on toolbars click
         if (0 < $target.closest('#editor-document-toolbar').length) {
-            return null;
+            return;
         }
-        /* Do nothing on Tinymce click */
-        if (0 < $target.parents('.mce-container').length) {
-            return null;
+        // Active plugin test
+        if (PluginManager.hasActivePlugin()) {
+            if (PluginManager.getActivePlugin().preventDocumentSelection($target)) {
+                return;
+            }
         }
 
         var $element:JQuery = $target.closest('.cms-block, .cms-row, .cms-container');
+        if (1 == $element.length) {
+            if ($element.attr('id') != this.selectionId) {
+                this.clickOrigin = origin;
+                this.$clickTarget = $element;
+            }
+        } else {
+            this.clickOrigin = origin;
+        }
+    }
 
-        this.deselect()
-            .then(() => {
-                if (1 == $element.length) {
-                    this.select($element, origin);
-                }
-            });
+    private onDocumentMouseUp():void {
+        //console.log('onDocumentMouseUp');
+        if (this.clickOrigin) {
+            this.deselect()
+                .then(() => {
+                    if (this.$clickTarget) {
+                        this.select(this.$clickTarget, this.clickOrigin);
+                    } else {
+                        this.createToolbar();
+                    }
+                    this.$clickTarget = null;
+                    this.clickOrigin = null;
+                });
+        }
     }
 
     private deselect():Promise<any> {
@@ -886,6 +919,17 @@ export class DocumentManager {
     }
 
     private select($element:JQuery, origin?:OffsetInterface):void {
+        if (1 != $element.length) {
+            return;
+        }
+
+        this.selectionId = $element.addClass('selected').attr('id');
+
+        this.createToolbar($element, origin);
+    }
+
+    private createToolbar($element?:JQuery, origin?:OffsetInterface):void {
+        $element = $element || BaseManager.findElementById(this.selectionId);
         if (1 != $element.length) {
             return;
         }
@@ -912,9 +956,6 @@ export class DocumentManager {
             throw 'Unexpected element';
         }
 
-        this.selectionId = $element.attr('id');
-        $element.addClass('selected');
-
         ToolbarManager.getToolbar().applyOriginOffset(this.viewportOrigin);
     }
 
@@ -934,7 +975,8 @@ export class DocumentManager {
             $document.find('head').append(stylesheet);
         }
 
-        $document.on('click', this.documentClickHandler);
+        $document.on('mousedown', this.documentMouseDownHandler);
+        $document.on('mouseup', this.documentMouseUpHandler);
 
         return this;
     }
@@ -948,7 +990,8 @@ export class DocumentManager {
 
         this.deselect();
 
-        $document.off('click', this.documentClickHandler);
+        $document.off('mousedown', this.documentMouseDownHandler);
+        $document.off('mouseup', this.documentMouseUpHandler);
 
         var $stylesheet:JQuery = $document.find('link#cms-editor-stylesheet');
         if ($stylesheet.length) {

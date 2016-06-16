@@ -213,7 +213,7 @@ export class Toolbar extends Backbone.Model {
     defaults():Backbone.ObjectHash {
         return {
             id: null,
-            type: 'vertical',
+            classes: ['vertical'],
             origin: <OffsetInterface>{top: 0, left: 0},
             groups: new Backbone.Collection<ButtonGroup>()
         }
@@ -284,7 +284,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
     constructor(options?:Backbone.ViewOptions<T>) {
         options.tagName = 'div';
         options.attributes = {
-            'class': 'editor-toolbar ' + options.model.get('type')
+            'class': 'editor-toolbar ' + options.model.get('classes').join(' ')
         };
         if (0 < String(options.model.get('id')).length) {
             _.extend(options.attributes, {id: options.model.get('id')});
@@ -299,8 +299,27 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
         this.subViews.forEach((view:ButtonGroupView) => view.remove());
     }
 
+    protected position(origin: OffsetInterface):void {
+        var position:any = {};
+        if (origin.left > (window.innerWidth / 2)) {
+            this.$el.addClass('right').removeClass('left');
+            position.right = window.innerWidth - origin.left;
+        } else {
+            this.$el.addClass('left').removeClass('right');
+            position.left = origin.left;
+        }
+        if (origin.top > (window.innerHeight / 2)) {
+            this.$el.addClass('bottom').removeClass('top');
+            position.bottom = window.innerHeight - origin.top;
+        } else {
+            this.$el.addClass('top').removeClass('bottom');
+            position.top = origin.top;
+        }
+        this.$el.removeAttr('style').css(position);
+    }
+
     applyOriginOffset(origin: OffsetInterface):ToolbarView<T> {
-        this.$el.css({
+        this.position({
             top: origin.top + this.model.get('origin').top,
             left: origin.left + this.model.get('origin').left,
         });
@@ -319,7 +338,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
             this.subViews.push(view);
         });
 
-        this.$el.css(this.model.get('origin'));
+        this.position(this.model.get('origin'));
 
         return this;
     }

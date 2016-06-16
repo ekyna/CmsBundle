@@ -48,4 +48,8 @@ export class BasePlugin {
     focus ():void {
 
     }
+
+    preventDocumentSelection ($target:JQuery):boolean {
+        return false;
+    }
 }

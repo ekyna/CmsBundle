@@ -5,6 +5,7 @@ import _ = require('underscore');
 
 import Dispatcher from './dispatcher';
 import {Button, ButtonGroup, Toolbar, ToolbarView} from './ui';
+import {OffsetInterface} from "./ui";
 
 /**
  * Controls model
@@ -91,6 +92,10 @@ export class MainToolbarView extends ToolbarView<MainToolbar> {
                 button.set('active', true);
             }
         });
+    }
+
+    protected position(origin: OffsetInterface):void {
+        // Prevent positioning
     }
 
     setBusy(e?:Event):void {

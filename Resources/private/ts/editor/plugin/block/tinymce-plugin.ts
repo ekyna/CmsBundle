@@ -98,11 +98,13 @@ class TinymcePlugin extends BasePlugin {
             .initialize()
             .then(() => {
                 if (this.isUpdated()) {
+                    //console.log('Tinymce block plugin : save.');
                     var editor = this.tinymce.get('tinymce-plugin-editor');
                     if (!editor) {
                         throw 'Failed to get tinymce editor instance.';
                     }
-                    var content = editor.getContent();
+
+                    var content:string = editor.getContent();
 
                     return BlockManager.request(
                             'ekyna_cms_editor_block_edit',
@@ -121,9 +123,14 @@ class TinymcePlugin extends BasePlugin {
         return this
             .save()
             .then(() => {
+                //console.log('Tinymce block plugin : remove editor.');
                 var editor = this.tinymce.get('tinymce-plugin-editor');
                 if (editor) {
                     editor.remove();
+                }
+                var $wrapper = this.$block.find('#tinymce-plugin-editor');
+                if ($wrapper.length) {
+                    $wrapper.children().first().unwrap();
                 }
             });
     }
@@ -136,6 +143,10 @@ class TinymcePlugin extends BasePlugin {
                     editor.focus();
                 }
             });
+    }
+
+    preventDocumentSelection ($target:JQuery):boolean {
+        return 0 < $target.closest('#tinymce-plugin-editor, .mce-container').length;
     }
 
     private initialize():Promise<any> {
@@ -188,7 +199,9 @@ class TinymcePlugin extends BasePlugin {
     }
 
     private createEditor() {
-        this.$block.wrapInner('<div id="tinymce-plugin-editor"></div>');
+        if (0 == this.$block.find('#tinymce-plugin-editor').length) {
+            this.$block.wrapInner('<div id="tinymce-plugin-editor"></div>');
+        }
 
         var settings:any = this.config.theme['advanced'];
 

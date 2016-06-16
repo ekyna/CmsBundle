@@ -65,42 +65,43 @@ export class ViewportView extends Backbone.View<ViewportModel> {
      */
     private resize():void {
         var size:SizeInterface = this.model.get('size'),
-            css:any = {};
+            origin:OffsetInterface = {top: 50, left: 0},
+            css:any = {
+                top: 50,
+                bottom: 0,
+                left: 0,
+                right: 0
+            };
 
         if (size) {
             var window_width:number = window.innerWidth,
                 window_height:number = window.innerHeight;
 
             if (window_height - 50 >= size.height) {
-                css.top = (window_height / 2 - size.height / 2) + 25;
+                origin.top = css.top = (window_height / 2 - size.height / 2) + 25;
                 css.bottom = (window_height / 2 - size.height / 2) - 25;
             } else {
                 css.top = 50;
                 css.height = size.height;
                 css.marginTop = 50;
                 css.marginBottom = 50;
+                origin.top = css.top + css.marginTop;
             }
             if (window_width >= size.width) {
-                css.left = window_width / 2 - size.width / 2;
+                origin.left = css.left = window_width / 2 - size.width / 2;
                 css.right = window_width / 2 - size.width / 2;
             } else {
                 css.left = 0;
                 css.width = size.width;
                 css.marginLeft = 50;
                 css.marginRight = 50;
+                origin.left = css.left + css.marginLeft;
             }
-        } else {
-            css = {
-                top: 50,
-                bottom: 0,
-                left: 0,
-                right: 0
-            };
         }
 
         this.$el.removeAttr('style').css(css);
 
-        Dispatcher.trigger('viewport.resize', <OffsetInterface>{top: css.top, left: css.left});
+        Dispatcher.trigger('viewport.resize', origin);
     }
 
     onViewportButtonClick(button:Button):void {

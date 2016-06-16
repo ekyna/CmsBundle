@@ -69,13 +69,33 @@ body {
   padding: @editor-controls-margin;
   background-color: #ffffff;
   box-shadow: 0 0 10px rgba(0, 0, 0, .4);
-  border-radius: 4px;
+  border-radius: 6px;
 
-  -webkit-transition: top @viewport-transition-speed, left @viewport-transition-speed;
-  -moz-transition: top @viewport-transition-speed, left @viewport-transition-speed;
-  -o-transition: top @viewport-transition-speed, left @viewport-transition-speed;
-  -ms-transition: top @viewport-transition-speed, left @viewport-transition-speed;
-  transition: top @viewport-transition-speed, left @viewport-transition-speed;
+  -webkit-transition:
+          top @viewport-transition-speed,
+          right @viewport-transition-speed,
+          bottom @viewport-transition-speed,
+          left @viewport-transition-speed;
+  -moz-transition:
+          top @viewport-transition-speed,
+          right @viewport-transition-speed,
+          bottom @viewport-transition-speed,
+          left @viewport-transition-speed;;
+  -o-transition:
+          top @viewport-transition-speed,
+          right @viewport-transition-speed,
+          bottom @viewport-transition-speed,
+          left @viewport-transition-speed;;
+  -ms-transition:
+          top @viewport-transition-speed,
+          right @viewport-transition-speed,
+          bottom @viewport-transition-speed,
+          left @viewport-transition-speed;;
+  transition:
+          top @viewport-transition-speed,
+          right @viewport-transition-speed,
+          bottom @viewport-transition-speed,
+          left @viewport-transition-speed;;
 
   &.horizontal {
     > .btn-group {
@@ -97,6 +117,61 @@ body {
         margin-bottom: 0;
       }
     }
+  }
+
+  &:before {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 18px;
+    line-height: 16px;
+    font-size: 11px;
+    padding: 0 6px;
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .6);
+  }
+
+  &.block-toolbar:before {
+    content: "Bloc";
+    background-color: @editor-block-color;
+  }
+  &.row-toolbar:before {
+    content: "Ligne";
+    background-color: @editor-row-color;
+  }
+  &.container-toolbar:before {
+    content: "Conteneur";
+    background-color: @editor-container-color;
+  }
+
+  &.top {
+    padding-top: 18px + @editor-controls-margin;
+
+    &:before {
+      top: 0;
+    }
+    &.right {
+      border-top-right-radius: 0;
+    }
+    &.left {
+      border-top-left-radius: 0;
+    }
+  }
+  &.bottom {
+    padding-bottom: 16 + @editor-controls-margin;
+
+    &:before {
+      bottom: 0;
+    }
+    &.right {
+      border-bottom-right-radius: 0;
+    }
+    &.left {
+      border-bottom-left-radius: 0;
+    }
+  }
+  &.right:before {
+    text-align: right;
   }
 
   .btn {
