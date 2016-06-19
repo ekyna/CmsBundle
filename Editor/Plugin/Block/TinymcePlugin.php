@@ -3,8 +3,10 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
+use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class TinymcePlugin
@@ -14,24 +16,35 @@ use Symfony\Component\HttpFoundation\Request;
 class TinymcePlugin extends AbstractPlugin
 {
     /**
-     * {@inheritDoc}
+     * Constructor.
+     *
+     * @param array $config
      */
-    public function create(BlockInterface $block, array $data = [])
+    public function __construct(array $config)
     {
-        //$defaultContent = array_key_exists('default_content', $this->config) ? $this->config['default_content'] : '';
-
-        $block->setCurrentLocale($this->localeProvider->getCurrentLocale());
-        $block->setFallbackLocale($this->localeProvider->getFallbackLocale());
-
-        // TODO $defaultContent
-        $block->setData(array());
-        $block->translate(null, true)->setData([
-            'content' => '<p>Tinymce block default content.</p>'
-        ]);;
+        parent::__construct(array_replace([
+            'default_content' => '<p>Default content.</p>',
+        ], $config));
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     */
+    public function create(BlockInterface $block, array $data = [])
+    {
+        parent::create($block, $data);
+
+        $block->setData(array());
+
+        foreach ($this->localeProvider->getAvailableLocales() as $locale) {
+            $block->translate($locale, true)->setData([
+                'content' => $this->config['default_content'],
+            ]);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function update(BlockInterface $block, Request $request)
     {
@@ -52,39 +65,61 @@ class TinymcePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function remove(BlockInterface $block)
     {
+        // TODO remove content images ?
+
+        parent::remove($block);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function render(BlockInterface $block)
+    public function validate(BlockInterface $block, ExecutionContextInterface $context)
+    {
+        $data = $block->getData();
+        if (0 < count($data)) {
+            $context->addViolation(self::INVALID_DATA);
+        }
+
+        foreach ($block->getTranslations() as $blockTranslation) {
+            $translationData = $blockTranslation->getData();
+
+            if (!array_key_exists('content', $translationData) || 0 == strlen($translationData['content'])) {
+                $context->addViolation(self::INVALID_DATA);
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render(BlockInterface $block, BlockView $view)
     {
         $data = $block->translate(null, true)->getData();
 
         if (array_key_exists('content', $data)) {
-            return $data['content'];
+            $view->content =  $data['content'];
+        } else {
+            $view->content = $this->config['default_content'];
         }
-
-        return 'Tinymce block no content';
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getType()
     {
-        return 'ekyna_cms_tinymce';
+        return 'ekyna_block_tinymce';
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getJavascriptFilePath()
     {
-        return 'ekyna-cms/editor/plugin/block/tinymce-plugin';
+        return 'ekyna-cms/editor/plugin/block/tinymce';
     }
 }

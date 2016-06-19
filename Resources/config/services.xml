@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <container
-    xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services
+        xmlns="http://symfony.com/schema/dic/services"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/dic/services
                         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
@@ -17,88 +17,93 @@
 
         <!-- Form Types -->
         <service id="ekyna_cms.menu.form_type" class="%ekyna_cms.menu.form_type.class%">
-            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="security.authorization_checker"/>
             <argument>%ekyna_cms.menu.class%</argument>
             <argument>%ekyna_cms.page.class%</argument>
-            <tag name="form.type" />
+            <tag name="form.type"/>
         </service>
         <service id="ekyna_cms.page.form_type" class="%ekyna_cms.page.form_type.class%">
             <argument>%ekyna_cms.page.class%</argument>
             <argument>%ekyna_cms.page.config%</argument>
-            <tag name="form.type" />
+            <tag name="form.type"/>
         </service>
         <service id="ekyna_cms.tags.form_type" class="%ekyna_cms.tags.form_type.class%">
             <argument>%ekyna_cms.tag.class%</argument>
-            <tag name="form.type" />
+            <tag name="form.type"/>
         </service>
 
         <!-- Repositories -->
         <service id="ekyna_cms.content.repository" class="Ekyna\Bundle\CmsBundle\Entity\ContentRepository">
-            <factory service="doctrine.orm.default_entity_manager" method="getRepository" />
+            <factory service="doctrine.orm.default_entity_manager" method="getRepository"/>
             <argument>Ekyna\Bundle\CmsBundle\Entity\Content</argument>
         </service>
 
         <!-- Event listeners -->
         <service id="ekyna_cms.kernel_event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\KernelEventListener">
-                <argument id="ekyna_cms.editor.editor" type="service"/>
-                <argument id="ekyna_cms.helper.page" type="service"/>
-                <argument id="security.authorization_checker" type="service"/>
-                <argument id="session" type="service"/>
-            <tag name="kernel.event_subscriber" />
+            <argument id="ekyna_cms.editor.editor" type="service"/>
+            <argument id="ekyna_cms.helper.page" type="service"/>
+            <argument id="security.authorization_checker" type="service"/>
+            <argument id="session" type="service"/>
+            <tag name="kernel.event_subscriber"/>
         </service>
         <service id="ekyna_cms.page_event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\PageEventListener">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="ekyna_core.cache.tag_manager" />
+            <argument type="service" id="doctrine.orm.default_entity_manager"/>
+            <argument type="service" id="ekyna_core.cache.tag_manager"/>
             <argument>%locales%</argument>
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%ekyna_cms.menu.class%</argument>
-            <argument type="service" id="doctrine.orm.default_result_cache" on-invalid="null" />
-            <tag name="kernel.event_subscriber" />
+            <argument type="service" id="doctrine.orm.default_result_cache" on-invalid="null"/>
+            <tag name="kernel.event_subscriber"/>
         </service>
         <service id="ekyna_cms.menu_event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\MenuEventListener">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="doctrine.orm.default_entity_manager"/>
             <argument>%ekyna_cms.menu.class%</argument>
             <argument>%ekyna_cms.page.class%</argument>
-            <tag name="kernel.event_subscriber" />
+            <tag name="kernel.event_subscriber"/>
         </service>
 
         <!-- Doctrine subscribers/listeners -->
         <!-- TODO merge metadata subscriber -->
-        <service id="ekyna_cms.content.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber" public="false">
-            <tag name="doctrine.event_subscriber" connection="default" />
+        <service id="ekyna_cms.content.subject_subscriber"
+                 class="Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber" public="false">
+            <tag name="doctrine.event_subscriber" connection="default"/>
         </service>
-        <service id="ekyna_cms.seo.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber" public="false">
-            <tag name="doctrine.event_subscriber" connection="default" />
+        <service id="ekyna_cms.seo.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber"
+                 public="false">
+            <tag name="doctrine.event_subscriber" connection="default"/>
         </service>
-        <service id="ekyna_cms.tags.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\TagsSubjectSubscriber" public="false">
-            <tag name="doctrine.event_subscriber" connection="default" />
+        <service id="ekyna_cms.tags.subject_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\TagsSubjectSubscriber"
+                 public="false">
+            <tag name="doctrine.event_subscriber" connection="default"/>
         </service>
         <!--<service id="ekyna_cms.abstract_block.subscriber" class="Ekyna\Bundle\CmsBundle\Listener\AbstractBlockSubscriber" public="false">
             <argument type="service" id="ekyna_cms.editor.plugin_registry" />
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>-->
-        <service id="ekyna_cms.page.elastica_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\PageElasticaSubscriber" public="false">
-            <argument id="fos_elastica.object_persister.search.ekyna_cms_page" type="service" />
+        <service id="ekyna_cms.page.elastica_subscriber" class="Ekyna\Bundle\CmsBundle\Listener\PageElasticaSubscriber"
+                 public="false">
+            <argument id="fos_elastica.object_persister.search.ekyna_cms_page" type="service"/>
             <argument>%ekyna_cms.page.class%</argument>
             <tag name="doctrine.event_subscriber"/>
         </service>
         <service id="ekyna_core.page.listener" class="Ekyna\Bundle\CmsBundle\Listener\PageListener">
-            <argument id="event_dispatcher" type="service" />
+            <argument id="event_dispatcher" type="service"/>
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%locales%</argument>
-            <tag name="doctrine.entity_listener" />
+            <tag name="doctrine.entity_listener"/>
         </service>
-        <service id="ekyna_core.page_translation.listener" class="Ekyna\Bundle\CmsBundle\Listener\PageTranslationListener">
-            <argument id="event_dispatcher" type="service" />
-            <tag name="doctrine.entity_listener" />
-            <tag name="doctrine.event_subscriber" />
+        <service id="ekyna_core.page_translation.listener"
+                 class="Ekyna\Bundle\CmsBundle\Listener\PageTranslationListener">
+            <argument id="event_dispatcher" type="service"/>
+            <tag name="doctrine.entity_listener"/>
+            <tag name="doctrine.event_subscriber"/>
         </service>
         <service id="ekyna_core.menu.listener" class="Ekyna\Bundle\CmsBundle\Listener\MenuListener">
-            <tag name="doctrine.entity_listener" />
+            <tag name="doctrine.entity_listener"/>
         </service>
         <service id="ekyna_core.block.listener" class="Ekyna\Bundle\CmsBundle\Listener\BlockListener">
-            <argument type="service" id="ekyna_core.cache.tag_manager" />
-            <tag name="doctrine.entity_listener" />
+            <argument type="service" id="ekyna_core.cache.tag_manager"/>
+            <tag name="doctrine.entity_listener"/>
         </service>
 
         <!-- Settings Schema -->
@@ -106,175 +111,217 @@
             <argument type="collection">
                 <argument key="locale">%locale%</argument>
             </argument>
-            <tag name="ekyna_setting.schema" namespace="seo" position="10" />
+            <tag name="ekyna_setting.schema" namespace="seo" position="10"/>
         </service>
-        <service id="ekyna_cms.settings.cookies" class="Ekyna\Bundle\CmsBundle\Settings\CookiesSettingsSchema" public="false">
-            <tag name="ekyna_setting.schema" namespace="cookies" position="11" />
+        <service id="ekyna_cms.settings.cookies" class="Ekyna\Bundle\CmsBundle\Settings\CookiesSettingsSchema"
+                 public="false">
+            <tag name="ekyna_setting.schema" namespace="cookies" position="11"/>
         </service>
 
         <!-- Sitemap providers -->
-        <service id="ekyna_cms.page.sitemap_provider" class="Ekyna\Bundle\CmsBundle\Sitemap\PageProvider" public="false">
-            <argument type="service" id="ekyna_cms.page.repository" />
-            <argument type="service" id="router" />
-            <tag name="ekyna_sitemap.provider" />
+        <service id="ekyna_cms.page.sitemap_provider" class="Ekyna\Bundle\CmsBundle\Sitemap\PageProvider"
+                 public="false">
+            <argument type="service" id="ekyna_cms.page.repository"/>
+            <argument type="service" id="router"/>
+            <tag name="ekyna_sitemap.provider"/>
         </service>
 
         <!-- Route provider -->
         <service id="ekyna_cms.route_provider" class="Ekyna\Bundle\CmsBundle\Routing\RouteProvider">
-            <argument type="service" id="ekyna_cms.page.repository" />
+            <argument type="service" id="ekyna_cms.page.repository"/>
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%locales%</argument>
         </service>
 
         <!-- Dynamic router -->
         <service id="ekyna_cms.router" class="Ekyna\Bundle\CmsBundle\Routing\Router">
-            <argument type="service" id="router.request_context" />
-            <argument type="service" id="ekyna_cms.nested_matcher" />
-            <argument type="service" id="ekyna_cms.url_generator" />
+            <argument type="service" id="router.request_context"/>
+            <argument type="service" id="ekyna_cms.nested_matcher"/>
+            <argument type="service" id="ekyna_cms.url_generator"/>
             <argument>null</argument>
-            <argument type="service" id="event_dispatcher" on-invalid="ignore" />
-            <argument type="service" id="ekyna_cms.route_provider" />
-            <tag name="router" />
+            <argument type="service" id="event_dispatcher" on-invalid="ignore"/>
+            <argument type="service" id="ekyna_cms.route_provider"/>
+            <tag name="router"/>
         </service>
 
         <!-- Nested Matcher -->
         <service id="ekyna_cms.nested_matcher" class="Ekyna\Bundle\CmsBundle\Routing\NestedMatcher">
-            <argument type="service" id="ekyna_cms.route_provider" />
+            <argument type="service" id="ekyna_cms.route_provider"/>
             <argument type="service" id="ekyna_cms.final_matcher"/>
         </service>
 
         <!-- Final Matcher -->
         <service id="ekyna_cms.final_matcher" class="Ekyna\Bundle\CmsBundle\Routing\FinalMatcher">
-            <argument type="service" id="ekyna_cms.matcher.dummy_collection" />
-            <argument type="service" id="ekyna_cms.matcher.dummy_context" />
+            <argument type="service" id="ekyna_cms.matcher.dummy_collection"/>
+            <argument type="service" id="ekyna_cms.matcher.dummy_context"/>
         </service>
-        <service id="ekyna_cms.matcher.dummy_collection" class="Symfony\Component\Routing\RouteCollection" public="false"/>
+        <service id="ekyna_cms.matcher.dummy_collection" class="Symfony\Component\Routing\RouteCollection"
+                 public="false"/>
         <service id="ekyna_cms.matcher.dummy_context" class="Symfony\Component\Routing\RequestContext" public="false"/>
 
         <!-- Url Generator -->
         <service id="ekyna_cms.url_generator" class="Ekyna\Bundle\CmsBundle\Routing\UrlGenerator">
-            <argument type="service" id="ekyna_cms.route_provider" />
-            <argument type="service" id="logger" on-invalid="ignore" />
+            <argument type="service" id="ekyna_cms.route_provider"/>
+            <argument type="service" id="logger" on-invalid="ignore"/>
         </service>
 
         <!-- Routing loader -->
         <service id="ekyna_cms.routing_loader" class="Ekyna\Bundle\CmsBundle\Routing\RoutingLoader">
             <argument>%ekyna_cms.page.config%</argument>
-            <tag name="routing.loader" />
+            <tag name="routing.loader"/>
         </service>
 
         <!-- Page Helper -->
         <service id="ekyna_cms.helper.page" class="Ekyna\Bundle\CmsBundle\Helper\PageHelper">
-            <argument id="ekyna_cms.page.repository" type="service" />
+            <argument id="ekyna_cms.page.repository" type="service"/>
             <argument>%ekyna_cms.home_route%</argument>
         </service>
 
         <!-- Web Editor -->
-        <service id="ekyna_cms.editor.plugin_registry" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry" />
+        <service id="ekyna_cms.editor.plugin_registry" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry"/>
         <service id="ekyna_cms.editor.editor" class="Ekyna\Bundle\CmsBundle\Editor\Editor">
-            <argument type="service" id="ekyna_cms.editor.plugin_registry" />
-            <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument type="service" id="validator" />
-            <argument>ekyna_cms_tinymce</argument>
+            <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="validator"/>
+            <argument type="collection"/>
         </service>
         <service id="ekyna_cms.editor.view_builder" class="Ekyna\Bundle\CmsBundle\Editor\View\ViewBuilder">
-            <argument type="service" id="ekyna_cms.editor.editor" />
-            <argument type="service" id="ekyna_cms.editor.adapter.bootstrap3" />
+            <argument type="service" id="ekyna_cms.editor.editor"/>
+            <argument type="service" id="ekyna_cms.editor.adapter.bootstrap3"/>
         </service>
         <!-- TODO factory or something ... -->
-        <service id="ekyna_cms.editor.adapter.bootstrap3" class="Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter" />
+        <service id="ekyna_cms.editor.adapter.bootstrap3"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter"/>
 
-        <!-- Web Editor plugins -->
-        <service id="ekyna_cms.editor.plugin.abstract" abstract="true">
+        <!-- Web Editor block plugins -->
+        <service id="ekyna_cms.editor.block_plugin.abstract" abstract="true">
+            <call method="setUrlGenerator">
+                <argument type="service" id="router"/>
+            </call>
+            <call method="setFormFactory">
+                <argument type="service" id="form.factory"/>
+            </call>
+            <call method="setModalRenderer">
+                <argument type="service" id="ekyna_core.modal"/>
+            </call>
             <call method="setLocaleProvider">
-                <argument type="service" id="ekyna_core.locale_provider.request" />
+                <argument type="service" id="ekyna_core.locale_provider.request"/>
             </call>
         </service>
-        <service id="ekyna_cms.editor.plugin.tinymce"
+        <service id="ekyna_cms.editor.block_plugin.tinymce"
                  class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\TinymcePlugin"
-                 parent="ekyna_cms.editor.plugin.abstract">
-            <argument>%ekyna_cms.editor.plugin.tinymce.config%</argument>
-            <tag name="ekyna_cms.editor.plugin" alias="ekyna_cms_tinymce" />
+                 parent="ekyna_cms.editor.block_plugin.abstract">
+            <argument>%ekyna_cms.editor.block_plugin.tinymce.config%</argument>
+            <tag name="ekyna_cms.editor.block_plugin" alias="ekyna_block_tinymce"/>
         </service>
-        <service id="ekyna_cms.editor.plugin.image"
+        <service id="ekyna_cms.editor.block_plugin.image"
                  class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\ImagePlugin"
-                 parent="ekyna_cms.editor.plugin.abstract">
-            <argument>%ekyna_cms.editor.plugin.image.config%</argument>
-            <tag name="ekyna_cms.editor.plugin" alias="ekyna_cms_image" />
+                 parent="ekyna_cms.editor.block_plugin.abstract">
+            <argument>%ekyna_cms.editor.block_plugin.image.config%</argument>
+            <argument type="service" id="ekyna_media.media.repository"/>
+            <argument type="service" id="liip_imagine.cache.manager"/>
+            <tag name="ekyna_cms.editor.block_plugin" alias="ekyna_block_image"/>
+        </service>
+
+        <!-- Web Editor container plugins -->
+        <service id="ekyna_cms.editor.container_plugin.abstract" abstract="true">
+            <call method="setUrlGenerator">
+                <argument type="service" id="router"/>
+            </call>
+            <call method="setFormFactory">
+                <argument type="service" id="form.factory"/>
+            </call>
+            <call method="setModalRenderer">
+                <argument type="service" id="ekyna_core.modal"/>
+            </call>
+        </service>
+        <service id="ekyna_cms.editor.container_plugin.background"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Container\BackgroundPlugin"
+                 parent="ekyna_cms.editor.container_plugin.abstract">
+            <argument>%ekyna_cms.editor.container_plugin.background.config%</argument>
+            <argument type="service" id="ekyna_media.media.repository"/>
+            <argument type="service" id="liip_imagine.cache.manager"/>
+            <tag name="ekyna_cms.editor.container_plugin" alias="ekyna_container_background"/>
         </service>
 
         <!-- Menus -->
         <service id="ekyna_cms.menu.menu_provider" class="Ekyna\Bundle\CmsBundle\Menu\MenuProvider">
-            <argument type="service" id="knp_menu.factory" />
-            <argument type="service" id="ekyna_cms.menu.repository" />
-            <argument type="service" id="ekyna_core.locale_provider.request" />
-            <tag name="knp_menu.provider" />
+            <argument type="service" id="knp_menu.factory"/>
+            <argument type="service" id="ekyna_cms.menu.repository"/>
+            <argument type="service" id="ekyna_core.locale_provider.request"/>
+            <tag name="knp_menu.provider"/>
         </service>
         <service id="ekyna_cms.menu.breadcrumb_builder" class="Ekyna\Bundle\CmsBundle\Menu\BreadcrumbBuilder">
-            <argument type="service" id="knp_menu.factory" />
-            <argument type="service" id="router" />
-            <argument type="service" id="ekyna_cms.helper.page" />
-            <argument type="service" id="ekyna_core.locale_provider.request" />
-            <argument type="service" id="ekyna_core.cache.tag_manager" />
+            <argument type="service" id="knp_menu.factory"/>
+            <argument type="service" id="router"/>
+            <argument type="service" id="ekyna_cms.helper.page"/>
+            <argument type="service" id="ekyna_core.locale_provider.request"/>
+            <argument type="service" id="ekyna_core.cache.tag_manager"/>
         </service>
         <service id="ekyna_cms.breadcrumb" class="Knp\Menu\MenuItem">
-            <factory service="ekyna_cms.menu.breadcrumb_builder" method="createBreadcrumb" />
-            <argument type="service" id="request_stack" />
-            <tag name="knp_menu.menu" alias="breadcrumb" />
+            <factory service="ekyna_cms.menu.breadcrumb_builder" method="createBreadcrumb"/>
+            <argument type="service" id="request_stack"/>
+            <tag name="knp_menu.menu" alias="breadcrumb"/>
         </service>
 
         <!-- Serializer handlers -->
         <service id="ekyna_cms.serializer.content_handler" class="Ekyna\Bundle\CmsBundle\Serializer\ContentHandler">
-            <tag name="jms_serializer.subscribing_handler" />
+            <tag name="jms_serializer.subscribing_handler"/>
         </service>
 
         <!-- Search -->
         <service id="ekyna_cms.wide_search" class="Ekyna\Bundle\CmsBundle\Search\Wide\Search">
-            <argument type="collection" />
+            <argument type="collection"/>
         </service>
         <service id="ekyna_cms.search.page"
                  class="Ekyna\Bundle\CmsBundle\Search\PageRepository">
-            <factory service="fos_elastica.manager" method="getRepository" />
+            <factory service="fos_elastica.manager" method="getRepository"/>
             <argument>%ekyna_cms.page.class%</argument>
             <call method="setLocaleProvider">
-                <argument id="ekyna_core.locale_provider.request" type="service" />
+                <argument id="ekyna_core.locale_provider.request" type="service"/>
             </call>
-            <tag name="ekyna_cms.wide_search.provider" />
+            <tag name="ekyna_cms.wide_search.provider"/>
         </service>
 
         <!-- Twig extensions -->
         <service id="ekyna_cms.twig.cms_extension" class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
-            <argument type="service" id="ekyna_setting.manager" />
-            <argument type="service" id="ekyna_cms.menu.menu_provider" />
-            <argument type="service" id="knp_menu.helper" />
-            <argument type="service" id="ekyna_cms.helper.page" />
-            <argument type="service" id="ekyna_cms.seo.repository" />
-            <argument type="service" id="ekyna_core.cache.tag_manager" />
-            <argument type="service" id="fragment.handler" />
+            <argument type="service" id="ekyna_setting.manager"/>
+            <argument type="service" id="ekyna_cms.menu.menu_provider"/>
+            <argument type="service" id="knp_menu.helper"/>
+            <argument type="service" id="ekyna_cms.helper.page"/>
+            <argument type="service" id="ekyna_cms.seo.repository"/>
+            <argument type="service" id="ekyna_core.cache.tag_manager"/>
+            <argument type="service" id="fragment.handler"/>
             <argument type="collection">
                 <argument key="home_route">%ekyna_cms.home_route%</argument>
                 <argument key="seo">%ekyna_cms.seo.config%</argument>
                 <argument key="page">%ekyna_cms.page.config%</argument>
                 <argument key="esi_flashes">%ekyna_cms.esi_flashes%</argument>
             </argument>
-            <tag name="twig.extension" />
+            <tag name="twig.extension"/>
         </service>
         <service id="ekyna_cms.twig.editor_extension" class="Ekyna\Bundle\CmsBundle\Twig\EditorExtension">
-            <argument type="service" id="ekyna_cms.editor.editor" />
-            <argument type="service" id="ekyna_cms.helper.page" />
-            <argument type="service" id="ekyna_cms.editor.view_builder" />
-            <tag name="twig.extension" />
+            <argument type="service" id="service_container"/>
+            <tag name="twig.extension"/>
         </service>
 
         <!-- Validators -->
         <service id="ekyna_cms.page.validator" class="Ekyna\Bundle\CmsBundle\Validator\Constraints\PageValidator">
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%locales%</argument>
-            <tag name="validator.constraint_validator" alias="ekyna_cms.page" />
+            <tag name="validator.constraint_validator"/>
         </service>
         <service id="ekyna_cms.menu.validator" class="Ekyna\Bundle\CmsBundle\Validator\Constraints\MenuValidator">
             <argument>%locales%</argument>
-            <tag name="validator.constraint_validator" alias="ekyna_cms.menu" />
+            <tag name="validator.constraint_validator"/>
+        </service>
+        <service id="ekyna_cms.block.validator" class="Ekyna\Bundle\CmsBundle\Validator\Constraints\BlockValidator">
+            <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
+            <tag name="validator.constraint_validator"/>
+        </service>
+        <service id="ekyna_cms.container.validator" class="Ekyna\Bundle\CmsBundle\Validator\Constraints\ContainerValidator">
+            <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
+            <tag name="validator.constraint_validator"/>
         </service>
 
     </services>

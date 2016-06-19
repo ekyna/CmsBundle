@@ -23,15 +23,11 @@ class RowController extends BaseController
      */
     public function createBlockAction(Request $request)
     {
-        $row = $this->findRow(intval($request->attributes->get('rowId')));
-
-        // TODO should be handled by validation
-        if (6 <= $row->getBlocks()->count()) {
-            throw new BadRequestHttpException('Row max block count reached.');
-        }
+        $row = $this->findRowByRequest($request);
+        $type = $request->request->get('type', null);
 
         try {
-            $block = $this->getEditor()->createDefaultBlock(null, [], $row);
+            $block = $this->getEditor()->createDefaultBlock($type, [], $row);
         } catch (EditorException $e) {
             throw new BadRequestHttpException($e->getMessage());
         }

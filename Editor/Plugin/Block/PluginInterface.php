@@ -2,15 +2,18 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
+use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginInterface as BaseInterface;
+use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Interface PluginInterface
  * @package Ekyna\Bundle\CmsBundle\Editor\Plugin\Block
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-interface PluginInterface
+interface PluginInterface extends BaseInterface
 {
     /**
      * Creates a new block.
@@ -38,6 +41,24 @@ interface PluginInterface
     public function remove(BlockInterface $block);
 
     /**
+     * Validates the block (data).
+     *
+     * @param BlockInterface            $block
+     * @param ExecutionContextInterface $context
+     */
+    public function validate(BlockInterface $block, ExecutionContextInterface $context);
+
+    /**
+     * Returns the block content.
+     *
+     * @param BlockInterface $block
+     * @param BlockView      $view
+     *
+     * @return string
+     */
+    public function render(BlockInterface $block, BlockView $view);
+
+    /**
      * Returns whether the block is supported.
      *
      * @param BlockInterface $block
@@ -45,27 +66,4 @@ interface PluginInterface
      * @return boolean
      */
     public function supports(BlockInterface $block);
-
-    /**
-     * Returns the block content.
-     *
-     * @param BlockInterface $block
-     *
-     * @return string
-     */
-    public function render(BlockInterface $block);
-
-    /**
-     * Returns the supported block type.
-     *
-     * @return string
-     */
-    public function getType();
-
-    /**
-     * Returns the javascript file path.
-     *
-     * @return string
-     */
-    public function getJavascriptFilePath();
 }

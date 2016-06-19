@@ -43,6 +43,38 @@ interface ContainerInterface extends Model\SortableInterface, Model\Timestampabl
     public function getName();
 
     /**
+     * Sets the type.
+     *
+     * @param string $type
+     *
+     * @return ContentInterface|$this
+     */
+    public function setType($type);
+
+    /**
+     * Returns the type.
+     *
+     * @return string
+     */
+    public function getType();
+
+    /**
+     * Sets the data.
+     *
+     * @param array $data
+     *
+     * @return ContentInterface|$this
+     */
+    public function setData(array $data);
+
+    /**
+     * Returns the data.
+     *
+     * @return array
+     */
+    public function getData();
+
+    /**
      * Set rows
      *
      * @param ArrayCollection|RowInterface[] $rows

@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 /**
  * Class ContentGridValidator
  * @package Ekyna\Bundle\CmsBundle\Validator\Constraints
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class MenuValidator extends ConstraintValidator
 {
@@ -34,7 +34,7 @@ class MenuValidator extends ConstraintValidator
     public function validate($menu, Constraint $constraint)
     {
         if (!$constraint instanceof Menu) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Menu');
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\Menu');
         }
         if (!$menu instanceof MenuInterface) {
             throw new UnexpectedTypeException($menu, 'Ekyna\Bundle\CmsBundle\Model\MenuInterface');
@@ -46,7 +46,7 @@ class MenuValidator extends ConstraintValidator
 
         /**
          * @var MenuInterface $menu
-         * @var Menu $constraint
+         * @var Menu          $constraint
          */
         $page = null !== $menu->getPage();
         $route = 0 < strlen($menu->getRoute());

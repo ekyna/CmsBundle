@@ -59,6 +59,7 @@ class PageValidator extends ConstraintValidator
             foreach ($this->locales as $locale) {
                 if (0 === strlen($page->translate($locale, true)->getTitle())) {
                     $this->context->addViolationAt('translations[' . $locale . '].title', $constraint->titleIsMandatory);
+
                     return;
                 }
             }

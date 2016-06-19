@@ -49,6 +49,10 @@ class ViewBuilder
 
         $this->layoutAdapter->buildContent($content, $view);
 
+        foreach ($content->getContainers() as $container) {
+            $view->containers[] = $this->buildContainer($container);
+        }
+
         if ($this->editor->isEnabled()) {
             $view->attributes['id'] = 'cms-content-' . $content->getId();
             $view->attributes['data'] = [
@@ -56,10 +60,6 @@ class ViewBuilder
             ];
             $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
             $view->attributes['classes'] = trim($classes . ' cms-content');
-        }
-
-        foreach ($content->getContainers() as $container) {
-            $view->containers[] = $this->buildContainer($container);
         }
 
         return $view;
@@ -78,11 +78,22 @@ class ViewBuilder
 
         $this->layoutAdapter->buildContainer($container, $view);
 
+        $plugin = $this->editor->getContainerPlugin($container->getType());
+        $plugin->render($container, $view);
+
+        // Don't build rows if the plugin did generate a content
+        if (0 == strlen($view->content)) {
+            foreach ($container->getRows() as $row) {
+                $view->rows[] = $this->buildRow($row);
+            }
+        }
+
         if ($this->editor->isEnabled()) {
             $view->attributes['id'] = 'cms-container-' . $container->getId();
             $view->attributes['data'] = [
                 'id'       => $container->getId(),
                 'position' => $container->getPosition(),
+                'type'     => $container->getType(),
             ];
             $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
             $view->attributes['classes'] = trim($classes . ' cms-container');
@@ -91,10 +102,6 @@ class ViewBuilder
             $view->innerAttributes['id'] = 'cms-inner-container-' . $container->getId();
             $classes = array_key_exists('classes', $view->innerAttributes) ? $view->innerAttributes['classes'] : '';
             $view->innerAttributes['classes'] = trim($classes . ' cms-inner-container');
-        }
-
-        foreach ($container->getRows() as $row) {
-            $view->rows[] = $this->buildRow($row);
         }
 
         return $view;
@@ -113,6 +120,10 @@ class ViewBuilder
 
         $this->layoutAdapter->buildRow($row, $view);
 
+        foreach ($row->getBlocks() as $block) {
+            $view->blocks[] = $this->buildBlock($block);
+        }
+
         if ($this->editor->isEnabled()) {
             $view->attributes['id'] = 'cms-row-' . $row->getId();
             $view->attributes['data'] = [
@@ -121,10 +132,6 @@ class ViewBuilder
             ];
             $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
             $view->attributes['classes'] = trim($classes . ' cms-row');
-        }
-
-        foreach ($row->getBlocks() as $block) {
-            $view->blocks[] = $this->buildBlock($block);
         }
 
         return $view;
@@ -142,6 +149,9 @@ class ViewBuilder
         $view = new BlockView();
 
         $this->layoutAdapter->buildBlock($block, $view);
+
+        $plugin = $this->editor->getBlockPlugin($block->getType());
+        $plugin->render($block, $view);
 
         if ($this->editor->isEnabled()) {
             // Column
@@ -163,9 +173,6 @@ class ViewBuilder
             $classes = array_key_exists('classes', $view->pluginAttributes) ? $view->pluginAttributes['classes'] : '';
             $view->pluginAttributes['classes'] = trim($classes . ' cms-block');
         }
-
-        $plugin = $this->editor->getPluginByName($block->getType());
-        $view->content = $plugin->render($block);
 
         return $view;
     }

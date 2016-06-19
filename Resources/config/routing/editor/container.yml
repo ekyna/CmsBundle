@@ -7,6 +7,15 @@ ekyna_cms_editor_container_create_row:
     options:
         expose: true
 
+ekyna_cms_editor_container_edit:
+    path: /{containerId}/edit
+    defaults: { _controller: "EkynaCmsBundle:Editor/Container:edit" }
+    methods: [GET|POST]
+    requirements:
+        containerId: \d+
+    options:
+        expose: true
+
 ekyna_cms_editor_container_remove:
     path: /{containerId}/remove
     defaults: { _controller: "EkynaCmsBundle:Editor/Container:remove" }

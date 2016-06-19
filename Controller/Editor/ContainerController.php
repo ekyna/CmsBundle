@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
@@ -52,7 +53,26 @@ class ContainerController extends BaseController
      */
     public function editAction(Request $request)
     {
+        $container = $this->findContainerByRequest($request);
 
+        try {
+            $response = $this->getEditor()->getContainerManager()->update($container, $request);
+        } catch (EditorException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        if ($response instanceof Response) {
+            return $response;
+        }
+
+        $this->validate($container);
+        $this->persist($container);
+
+        $data = [
+            'containers' => [$this->getViewBuilder()->buildContainer($container)],
+        ];
+
+        return $this->buildResponse($data, self::SERIALIZE_CONTENT);
     }
 
     /**

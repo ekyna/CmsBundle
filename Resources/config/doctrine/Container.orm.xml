@@ -16,6 +16,9 @@
         <field name="name" type="string" column="name" nullable="true"/>
         <field name="position" type="smallint" column="position"/>
 
+        <field name="type" type="string" column="type" length="32"/>
+        <field name="data" type="object" column="data"/>
+
         <field name="createdAt" type="datetime" column="created_at">
             <gedmo:timestampable on="create"/>
         </field>

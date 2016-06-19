@@ -2,9 +2,12 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
+use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
+use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry;
 use Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CmsBundle\Model;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class ContainerManager
@@ -14,15 +17,42 @@ use Ekyna\Bundle\CmsBundle\Model;
 class ContainerManager extends AbstractManager
 {
     /**
+     * @var PluginRegistry
+     */
+    private $pluginRegistry;
+
+    /**
+     * @var string
+     */
+    private $defaultType;
+
+
+    /**
+     * Constructor.
+     *
+     * @param Editor         $editor
+     * @param PluginRegistry $pluginRegistry
+     * @param string         $defaultType
+     */
+    public function __construct(Editor $editor, PluginRegistry $pluginRegistry, $defaultType)
+    {
+        parent::__construct($editor);
+
+        $this->pluginRegistry = $pluginRegistry;
+        $this->defaultType = $defaultType;
+    }
+
+    /**
      * Creates a new container.
      *
      * @param Model\ContentInterface|string $contentOrName
-     * @param array                           $data
+     * @param string                        $type
+     * @param array                         $data
      *
      * @return Entity\Container
      * @throws InvalidOperationException
      */
-    public function create($contentOrName, array $data = [])
+    public function create($contentOrName, $type = null, array $data = [])
     {
         // Check if container or name is defined
         if (!$contentOrName instanceof Model\ContentInterface
@@ -31,13 +61,22 @@ class ContainerManager extends AbstractManager
             throw new InvalidOperationException("Excepted instance of ContentInterface or string.");
         }
 
-        $editor = $this->getEditor();
+        // Default type if null
+        if (null === $type) {
+            $type = $this->defaultType;
+        }
 
         // New instance
         $container = new Entity\Container();
+        $container->setType($type);
+
+        // Plugin creation
+        $this->pluginRegistry
+            ->getContainerPlugin($type)
+            ->create($container, $data);
 
         // Create default row
-        $editor->getRowManager()->create($container);
+        $this->getEditor()->getRowManager()->create($container);
 
         // Add to container if available
         if ($contentOrName instanceof Model\ContentInterface) {
@@ -49,6 +88,24 @@ class ContainerManager extends AbstractManager
         }
 
         return $container;
+    }
+
+    /**
+     * Updates the container.
+     *
+     * @param Model\ContainerInterface $container
+     * @param Request                  $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response|null
+     * @throws InvalidOperationException
+     */
+    public function update(Model\ContainerInterface $container, Request $request)
+    {
+        // Plugin update
+        return $this
+            ->pluginRegistry
+            ->getContainerPlugin($container->getType())
+            ->update($container, $request);
     }
 
     /**
@@ -75,6 +132,11 @@ class ContainerManager extends AbstractManager
                 "The container can't be removed because the parent content does not have enough children."
             );
         }
+
+        // Plugin remove
+        $this->pluginRegistry
+            ->getContainerPlugin($container->getType())
+            ->remove($container);
 
         $containers->removeElement($container);
 
@@ -180,7 +242,7 @@ class ContainerManager extends AbstractManager
         $containers = $content->getContainers();
 
         $sibling = $containers->filter(function (Model\ContainerInterface $b) use ($container) {
-            return $b->getPosition() == $container->getPosition() -1;
+            return $b->getPosition() == $container->getPosition() - 1;
         })->first();
 
         return $sibling ? $sibling : null;
@@ -203,7 +265,7 @@ class ContainerManager extends AbstractManager
         $containers = $content->getContainers();
 
         // Return null if this is the last container
-        if ($containers->count() -1 == $container->getPosition()) {
+        if ($containers->count() - 1 == $container->getPosition()) {
             return null;
         }
 

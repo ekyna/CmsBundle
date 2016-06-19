@@ -22,10 +22,11 @@ class ContentController extends BaseController
      */
     public function createContainerAction(Request $request)
     {
-        $content = $this->findContent(intval($request->attributes->get('contentId')));
+        $content = $this->findContentByRequest($request);
+        $type = $request->request->get('type', null);
 
         try {
-            $container = $this->getEditor()->createDefaultContainer([], $content);
+            $container = $this->getEditor()->createDefaultContainer($type, [], $content);
         } catch (EditorException $e) {
             throw new BadRequestHttpException($e->getMessage());
         }

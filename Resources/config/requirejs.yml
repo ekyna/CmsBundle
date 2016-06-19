@@ -1,29 +1,11 @@
 config:
-    shim:
-        backbone:
-            deps: ['underscore']
-            exports: 'Backbone'
-        underscore:
-            exports: '_'
-        'es6-promise':
-            exports: 'Promise'
-        'ekyna-cms/editor/editor':
-            deps: ['jquery']
-#            deps: ['routing', 'jquery', 'backbone', 'underscore', 'es6-promise']
-        'ekyna-cms/editor/controls':
-            deps: ['backbone', 'underscore']
-        'ekyna-cms/editor/dispatcher':
-            deps: ['backbone', 'underscore']
-        'ekyna-cms/editor/document-manager':
-            deps: ['routing', 'jquery', 'es6-promise']
-        'ekyna-cms/editor/ui':
-            deps: ['jquery', 'backbone', 'underscore']
-        'ekyna-cms/editor/viewport':
-            deps: ['jquery', 'backbone', 'underscore']
-        'ekyna-cms/editor/plugin/base-plugin':
-            deps: ['es6-promise']
-        'ekyna-cms/editor/plugin/block/tinymce-plugin':
-            deps: ['jquery', 'es6-promise']
+#    shim:
+#        'ekyna-cms/editor/document-manager':
+#            deps: ['routing']
+#        'ekyna-cms/editor/plugin/block/image':
+#            deps: ['routing']
+#        'ekyna-cms/editor/plugin/container/background':
+#            deps: ['routing']
     packages:
         -
             name: 'ekyna-cms/editor'
@@ -32,9 +14,6 @@ config:
     paths:
         'ekyna-cms/cookie': 'bundles/ekynacms/js/cookie'
         'ekyna-cms/user': 'bundles/ekynacms/js/user'
-        backbone: 'bundles/ekynacms/lib/backbone'
-        underscore: 'bundles/ekynacms/lib/underscore'
-        'es6-promise': 'bundles/ekynacms/lib/es6-promise'
 build:
     include:
         - 'ekyna-cms/cookie'

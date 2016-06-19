@@ -46,6 +46,34 @@ class BlockController extends BaseController
     }
 
     /**
+     * Change the block type.
+     *
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function changeTypeAction(Request $request)
+    {
+        $block = $this->findBlockByRequest($request);
+        $type = $request->request->get('type', null);
+
+        try {
+            $this->getEditor()->getBlockManager()->changeType($block, $type);
+        } catch (EditorException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        $this->validate($block);
+        $this->persist($block);
+
+        $data = ['blocks' => [
+            $this->getViewBuilder()->buildBlock($block)
+        ]];
+
+        return $this->buildResponse($data, self::SERIALIZE_CONTENT);
+    }
+
+    /**
      * Remove the block.
      *
      * @param Request $request
@@ -206,7 +234,7 @@ class BlockController extends BaseController
      */
     public function moveUpAction(Request $request)
     {
-
+        throw new \Exception('Not yet implemented'); // TODO
     }
 
     /**
@@ -218,6 +246,6 @@ class BlockController extends BaseController
      */
     public function moveDownAction(Request $request)
     {
-
+        throw new \Exception('Not yet implemented'); // TODO
     }
 }

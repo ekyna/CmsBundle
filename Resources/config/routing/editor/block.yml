@@ -7,6 +7,15 @@ ekyna_cms_editor_block_edit:
     options:
         expose: true
 
+ekyna_cms_editor_block_change_type:
+    path: /{blockId}/change-type
+    defaults: { _controller: "EkynaCmsBundle:Editor/Block:changeType" }
+    methods: [POST]
+    requirements:
+        blockId: \d+
+    options:
+        expose: true
+
 ekyna_cms_editor_block_remove:
     path: /{blockId}/remove
     defaults: { _controller: "EkynaCmsBundle:Editor/Block:remove" }

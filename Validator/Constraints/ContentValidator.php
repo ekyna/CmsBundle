@@ -10,14 +10,14 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 /**
  * Class ContentValidator
  * @package Ekyna\Bundle\CmsBundle\Validator\Constraints
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class ContentValidator extends ConstraintValidator
 {
     public function validate($content, Constraint $constraint)
     {
         if (!$constraint instanceof Content) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Content');
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\Content');
         }
         if (!$content instanceof ContentInterface) {
             throw new UnexpectedTypeException($content, 'Ekyna\Bundle\CmsBundle\Model\ContentInterface');

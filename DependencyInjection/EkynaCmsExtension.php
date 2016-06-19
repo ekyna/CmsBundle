@@ -29,8 +29,10 @@ class EkynaCmsExtension extends AbstractExtension
         $container->setParameter('ekyna_cms.page.config', $config['page']);
         $container->setParameter('ekyna_cms.menu.config', $config['menu']);
 
-        foreach ($config['editor']['plugin'] as $name => $editorPluginConfig) {
-            $container->setParameter('ekyna_cms.editor.plugin.'.$name.'.config', $editorPluginConfig);
+        foreach ($config['editor']['plugin'] as $type => $pluginsConfigs) {
+            foreach ($pluginsConfigs as $name => $pluginConfig) {
+                $container->setParameter('ekyna_cms.editor.' . $type . '_plugin.' . $name . '.config', $pluginConfig);
+            }
         }
 
         $bundles = $container->getParameter('kernel.bundles');

@@ -1,10 +1,12 @@
-/// <reference path="../../../../../../../typings/tsd.d.ts" />
+/// <reference path="../../../../../../../typings/index.d.ts" />
 
-import Backbone = require('backbone');
-import _ = require('underscore');
-import $ = require('jquery');
+import * as $ from 'jquery';
+import * as Backbone from 'backbone';
+import * as _ from 'underscore';
+import * as Bootstrap from 'bootstrap';
 
 import Dispatcher from './dispatcher';
+
 
 /**
  * OffsetInterface
@@ -14,11 +16,30 @@ export interface OffsetInterface {
     left: number
 }
 
+interface ButtonChoiceConfig extends Backbone.ObjectHash {
+    name: string
+    title: string
+    confirm: string
+    event: string
+    data: Object
+}
+
+interface ButtonConfig extends ButtonChoiceConfig {
+    size: string
+    theme: string
+    icon: string
+    active: boolean
+    disabled: boolean
+    spinning: boolean
+    rotate: boolean
+    choices: Array<ButtonChoiceConfig>
+}
+
 /**
  * Button
  */
 export class Button extends Backbone.Model {
-    defaults():Backbone.ObjectHash {
+    defaults():ButtonConfig {
         return {
             name: null,
             title: null,
@@ -29,7 +50,9 @@ export class Button extends Backbone.Model {
             disabled: false,
             spinning: false,
             rotate: false,
+            confirm: null,
             event: null,
+            choices: [],
             data: {}
             //onClick:(button:Button) => {}
         }
@@ -81,7 +104,7 @@ export class Button extends Backbone.Model {
  * ButtonView
  */
 export class ButtonView extends Backbone.View<Button> {
-    template:(data:{icon: string}) => string;
+    template:(data: {icon: string}) => string;
 
     events():Backbone.EventsHash {
         return {
@@ -104,8 +127,18 @@ export class ButtonView extends Backbone.View<Button> {
         this.listenTo(this.model, 'change', this.render);
     }
 
-    onClick():void {
-        Dispatcher.trigger(this.model.get('event'), this.model);
+    onClick(e:JQueryEventObject):void {
+        e.preventDefault();
+
+        var dispatch = () => { Dispatcher.trigger(this.model.get('event'), this.model, this.model.get('data'));},
+            message:string = this.model.get('confirm');
+        if (message && 0 < message.length) {
+            if (confirm(message)) {
+                dispatch();
+            }
+        } else {
+            dispatch();
+        }
     }
 
     render():ButtonView {
@@ -122,6 +155,87 @@ export class ButtonView extends Backbone.View<Button> {
         this.$el.toggleClass('rotate', this.model.get('rotate'));
 
         this.$('span').toggleClass('fa-spin', this.model.get('spinning'));
+
+        return this;
+    }
+}
+
+/**
+ * ButtonDropdownView
+ */
+export class ButtonDropdownView extends Backbone.View<Button> {
+    template:(data:ButtonConfig) => string;
+
+    events():Backbone.EventsHash {
+        return {
+            'click li a': 'onClick'
+        }
+    }
+
+    constructor(options?:Backbone.ViewOptions<Button>) {
+        options.tagName = 'div';
+        options.attributes = {
+            'class': 'btn-group'
+        };
+
+        super(options);
+
+        this.template = _.template(`
+        <button type="button" class="btn btn-<%= theme %> btn-<%= size %> dropdown-toggle"
+                title="<%= title %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="fa fa-<%= icon %>"></span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu"></ul>
+        `);
+
+        //_.bindAll(this, 'render');
+        this.listenTo(this.model, 'change', this.render);
+    }
+
+    onClick(e:JQueryEventObject):void {
+        e.preventDefault();
+
+        var $target = $(e.target).closest('a');
+
+        var choice:ButtonChoiceConfig = _.findWhere(
+            (<Array<ButtonChoiceConfig>>this.model.get('choices')),
+            {name: $target.data('choice')}
+        );
+        if (!choice) {
+            throw 'Choice not found';
+        }
+
+        var dispatch = () => { Dispatcher.trigger(choice.event, this.model, choice.data); },
+            message:string = choice.confirm;
+        if (message && 0 < message.length) {
+            if (confirm(message)) {
+                dispatch();
+            }
+        } else {
+            dispatch();
+        }
+
+    }
+
+    render():ButtonView {
+        this.$el.html(this.template(this.model.attributes));
+
+        this.$('button')
+            .prop('disabled', this.model.get('disabled'))
+            .toggleClass('active', this.model.get('active'))
+            .toggleClass('rotate', this.model.get('rotate'))
+            .find('span').toggleClass('fa-spin', this.model.get('spinning'));
+
+        var $ul:JQuery = this.$('ul');
+
+        this.model.get('choices').forEach(function(choice:ButtonChoiceConfig) {
+            var $a = $('<a></a>')
+                .attr('href', 'javascript:void(0)')
+                .data('choice', choice.name)
+                .text(choice.title)
+                .appendTo($ul);
+            $('<li></li>').append($a).appendTo($ul);
+        });
 
         return this;
     }
@@ -187,9 +301,12 @@ export class ButtonGroupView extends Backbone.View<ButtonGroup> {
         this.clear();
 
         this.model.get('buttons').each((button:Button) => {
-            var view = new ButtonView({
-                model: button
-            });
+            var view;
+            if (0 < button.get('choices').length) {
+                view = new ButtonDropdownView({model: button});
+            } else {
+                view = new ButtonView({model: button});
+            }
             this.$el.append(view.render().$el);
             this.subViews.push(view);
         });
@@ -341,6 +458,10 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
         this.position(this.model.get('origin'));
 
         return this;
+    }
+
+    postRender() {
+        $('.dropdown-toggle').dropdown();
     }
 
     remove():ToolbarView<T> {

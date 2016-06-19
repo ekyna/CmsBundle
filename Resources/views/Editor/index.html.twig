@@ -5,51 +5,28 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
     <title>CMS Editor</title>
 
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"
+          rel="stylesheet" type="text/css"/>
+
     <link href="{{ asset('bundles/ekynacore/css/fontawesome.css') }}" type="text/css" rel="stylesheet">
+    <link href="{{ asset('bundles/ekynacore/css/glyphicons.css') }}" type="text/css" rel="stylesheet">
+    <link href="{{ asset('bundles/ekynacore/css/bootstrap.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('bundles/ekynacore/css/jquery-ui.css') }}" rel="stylesheet" type="text/css" />
+    {{ admin_stylesheets() }}
+    {{ ui_forms_stylesheets() }}
     <link href="{{ asset('bundles/ekynacms/css/editor.css') }}" type="text/css" rel="stylesheet">
 
     {% include 'EkynaCoreBundle:Ui:ie-fix.html.twig' %}
 
     {{ require_js(not app.debug) }}
 </head>
-<body>
+<body class="cms-editor">
 
     <div data-controls-placeholder></div>
     <div data-viewport-placeholder></div>
-
-    {#<div id="editor-control-bar">
-
-        <button type="button" class="btn btn-default">
-            <span class="fa fa-power-off"></span>
-        </button>
-
-        <div id="editor-control-viewport" class="btn-group" role="group" aria-label="...">
-            <button type="button" class="btn btn-default" data-width="320" data-height="568">
-                <span class="fa fa-mobile"></span>
-            </button>
-            <button type="button" class="btn btn-default" data-width="768" data-height="1024">
-                <span class="fa fa-tablet"></span>
-            </button>
-            <button type="button" class="btn btn-default" data-width="1280" data-height="800">
-                <span class="fa fa-laptop"></span>
-            </button>
-            <button type="button" class="btn btn-default" data-width="1920" data-height="1080">
-                <span class="fa fa-desktop"></span>
-            </button>
-            <button type="button" class="btn btn-default" data-width="full" data-height="full">
-                <span class="fa fa-arrows-alt"></span>
-            </button>
-        </div>
-
-    </div>#}
-
-    {#<div id="editor-viewport">
-        <iframe src="{{ path(ekyna_cms_home_route) }}" frameborder="0"></iframe>
-    </div>#}
-
 
     {% block javascripts -%}
         <script type="text/javascript">require(['ekyna-cms/editor']);</script>

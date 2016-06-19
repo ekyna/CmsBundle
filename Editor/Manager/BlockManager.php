@@ -21,18 +21,25 @@ class BlockManager extends AbstractManager
      */
     private $pluginRegistry;
 
+    /**
+     * @var string
+     */
+    private $defaultType;
+
 
     /**
      * Constructor.
      *
      * @param Editor         $editor
      * @param PluginRegistry $pluginRegistry
+     * @param string         $defaultType
      */
-    public function __construct(Editor $editor, PluginRegistry $pluginRegistry)
+    public function __construct(Editor $editor, PluginRegistry $pluginRegistry, $defaultType)
     {
         parent::__construct($editor);
 
         $this->pluginRegistry = $pluginRegistry;
+        $this->defaultType = $defaultType;
     }
 
     /**
@@ -55,18 +62,17 @@ class BlockManager extends AbstractManager
 
         // Default type if null
         if (null === $type) {
-            $type = 'ekyna_cms_tinymce'; // TODO parameter
+            $type = $this->defaultType;
         }
-
-        // Check if type is valid
-        $plugin = $this->pluginRegistry->get($type);
 
         // New instance
         $block = new Entity\Block();
         $block->setType($type);
 
-        // TODO Default data
-        $plugin->create($block, $data);
+        // Plugin creation
+        $this->pluginRegistry
+            ->getBlockPlugin($type)
+            ->create($block, $data);
 
         // Add to row if available
         if ($rowOrName instanceof Model\RowInterface) {
@@ -74,6 +80,7 @@ class BlockManager extends AbstractManager
             $block
                 ->setPosition($count)
                 ->setSize(floor(12 / ($count + 1)));
+
             $rowOrName->addBlock($block);
 
             $this->getEditor()->getRowManager()->fixBlockSizes($rowOrName);
@@ -95,10 +102,38 @@ class BlockManager extends AbstractManager
      */
     public function update(Model\BlockInterface $block, Request $request)
     {
-        // Check if type is valid
-        $plugin = $this->pluginRegistry->get($block->getType());
+        // Plugin update
+        return $this
+            ->pluginRegistry
+            ->getBlockPlugin($block->getType())
+            ->update($block, $request);
+    }
 
-        return $plugin->update($block, $request);
+    /**
+     * Changes the block type.
+     *
+     * @param Model\BlockInterface $block The block
+     * @param string               $type  The block new type
+     * @param array                $data  The block new data
+     */
+    public function changeType(Model\BlockInterface $block, $type, array $data = [])
+    {
+        if ($type === $block->getType()) {
+            return;
+        }
+
+        // Plugin removal
+        $this->pluginRegistry
+            ->getBlockPlugin($block->getType())
+            ->remove($block);
+
+        // Sets the new type
+        $block->setType($type);
+
+        // Plugin creation
+        $this->pluginRegistry
+            ->getBlockPlugin($block->getType())
+            ->create($block, $data);
     }
 
     /**
@@ -119,6 +154,7 @@ class BlockManager extends AbstractManager
             );
         }
 
+        // Ensure one block remains
         $blocks = $block->getRow()->getBlocks();
         if (1 >= $blocks->count()) {
             throw new InvalidOperationException(
@@ -126,8 +162,15 @@ class BlockManager extends AbstractManager
             );
         }
 
+        // Plugin remove
+        $this->pluginRegistry
+            ->getBlockPlugin($block->getType())
+            ->remove($block);
+
+        // Remove from row
         $blocks->removeElement($block);
 
+        // Fix row's blocks sizes and positions
         $this
             ->getEditor()
             ->getRowManager()
@@ -244,7 +287,7 @@ class BlockManager extends AbstractManager
      */
     public function moveUp(Model\BlockInterface $block)
     {
-
+        throw new \Exception('Not yet implemented'); // TODO
     }
 
     /**
@@ -254,23 +297,7 @@ class BlockManager extends AbstractManager
      */
     public function moveDown(Model\BlockInterface $block)
     {
-
-    }
-
-    public function changeType(Model\BlockInterface $block, string $type, array $data = [])
-    {
-        // Validate new type
-
-        // Set type
-
-        // Set default data (through plugin)
-    }
-
-    public function updateData(Model\BlockInterface $block, array $data = [])
-    {
-        // Validate data
-
-        // Set data (through plugin)
+        throw new \Exception('Not yet implemented'); // TODO
     }
 
     /**

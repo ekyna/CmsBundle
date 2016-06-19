@@ -274,6 +274,9 @@
             </constraint>
             <constraint name="Valid"/>
         </property>
+        <property name="type">
+            <constraint name="NotBlank"/>
+        </property>
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\Row">

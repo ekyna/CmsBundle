@@ -6,6 +6,7 @@ use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\View;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Model;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class EditorExtension
@@ -15,19 +16,9 @@ use Ekyna\Bundle\CmsBundle\Model;
 class EditorExtension extends \Twig_Extension
 {
     /**
-     * @var Editor
+     * @var ContainerInterface
      */
-    protected $editor;
-
-    /**
-     * @var PageHelper
-     */
-    protected $pageHelper;
-
-    /**
-     * @var View\ViewBuilder
-     */
-    protected $viewBuilder;
+    protected $container;
 
     /**
      * @var \Twig_Template
@@ -38,15 +29,41 @@ class EditorExtension extends \Twig_Extension
     /**
      * Constructor.
      *
-     * @param Editor      $editor
-     * @param PageHelper  $pageHelper
-     * @param View\ViewBuilder $viewBuilder
+     * @param ContainerInterface $container
      */
-    public function __construct(Editor $editor, PageHelper $pageHelper, View\ViewBuilder $viewBuilder)
+    public function __construct(ContainerInterface $container)
     {
-        $this->editor = $editor;
-        $this->pageHelper = $pageHelper;
-        $this->viewBuilder = $viewBuilder;
+        $this->container = $container;
+    }
+
+    /**
+     * Returns the editor.
+     *
+     * @return Editor
+     */
+    protected function getEditor()
+    {
+        return $this->container->get('ekyna_cms.editor.editor');
+    }
+
+    /**
+     * Returns the view builder.
+     *
+     * @return View\ViewBuilder
+     */
+    protected function getViewBuilder()
+    {
+        return $this->container->get('ekyna_cms.editor.view_builder');
+    }
+
+    /**
+     * Returns the page helper.
+     *
+     * @return PageHelper
+     */
+    protected function getPageHelper()
+    {
+        return $this->container->get('ekyna_cms.helper.page');
     }
 
     /**
@@ -97,12 +114,12 @@ class EditorExtension extends \Twig_Extension
     public function renderContent($subjectOrContentOrView = null)
     {
         if (null === $subjectOrContentOrView) {
-            if (null !== $page = $this->pageHelper->getCurrent()) {
+            if (null !== $page = $this->getPageHelper()->getCurrent()) {
                 if (null !== $content = $page->getContent()) {
                     $subjectOrContentOrView = $content;
                 } else {
                     if ($page->getAdvanced()) {
-                        $subjectOrContentOrView = $this->editor->createDefaultContent($page);
+                        $subjectOrContentOrView = $this->getEditor()->createDefaultContent($page);
                     } elseif (0 < strlen($html = $page->getHtml())) {
                         return $html;
                     } else {
@@ -121,7 +138,7 @@ class EditorExtension extends \Twig_Extension
             /*if (null !== $subjectOrContentOrView->getId()) {
                 $this->tagManager->addTags($subjectOrContentOrView->getEntityTag());
             }*/
-            $subjectOrContentOrView = $this->viewBuilder->buildContent($subjectOrContentOrView);
+            $subjectOrContentOrView = $this->getViewBuilder()->buildContent($subjectOrContentOrView);
         }
         if (!$subjectOrContentOrView instanceof View\ContentView) {
             throw new \InvalidArgumentException(
@@ -149,7 +166,7 @@ class EditorExtension extends \Twig_Extension
             // TODO Tags the response as Container relative
             //$this->tagManager->addTags($containerOrView->getEntityTag());
 
-            $containerOrView = $this->viewBuilder->buildContainer($containerOrView);
+            $containerOrView = $this->getViewBuilder()->buildContainer($containerOrView);
         }
 
         /** @noinspection PhpInternalEntityUsedInspection */
@@ -185,7 +202,7 @@ class EditorExtension extends \Twig_Extension
             // TODO Tags the response as Row relative
             //$this->tagManager->addTags($containerOrView->getEntityTag());
 
-            $rowOrView = $this->viewBuilder->buildRow($rowOrView);
+            $rowOrView = $this->getViewBuilder()->buildRow($rowOrView);
         }
 
         /** @noinspection PhpInternalEntityUsedInspection */
@@ -221,7 +238,7 @@ class EditorExtension extends \Twig_Extension
             // TODO Tags the response as Block relative
             //$this->tagManager->addTags($blockOrView->getEntityTag());
 
-            $blockOrView = $this->viewBuilder->buildBlock($blockOrView);
+            $blockOrView = $this->getViewBuilder()->buildBlock($blockOrView);
         }
 
         /** @noinspection PhpInternalEntityUsedInspection */
@@ -239,7 +256,7 @@ class EditorExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function renderStaticBlock($name, $type = 'ekyna_cms_tinymce', $data = null)
+    public function renderStaticBlock($name, $type = null, $data = null)
     {
         // TODO
         return '<p>[TODO]</p>';

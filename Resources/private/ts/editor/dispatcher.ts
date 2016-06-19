@@ -1,7 +1,7 @@
-/// <reference path="../../../../../../../typings/tsd.d.ts" />
+/// <reference path="../../../../../../../typings/index.d.ts" />
 
-import Backbone = require('backbone');
-import _ = require('underscore');
+import * as Backbone from 'backbone';
+import * as _ from 'underscore';
 
 export default _.extend({}, Backbone.Events);
 

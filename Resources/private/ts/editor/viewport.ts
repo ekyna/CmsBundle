@@ -1,8 +1,8 @@
-/// <reference path="../../../../../../../typings/tsd.d.ts" />
+/// <reference path="../../../../../../../typings/index.d.ts" />
 
-import $ = require('jquery');
-import Backbone = require('backbone');
-import _ = require('underscore');
+import * as $ from 'jquery';
+import * as Backbone from 'backbone';
+import * as _ from 'underscore';
 
 import Dispatcher from './dispatcher';
 import {OffsetInterface, Button} from './ui';

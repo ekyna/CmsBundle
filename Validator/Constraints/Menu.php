@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraint;
 /**
  * Class Menu
  * @package Ekyna\Bundle\CmsBundle\Validator\Constraints
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class Menu extends Constraint
 {
@@ -24,8 +24,8 @@ class Menu extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    /*public function validatedBy()
     {
-        return 'ekyna_cms.menu';
-    }
+        return MenuValidator::class;
+    }*/
 }

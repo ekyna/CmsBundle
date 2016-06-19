@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraint;
 /**
  * Class Container
  * @package Ekyna\Bundle\CmsBundle\Validator\Constraints
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class Container extends Constraint
 {

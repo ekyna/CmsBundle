@@ -23,4 +23,9 @@ class ContainerView
      * @var array|RowView[]
      */
     public $rows = [];
+
+    /**
+     * @var string
+     */
+    public $content = '';
 }

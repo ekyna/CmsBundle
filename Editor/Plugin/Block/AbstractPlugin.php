@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
+use Ekyna\Bundle\CmsBundle\Editor\Plugin\AbstractPlugin as BasePlugin;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
 
@@ -10,28 +11,15 @@ use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
  * @package Ekyna\Bundle\CmsBundle\Editor\Plugin\Block
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-abstract class AbstractPlugin implements PluginInterface
+abstract class AbstractPlugin extends BasePlugin implements PluginInterface
 {
-    /**
-     * @var array
-     */
-    protected $config;
+    const INVALID_DATA = 'ekyna_cms.block.invalid_data';
 
     /**
      * @var LocaleProviderInterface
      */
     protected $localeProvider;
 
-
-    /**
-     * Constructor.
-     *
-     * @param array $config
-     */
-    public function __construct(array $config = [])
-    {
-        $this->config = $config;
-    }
 
     /**
      * Sets the localeProvider.
@@ -51,6 +39,26 @@ abstract class AbstractPlugin implements PluginInterface
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function create(BlockInterface $block, array $data = [])
+    {
+        $block->setCurrentLocale($this->localeProvider->getCurrentLocale());
+        $block->setFallbackLocale($this->localeProvider->getFallbackLocale());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove(BlockInterface $block)
+    {
+        $block->setData([]);
+        foreach ($block->getTranslations() as $blockTranslation) {
+            $blockTranslation->setData([]);
+        }
     }
 
     /**

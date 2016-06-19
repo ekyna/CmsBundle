@@ -12,7 +12,9 @@ use Symfony\Component\Validator\Constraint;
 class Page extends Constraint
 {
     public $titleIsMandatory      = 'ekyna_cms.page.title_is_mandatory';
+
     public $controllerIsMandatory = 'ekyna_cms.page.controller_is_mandatory';
+
     public $invalidController     = 'ekyna_cms.page.invalid_controller';
 
     /**
@@ -26,8 +28,8 @@ class Page extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    /*public function validatedBy()
     {
-        return 'ekyna_cms.page';
-    }
+        return PageValidator::class;
+    }*/
 }

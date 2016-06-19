@@ -1,18 +1,19 @@
-/// <reference path="../../../../../../../../typings/tsd.d.ts" />
+/// <reference path="../../../../../../../../typings/index.d.ts" />
 
-import es6Promise = require('es6-promise');
+import * as es6Promise from 'es6-promise';
+
 es6Promise.polyfill();
 var Promise = es6Promise.Promise;
 
 export class BasePlugin {
     protected window:Window;
-    protected $block:JQuery;
+    protected $element:JQuery;
     protected updated:boolean;
     protected destroyed:boolean;
 
-    constructor($block:JQuery, win:Window) {
+    constructor($element:JQuery, win:Window) {
         this.window = win;
-        this.$block = $block;
+        this.$element = $element;
         this.updated = false;
     }
 

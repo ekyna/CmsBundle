@@ -1,10 +1,13 @@
-import $ = require('jquery');
-import es6Promise = require('es6-promise');
-es6Promise.polyfill();
-var Promise = es6Promise.Promise;
+/// <reference path="../../../../../../../../../typings/index.d.ts" />
+
+import * as $ from 'jquery';
+import * as es6Promise from 'es6-promise';
 
 import {BasePlugin} from '../base-plugin';
 import {BlockManager} from '../../document-manager';
+
+es6Promise.polyfill();
+var Promise = es6Promise.Promise;
 
 declare var clone:(object:Object) => Object;
 
@@ -108,11 +111,11 @@ class TinymcePlugin extends BasePlugin {
 
                     return BlockManager.request(
                             'ekyna_cms_editor_block_edit',
-                            this.$block,
+                            this.$element,
                             {data: {data: {content: content}}}
                         )
                         .then(() => {
-                            this.$block.html(content);
+                            this.$element.html(content);
                             this.updated = false;
                         });
                 }
@@ -128,7 +131,7 @@ class TinymcePlugin extends BasePlugin {
                 if (editor) {
                     editor.remove();
                 }
-                var $wrapper = this.$block.find('#tinymce-plugin-editor');
+                var $wrapper = this.$element.find('#tinymce-plugin-editor');
                 if ($wrapper.length) {
                     $wrapper.children().first().unwrap();
                 }
@@ -199,8 +202,8 @@ class TinymcePlugin extends BasePlugin {
     }
 
     private createEditor() {
-        if (0 == this.$block.find('#tinymce-plugin-editor').length) {
-            this.$block.wrapInner('<div id="tinymce-plugin-editor"></div>');
+        if (0 == this.$element.find('#tinymce-plugin-editor').length) {
+            this.$element.wrapInner('<div id="tinymce-plugin-editor"></div>');
         }
 
         var settings:any = this.config.theme['advanced'];

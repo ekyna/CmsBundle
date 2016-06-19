@@ -1,11 +1,12 @@
-/// <reference path="../../../../../../../typings/tsd.d.ts" />
+/// <reference path="../../../../../../../typings/index.d.ts" />
 
-import Backbone = require('backbone');
-import _ = require('underscore');
+import * as Backbone from 'backbone';
+import * as _ from 'underscore';
 
 import Dispatcher from './dispatcher';
 import {Button, ButtonGroup, Toolbar, ToolbarView} from './ui';
 import {OffsetInterface} from "./ui";
+
 
 /**
  * Controls model

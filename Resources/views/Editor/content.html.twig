@@ -27,6 +27,7 @@
     <div{{ block('attributes') }}>
         {% set attr = container.innerAttributes %}
         <div{{ block('attributes') }}>
+            {{ container.content|raw }}
             {% for row in container.rows %}
                 {{ cms_row(row) }}
             {% endfor %}

@@ -1,6 +1,6 @@
-/// <reference path="../../../../../../../typings/backbone/backbone.d.ts" />
+/// <reference path="../../../../../../../typings/index.d.ts" />
 
-import $ = require('jquery');
+import * as $ from 'jquery';
 import Dispatcher from './dispatcher';
 
 import {MainToolbar, MainToolbarView} from './controls';
@@ -21,10 +21,11 @@ var config = {
     ],
     plugins: {
         block: [
-            {name: 'ekyna_cms_tinymce', path: 'ekyna-cms/editor/plugin/block/tinymce-plugin'}
+            {name: 'ekyna_block_tinymce', title: 'Html', path: 'ekyna-cms/editor/plugin/block/tinymce'},
+            {name: 'ekyna_block_image', title: 'Image', path: 'ekyna-cms/editor/plugin/block/image'}
         ],
         container: [
-            //{name: '', path:''}
+            {name: 'ekyna_container_background', title: 'Background', path: 'ekyna-cms/editor/plugin/container/background'}
         ]
     }
 };
