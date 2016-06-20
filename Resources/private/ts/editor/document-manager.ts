@@ -1,12 +1,14 @@
 /// <reference path="../../../../../../../typings/index.d.ts" />
 
 import * as $ from 'jquery';
+import * as _ from 'underscore';
 import * as es6Promise from 'es6-promise';
 import * as Router from 'routing';
 
 import Dispatcher from './dispatcher';
 import {OffsetInterface, Button, Toolbar, ToolbarView} from './ui';
 import {BasePlugin} from './plugin/base-plugin';
+import RouteParams = FOS.RouteParams;
 
 
 es6Promise.polyfill();
@@ -50,16 +52,30 @@ interface ResponseData {
 }
 
 class BaseManager {
-    static window:Window;
-
+    private static window:Window;
     static setWindow(win:Window):void {
         this.window = win;
     }
+    static getWindow():Window {
+        return this.window;
+    }
 
-    static $document:JQuery;
-
+    private static $document:JQuery;
     static setDocument($doc:JQuery):void {
         this.$document = $doc;
+    }
+    static getDocument():JQuery {
+        return this.$document;
+    }
+    static getDocumentLocale():string {
+        if (!this.$document) {
+            throw 'Document is not defined.';
+        }
+        var locale = this.$document.find('html').attr('lang');
+        if (0 == String(locale).length) {
+            throw 'Undefined content locale.';
+        }
+        return locale;
     }
 
     static findElementById(id:string):JQuery {
@@ -102,10 +118,16 @@ class BaseManager {
         });
     }
 
+    static generateUrl(route:string, params?:RouteParams) {
+        return Router.generate(route, _.extend({}, params || {}, {
+            _content_locale: BaseManager.getDocumentLocale()
+        }));
+    }
+
     static request(settings:JQueryAjaxSettings):JQueryXHR {
-        settings = _.extend({
+        settings = _.extend({}, settings, {
             method: 'POST'
-        }, settings);
+        });
 
         var xhr = $.ajax(settings);
         xhr.done((data:ResponseData) => {
@@ -159,6 +181,23 @@ export class ContentManager {
         // Reorder containers
         BaseManager.sortChildren($content);
     }
+
+    static generateUrl($content:JQuery, route:string, params?:RouteParams) {
+        var id = (<ElementAttributes>$content.data('cms')).id;
+        if (!id) {
+            throw 'Invalid id';
+        }
+        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
+            contentId: id
+        }));
+    }
+
+    static request($container:JQuery, route:string, params?:RouteParams, settings?:JQueryAjaxSettings):JQueryXHR {
+        settings = settings || {};
+        settings.url = this.generateUrl($container, route, params);
+
+        return BaseManager.request(settings);
+    }
 }
 
 export class ContainerManager {
@@ -202,14 +241,19 @@ export class ContainerManager {
         });
     }
 
-    static request(route:string, $container:JQuery, settings?:JQueryAjaxSettings):JQueryXHR {
+    static generateUrl($container:JQuery, route:string, params?:RouteParams) {
         var id = (<ElementAttributes>$container.data('cms')).id;
         if (!id) {
             throw 'Invalid id';
         }
+        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
+            containerId: id
+        }));
+    }
 
+    static request($container:JQuery, route:string, params?:RouteParams, settings?:JQueryAjaxSettings):JQueryXHR {
         settings = settings || {};
-        settings.url = Router.generate(route, {'containerId': id});
+        settings.url = this.generateUrl($container, route, params);
 
         return BaseManager.request(settings);
     }
@@ -219,11 +263,11 @@ export class ContainerManager {
     }
 
     static changeType($container:JQuery, type: string) {
-        ContainerManager.request('ekyna_cms_editor_container_change_type', $container, {data: {type: type}});
+        ContainerManager.request($container, 'ekyna_cms_editor_container_change_type', null, {data: {type: type}});
     }
 
     static remove($container:JQuery) {
-        ContainerManager.request('ekyna_cms_editor_container_remove', $container);
+        ContainerManager.request($container, 'ekyna_cms_editor_container_remove');
     }
 
     static add($container:JQuery, type: string) {
@@ -231,22 +275,15 @@ export class ContainerManager {
         if (1 != $content.length) {
             throw 'Container content not found.';
         }
-        var id = $content.data('cms').id;
-        if (!id) {
-            throw 'Invalid id';
-        }
-        BaseManager.request({
-            url: Router.generate('ekyna_cms_editor_content_create_container', {'contentId': id}),
-            data: {type: type}
-        });
+        ContentManager.request($content, 'ekyna_cms_editor_content_create_container', null, {data: {type: type}});
     }
 
     static moveUp($container:JQuery) {
-        ContainerManager.request('ekyna_cms_editor_container_move_up', $container);
+        ContainerManager.request($container, 'ekyna_cms_editor_container_move_up');
     }
 
     static moveDown($container:JQuery) {
-        ContainerManager.request('ekyna_cms_editor_container_move_down', $container);
+        ContainerManager.request($container, 'ekyna_cms_editor_container_move_down');
     }
 }
 
@@ -275,18 +312,25 @@ export class RowManager {
         });
     }
 
-    static request(route:string, $row:JQuery):JQueryXHR {
+    static generateUrl($row:JQuery, route:string, params?:RouteParams) {
         var id = (<ElementAttributes>$row.data('cms')).id;
         if (!id) {
             throw 'Invalid id';
         }
-        return BaseManager.request({
-            url: Router.generate(route, {'rowId': id})
-        });
+        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
+            rowId: id
+        }));
+    }
+
+    static request($row:JQuery, route:string, params?:RouteParams, settings?:JQueryAjaxSettings):JQueryXHR {
+        settings = settings || {};
+        settings.url = this.generateUrl($row, route, params);
+
+        return BaseManager.request(settings);
     }
 
     static remove($row:JQuery) {
-        RowManager.request('ekyna_cms_editor_row_remove', $row);
+        RowManager.request($row, 'ekyna_cms_editor_row_remove');
     }
 
     static add($row:JQuery) {
@@ -294,21 +338,15 @@ export class RowManager {
         if (1 != $container.length) {
             throw 'Row container not found.';
         }
-        var id = $container.data('cms').id;
-        if (!id) {
-            throw 'Invalid id';
-        }
-        BaseManager.request({
-            url: Router.generate('ekyna_cms_editor_container_create_row', {'containerId': id})
-        });
+        ContainerManager.request($container, 'ekyna_cms_editor_container_create_row');
     }
 
     static moveUp($row:JQuery) {
-        RowManager.request('ekyna_cms_editor_row_move_up', $row);
+        RowManager.request($row, 'ekyna_cms_editor_row_move_up');
     }
 
     static moveDown($row:JQuery) {
-        RowManager.request('ekyna_cms_editor_row_move_down', $row);
+        RowManager.request($row, 'ekyna_cms_editor_row_move_down');
     }
 }
 
@@ -344,14 +382,19 @@ export class BlockManager {
         });
     }
 
-    static request(route:string, $block:JQuery, settings?:JQueryAjaxSettings):JQueryXHR {
+    static generateUrl($block:JQuery, route:string, params?:RouteParams) {
         var id = (<ElementAttributes>$block.data('cms')).id;
         if (!id) {
             throw 'Invalid id';
         }
+        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
+            blockId: id
+        }));
+    }
 
+    static request($block:JQuery, route:string, params?:RouteParams, settings?:JQueryAjaxSettings):JQueryXHR {
         settings = settings || {};
-        settings.url = Router.generate(route, {'blockId': id});
+        settings.url = this.generateUrl($block, route, params);
 
         return BaseManager.request(settings);
     }
@@ -361,11 +404,11 @@ export class BlockManager {
     }
 
     static changeType($block:JQuery, type: string) {
-        BlockManager.request('ekyna_cms_editor_block_change_type', $block, {data: {type: type}});
+        BlockManager.request($block, 'ekyna_cms_editor_block_change_type', null, {data: {type: type}});
     }
 
     static remove($block:JQuery) {
-        BlockManager.request('ekyna_cms_editor_block_remove', $block);
+        BlockManager.request($block, 'ekyna_cms_editor_block_remove');
     }
 
     static add($block:JQuery, type: string) {
@@ -373,22 +416,15 @@ export class BlockManager {
         if (1 != $row.length) {
             throw 'Block row not found.';
         }
-        var id = $row.data('cms').id;
-        if (!id) {
-            throw 'Invalid id';
-        }
-        BaseManager.request({
-            url: Router.generate('ekyna_cms_editor_row_create_block', {'rowId': id}),
-            data: {type: type}
-        });
+        RowManager.request($row, 'ekyna_cms_editor_row_create_block', null, {data: {type: type}});
     }
 
     static moveLeft($block:JQuery) {
-        BlockManager.request('ekyna_cms_editor_block_move_left', $block);
+        BlockManager.request($block, 'ekyna_cms_editor_block_move_left');
     }
 
     static moveRight($block:JQuery) {
-        BlockManager.request('ekyna_cms_editor_block_move_right', $block);
+        BlockManager.request($block, 'ekyna_cms_editor_block_move_right');
     }
 
     static moveUp($block:JQuery) {
@@ -400,11 +436,11 @@ export class BlockManager {
     }
 
     static expand($block:JQuery) {
-        BlockManager.request('ekyna_cms_editor_block_expand', $block);
+        BlockManager.request($block, 'ekyna_cms_editor_block_expand');
     }
 
     static compress($block:JQuery) {
-        BlockManager.request('ekyna_cms_editor_block_compress', $block);
+        BlockManager.request($block, 'ekyna_cms_editor_block_compress');
     }
 }
 
@@ -484,7 +520,7 @@ export class PluginManager {
                     if (config.name === type) {
                         require([config.path], (plugin:PluginInterface) => {
                             console.log('plugin loaded', plugin);
-                            this.activePlugin = new plugin($element, BaseManager.window);
+                            this.activePlugin = new plugin($element, BaseManager.getWindow());
                             this.activePlugin.edit();
                         });
                         return;
@@ -911,7 +947,7 @@ export class DocumentManager {
         BaseManager.setDocument($(doc));
 
         // Intercept anchors click
-        BaseManager.$document.find('a[href]').off('click').on('click', (e:Event) => {
+        BaseManager.getDocument().find('a[href]').off('click').on('click', (e:Event) => {
             e.preventDefault();
             e.stopPropagation();
 
@@ -1068,7 +1104,7 @@ export class DocumentManager {
     }
 
     private enableEdition():DocumentManager {
-        var $document = BaseManager.$document;
+        var $document = BaseManager.getDocument();
 
         if (!this.enabled || null === $document) {
             return;
@@ -1090,7 +1126,7 @@ export class DocumentManager {
     }
 
     private disableEdition():DocumentManager {
-        var $document = BaseManager.$document;
+        var $document = BaseManager.getDocument();
 
         if (this.enabled || null === $document) {
             return;

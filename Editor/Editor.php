@@ -80,6 +80,7 @@ class Editor
         $this->validator = $validator;
 
         $this->config = array_replace([
+            'block_min_size'           => 2,
             'default_block_plugin'     => 'ekyna_block_tinymce',
             'default_container_plugin' => 'ekyna_container_background',
         ], $config);

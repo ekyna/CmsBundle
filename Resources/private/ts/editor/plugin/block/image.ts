@@ -16,32 +16,24 @@ var Promise = es6Promise.Promise;
  * @todo use CamanJS (http://camanjs.com/guides/)
  */
 class ImagePlugin extends BasePlugin {
-    //private initPromise:Promise<Modal>;
     modal:Ekyna.Modal;
 
     edit() {
-        var id = (<ElementAttributes>this.$element.data('cms')).id;
-        if (!id) {
-            throw 'Invalid block id';
-        }
+        this.modal = new Modal();
+        this.modal.load({
+            url: BlockManager.generateUrl(this.$element, 'ekyna_cms_editor_block_edit'),
+            method: 'GET'
+        });
 
-        //this.initialize()
-        //    .then((Modal:Modal) => {
-                this.modal = new Modal();
-                this.modal.load({
-                    url: Router.generate('ekyna_cms_editor_block_edit', {blockId: id}),
-                    method: 'GET'
-                });
+        $(this.modal).on('ekyna.modal.response', (e:Ekyna.ModalResponseEvent) => {
+            if (e.contentType == 'json') {
+                e.preventDefault();
 
-                $(this.modal).on('ekyna.modal.response', (e:Ekyna.ModalResponseEvent) => {
-                    if (e.contentType == 'json') {
-                        if (e.content.hasOwnProperty('blocks')) {
-                            BlockManager.parse(e.content.blocks);
-                        }
-                        this.modal.close();
-                    }
-                });
-            //});
+                if (e.content.hasOwnProperty('blocks')) {
+                    BlockManager.parse(e.content.blocks);
+                }
+            }
+        });
     }
 
     save():Promise<any> {
@@ -70,19 +62,6 @@ class ImagePlugin extends BasePlugin {
     preventDocumentSelection ($target:JQuery):boolean {
         return false;
     }
-
-    /*private initialize():Promise<any> {
-        if (!this.initPromise) {
-            this.initPromise = new Promise((resolve) => {
-                //noinspection JSFileReferences
-                require(['ekyna-modal'], function(modal) {
-                    resolve(modal);
-                });
-            });
-        }
-        return this.initPromise;
-    }*/
-
 }
 
 export = ImagePlugin;

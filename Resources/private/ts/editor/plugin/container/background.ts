@@ -26,16 +26,17 @@ class BackgroundPlugin extends BasePlugin {
 
         this.modal = new Modal();
         this.modal.load({
-            url: Router.generate('ekyna_cms_editor_container_edit', {containerId: id}),
+            url: ContainerManager.generateUrl(this.$element, 'ekyna_cms_editor_container_edit'),
             method: 'GET'
         });
 
         $(this.modal).on('ekyna.modal.response', (e:Ekyna.ModalResponseEvent) => {
             if (e.contentType == 'json') {
+                e.preventDefault();
+
                 if (e.content.hasOwnProperty('containers')) {
                     ContainerManager.parse(e.content.containers);
                 }
-                this.modal.close();
             }
         });
     }

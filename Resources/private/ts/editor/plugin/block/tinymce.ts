@@ -110,8 +110,9 @@ class TinymcePlugin extends BasePlugin {
                     var content:string = editor.getContent();
 
                     return BlockManager.request(
-                            'ekyna_cms_editor_block_edit',
                             this.$element,
+                            'ekyna_cms_editor_block_edit',
+                            null,
                             {data: {data: {content: content}}}
                         )
                         .then(() => {

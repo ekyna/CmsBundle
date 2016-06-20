@@ -193,6 +193,13 @@
         <service id="ekyna_cms.editor.adapter.bootstrap3"
                  class="Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter"/>
 
+        <!-- Block content locale -->
+        <service id="ekyna_cms.editor.content_locale_provider" class="Ekyna\Bundle\CmsBundle\Editor\Locale\ContentLocaleProvider">
+            <argument>%locale%</argument>
+            <argument>%locales%</argument>
+            <tag name="kernel.event_subscriber" priority="98" />
+        </service>
+
         <!-- Web Editor block plugins -->
         <service id="ekyna_cms.editor.block_plugin.abstract" abstract="true">
             <call method="setUrlGenerator">
@@ -205,7 +212,7 @@
                 <argument type="service" id="ekyna_core.modal"/>
             </call>
             <call method="setLocaleProvider">
-                <argument type="service" id="ekyna_core.locale_provider.request"/>
+                <argument type="service" id="ekyna_cms.editor.content_locale_provider"/>
             </call>
         </service>
         <service id="ekyna_cms.editor.block_plugin.tinymce"
@@ -292,12 +299,7 @@
             <argument type="service" id="ekyna_cms.seo.repository"/>
             <argument type="service" id="ekyna_core.cache.tag_manager"/>
             <argument type="service" id="fragment.handler"/>
-            <argument type="collection">
-                <argument key="home_route">%ekyna_cms.home_route%</argument>
-                <argument key="seo">%ekyna_cms.seo.config%</argument>
-                <argument key="page">%ekyna_cms.page.config%</argument>
-                <argument key="esi_flashes">%ekyna_cms.esi_flashes%</argument>
-            </argument>
+            <argument type="collection" />
             <tag name="twig.extension"/>
         </service>
         <service id="ekyna_cms.twig.editor_extension" class="Ekyna\Bundle\CmsBundle\Twig\EditorExtension">

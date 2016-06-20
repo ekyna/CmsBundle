@@ -63,9 +63,7 @@ class ImagePlugin extends AbstractPlugin
             'media_id' => null,
         ]);
 
-        foreach ($this->localeProvider->getAvailableLocales() as $locale) {
-            $block->translate($locale, true)->setData([]);
-        }
+        $block->translate($this->localeProvider->getCurrentLocale(), true)->setData([]);
     }
 
     /**
@@ -77,7 +75,10 @@ class ImagePlugin extends AbstractPlugin
             'repository' => $this->mediaRepository,
             'action' => $this->urlGenerator->generate(
                 'ekyna_cms_editor_block_edit',
-                ['blockId' => $block->getId()]
+                [
+                    'blockId' => $block->getId(),
+                    '_content_locale' => '', // TODO
+                ]
             ),
             'method' => 'post',
             'attr' => [

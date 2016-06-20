@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * Class EkynaCmsExtension
  * @package Ekyna\Bundle\CmsBundle\DependencyInjection
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class EkynaCmsExtension extends AbstractExtension
 {
@@ -22,12 +22,25 @@ class EkynaCmsExtension extends AbstractExtension
         $config = $this->configure($configs, 'ekyna_cms', new Configuration(), $container);
 
         $container->setParameter('ekyna_cms.home_route', $config['home_route']);
-        $container->setParameter('ekyna_cms.esi_flashes', $config['esi_flashes']);
-
-        // TODO Set config directly by changing services definitions
-        $container->setParameter('ekyna_cms.seo.config', $config['seo']);
         $container->setParameter('ekyna_cms.page.config', $config['page']);
         $container->setParameter('ekyna_cms.menu.config', $config['menu']);
+
+        $container
+            ->getDefinition('ekyna_cms.twig.cms_extension')
+            ->replaceArgument(7, [
+                'home_route'  => $config['home_route'],
+                'esi_flashes' => $config['esi_flashes'],
+                'seo'         => $config['seo'],
+                'page'        => $config['page'],
+            ]);
+
+        $container
+            ->getDefinition('ekyna_cms.editor.editor')
+            ->replaceArgument(3, [
+                'block_min_size'           => $config['editor']['plugin']['block']['min_size'],
+                'default_block_plugin'     => $config['editor']['plugin']['block']['default'],
+                'default_container_plugin' => $config['editor']['plugin']['container']['default'],
+            ]);
 
         foreach ($config['editor']['plugin'] as $type => $pluginsConfigs) {
             foreach ($pluginsConfigs as $name => $pluginConfig) {

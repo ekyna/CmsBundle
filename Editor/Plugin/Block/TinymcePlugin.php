@@ -36,11 +36,9 @@ class TinymcePlugin extends AbstractPlugin
 
         $block->setData(array());
 
-        foreach ($this->localeProvider->getAvailableLocales() as $locale) {
-            $block->translate($locale, true)->setData([
-                'content' => $this->config['default_content'],
-            ]);
-        }
+        $block->translate($this->localeProvider->getCurrentLocale(), true)->setData([
+            'content' => $this->config['default_content'],
+        ]);
     }
 
     /**
@@ -57,7 +55,7 @@ class TinymcePlugin extends AbstractPlugin
             throw new InvalidOperationException('Invalid POST data.');
         }
 
-        $block->translate(null, true)->setData([
+        $block->translate($this->localeProvider->getCurrentLocale(), true)->setData([
             'content' => $data['content']
         ]);
 
@@ -84,12 +82,9 @@ class TinymcePlugin extends AbstractPlugin
             $context->addViolation(self::INVALID_DATA);
         }
 
-        foreach ($block->getTranslations() as $blockTranslation) {
-            $translationData = $blockTranslation->getData();
-
-            if (!array_key_exists('content', $translationData) || 0 == strlen($translationData['content'])) {
-                $context->addViolation(self::INVALID_DATA);
-            }
+        $translationData = $block->translate($this->localeProvider->getCurrentLocale())->getData();
+        if (!array_key_exists('content', $translationData) || 0 == strlen($translationData['content'])) {
+            $context->addViolation(self::INVALID_DATA);
         }
     }
 
@@ -98,10 +93,10 @@ class TinymcePlugin extends AbstractPlugin
      */
     public function render(BlockInterface $block, BlockView $view)
     {
-        $data = $block->translate(null, true)->getData();
+        $translationData = $block->translate($this->localeProvider->getCurrentLocale())->getData();
 
-        if (array_key_exists('content', $data)) {
-            $view->content =  $data['content'];
+        if (array_key_exists('content', $translationData)) {
+            $view->content =  $translationData['content'];
         } else {
             $view->content = $this->config['default_content'];
         }

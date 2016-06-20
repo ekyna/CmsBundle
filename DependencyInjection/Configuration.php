@@ -21,11 +21,34 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('ekyna_cms');
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $rootNode
             ->children()
                 ->scalarNode('output_dir')->defaultValue('')->cannotBeEmpty()->end()
                 ->booleanNode('esi_flashes')->defaultFalse()->end()
                 ->scalarNode('home_route')->defaultNull()->end()
+            ->end()
+        ;
+
+        $this->addSeoSection($rootNode);
+        $this->addPageSection($rootNode);
+        $this->addMenuSection($rootNode);
+        $this->addEditorSection($rootNode);
+        $this->addPoolsSection($rootNode);
+
+        return $treeBuilder;
+    }
+
+    /**
+     * Adds `seo` section.
+     *
+     * @param ArrayNodeDefinition $node
+     */
+    private function addSeoSection(ArrayNodeDefinition $node)
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $node
+            ->children()
                 ->arrayNode('seo')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -34,6 +57,19 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('title_append')->defaultValue('')->end()
                     ->end()
                 ->end()
+            ->end();
+    }
+
+    /**
+     * Adds `page` section.
+     *
+     * @param ArrayNodeDefinition $node
+     */
+    private function addPageSection(ArrayNodeDefinition $node)
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $node
+            ->children()
                 ->arrayNode('page')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -68,6 +104,19 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+            ->end();
+    }
+
+    /**
+     * Adds `menu` section.
+     *
+     * @param ArrayNodeDefinition $node
+     */
+    private function addMenuSection(ArrayNodeDefinition $node)
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $node
+            ->children()
                 ->arrayNode('menu')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -86,6 +135,19 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+            ->end();
+    }
+
+    /**
+     * Adds `editor` section.
+     *
+     * @param ArrayNodeDefinition $node
+     */
+    private function addEditorSection(ArrayNodeDefinition $node)
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $node
+            ->children()
                 ->arrayNode('editor')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -95,6 +157,14 @@ class Configuration implements ConfigurationInterface
                                 ->arrayNode('block')
                                     ->addDefaultsIfNotSet()
                                     ->children()
+                                        ->scalarNode('default')->defaultValue('ekyna_block_tinymce')->end()
+                                        ->integerNode('min_size')
+                                            ->defaultValue(2)
+                                            ->validate()
+                                            ->ifTrue(function($value) { return $value < 1 || 12 < $value; })
+                                                ->thenInvalid('Minimum block size must be greater than 0 and smaller than 13.')
+                                            ->end()
+                                        ->end()
                                         ->arrayNode('tinymce')
                                             ->addDefaultsIfNotSet()
                                             ->children()
@@ -119,6 +189,7 @@ class Configuration implements ConfigurationInterface
                                 ->arrayNode('container')
                                     ->addDefaultsIfNotSet()
                                     ->children()
+                                        ->scalarNode('default')->defaultValue('ekyna_container_background')->end()
                                         ->arrayNode('background')
                                             ->addDefaultsIfNotSet()
                                             ->children()
@@ -133,10 +204,6 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ;
-
-        $this->addPoolsSection($rootNode);
-
-        return $treeBuilder;
     }
 
     /**
@@ -146,6 +213,7 @@ class Configuration implements ConfigurationInterface
      */
     private function addPoolsSection(ArrayNodeDefinition $node)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $node
             ->children()
                 ->arrayNode('pools')
