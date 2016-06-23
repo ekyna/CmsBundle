@@ -177,27 +177,23 @@
             <argument>%ekyna_cms.home_route%</argument>
         </service>
 
+        <!-- Content locale -->
+        <service id="ekyna_cms.editor.document_locale_provider"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Locale\DocumentLocaleProvider">
+            <argument>%locale%</argument>
+            <argument>%locales%</argument>
+            <tag name="kernel.event_subscriber" priority="98"/>
+        </service>
+
         <!-- Web Editor -->
         <service id="ekyna_cms.editor.plugin_registry" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry"/>
         <service id="ekyna_cms.editor.editor" class="Ekyna\Bundle\CmsBundle\Editor\Editor">
+            <argument type="collection"/>
             <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="service" id="validator"/>
-            <argument type="collection"/>
-        </service>
-        <service id="ekyna_cms.editor.view_builder" class="Ekyna\Bundle\CmsBundle\Editor\View\ViewBuilder">
-            <argument type="service" id="ekyna_cms.editor.editor"/>
-            <argument type="service" id="ekyna_cms.editor.adapter.bootstrap3"/>
-        </service>
-        <!-- TODO factory or something ... -->
-        <service id="ekyna_cms.editor.adapter.bootstrap3"
-                 class="Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter"/>
-
-        <!-- Block content locale -->
-        <service id="ekyna_cms.editor.content_locale_provider" class="Ekyna\Bundle\CmsBundle\Editor\Locale\ContentLocaleProvider">
-            <argument>%locale%</argument>
-            <argument>%locales%</argument>
-            <tag name="kernel.event_subscriber" priority="98" />
+            <argument type="service" id="ekyna_cms.editor.document_locale_provider"/>
+            <argument type="service" id="ekyna_cms.helper.page"/>
         </service>
 
         <!-- Web Editor block plugins -->
@@ -212,14 +208,14 @@
                 <argument type="service" id="ekyna_core.modal"/>
             </call>
             <call method="setLocaleProvider">
-                <argument type="service" id="ekyna_cms.editor.content_locale_provider"/>
+                <argument type="service" id="ekyna_cms.editor.document_locale_provider"/>
             </call>
         </service>
         <service id="ekyna_cms.editor.block_plugin.tinymce"
                  class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\TinymcePlugin"
                  parent="ekyna_cms.editor.block_plugin.abstract">
             <argument>%ekyna_cms.editor.block_plugin.tinymce.config%</argument>
-            <tag name="ekyna_cms.editor.block_plugin" alias="ekyna_block_tinymce"/>
+            <tag name="ekyna_cms.editor.block_plugin"/>
         </service>
         <service id="ekyna_cms.editor.block_plugin.image"
                  class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\ImagePlugin"
@@ -227,7 +223,7 @@
             <argument>%ekyna_cms.editor.block_plugin.image.config%</argument>
             <argument type="service" id="ekyna_media.media.repository"/>
             <argument type="service" id="liip_imagine.cache.manager"/>
-            <tag name="ekyna_cms.editor.block_plugin" alias="ekyna_block_image"/>
+            <tag name="ekyna_cms.editor.block_plugin"/>
         </service>
 
         <!-- Web Editor container plugins -->
@@ -248,7 +244,7 @@
             <argument>%ekyna_cms.editor.container_plugin.background.config%</argument>
             <argument type="service" id="ekyna_media.media.repository"/>
             <argument type="service" id="liip_imagine.cache.manager"/>
-            <tag name="ekyna_cms.editor.container_plugin" alias="ekyna_container_background"/>
+            <tag name="ekyna_cms.editor.container_plugin"/>
         </service>
 
         <!-- Menus -->
@@ -292,6 +288,7 @@
 
         <!-- Twig extensions -->
         <service id="ekyna_cms.twig.cms_extension" class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
+            <argument type="collection"/>
             <argument type="service" id="ekyna_setting.manager"/>
             <argument type="service" id="ekyna_cms.menu.menu_provider"/>
             <argument type="service" id="knp_menu.helper"/>
@@ -299,7 +296,6 @@
             <argument type="service" id="ekyna_cms.seo.repository"/>
             <argument type="service" id="ekyna_core.cache.tag_manager"/>
             <argument type="service" id="fragment.handler"/>
-            <argument type="collection" />
             <tag name="twig.extension"/>
         </service>
         <service id="ekyna_cms.twig.editor_extension" class="Ekyna\Bundle\CmsBundle\Twig\EditorExtension">
@@ -321,7 +317,8 @@
             <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
             <tag name="validator.constraint_validator"/>
         </service>
-        <service id="ekyna_cms.container.validator" class="Ekyna\Bundle\CmsBundle\Validator\Constraints\ContainerValidator">
+        <service id="ekyna_cms.container.validator"
+                 class="Ekyna\Bundle\CmsBundle\Validator\Constraints\ContainerValidator">
             <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
             <tag name="validator.constraint_validator"/>
         </service>

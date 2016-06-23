@@ -73,7 +73,7 @@ class BackgroundPlugin extends AbstractPlugin
             ]
         ]);
 
-        if ($request->getMethod() == 'POST' && $form->handleRequest($request)) {
+        if ($request->getMethod() == 'POST' && $form->handleRequest($request) && $form->isValid()) {
             $data = $form->getData();
 
             $container->setData($data);
@@ -141,7 +141,15 @@ class BackgroundPlugin extends AbstractPlugin
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getTitle()
+    {
+        return 'Background';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
     {
         return 'ekyna_container_background';
     }

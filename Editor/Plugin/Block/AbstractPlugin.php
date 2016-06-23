@@ -66,6 +66,6 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
      */
     public function supports(BlockInterface $block)
     {
-        return $block->getType() === $this->getType();
+        return $block->getType() === $this->getName();
     }
 }

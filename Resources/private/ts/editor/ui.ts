@@ -4,6 +4,14 @@ import * as $ from 'jquery';
 import * as Backbone from 'backbone';
 import * as _ from 'underscore';
 import * as Bootstrap from 'bootstrap';
+import * as Select2 from 'select2';
+
+$.fn.select2.defaults.set('theme', 'bootstrap');
+
+//noinspection JSUnusedLocalSymbols
+let bs = Bootstrap;
+//noinspection JSUnusedLocalSymbols
+let s2 = Select2;
 
 import Dispatcher from './dispatcher';
 
@@ -16,20 +24,79 @@ export interface OffsetInterface {
     left: number
 }
 
-interface ButtonChoiceConfig extends Backbone.ObjectHash {
+/**
+ * ControlConfig
+ */
+interface ControlConfig extends Backbone.ObjectHash {
     name: string
     title: string
-    confirm: string
-    event: string
-    data: Object
+    disabled: boolean
 }
 
-interface ButtonConfig extends ButtonChoiceConfig {
+const CONTROL_DEFAULTS = {
+    name: null,
+    title: null,
+    disabled: false
+};
+
+/**
+ * Control
+ */
+abstract class Control extends Backbone.Model {
+    abstract createView():ControlView<Control>
+
+    defaults():ControlConfig {
+        return CONTROL_DEFAULTS;
+    }
+
+    validate(attributes: any, options?: any): any {
+        attributes = attributes || this.attributes;
+
+        if (0 == String(attributes.name).length) {
+            throw 'Control.name is mandatory';
+        }
+        if (0 == String(attributes.title).length) {
+            throw 'Control.event is mandatory';
+        }
+    }
+
+    enable():Control {
+        this.set('disabled', false);
+        return this;
+    }
+
+    disable():Control {
+        this.set('disabled', true);
+        return this;
+    }
+}
+
+/**
+ * ControlView
+ */
+abstract class ControlView<T extends Backbone.Model> extends Backbone.View<T> {
+
+}
+
+/**
+ * ButtonChoiceConfig
+ */
+export interface ButtonChoiceConfig extends ControlConfig {
+    confirm: string
+    data: any
+}
+
+/**
+ * ButtonConfig
+ */
+export interface ButtonConfig extends ControlConfig {
     size: string
     theme: string
     icon: string
     active: boolean
-    disabled: boolean
+    confirm: string
+    event: string
+    data: any
     spinning: boolean
     rotate: boolean
     choices: Array<ButtonChoiceConfig>
@@ -38,32 +105,34 @@ interface ButtonConfig extends ButtonChoiceConfig {
 /**
  * Button
  */
-export class Button extends Backbone.Model {
+export class Button extends Control {
+    createView():ControlView<Button> {
+        if (0 < this.get('choices').length) {
+            return new ButtonDropdownView({model: this});
+        }
+        return new ButtonView({model: this});
+    }
+
     defaults():ButtonConfig {
-        return {
-            name: null,
-            title: null,
+        return _.extend(CONTROL_DEFAULTS, {
             size: 'sm',
             theme: 'default',
             icon: null,
             active: false,
-            disabled: false,
             spinning: false,
             rotate: false,
             confirm: null,
             event: null,
             choices: [],
             data: {}
-            //onClick:(button:Button) => {}
-        }
+        });
     }
 
     validate(attributes: any, options?: any): any {
+        super.validate(attributes, options);
+
         attributes = attributes || this.attributes;
 
-        if (0 == String(attributes.name).length) {
-            throw 'Button.name is mandatory';
-        }
         if (0 == String(attributes.event).length) {
             throw 'Button.event is mandatory';
         }
@@ -88,23 +157,13 @@ export class Button extends Backbone.Model {
         this.set('spinning', false);
         return this;
     }
-
-    enable():Button {
-        this.set('disabled', false);
-        return this;
-    }
-
-    disable():Button {
-        this.set('disabled', true);
-        return this;
-    }
 }
 
 /**
  * ButtonView
  */
-export class ButtonView extends Backbone.View<Button> {
-    template:(data: {icon: string}) => string;
+export class ButtonView extends ControlView<Button> {
+    template:(data:ButtonConfig) => string;
 
     events():Backbone.EventsHash {
         return {
@@ -113,15 +172,18 @@ export class ButtonView extends Backbone.View<Button> {
     }
 
     constructor(options?:Backbone.ViewOptions<Button>) {
-        options.tagName = 'button';
+        options.tagName = 'span';
         options.attributes = {
-            type: 'button',
-            'class': 'btn'
+            'class': 'input-group-btn'
         };
 
         super(options);
 
-        this.template = _.template('<span class="fa fa-<%= icon %>"></span>');
+        this.template = _.template(`
+        <button type="button" class="btn btn-<%= theme %> btn-<%= size %>" title="<%= title %>">
+          <span class="fa fa-<%= icon %>"></span>
+        </button>
+        `);
 
         //_.bindAll(this, 'render');
         this.listenTo(this.model, 'change', this.render);
@@ -130,7 +192,7 @@ export class ButtonView extends Backbone.View<Button> {
     onClick(e:JQueryEventObject):void {
         e.preventDefault();
 
-        var dispatch = () => { Dispatcher.trigger(this.model.get('event'), this.model, this.model.get('data'));},
+        var dispatch = () => { Dispatcher.trigger(this.model.get('event'), this.model);},
             message:string = this.model.get('confirm');
         if (message && 0 < message.length) {
             if (confirm(message)) {
@@ -142,19 +204,15 @@ export class ButtonView extends Backbone.View<Button> {
     }
 
     render():ButtonView {
-        this.$el
-            .html(this.template({icon: this.model.get('icon')}))
-            .addClass('btn-' + this.model.get('size'))
-            .addClass('btn-' + this.model.get('theme'))
-            .attr('title', this.model.get('title'));
+        this.$el.html(this.template(this.model.attributes));
 
+        this.$('button')
+            .prop('disabled', this.model.get('disabled'))
+            .toggleClass('active', this.model.get('active'))
+            .toggleClass('rotate', this.model.get('rotate'))
+            .find('span').toggleClass('fa-spin', this.model.get('spinning'));
 
-        this.$el.prop('disabled', this.model.get('disabled'));
-        //console.log(this.model.get('name'), this.model.get('active'));
-        this.$el.toggleClass('active', this.model.get('active'));
-        this.$el.toggleClass('rotate', this.model.get('rotate'));
-
-        this.$('span').toggleClass('fa-spin', this.model.get('spinning'));
+        Dispatcher.trigger('ui.control.render', this);
 
         return this;
     }
@@ -163,7 +221,7 @@ export class ButtonView extends Backbone.View<Button> {
 /**
  * ButtonDropdownView
  */
-export class ButtonDropdownView extends Backbone.View<Button> {
+export class ButtonDropdownView extends ControlView<Button> {
     template:(data:ButtonConfig) => string;
 
     events():Backbone.EventsHash {
@@ -173,9 +231,9 @@ export class ButtonDropdownView extends Backbone.View<Button> {
     }
 
     constructor(options?:Backbone.ViewOptions<Button>) {
-        options.tagName = 'div';
+        options.tagName = 'span';
         options.attributes = {
-            'class': 'btn-group'
+            'class': 'input-group-btn'
         };
 
         super(options);
@@ -188,7 +246,6 @@ export class ButtonDropdownView extends Backbone.View<Button> {
         <ul class="dropdown-menu"></ul>
         `);
 
-        //_.bindAll(this, 'render');
         this.listenTo(this.model, 'change', this.render);
     }
 
@@ -205,7 +262,7 @@ export class ButtonDropdownView extends Backbone.View<Button> {
             throw 'Choice not found';
         }
 
-        var dispatch = () => { Dispatcher.trigger(choice.event, this.model, choice.data); },
+        var dispatch = () => { Dispatcher.trigger(this.model.get('event'), this.model, choice); },
             message:string = choice.confirm;
         if (message && 0 < message.length) {
             if (confirm(message)) {
@@ -237,76 +294,238 @@ export class ButtonDropdownView extends Backbone.View<Button> {
             $('<li></li>').append($a).appendTo($ul);
         });
 
+        Dispatcher.trigger('ui.control.render', this);
+
+        return this;
+    }
+}
+
+
+/**
+ * SelectChoiceConfig
+ */
+export interface SelectChoiceConfig extends ControlConfig {
+    value: string
+    active: boolean
+    data: any
+}
+
+/**
+ * SelectConfig
+ */
+interface SelectConfig extends ControlConfig {
+    value: string
+    event: string
+    maxWidth: number
+    choices: Array<SelectChoiceConfig>
+}
+
+export class Select extends Control {
+    defaults():SelectConfig {
+        return _.extend(CONTROL_DEFAULTS, {
+            width: null,
+            value: null,
+            choices: [],
+        });
+    }
+
+    initialize(attributes?: SelectConfig, options?: any):void {
+        if (attributes.choices.length) {
+            this.setChoices(attributes.choices);
+        }
+    }
+
+    createView():SelectView {
+        return new SelectView({model: this});
+    }
+
+    validate(attributes: any, options?: any): any {
+        super.validate(attributes, options);
+
+        attributes = attributes || this.attributes;
+
+        if (0 == String(attributes.event).length) {
+            throw 'Button.event is mandatory';
+        }
+    }
+
+    setChoices(choices:Array<SelectChoiceConfig>):Select {
+        if (choices.length) {
+            var activeChoice = (<SelectChoiceConfig>_.findWhere(choices, {active: true}));
+            if (activeChoice) {
+                this.setValue(activeChoice.value);
+            } else {
+                activeChoice = (<SelectChoiceConfig>_.findWhere(choices, {value: this.get('value')}));
+                if (activeChoice) {
+                    activeChoice.active = true;
+                } else {
+                    choices[0].active = true;
+                    this.setValue(choices[0].value);
+                }
+            }
+        }
+
+        this.set('choices', choices);
+
+        return this;
+    }
+
+    getActiveChoice():SelectChoiceConfig {
+        return (<SelectChoiceConfig>_.findWhere(this.get('choices'), {active: true}));
+    }
+
+    private setValue(value:string):Select {
+        if (value != this.getValue()) {
+            this.set('value', value);
+        }
+        return this;
+    }
+
+    getValue():string {
+        return this.get('value');
+    }
+
+    // TODO don't return bool
+    select(value:string):boolean {
+        if (value == this.get('value')) {
+            return false;
+        }
+
+        var choice;
+        this.get('choices').forEach(function(c:SelectChoiceConfig) {
+            if (c.value == value) {
+                c.active = true;
+                choice = c;
+            } else {
+                c.active = false;
+            }
+        });
+        if (!choice) {
+            throw 'Value "' + value + '" not found in select choices.';
+        }
+
+        this.set('value', value);
+
+        return true;
+    }
+}
+
+export class SelectView extends ControlView<Select> {
+    template:(data:SelectConfig) => string;
+
+    events():Backbone.EventsHash {
+        return {
+            'change select': 'onSelectChange'
+        }
+    }
+
+    constructor(options?:Backbone.ViewOptions<Select>) {
+        options.tagName = 'span';
+        options.attributes = {
+            'class': 'input-group-select'
+        };
+
+        super(options);
+
+        this.template = _.template('<select class="form-control" name="<%= name %>" title="<%= title %>"></select>');
+
+        this.listenTo(this.model, 'change', this.render);
+    }
+
+    onSelectChange(e:JQueryEventObject):void {
+        e.preventDefault();
+
+        this.model.select(this.$('select').val());
+
+        Dispatcher.trigger(this.model.get('event'), this.model);
+    }
+
+    render():SelectView {
+        this.$el.html(this.template(this.model.attributes));
+
+        var $select = this.$('select')
+            .empty()
+            .prop('disabled', this.model.get('disabled'));
+        var width = this.model.get('width');
+        if (0 < width) {
+            $select.removeAttr('style').css({'width': width});
+        }
+
+        this.model.get('choices').forEach(function(choice:SelectChoiceConfig) {
+            $('<option></option>')
+                .attr('value', choice.value)
+                .prop('selected', choice.active)
+                .prop('disabled', choice.disabled)
+                .text(choice.title)
+                .appendTo($select);
+        });
+
+        Dispatcher.trigger('ui.control.render', this);
+
         return this;
     }
 }
 
 /**
- * ButtonGroup
+ * ControlGroup
  */
-export class ButtonGroup extends Backbone.Model {
+export class ControlGroup extends Backbone.Model {
     defaults():Backbone.ObjectHash {
         return {
             name: null,
-            buttons: new Backbone.Collection<Button>()
+            controls: new Backbone.Collection<Control>()
         }
     }
 
     /**
-     * Adds the button
-     * @param button
-     * @returns ButtonGroup
+     * Adds the controls
+     * @param control
+     * @returns ControlGroup
      */
-    addButton(button:Button):ButtonGroup {
-        this.get('buttons').add(button);
+    addControl(control:Control):ControlGroup {
+        this.get('controls').add(control);
 
         return this;
     }
 
     /**
-     * Returns thee button by name
+     * Returns the control by name
      * @param name
-     * @returns Button
+     * @returns Control
      */
-    getButton(name:string):Button {
-        return this.get('buttons').findWhere({name: name});
+    getControl(name:string):Control {
+        return this.get('controls').findWhere({name: name});
     }
 }
 
 /**
- * ButtonGroupView
+ * ControlGroupView
  */
-export class ButtonGroupView extends Backbone.View<ButtonGroup> {
-    private subViews:Array<ButtonView>;
+export class ControlGroupView extends Backbone.View<ControlGroup> {
+    private subViews:Array<ControlView<Control>>;
 
-    constructor(options?:Backbone.ViewOptions<ButtonGroup>) {
+    constructor(options?:Backbone.ViewOptions<ControlGroup>) {
         options.tagName = 'div';
         options.attributes = {
-            'class': 'btn-group'
+            'class': 'input-group'
         };
 
         super(options);
 
         this.subViews = [];
 
-        //_.bindAll(this, 'render');
         this.listenTo(this.model, 'add remove', this.render);
     }
 
     private clear():void {
-        this.subViews.forEach((view:ButtonView) => view.remove());
+        this.subViews.forEach((view:ControlView<Control>) => view.remove());
     }
 
-    render():ButtonGroupView {
+    render():ControlGroupView {
         this.clear();
 
-        this.model.get('buttons').each((button:Button) => {
-            var view;
-            if (0 < button.get('choices').length) {
-                view = new ButtonDropdownView({model: button});
-            } else {
-                view = new ButtonView({model: button});
-            }
+        this.model.get('controls').each((control:Control) => {
+            var view = control.createView();
             this.$el.append(view.render().$el);
             this.subViews.push(view);
         });
@@ -314,7 +533,7 @@ export class ButtonGroupView extends Backbone.View<ButtonGroup> {
         return this;
     }
 
-    remove():ButtonGroupView {
+    remove():ControlGroupView {
         this.clear();
 
         super.remove();
@@ -332,7 +551,7 @@ export class Toolbar extends Backbone.Model {
             id: null,
             classes: ['vertical'],
             origin: <OffsetInterface>{top: 0, left: 0},
-            groups: new Backbone.Collection<ButtonGroup>()
+            groups: new Backbone.Collection<ControlGroup>()
         }
     }
 
@@ -342,7 +561,7 @@ export class Toolbar extends Backbone.Model {
      * @returns boolean
      */
     hasGroup(groupName:string) {
-        return -1 < this.get('groups').findIndex(function(group:ButtonGroup) {
+        return -1 < this.get('groups').findIndex(function(group:ControlGroup) {
             return group.get('name') === groupName;
         });
     }
@@ -352,7 +571,7 @@ export class Toolbar extends Backbone.Model {
      * @param group
      * @returns Toolbar
      */
-    addGroup(group:ButtonGroup):Toolbar {
+    addGroup(group:ControlGroup):Toolbar {
         this.get('groups').add(group);
         return this;
     }
@@ -360,35 +579,35 @@ export class Toolbar extends Backbone.Model {
     /**
      * Returns the group by name.
      * @param name
-     * @returns ButtonGroup
+     * @returns ControlGroup
      */
-    getGroup(name:string):ButtonGroup {
+    getGroup(name:string):ControlGroup {
         return this.get('groups').findWhere({name: name});
     }
 
     /**
-     * Adds the button
+     * Adds the control
      * @param groupName
-     * @param button
+     * @param control
      * @returns Toolbar
      */
-    addButton(groupName:string, button:Button):Toolbar {
+    addControl(groupName:string, control:Control):Toolbar {
         if (!this.hasGroup(groupName)) {
-            this.addGroup(new ButtonGroup({name: groupName}));
+            this.addGroup(new ControlGroup({name: groupName}));
         }
-        this.getGroup(groupName).addButton(button);
+        this.getGroup(groupName).addControl(control);
 
         return this;
     }
 
     /**
-     * Returns the button by name
+     * Returns the control by name
      * @param groupName
-     * @param buttonName
-     * @returns Button|null
+     * @param controlName
+     * @returns Control|null
      */
-    getButton(groupName:string, buttonName:string):Button {
-        return this.getGroup(groupName).getButton(buttonName);
+    getControl(groupName:string, controlName:string):Control {
+        return this.getGroup(groupName).getControl(controlName);
     }
 }
 
@@ -396,7 +615,7 @@ export class Toolbar extends Backbone.Model {
  * ToolbarView
  */
 export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
-    private subViews:Array<ButtonGroupView>;
+    private subViews:Array<ControlGroupView>;
 
     constructor(options?:Backbone.ViewOptions<T>) {
         options.tagName = 'div';
@@ -413,7 +632,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
     }
 
     private clear():void {
-        this.subViews.forEach((view:ButtonGroupView) => view.remove());
+        this.subViews.forEach((view:ControlGroupView) => view.remove());
     }
 
     protected position(origin: OffsetInterface):void {
@@ -447,8 +666,8 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
     render():ToolbarView<T> {
         this.clear();
 
-        this.model.get('groups').each((group:ButtonGroup) => {
-            var view = new ButtonGroupView({
+        this.model.get('groups').each((group:ControlGroup) => {
+            var view = new ControlGroupView({
                 model: group
             });
             this.$el.append(view.render().$el);
@@ -457,11 +676,14 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
 
         this.position(this.model.get('origin'));
 
-        return this;
+        return this.postRender();
     }
 
-    postRender() {
-        $('.dropdown-toggle').dropdown();
+    postRender():ToolbarView<T> {
+        this.$('.dropdown-toggle').dropdown();
+        this.$('select').select2({width: "resolve"});
+
+        return this;
     }
 
     remove():ToolbarView<T> {

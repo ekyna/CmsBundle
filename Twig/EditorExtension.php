@@ -53,7 +53,7 @@ class EditorExtension extends \Twig_Extension
      */
     protected function getViewBuilder()
     {
-        return $this->container->get('ekyna_cms.editor.view_builder');
+        return $this->getEditor()->getViewBuilder();
     }
 
     /**
@@ -72,6 +72,7 @@ class EditorExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
+            new \Twig_SimpleFunction('cms_document_data', [$this, 'renderDocumentData'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_content', [$this, 'renderContent'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_container', [$this, 'renderContainer'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_row', [$this, 'renderRow'], ['is_safe' => ['html']]),
@@ -102,6 +103,22 @@ class EditorExtension extends \Twig_Extension
         if (!$this->template->hasBlock('cms_block')) {
             throw new \RuntimeException('Unable to find "cms_block" twig block.');
         }
+    }
+
+    /**
+     * Renders the document data attribute.
+     *
+     * @return string
+     */
+    public function renderDocumentData()
+    {
+        $editor = $this->getEditor();
+
+        if (!$editor->isEnabled()) {
+            return '';
+        }
+
+        return " data-document-data='" . json_encode($editor->getContentData()) . "'";
     }
 
     /**

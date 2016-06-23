@@ -23,7 +23,7 @@
 
     {{ require_js(not app.debug) }}
 </head>
-<body class="cms-editor">
+<body class="cms-editor" data-config="{{ config|json_encode }}">
 
     <div data-controls-placeholder></div>
     <div data-viewport-placeholder></div>

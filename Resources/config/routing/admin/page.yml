@@ -19,6 +19,8 @@ ekyna_cms_page_admin_new_child:
     methods: [GET|POST]
     requirements:
         pageId: \d+
+    options:
+        expose: true
 
 ekyna_cms_page_admin_show:
     path: /{pageId}/show
@@ -33,6 +35,8 @@ ekyna_cms_page_admin_edit:
     methods: [GET|POST]
     requirements:
         pageId: \d+
+    options:
+        expose: true
 
 ekyna_cms_page_admin_tinymce:
     path: /{pageId}/tinymce

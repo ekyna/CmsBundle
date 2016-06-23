@@ -6,7 +6,7 @@ import * as es6Promise from 'es6-promise';
 import * as Router from 'routing';
 
 import Dispatcher from './dispatcher';
-import {OffsetInterface, Button, Toolbar, ToolbarView} from './ui';
+import {OffsetInterface, Button, ButtonConfig, ButtonChoiceConfig, Toolbar, ToolbarView} from './ui';
 import {BasePlugin} from './plugin/base-plugin';
 import RouteParams = FOS.RouteParams;
 
@@ -20,7 +20,8 @@ export interface ElementAttributes {
     type?: string
     classes: string
     style?: string
-    data: Object
+    content: any
+    data: any
 }
 interface BlockData {
     attributes: ElementAttributes
@@ -41,6 +42,10 @@ interface ContentData {
     attributes: ElementAttributes
     containers: Array<ContainerData>
 }
+export interface DocumentData {
+    locale: string
+    id?: string
+}
 
 interface ResponseData {
     created?: string
@@ -51,35 +56,59 @@ interface ResponseData {
     blocks: Array<BlockData>
 }
 
-class BaseManager {
-    private static window:Window;
-    static setWindow(win:Window):void {
-        this.window = win;
+export class BaseManager {
+    private static contentWindow:Window;
+    static setContentWindow(win:Window):void {
+        this.contentWindow = win;
     }
-    static getWindow():Window {
-        return this.window;
+    static getContentWindow():Window {
+        if (!this.contentWindow) {
+            throw 'Window is not defined.';
+        }
+        return this.contentWindow;
     }
 
-    private static $document:JQuery;
-    static setDocument($doc:JQuery):void {
-        this.$document = $doc;
+    private static $contentDocument:JQuery;
+    static setContentDocument($doc:JQuery):void {
+        this.$contentDocument = $doc;
+
+        var data:DocumentData = $doc.find('html').data('document-data');
+        if (!data) {
+            throw "Undefined document data.\n" +
+                "Did you forget to use the cms_document_data() twig function in your template ?";
+        }
+
+        this.setDocumentData(data);
     }
-    static getDocument():JQuery {
-        return this.$document;
-    }
-    static getDocumentLocale():string {
-        if (!this.$document) {
+    static getContentDocument():JQuery {
+        if (!this.$contentDocument) {
             throw 'Document is not defined.';
         }
-        var locale = this.$document.find('html').attr('lang');
-        if (0 == String(locale).length) {
-            throw 'Undefined content locale.';
+        return this.$contentDocument;
+    }
+
+    private static documentData:DocumentData;
+    static setDocumentData(data:DocumentData):void {
+        this.documentData = data;
+    }
+    static getDocumentData():DocumentData {
+        return this.documentData;
+    }
+    static getDocumentLocale():string {
+        if (!this.documentData) {
+            throw 'Content data is not defined.';
         }
-        return locale;
+        return this.documentData.locale;
+    }
+
+    static clear():void {
+        this.contentWindow = null;
+        this.$contentDocument = null;
+        this.documentData = null;
     }
 
     static findElementById(id:string):JQuery {
-        return this.$document.find('#' + id);
+        return this.$contentDocument.find('#' + id);
     }
 
     static createElement(id:string, $parent:JQuery):JQuery {
@@ -120,7 +149,7 @@ class BaseManager {
 
     static generateUrl(route:string, params?:RouteParams) {
         return Router.generate(route, _.extend({}, params || {}, {
-            _content_locale: BaseManager.getDocumentLocale()
+            _document_locale: BaseManager.getDocumentLocale()
         }));
     }
 
@@ -134,7 +163,7 @@ class BaseManager {
             // Remove elements by id
             if (data.hasOwnProperty('removed')) {
                 data.removed.forEach((id:string) => {
-                    this.$document.find('#' + id).remove();
+                    this.$contentDocument.find('#' + id).remove();
                 });
             }
             // Parse elements
@@ -147,6 +176,7 @@ class BaseManager {
             } else if (data.hasOwnProperty('blocks')) {
                 BlockManager.parse(data.blocks);
             }
+
             // Dispatch response parsed
             Dispatcher.trigger(
                 'base_manager.response_parsed',
@@ -444,28 +474,82 @@ export class BlockManager {
     }
 }
 
-Dispatcher.on('block.edit', (button:Button, data:any) => BlockManager.edit(data.$block));
-Dispatcher.on('block.change-type', (button:Button, data:any) => BlockManager.changeType(data.$block, data.type));
-Dispatcher.on('block.move-left', (button:Button, data:any) => BlockManager.moveLeft(data.$block));
-Dispatcher.on('block.move-right', (button:Button, data:any) => BlockManager.moveRight(data.$block));
-Dispatcher.on('block.move-up', (button:Button, data:any) => BlockManager.moveUp(data.$block));
-Dispatcher.on('block.move-down', (button:Button, data:any) => BlockManager.moveDown(data.$block));
-Dispatcher.on('block.expand', (button:Button, data:any) => BlockManager.expand(data.$block));
-Dispatcher.on('block.compress', (button:Button, data:any) => BlockManager.compress(data.$block));
-Dispatcher.on('block.remove', (button:Button, data:any) => BlockManager.remove(data.$block));
-Dispatcher.on('block.add', (button:Button, data:any) => BlockManager.add(data.$block, data.type));
+/**
+ * Block events
+ */
+Dispatcher.on('block.edit',
+    (button:Button) => BlockManager.edit(button.get('data').$block)
+);
+Dispatcher.on('block.change-type',
+    (button:Button, choice:ButtonChoiceConfig) =>
+        BlockManager.changeType(button.get('data').$block, choice.data.type)
+);
+Dispatcher.on('block.move-left',
+    (button:Button) => BlockManager.moveLeft(button.get('data').$block)
+);
+Dispatcher.on('block.move-right',
+    (button:Button) => BlockManager.moveRight(button.get('data').$block)
+);
+Dispatcher.on('block.move-up',
+    (button:Button) => BlockManager.moveUp(button.get('data').$block)
+);
+Dispatcher.on('block.move-down',
+    (button:Button) => BlockManager.moveDown(button.get('data').$block)
+);
+Dispatcher.on('block.expand',
+    (button:Button) => BlockManager.expand(button.get('data').$block)
+);
+Dispatcher.on('block.compress',
+    (button:Button) => BlockManager.compress(button.get('data').$block)
+);
+Dispatcher.on('block.remove',
+    (button:Button) => BlockManager.remove(button.get('data').$block)
+);
+Dispatcher.on('block.add',
+    (button:Button, choice:ButtonChoiceConfig) =>
+        BlockManager.add(button.get('data').$block, choice.data.type)
+);
 
-Dispatcher.on('row.move-up', (button:Button, data:any) => RowManager.moveUp(data.$row));
-Dispatcher.on('row.move-down', (button:Button, data:any) => RowManager.moveDown(data.$row));
-Dispatcher.on('row.remove', (button:Button, data:any) => RowManager.remove(data.$row));
-Dispatcher.on('row.add', (button:Button, data:any) => RowManager.add(data.$row));
+/**
+ * Row events
+ */
+Dispatcher.on('row.move-up',
+    (button:Button) => RowManager.moveUp(button.get('data').$row)
+);
+Dispatcher.on('row.move-down',
+    (button:Button) => RowManager.moveDown(button.get('data').$row)
+);
+Dispatcher.on('row.remove',
+    (button:Button) => RowManager.remove(button.get('data').$row)
+);
+Dispatcher.on('row.add',
+    (button:Button) => RowManager.add(button.get('data').$row)
+);
 
-Dispatcher.on('container.edit', (button:Button, data:any) => ContainerManager.edit(data.$container));
-Dispatcher.on('container.change-type', (button:Button, data:any) => ContainerManager.changeType(data.$container, data.type));
-Dispatcher.on('container.move-up', (button:Button, data:any) => ContainerManager.moveUp(data.$container));
-Dispatcher.on('container.move-down', (button:Button, data:any) => ContainerManager.moveDown(data.$container));
-Dispatcher.on('container.remove', (button:Button, data:any) => ContainerManager.remove(data.$container));
-Dispatcher.on('container.add', (button:Button, data:any) => ContainerManager.add(data.$container, data.type));
+/**
+ * Container events
+ */
+Dispatcher.on('container.edit',
+    (button:Button) => ContainerManager.edit(button.get('data').$container)
+);
+Dispatcher.on('container.change-type',
+    (button:Button, choice:ButtonChoiceConfig) =>
+        ContainerManager.changeType(button.get('data').$container, choice.data.type)
+);
+Dispatcher.on('container.move-up',
+    (button:Button) => ContainerManager.moveUp(button.get('data').$container)
+);
+Dispatcher.on('container.move-down',
+    (button:Button) => ContainerManager.moveDown(button.get('data').$container)
+);
+Dispatcher.on('container.remove',
+    (button:Button) => ContainerManager.remove(button.get('data').$container)
+);
+Dispatcher.on('container.add',
+    (button:Button, choice:ButtonChoiceConfig) =>
+        ContainerManager.add(button.get('data').$container, choice.data.type)
+);
+
 
 interface PluginInterface {
     new($element:JQuery, window:Window):BasePlugin
@@ -477,7 +561,7 @@ interface PluginConfig {
     path:string
 }
 
-interface PluginRegistryConfig {
+export interface PluginRegistryConfig {
     block: Array<PluginConfig>
     container: Array<PluginConfig>
 }
@@ -513,14 +597,14 @@ export class PluginManager {
     }
 
     private static createPlugin(registry:Array<PluginConfig>, type:string, $element:JQuery) {
-        console.log('PluginManager::createPlugin', registry, type, $element);
+        //console.log('PluginManager::createPlugin', registry, type, $element);
         this.clearActivePlugin()
             .then(() => {
                 registry.forEach((config:PluginConfig) => {
                     if (config.name === type) {
                         require([config.path], (plugin:PluginInterface) => {
-                            console.log('plugin loaded', plugin);
-                            this.activePlugin = new plugin($element, BaseManager.getWindow());
+                            //console.log('plugin loaded', plugin);
+                            this.activePlugin = new plugin($element, BaseManager.getContentWindow());
                             this.activePlugin.edit();
                         });
                         return;
@@ -581,10 +665,8 @@ class ToolbarManager {
         this.toolbar = new ToolbarView<Toolbar>({
             model: toolbar
         });
-        $(document).find('body').append(
-            this.toolbar.render().$el
-        );
-        this.toolbar.postRender();
+        $(document).find('body').append(this.toolbar.$el);
+        this.toolbar.render();
     }
 
     static createBlockToolbar($block:JQuery, origin:OffsetInterface):void {
@@ -596,7 +678,7 @@ class ToolbarManager {
             });
 
         // Edit button
-        toolbar.addButton('default', new Button({
+        toolbar.addControl('default', new Button({
             name: 'edit',
             title: 'Edit',
             icon: 'pencil',
@@ -610,19 +692,20 @@ class ToolbarManager {
                 name: config.name,
                 title: config.title,
                 confirm: 'Êtes-vous sûr de vouloir changer le type de ce bloc ? (Le contenu actuel sera définitivement perdu).',
-                event: 'block.change-type',
-                data: {$block: $block, type: config.name}
+                data: {type: config.name}
             });
         });
-        toolbar.addButton('default', new Button({
+        toolbar.addControl('default', new Button({
             name: 'change-type',
             title: 'Change type',
             icon: 'cog',
+            event: 'block.change-type',
+            data: {$block: $block},
             choices: choices
         }));
         if (1 == $row.length) {
             // Move left
-            toolbar.addButton('horizontal', new Button({
+            toolbar.addControl('horizontal', new Button({
                 name: 'move-left',
                 title: 'Move left',
                 icon: 'arrow-left',
@@ -631,7 +714,7 @@ class ToolbarManager {
                 data: {$block: $block}
             }));
             // Move right
-            toolbar.addButton('horizontal', new Button({
+            toolbar.addControl('horizontal', new Button({
                 name: 'move-right',
                 title: 'Move right',
                 icon: 'arrow-right',
@@ -640,7 +723,7 @@ class ToolbarManager {
                 data: {$block: $block}
             }));
             // Move top
-            /*toolbar.addButton('vertical', new Button({
+            /*toolbar.addControl('vertical', new Button({
                 name: 'move-up',
                 title: 'Move up',
                 icon: 'arrow-up',
@@ -652,7 +735,7 @@ class ToolbarManager {
                 data: {$block: $block}
             }));*/
             // Move bottom
-            /*toolbar.addButton('vertical', new Button({
+            /*toolbar.addControl('vertical', new Button({
                 name: 'move-down',
                 title: 'Move down',
                 icon: 'arrow-down',
@@ -664,7 +747,7 @@ class ToolbarManager {
                 data: {$block: $block}
             }));*/
             // Grow
-            toolbar.addButton('resize', new Button({
+            toolbar.addControl('resize', new Button({
                 name: 'expand',
                 title: 'Expand size',
                 icon: 'expand',
@@ -676,7 +759,7 @@ class ToolbarManager {
                 data: {$block: $block}
             }));
             // Reduce
-            toolbar.addButton('resize', new Button({
+            toolbar.addControl('resize', new Button({
                 name: 'compress',
                 title: 'Compress size',
                 icon: 'compress',
@@ -685,7 +768,7 @@ class ToolbarManager {
                 data: {$block: $block}
             }));
             // Remove
-            toolbar.addButton('add', new Button({
+            toolbar.addControl('add', new Button({
                 name: 'remove',
                 title: 'Remove',
                 icon: 'remove',
@@ -700,15 +783,16 @@ class ToolbarManager {
                 choices.push({
                     name: config.name,
                     title: config.title,
-                    event: 'block.add',
-                    data: {$block: $block, type: config.name}
+                    data: {type: config.name}
                 });
             });
-            toolbar.addButton('add', new Button({
+            toolbar.addControl('add', new Button({
                 name: 'add',
                 title: 'Create a new block after this one',
                 icon: 'plus',
                 disabled: 6 <= $row.children('.cms-column').length, // TODO min size parameter
+                event: 'block.add',
+                data: {$block: $block},
                 choices: choices,
             }));
         }
@@ -734,7 +818,7 @@ class ToolbarManager {
         }));*/
         if (1 == $container.length) {
             // Move top
-            toolbar.addButton('move', new Button({
+            toolbar.addControl('move', new Button({
                 name: 'move-up',
                 title: 'Move up',
                 icon: 'arrow-up',
@@ -743,7 +827,7 @@ class ToolbarManager {
                 data: {$row: $row}
             }));
             // Move bottom
-            toolbar.addButton('move', new Button({
+            toolbar.addControl('move', new Button({
                 name: 'move-down',
                 title: 'Move down',
                 icon: 'arrow-down',
@@ -752,7 +836,7 @@ class ToolbarManager {
                 data: {$row: $row}
             }));
             // Remove
-            toolbar.addButton('add', new Button({
+            toolbar.addControl('add', new Button({
                 name: 'remove',
                 title: 'Remove',
                 icon: 'remove',
@@ -762,7 +846,7 @@ class ToolbarManager {
                 data: {$row: $row}
             }));
             // Add
-            toolbar.addButton('add', new Button({
+            toolbar.addControl('add', new Button({
                 name: 'add',
                 title: 'Create a new row',
                 icon: 'plus',
@@ -781,7 +865,7 @@ class ToolbarManager {
                 origin: origin
             });
 
-        toolbar.addButton('default', new Button({
+        toolbar.addControl('default', new Button({
             name: 'edit',
             title: 'Edit',
             icon: 'pencil',
@@ -795,20 +879,20 @@ class ToolbarManager {
                 name: config.name,
                 title: config.title,
                 confirm: 'Êtes-vous sûr de vouloir changer le type de ce contener ? (Le contenu actuel sera définitivement perdu).',
-                event: 'container.change-type',
-                data: {$container: $container, type: config.name}
+                data: {type: config.name}
             });
         });
-        toolbar.addButton('default', new Button({
+        toolbar.addControl('default', new Button({
             name: 'change-type',
             title: 'Change type',
             icon: 'cog',
+            event: 'container.change-type',
+            data: {$container: $container},
             choices: choices
         }));
         if (1 == $content.length) {
-            // TODO change type
             // Move top
-            toolbar.addButton('move', new Button({
+            toolbar.addControl('move', new Button({
                 name: 'move-up',
                 title: 'Move up',
                 icon: 'arrow-up',
@@ -817,7 +901,7 @@ class ToolbarManager {
                 data: {$container: $container}
             }));
             // Move bottom
-            toolbar.addButton('move', new Button({
+            toolbar.addControl('move', new Button({
                 name: 'move-down',
                 title: 'Move down',
                 icon: 'arrow-down',
@@ -826,7 +910,7 @@ class ToolbarManager {
                 data: {$container: $container}
             }));
             // Remove
-            toolbar.addButton('add', new Button({
+            toolbar.addControl('add', new Button({
                 name: 'remove',
                 title: 'Remove',
                 icon: 'remove',
@@ -840,14 +924,15 @@ class ToolbarManager {
                 choices.push({
                     name: config.name,
                     title: config.title,
-                    event: 'container.add',
-                    data: {$container: $container, type: config.name}
+                    data: {type: config.name}
                 });
             });
-            toolbar.addButton('add', new Button({
+            toolbar.addControl('add', new Button({
                 name: 'add',
                 title: 'Create a new container after this one',
                 icon: 'plus',
+                event: 'container.add',
+                data: {$container: $container},
                 choices: choices,
             }));
         }
@@ -943,11 +1028,11 @@ export class DocumentManager {
      */
     private onViewportLoad(win:Window, doc:Document):DocumentManager {
 
-        BaseManager.setWindow(win);
-        BaseManager.setDocument($(doc));
+        BaseManager.setContentWindow(win);
+        BaseManager.setContentDocument($(doc));
 
-        // Intercept anchors click
-        BaseManager.getDocument().find('a[href]').off('click').on('click', (e:Event) => {
+        // Intercept anchors click + TODO form submit
+        BaseManager.getContentDocument().find('a[href]').off('click').on('click', (e:Event) => {
             e.preventDefault();
             e.stopPropagation();
 
@@ -963,6 +1048,8 @@ export class DocumentManager {
         if (this.enabled) {
             this.enableEdition();
         }
+
+        Dispatcher.trigger('document_manager.document_data', BaseManager.getDocumentData());
 
         return this;
     }
@@ -984,9 +1071,8 @@ export class DocumentManager {
         // Clear active plugin.
         PluginManager.clearActivePlugin();
 
-        // Clear viewport window and document
-        BaseManager.setWindow(null);
-        BaseManager.setDocument(null);
+        // Clear content window, document and locale
+        BaseManager.clear();
 
         return this;
     }
@@ -1104,7 +1190,7 @@ export class DocumentManager {
     }
 
     private enableEdition():DocumentManager {
-        var $document = BaseManager.getDocument();
+        var $document = BaseManager.getContentDocument();
 
         if (!this.enabled || null === $document) {
             return;
@@ -1126,7 +1212,7 @@ export class DocumentManager {
     }
 
     private disableEdition():DocumentManager {
-        var $document = BaseManager.getDocument();
+        var $document = BaseManager.getContentDocument();
 
         if (this.enabled || null === $document) {
             return;

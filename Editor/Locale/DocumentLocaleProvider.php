@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @package Ekyna\Bundle\CmsBundle\Editor\Locale
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class ContentLocaleProvider implements LocaleProviderInterface, EventSubscriberInterface
+class DocumentLocaleProvider implements LocaleProviderInterface, EventSubscriberInterface
 {
     /**
      * @var Request
@@ -70,7 +70,7 @@ class ContentLocaleProvider implements LocaleProviderInterface, EventSubscriberI
         if (null === $this->request) {
             return $this->getFallbackLocale();
         }
-        return $this->request->get('_content_locale', $this->request->getLocale());
+        return $this->request->get('_document_locale', $this->request->getLocale());
     }
 
     /**

@@ -27,23 +27,13 @@ class EditorPluginPass implements CompilerPassInterface
         // Block plugins
         $taggedServices = $container->findTaggedServiceIds('ekyna_cms.editor.block_plugin');
         foreach ($taggedServices as $id => $tagAttributes) {
-            foreach ($tagAttributes as $attributes) {
-                $registry->addMethodCall(
-                    'addBlockPlugin',
-                    array($attributes["alias"], new Reference($id))
-                );
-            }
+            $registry->addMethodCall('addBlockPlugin', array(new Reference($id)));
         }
 
         // Container plugins
         $taggedServices = $container->findTaggedServiceIds('ekyna_cms.editor.container_plugin');
         foreach ($taggedServices as $id => $tagAttributes) {
-            foreach ($tagAttributes as $attributes) {
-                $registry->addMethodCall(
-                    'addContainerPlugin',
-                    array($attributes["alias"], new Reference($id))
-                );
-            }
+            $registry->addMethodCall('addContainerPlugin', array(new Reference($id)));
         }
 
         $mapping = array(

@@ -86,7 +86,7 @@ class ImagePlugin extends AbstractPlugin
             ]
         ]);
 
-        if ($request->getMethod() == 'POST' && $form->handleRequest($request)) {
+        if ($request->getMethod() == 'POST' && $form->handleRequest($request) && $form->isValid()) {
             $data = $form->getData();
 
             $block->setData($data);
@@ -151,9 +151,17 @@ class ImagePlugin extends AbstractPlugin
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getTitle()
+    {
+        return 'Image';
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public function getType()
+    public function getName()
     {
         return 'ekyna_block_image';
     }

@@ -92,7 +92,7 @@ class PageType extends ResourceFormType
                         'label'         => 'ekyna_core.field.parent',
                         'admin_helper'  => 'CMS_PAGE_PARENT',
                         'class'         => $this->dataClass,
-                        'property'      => 'name',
+                        //'property_path' => 'name',
                         'required'      => true,
                         'query_builder' => function (EntityRepository $er) use ($page) {
                             $qb = $er
@@ -120,7 +120,7 @@ class PageType extends ResourceFormType
 
                 $controllers = [];
                 foreach ($this->config['controllers'] as $name => $config) {
-                    $controllers[$name] = $config['title'];
+                    $controllers[$config['title']] = $name;
                 }
 
                 $form->add('controller', Type\ChoiceType::class, [

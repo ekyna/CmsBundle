@@ -27,7 +27,7 @@ class EkynaCmsExtension extends AbstractExtension
 
         $container
             ->getDefinition('ekyna_cms.twig.cms_extension')
-            ->replaceArgument(7, [
+            ->replaceArgument(0, [
                 'home_route'  => $config['home_route'],
                 'esi_flashes' => $config['esi_flashes'],
                 'seo'         => $config['seo'],
@@ -36,13 +36,16 @@ class EkynaCmsExtension extends AbstractExtension
 
         $container
             ->getDefinition('ekyna_cms.editor.editor')
-            ->replaceArgument(3, [
-                'block_min_size'           => $config['editor']['plugin']['block']['min_size'],
-                'default_block_plugin'     => $config['editor']['plugin']['block']['default'],
-                'default_container_plugin' => $config['editor']['plugin']['container']['default'],
+            ->replaceArgument(0, [
+                'locales'                  => $container->getParameter('locales'),
+                'layout'                   => $config['editor']['layout'],
+                'viewports'                => $config['editor']['viewports'],
+                'block_min_size'           => $config['editor']['plugins']['block']['min_size'],
+                'default_block_plugin'     => $config['editor']['plugins']['block']['default'],
+                'default_container_plugin' => $config['editor']['plugins']['container']['default'],
             ]);
 
-        foreach ($config['editor']['plugin'] as $type => $pluginsConfigs) {
+        foreach ($config['editor']['plugins'] as $type => $pluginsConfigs) {
             foreach ($pluginsConfigs as $name => $pluginConfig) {
                 $container->setParameter('ekyna_cms.editor.' . $type . '_plugin.' . $name . '.config', $pluginConfig);
             }

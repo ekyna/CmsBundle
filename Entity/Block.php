@@ -46,7 +46,7 @@ class Block extends AbstractTranslatable implements Cms\BlockInterface
     /**
      * @var array
      */
-    protected $data;
+    protected $data = [];
 
 
     /**

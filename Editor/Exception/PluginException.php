@@ -3,11 +3,11 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Exception;
 
 /**
- * Class UnknownPluginException
+ * Class PluginException
  * @package Ekyna\Bundle\CmsBundle\Editor\Exception
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class UnknownPluginException extends EditorException
+class PluginException extends EditorException
 {
 
 }

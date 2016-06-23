@@ -102,10 +102,7 @@ class PageHelper
             if (null === $this->request) {
                 throw new \RuntimeException('The page helper must be initialized first.');
             }
-            $this->currentPage = null;
-            if (null !== $route = $this->request->attributes->get('_route', null)) {
-                $this->currentPage = $this->findByRoute($route);
-            }
+            $this->currentPage = $this->findByRequest($this->request);
         }
         return $this->currentPage;
     }

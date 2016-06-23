@@ -105,7 +105,15 @@ class TinymcePlugin extends AbstractPlugin
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getTitle()
+    {
+        return 'Html';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
     {
         return 'ekyna_block_tinymce';
     }

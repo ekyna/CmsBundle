@@ -20,7 +20,7 @@ class BlockTranslation extends AbstractTranslation implements BlockTranslationIn
     /**
      * @var array
      */
-    protected $data;
+    protected $data = [];
 
 
     /**

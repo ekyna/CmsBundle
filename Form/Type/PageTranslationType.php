@@ -73,6 +73,7 @@ class PageTranslationType extends AbstractType
                     'label'        => 'ekyna_core.field.content',
                     'admin_helper' => 'CMS_PAGE_CONTENT',
                     'theme'        => 'advanced',
+                    'required'     => false,
                 ));
             }
         });

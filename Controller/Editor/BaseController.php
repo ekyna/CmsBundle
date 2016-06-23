@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
 use Ekyna\Bundle\CmsBundle\Entity;
+use Ekyna\Bundle\CoreBundle\Modal\Modal;
 use JMS\Serializer\SerializationContext;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,48 @@ class BaseController extends Controller
     const SERIALIZE_FULL    = 'Default';
     const SERIALIZE_LAYOUT  = 'Layout';
     const SERIALIZE_CONTENT = 'Content';
+
+    /**
+     * Creates a modal.
+     *
+     * @param string $title
+     * @param mixed  $content
+     * @param array  $buttons
+     *
+     * @return Modal
+     */
+    protected function createModal($title, $content = null, array $buttons = [])
+    {
+        $modal = new Modal($title);
+
+        $buttons = [];
+
+        if (empty($buttons)) {
+            $buttons['submit'] = [
+                'id'       => 'submit',
+                'label'    => 'ekyna_core.button.validate',
+                'icon'     => 'glyphicon glyphicon-ok',
+                'cssClass' => 'btn-success',
+                'autospin' => true,
+            ];
+        }
+        if (!array_key_exists('close', $buttons)) {
+            $buttons['close'] = [
+                'id'       => 'close',
+                'label'    => 'ekyna_core.button.cancel',
+                'icon'     => 'glyphicon glyphicon-remove',
+                'cssClass' => 'btn-default',
+            ];
+        }
+
+        $modal->setButtons($buttons);
+
+        if ($content) {
+            $modal->setContent($content);
+        }
+
+        return $modal;
+    }
 
     /**
      * Builds the response.
@@ -96,7 +139,7 @@ class BaseController extends Controller
      */
     protected function getViewBuilder()
     {
-        return $this->get('ekyna_cms.editor.view_builder');
+        return $this->getEditor()->getViewBuilder();
     }
 
     /**

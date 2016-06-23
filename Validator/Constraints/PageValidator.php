@@ -54,11 +54,24 @@ class PageValidator extends ConstraintValidator
          * @var Page          $constraint
          */
 
+        // Check that the parent page is not locked
+        if (null !== $parentPage = $page->getParent()) {
+            if ($parentPage->getLocked()) {
+                $this->context
+                    ->buildViolation($constraint->invalidParent)
+                    ->atPath('parent')
+                    ->addViolation();
+            }
+        }
+
         // Validates the translations title
         if (!in_array('Generator', $constraint->groups)) {
             foreach ($this->locales as $locale) {
                 if (0 === strlen($page->translate($locale, true)->getTitle())) {
-                    $this->context->addViolationAt('translations[' . $locale . '].title', $constraint->titleIsMandatory);
+                    $this->context
+                        ->buildViolation($constraint->titleIsMandatory)
+                        ->atPath('translations[' . $locale . '].title')
+                        ->addViolation();
 
                     return;
                 }
@@ -68,10 +81,16 @@ class PageValidator extends ConstraintValidator
         // Validates the controller
         if (!$page->getStatic()) {
             if (null === $controller = $page->getController()) {
-                $this->context->addViolationAt('controller', $constraint->controllerIsMandatory);
+                $this->context
+                    ->buildViolation($constraint->controllerIsMandatory)
+                    ->atPath('controller')
+                    ->addViolation();
             }
             if (!array_key_exists($controller, $this->pageConfig['controllers'])) {
-                $this->context->addViolationAt('controller', $constraint->invalidController);
+                $this->context
+                    ->buildViolation($constraint->invalidController)
+                    ->atPath('controller')
+                    ->addViolation();
             }
         }
     }

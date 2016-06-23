@@ -4,18 +4,40 @@ import * as Backbone from 'backbone';
 import * as _ from 'underscore';
 
 import Dispatcher from './dispatcher';
-import {Button, ButtonGroup, Toolbar, ToolbarView} from './ui';
-import {OffsetInterface} from "./ui";
+import {OffsetInterface, Button, Select, SelectChoiceConfig, Toolbar, ToolbarView} from './ui';
 
+export interface ViewportButtonConfig {
+    width: number
+    height: number
+    icon: string
+    title: string
+    name: string
+    active:boolean
+}
+export interface LocaleChoiceConfig {
+    name: number
+    title: number
+}
+
+export interface MainToolbarAttributes {
+    id: string
+    classes: Array<string>
+}
+
+export interface MainToolbarOptions {
+    viewports: Array<ViewportButtonConfig>
+    locales: Array<LocaleChoiceConfig>
+}
 
 /**
  * Controls model
  */
 export class MainToolbar extends Toolbar {
-    initialize(attributes?:any, options?:any):void {
+    initialize(attributes:MainToolbarAttributes, options:MainToolbarOptions):void {
         super.initialize(attributes, options);
 
-        this.addButton('default', new Button({
+        // Power button
+        this.addControl('default', new Button({
             name: 'power',
             title: 'Toggle editor on/off',
             size: 'md',
@@ -23,7 +45,9 @@ export class MainToolbar extends Toolbar {
             icon: 'power-off',
             event: 'controls.power.click'
         }));
-        this.addButton('default', new Button({
+
+        // Reload button
+        this.addControl('default', new Button({
             name: 'reload',
             title: 'Reload the page',
             size: 'md',
@@ -33,26 +57,67 @@ export class MainToolbar extends Toolbar {
             spinning: true
         }));
 
-        if (options.viewports) {
-            _.forEach(options.viewports, (viewport:{
-                width: number; height: number, icon: string, title: string, name: string, active?:boolean
-            }) => {
-                this.addButton('viewport', new Button({
-                    name: viewport.name,
-                    title: viewport.title,
-                    size: 'md',
-                    icon: viewport.icon,
-                    event: 'controls.viewport.click',
-                    rotate: false,
-                    active: viewport.active,
-                    data: {
-                        width: viewport.width,
-                        height: viewport.height
-                    }
-                }));
-            });
+        // Viewport selector
+        if (!options.viewports || 0 == options.viewports.length) {
+            throw 'Viewport buttons are not configured';
         }
+        _.forEach(options.viewports, (viewport:ViewportButtonConfig) => {
+            this.addControl('viewport', new Button({
+                name: viewport.name,
+                title: viewport.title,
+                size: 'md',
+                icon: viewport.icon,
+                event: 'controls.viewport.click',
+                rotate: false,
+                active: viewport.active,
+                data: {
+                    width: viewport.width,
+                    height: viewport.height
+                }
+            }));
+        });
+
+        // Locale selector
+        if (!options.locales || 0 == options.locales.length) {
+            throw 'Locale buttons are not configured';
+        }
+        this.addControl('document', new Select({
+            name: 'locale',
+            title: 'Select the locale',
+            event: 'controls.locale.change',
+            choices: options.locales
+        }));
+        // Page selector
+        this.addControl('document', new Select({
+            name: 'page',
+            title: 'Select the page',
+            event: 'controls.page.change',
+            choices: [],
+            width: 250,
+        }));
+        // Edit page button
+        this.addControl('document', new Button({
+            name: 'edit-page',
+            title: 'Edit the page',
+            size: 'md',
+            theme: 'warning',
+            icon: 'pencil',
+            event: 'controls.edit_page.click'
+        }));
+        // New page button
+        this.addControl('document', new Button({
+            name: 'new-page',
+            title: 'Create a new page',
+            size: 'md',
+            theme: 'success',
+            icon: 'plus',
+            event: 'controls.new_page.click'
+        }));
     }
+}
+
+interface MainToolbarViewOptions extends Backbone.ViewOptions<MainToolbar> {
+    model: MainToolbar
 }
 
 /**
@@ -61,7 +126,7 @@ export class MainToolbar extends Toolbar {
 export class MainToolbarView extends ToolbarView<MainToolbar> {
     template:(data?:Object) => string;
 
-    constructor(options?:Backbone.ViewOptions<MainToolbar>) {
+    constructor(options:MainToolbarViewOptions) {
         super(options);
 
         this.template = _.template(`
@@ -79,7 +144,7 @@ export class MainToolbarView extends ToolbarView<MainToolbar> {
         // Viewport button click handler
         Dispatcher.on('controls.viewport.click', (button:Button) => {
             // Deactivate others buttons.
-            this.model.getGroup('viewport').get('buttons')
+            this.model.getGroup('viewport').get('controls')
                 .reject(function(b:Button) {
                     return b == button;
                 })
@@ -99,14 +164,19 @@ export class MainToolbarView extends ToolbarView<MainToolbar> {
         // Prevent positioning
     }
 
-    setBusy(e?:Event):void {
-        if (e && e.defaultPrevented) {
-            return;
-        }
-        this.model.getButton('default', 'reload').activate().startSpinning();
+    getLocaleSelect():Select {
+        return (<Select>this.model.getControl('document', 'locale'));
     }
 
-    unsetBusy():void {
-        this.model.getButton('default', 'reload').deactivate().stopSpinning();
+    getPageSelect():Select {
+        return (<Select>this.model.getControl('document', 'page'));
+    }
+
+    getNewPageButton():Button {
+        return (<Button>this.model.getControl('document', 'new-page'));
+    }
+
+    getEditPageButton():Button {
+        return (<Button>this.model.getControl('document', 'edit-page'));
     }
 }

@@ -12,11 +12,18 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 interface PluginInterface
 {
     /**
+     * Returns the title.
+     *
+     * @return string
+     */
+    public function getTitle();
+
+    /**
      * Returns the supported block type.
      *
      * @return string
      */
-    public function getType();
+    public function getName();
 
     /**
      * Returns the javascript file path.

@@ -7,18 +7,18 @@
     {{ bootstrap_set_col_size('md') }}
     {{ form_errors(form) }}
     <div class="tab-content">
-	    <div class="tab-pane active" id="general">
-	        {{ form_row(form.name) }}
-	        {{ form_row(form.parent) }}
+        <div class="tab-pane active" id="general">
+            {{ form_row(form.name) }}
+            {{ form_row(form.parent) }}
             {{ form_row(form.enabled) }}
-	        {% if form.controller is defined %}
-	            {{ form_row(form.controller) }}
-	        {% endif %}
+            {% if form.controller is defined %}
+                {{ form_row(form.controller) }}
+            {% endif %}
             {{ form_row(form.translations) }}
-	    </div>
-	    <div class="tab-pane" id="seo">
-	        {{ form_row(form.seo) }}
-	    </div>
+        </div>
+        <div class="tab-pane" id="seo">
+            {{ form_row(form.seo) }}
+        </div>
     </div>
     {{ form_rest(form) }}
 </div>

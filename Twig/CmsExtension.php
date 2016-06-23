@@ -65,6 +65,7 @@ class CmsExtension extends \Twig_Extension
     /**
      * Constructor.
      *
+     * @param array                    $config
      * @param SettingsManagerInterface $settings
      * @param MenuProvider             $menuProvider
      * @param Helper                   $menuHelper
@@ -72,26 +73,17 @@ class CmsExtension extends \Twig_Extension
      * @param SeoRepository            $seoRepository
      * @param TagManager               $tagManager
      * @param FragmentHandler          $fragmentHandler
-     * @param array                    $config
      */
     public function __construct(
+        array $config,
         SettingsManagerInterface $settings,
         MenuProvider             $menuProvider,
         Helper                   $menuHelper,
         PageHelper               $pageHelper,
         SeoRepository            $seoRepository,
         TagManager               $tagManager,
-        FragmentHandler          $fragmentHandler,
-        array $config = array()
+        FragmentHandler          $fragmentHandler
     ) {
-        $this->settings        = $settings;
-        $this->menuProvider    = $menuProvider;
-        $this->menuHelper      = $menuHelper;
-        $this->pageHelper      = $pageHelper;
-        $this->tagManager      = $tagManager;
-        $this->seoRepository   = $seoRepository;
-        $this->fragmentHandler = $fragmentHandler;
-
         $this->config = array_merge(array(
             'home_route' => 'home',
             'seo' => array(
@@ -104,6 +96,14 @@ class CmsExtension extends \Twig_Extension
             ),
             'esi_flashes' => false,
         ), $config);
+
+        $this->settings        = $settings;
+        $this->menuProvider    = $menuProvider;
+        $this->menuHelper      = $menuHelper;
+        $this->pageHelper      = $pageHelper;
+        $this->tagManager      = $tagManager;
+        $this->seoRepository   = $seoRepository;
+        $this->fragmentHandler = $fragmentHandler;
     }
 
     /**
