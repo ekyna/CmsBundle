@@ -54,13 +54,16 @@ class ViewBuilder
         }
 
         if ($this->editor->isEnabled()) {
+            // Content
             $view->attributes['id'] = 'cms-content-' . $content->getId();
             $view->attributes['data'] = [
                 'id' => $content->getId(),
             ];
-            $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
-            $view->attributes['classes'] = trim($classes . ' cms-content');
         }
+
+        // Content
+        $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
+        $view->attributes['classes'] = trim($classes . ' cms-content');
 
         return $view;
     }
@@ -89,20 +92,25 @@ class ViewBuilder
         }
 
         if ($this->editor->isEnabled()) {
+            // Container
             $view->attributes['id'] = 'cms-container-' . $container->getId();
             $view->attributes['data'] = [
                 'id'       => $container->getId(),
                 'position' => $container->getPosition(),
                 'type'     => $container->getType(),
             ];
-            $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
-            $view->attributes['classes'] = trim($classes . ' cms-container');
 
             // Inner container
             $view->innerAttributes['id'] = 'cms-inner-container-' . $container->getId();
-            $classes = array_key_exists('classes', $view->innerAttributes) ? $view->innerAttributes['classes'] : '';
-            $view->innerAttributes['classes'] = trim($classes . ' cms-inner-container');
         }
+
+        // Container
+        $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
+        $view->attributes['classes'] = trim($classes . ' cms-container');
+
+        // Inner container
+        $classes = array_key_exists('classes', $view->innerAttributes) ? $view->innerAttributes['classes'] : '';
+        $view->innerAttributes['classes'] = trim($classes . ' cms-inner-container');
 
         return $view;
     }
@@ -125,14 +133,17 @@ class ViewBuilder
         }
 
         if ($this->editor->isEnabled()) {
+            // Row
             $view->attributes['id'] = 'cms-row-' . $row->getId();
             $view->attributes['data'] = [
                 'id'       => $row->getId(),
                 'position' => $row->getPosition(),
             ];
-            $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
-            $view->attributes['classes'] = trim($classes . ' cms-row');
         }
+
+        // Row
+        $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
+        $view->attributes['classes'] = trim($classes . ' cms-row');
 
         return $view;
     }
@@ -161,8 +172,6 @@ class ViewBuilder
                 'position' => $block->getPosition(),
                 'size'     => $block->getSize(),
             ];
-            $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
-            $view->attributes['classes'] = trim($classes . ' cms-column');
 
             // Block
             $view->pluginAttributes['id'] = 'cms-block-' . $block->getId();
@@ -170,9 +179,15 @@ class ViewBuilder
                 'id'   => $block->getId(),
                 'type' => $block->getType(),
             ];
-            $classes = array_key_exists('classes', $view->pluginAttributes) ? $view->pluginAttributes['classes'] : '';
-            $view->pluginAttributes['classes'] = trim($classes . ' cms-block');
         }
+
+        // Column
+        $classes = array_key_exists('classes', $view->attributes) ? $view->attributes['classes'] : '';
+        $view->attributes['classes'] = trim($classes . ' cms-column');
+
+        // Block
+        $classes = array_key_exists('classes', $view->pluginAttributes) ? $view->pluginAttributes['classes'] : '';
+        $view->pluginAttributes['classes'] = trim($classes . ' cms-block');
 
         return $view;
     }

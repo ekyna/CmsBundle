@@ -1,13 +1,12 @@
-.cms-content {
-  > div {
-    background: no-repeat center center;
-    -webkit-background-size:cover;
-    background-size: cover;
-  }
-  > div > .container,
-  > div > .container > .row {
-    padding-top: 15px;
-    padding-bottom: 15px;
-  }
-}
+@import "editor-variables.less";
 
+.cms-container {
+  background: no-repeat center center;
+  -webkit-background-size:cover;
+  background-size: cover;
+}
+.cms-inner-container,
+.cms-row {
+  padding-top: @document-element-padding + 1;
+  padding-bottom: @document-element-padding + 1;
+}

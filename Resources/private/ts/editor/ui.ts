@@ -16,6 +16,39 @@ let s2 = Select2;
 import Dispatcher from './dispatcher';
 
 
+export class Util {
+    static addEditorParameterToUrl(url:string):string {
+        var anchor:HTMLAnchorElement = <HTMLAnchorElement>document.createElement('a');
+        anchor.href = url;
+
+        // Parse search query string
+        var params:Backbone.ObjectHash = {},
+            seg:any = anchor.search.replace('?','').split('&'),
+            len:number = seg.length, i:number = 0, s:any;
+        for (;i<len;i++) {
+            if (!seg[i]) { continue; }
+            s = seg[i].split('=');
+            params[s[0]] = s[1];
+        }
+
+        // Add cms-editor-enable parameter if not exists
+        if (!params.hasOwnProperty('cms-editor-enable')) {
+            params['cms-editor-enable'] = 1;
+
+            // Rebuild search query string
+            seg = [];
+            for (var k in params) {
+                if (params.hasOwnProperty(k)) {
+                    seg.push(k + '=' + params[k]);
+                }
+            }
+            anchor.search = '?' + seg.join('&');
+        }
+
+        return anchor.href;
+    }
+}
+
 /**
  * OffsetInterface
  */

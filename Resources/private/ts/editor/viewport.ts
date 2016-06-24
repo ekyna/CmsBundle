@@ -5,7 +5,7 @@ import * as Backbone from 'backbone';
 import * as _ from 'underscore';
 
 import Dispatcher from './dispatcher';
-import {OffsetInterface, Button} from './ui';
+import {Util, OffsetInterface, Button} from './ui';
 
 /**
  * SizeInterface
@@ -56,8 +56,106 @@ export class ViewportView extends Backbone.View<ViewportModel> {
         $(window).resize(this.resize);
     }
 
-    private reload():void {
+    reload():void {
         this.iFrame.contentWindow.location.reload();
+    }
+
+    onViewportButtonClick(button:Button):void {
+        var size:SizeInterface = null,
+            data:SizeInterface = button.get('data');
+
+        if (0 < data.width && 0 < data.height) {
+            if (button.get('rotate')) {
+                //noinspection JSSuspiciousNameCombination
+                size = {
+                    width: data.height,
+                    height: data.width
+                };
+            } else {
+                size = {
+                    width: data.width,
+                    height: data.height
+                };
+            }
+        }
+
+        this.model.set('size', size);
+    }
+
+    /**
+     * Renders the viewport.
+     *
+     * @returns ViewportView
+     */
+    render():ViewportView {
+        this.$el.html(this.template());
+
+        return this;
+    }
+
+    /**
+     * Loads the url in the editor content frame.
+     * Adds the cms-editor-enable parameter if need.
+     *
+     * @param url
+     */
+    load(url:string) {
+        /*var anchor:HTMLAnchorElement = <HTMLAnchorElement>document.createElement('a');
+        anchor.href = url;
+
+        // Parse search query string
+        var params:Backbone.ObjectHash = {},
+            seg:any = anchor.search.replace('?','').split('&'),
+            len:number = seg.length, i:number = 0, s:any;
+        for (;i<len;i++) {
+            if (!seg[i]) { continue; }
+            s = seg[i].split('=');
+            params[s[0]] = s[1];
+        }
+
+        // Add cms-editor-enable parameter if not exists
+        if (!params.hasOwnProperty('cms-editor-enable')) {
+            params['cms-editor-enable'] = 1;
+
+            // Rebuild search query string
+            seg = [];
+            for (var k in params) {
+                if (params.hasOwnProperty(k)) {
+                    seg.push(k + '=' + params[k]);
+                }
+            }
+            anchor.search = '?' + seg.join('&');
+        }*/
+
+        this.iFrame.src = Util.addEditorParameterToUrl(url);
+    }
+
+    /**
+     * Initializes the viewport iFrame.
+     *
+     * @returns ViewportView
+     */
+    initIFrame(url:string):ViewportView {
+        this.iFrame = <HTMLIFrameElement>document.getElementById('editor-viewport-frame');
+        this.iFrame.onload = () => {
+            Dispatcher.trigger('viewport_iframe.load', this.iFrame.contentWindow || this.iFrame, this.iFrame.contentDocument);
+
+            this.iFrame.contentWindow.onbeforeunload = (e:BeforeUnloadEvent) => {
+                Dispatcher.trigger('viewport_iframe.unload', e);
+
+                // https://developer.mozilla.org/fr/docs/Web/Events/beforeunload
+                if (e.returnValue) {
+                    return e.returnValue;
+                }
+                /*if (e.defaultPrevented) {
+                    return false;
+                }*/
+            }
+        };
+
+        this.load(url);
+
+        return this;
     }
 
     /**
@@ -102,100 +200,5 @@ export class ViewportView extends Backbone.View<ViewportModel> {
         this.$el.removeAttr('style').css(css);
 
         Dispatcher.trigger('viewport.resize', origin);
-    }
-
-    onViewportButtonClick(button:Button):void {
-        var size:SizeInterface = null,
-            data:SizeInterface = button.get('data');
-
-        if (0 < data.width && 0 < data.height) {
-            if (button.get('rotate')) {
-                //noinspection JSSuspiciousNameCombination
-                size = {
-                    width: data.height,
-                    height: data.width
-                };
-            } else {
-                size = {
-                    width: data.width,
-                    height: data.height
-                };
-            }
-        }
-
-        this.model.set('size', size);
-    }
-
-    /**
-     * Renders the viewport.
-     *
-     * @returns ViewportView
-     */
-    render():ViewportView {
-        this.$el.html(this.template());
-
-        return this;
-    }
-
-    /**
-     * Initializes the viewport iFrame.
-     *
-     * @returns ViewportView
-     */
-    initIFrame(url:string):ViewportView {
-        this.iFrame = <HTMLIFrameElement>document.getElementById('editor-viewport-frame');
-        this.iFrame.onload = () => {
-            Dispatcher.trigger('viewport_iframe.load', this.iFrame.contentWindow || this.iFrame, this.iFrame.contentDocument);
-
-            this.iFrame.contentWindow.onbeforeunload = (e:BeforeUnloadEvent) => {
-                Dispatcher.trigger('viewport_iframe.unload', e);
-
-                // https://developer.mozilla.org/fr/docs/Web/Events/beforeunload
-                if (e.returnValue) {
-                    return e.returnValue;
-                }
-            }
-        };
-
-        this.load(url);
-
-        return this;
-    }
-
-    /**
-     * Loads the url in the editor content frame.
-     * Adds the cms-editor-enable parameter if need.
-     *
-     * @param url
-     */
-    load(url:string) {
-        var anchor:HTMLAnchorElement = <HTMLAnchorElement>document.createElement('a');
-        anchor.href = url;
-
-        // Parse search query string
-        var params:Backbone.ObjectHash = {},
-            seg:any = anchor.search.replace('?','').split('&'),
-            len:number = seg.length, i:number = 0, s:any;
-        for (;i<len;i++) {
-            if (!seg[i]) { continue; }
-            s = seg[i].split('=');
-            params[s[0]] = s[1];
-        }
-
-        // Add cms-editor-enable parameter if not exists
-        if (!params.hasOwnProperty('cms-editor-enable')) {
-            params['cms-editor-enable'] = 1;
-
-            // Rebuild search query string
-            seg = [];
-            for (var k in params) {
-                if (params.hasOwnProperty(k)) {
-                    seg.push(k + '=' + params[k]);
-                }
-            }
-            anchor.search = '?' + seg.join('&');
-        }
-
-        this.iFrame.src = anchor.href;
     }
 }

@@ -24,23 +24,30 @@ class Editor {
     mainToolbar:MainToolbarView;
     viewport:ViewportView;
 
+    busy:boolean;
+    $busy:JQuery;
+
     private onLocaleSelectChangeHandler:(select:Select) => void;
     private onPageSelectChangeHandler:(select:Select) => void;
     private onDocumentDataHandler:(data:DocumentData) => void;
+    private onDocumentManagerReloadHandler:() => void;
     private onNewPageClickHandler:(button:Button) => void;
     private onEditPageClickHandler:(button:Button) => void;
 
-    constructor(config:EditorConfig) {
-        this.config = config;
-
+    constructor() {
         this.onLocaleSelectChangeHandler = (s:Select) => this.onLocaleSelectChange(s);
         this.onPageSelectChangeHandler = (s:Select) => this.onPageSelectChange(s);
         this.onDocumentDataHandler = (d:DocumentData) => this.onDocumentData(d);
+        this.onDocumentManagerReloadHandler = () => this.onDocumentManagerReload();
         this.onNewPageClickHandler = (b:Button) => this.onNewPageClick(b);
         this.onEditPageClickHandler = (b:Button) => this.onEditPageClick(b);
+
+        this.busy = true;
     }
 
-    init() {
+    init(config:EditorConfig) {
+        this.config = config;
+
         // Plugin manager
         PluginManager.load(config.plugins);
 
@@ -71,6 +78,9 @@ class Editor {
         $('[data-viewport-placeholder]').replaceWith(this.viewport.render().$el);
 
 
+        // Busy layer
+        this.$busy = $('#cms-editor-busy');
+
         // Init event handlers
         this.initHandlers();
 
@@ -80,19 +90,35 @@ class Editor {
     }
 
     setBusy(e?:Event):void {
-        if (e && e.defaultPrevented) {
+        if ((e && e.defaultPrevented) || this.busy) {
             return;
         }
-        (<Button>this.mainToolbar.model.getControl('default', 'reload'))
-            .activate().startSpinning();
+
+        this.busy = true;
+
+        /*(<Button>this.mainToolbar.model.getControl('default', 'reload'))
+            .activate().startSpinning();*/
+
+        this.$busy.show();
     }
 
     unsetBusy():void {
-        (<Button>this.mainToolbar.model.getControl('default', 'reload'))
-            .deactivate().stopSpinning();
+        if (!this.busy) {
+            return;
+        }
+
+        /*(<Button>this.mainToolbar.model.getControl('default', 'reload'))
+            .deactivate().stopSpinning();*/
+
+        this.$busy.hide();
+
+        this.busy = false;
     }
 
     private initHandlers() {
+        Dispatcher.on('editor.set_busy', () => this.setBusy());
+        Dispatcher.on('editor.unset_busy', () => this.unsetBusy());
+
         // Main toolbar
         Dispatcher.on('controls.power.click', this.documentManager.powerClickHandler);
         Dispatcher.on('controls.reload.click', this.viewport.onControlsReloadClickHandler);
@@ -109,6 +135,7 @@ class Editor {
         Dispatcher.on('viewport_iframe.load', () => this.unsetBusy());
 
         // Document manager
+        Dispatcher.on('document_manager.reload', this.onDocumentManagerReloadHandler);
         Dispatcher.on('document_manager.navigate', this.viewport.onDocumentManagerNavigateHandler);
         Dispatcher.on('document_manager.document_data', this.onDocumentDataHandler);
 
@@ -164,11 +191,14 @@ class Editor {
         // TODO dynamic path page selection
     }
 
+    private onDocumentManagerReload():void {
+        this.viewport.reload();
+    }
+
     private onNewPageClick(button:Button):void {
         var modal:Ekyna.Modal = new Modal(),
             parentPageId:string = this.mainToolbar.getPageSelect().getValue();
 
-        // TODO use resource controller
         modal.load({
             url: Router.generate('ekyna_cms_page_admin_new_child', {'pageId': parentPageId}),
             method: 'GET'
@@ -205,29 +235,30 @@ class Editor {
         });
     }
 
-    private updateDocumentControls(pageId:string, reload?:boolean):void {
-        this.mainToolbar.getEditPageButton().disable();
-        this.mainToolbar.getNewPageButton().disable();
+    private updateDocumentControls(pageId:string, reload:boolean = true):SelectChoiceConfig {
 
-        var pageSelect:Select = this.mainToolbar.getPageSelect();
-        reload = !!reload || pageSelect.select(pageId);
+        var newButton:Button = this.mainToolbar.getNewPageButton(),
+            editButton:Button = this.mainToolbar.getEditPageButton(),
+            pageSelect:Select = this.mainToolbar.getPageSelect();
+
+        newButton.disable();
+        editButton.disable();
+
+        pageSelect.select(pageId);
 
         var pageChoice:SelectChoiceConfig = pageSelect.getActiveChoice();
         if (pageChoice) {
+            editButton.enable();
+            if (!pageChoice.data.locked) {
+                newButton.enable();
+            }
             if (reload) {
                 this.viewport.load(pageChoice.data.path);
             }
-            this.mainToolbar.getEditPageButton().enable();
-            if (!pageChoice.data.locked) {
-                this.mainToolbar.getNewPageButton().enable();
-                return;
-            }
         }
+
+        return pageChoice;
     }
 }
 
-var config = (<EditorConfig>$('.cms-editor').data('config'));
-var editor:Editor = new Editor(config);
-editor.init();
-
-export = editor;
+export = new Editor();

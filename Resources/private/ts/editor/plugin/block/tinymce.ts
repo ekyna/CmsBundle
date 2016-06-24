@@ -3,6 +3,7 @@
 import * as $ from 'jquery';
 import * as es6Promise from 'es6-promise';
 
+import Dispatcher from '../../dispatcher';
 import {BasePlugin} from '../base-plugin';
 import {BlockManager} from '../../document-manager';
 
@@ -78,10 +79,29 @@ interface TinyMceStatic extends TinyMceObservable {
 }
 
 class TinymcePlugin extends BasePlugin {
-    private initPromise:Promise<TinyMceStatic>;
-    private config:TinymceConfig;
-    private externalPlugins:Array<Object>;
-    private tinymce:TinyMceStatic;
+    private static initPromise:Promise<TinyMceStatic>;
+    private static config:TinymceConfig;
+    private static externalPlugins:Array<Object>;
+    private static tinymce:TinyMceStatic;
+
+    static setup():Promise<any> {
+        return new Promise(function(resolve, reject) {
+            resolve();
+        })
+    }
+
+    static tearDown():Promise<any> {
+        return new Promise(function(resolve, reject) {
+            resolve();
+        });
+    }
+
+    private static clear() {
+        TinymcePlugin.initPromise = null;
+        TinymcePlugin.config = null;
+        TinymcePlugin.externalPlugins = null;
+        TinymcePlugin.tinymce = null;
+    }
 
     edit() {
         super.edit();
@@ -101,8 +121,9 @@ class TinymcePlugin extends BasePlugin {
             .initialize()
             .then(() => {
                 if (this.isUpdated()) {
+                    Dispatcher.trigger('editor.set_busy');
                     //console.log('Tinymce block plugin : save.');
-                    var editor = this.tinymce.get('tinymce-plugin-editor');
+                    var editor = TinymcePlugin.tinymce.get('tinymce-plugin-editor');
                     if (!editor) {
                         throw 'Failed to get tinymce editor instance.';
                     }
@@ -118,6 +139,7 @@ class TinymcePlugin extends BasePlugin {
                         .then(() => {
                             this.$element.html(content);
                             this.updated = false;
+                            Dispatcher.trigger('editor.unset_busy');
                         });
                 }
             });
@@ -128,7 +150,7 @@ class TinymcePlugin extends BasePlugin {
             .save()
             .then(() => {
                 //console.log('Tinymce block plugin : remove editor.');
-                var editor = this.tinymce.get('tinymce-plugin-editor');
+                var editor = TinymcePlugin.tinymce.get('tinymce-plugin-editor');
                 if (editor) {
                     editor.remove();
                 }
@@ -136,16 +158,7 @@ class TinymcePlugin extends BasePlugin {
                 if ($wrapper.length) {
                     $wrapper.children().first().unwrap();
                 }
-            });
-    }
-
-    focus() {
-        this.initialize()
-            .then(() => {
-                var editor = this.tinymce.get('tinymce-plugin-editor');
-                if (editor) {
-                    editor.focus();
-                }
+                TinymcePlugin.clear();
             });
     }
 
@@ -154,9 +167,10 @@ class TinymcePlugin extends BasePlugin {
     }
 
     private initialize():Promise<any> {
-        if (!this.initPromise) {
-            this.initPromise = new Promise((resolve) => {
-                if (this.tinymce) {
+        if (!TinymcePlugin.initPromise) {
+            Dispatcher.trigger('editor.set_busy');
+            TinymcePlugin.initPromise = new Promise((resolve) => {
+                if (TinymcePlugin.tinymce) {
                     resolve();
                 }
 
@@ -168,30 +182,32 @@ class TinymcePlugin extends BasePlugin {
                             throw 'Failed to load tinymce from the content iFrame.';
                         }
 
-                        this.config = cfg;
+                        TinymcePlugin.config = cfg;
 
-                        this.tinymce = this.window['tinymce'];
-                        this.tinymce.baseURL = this.config.tinymce_url;
-                        this.tinymce.suffix = '.min';
+                        TinymcePlugin.tinymce = this.window['tinymce'];
+                        TinymcePlugin.tinymce.baseURL = TinymcePlugin.config.tinymce_url;
+                        TinymcePlugin.tinymce.suffix = '.min';
 
                         // Load external plugins
-                        this.externalPlugins = [];
-                        if (typeof this.config.external_plugins == 'object') {
-                            for (var pluginId in this.config.external_plugins) {
-                                if (!this.config.external_plugins.hasOwnProperty(pluginId)) {
+                        TinymcePlugin.externalPlugins = [];
+                        if (typeof TinymcePlugin.config.external_plugins == 'object') {
+                            for (var pluginId in TinymcePlugin.config.external_plugins) {
+                                if (!TinymcePlugin.config.external_plugins.hasOwnProperty(pluginId)) {
                                     continue;
                                 }
-                                var opts:any = this.config.external_plugins[pluginId],
+                                var opts:any = TinymcePlugin.config.external_plugins[pluginId],
                                     url:string = opts.url || null;
                                 if (url) {
-                                    this.externalPlugins.push({
+                                    TinymcePlugin.externalPlugins.push({
                                         id: pluginId,
                                         url: url
                                     });
-                                    this.tinymce.PluginManager.load(pluginId, url);
+                                    TinymcePlugin.tinymce.PluginManager.load(pluginId, url);
                                 }
                             }
                         }
+
+                        Dispatcher.trigger('editor.unset_busy');
 
                         resolve();
                     });
@@ -199,7 +215,7 @@ class TinymcePlugin extends BasePlugin {
             });
         }
 
-        return this.initPromise;
+        return TinymcePlugin.initPromise;
     }
 
     private createEditor() {
@@ -207,11 +223,11 @@ class TinymcePlugin extends BasePlugin {
             this.$element.wrapInner('<div id="tinymce-plugin-editor"></div>');
         }
 
-        var settings:any = this.config.theme['advanced'];
+        var settings:any = TinymcePlugin.config.theme['advanced'];
 
         settings.external_plugins = settings.external_plugins || {};
-        for (var p = 0; p < this.externalPlugins.length; p++) {
-            settings.external_plugins[this.externalPlugins[p]['id']] = this.externalPlugins[p]['url'];
+        for (var p = 0; p < TinymcePlugin.externalPlugins.length; p++) {
+            settings.external_plugins[TinymcePlugin.externalPlugins[p]['id']] = TinymcePlugin.externalPlugins[p]['url'];
         }
 
         settings.add_unload_trigger = false;
@@ -224,9 +240,9 @@ class TinymcePlugin extends BasePlugin {
         settings.content_css = [];
 
         settings.setup = (editor:TinyMceEditor) => {
-            if (typeof this.config.tinymce_buttons == 'object') {
-                for (var buttonId in this.config.tinymce_buttons) {
-                    if (!this.config.tinymce_buttons.hasOwnProperty(buttonId)) continue;
+            if (typeof TinymcePlugin.config.tinymce_buttons == 'object') {
+                for (var buttonId in TinymcePlugin.config.tinymce_buttons) {
+                    if (!TinymcePlugin.config.tinymce_buttons.hasOwnProperty(buttonId)) continue;
                     // Some tricky function to isolate variables values
                     (function (id, opts) {
                         opts.onclick = function () {
@@ -238,7 +254,7 @@ class TinymcePlugin extends BasePlugin {
                             }
                         };
                         editor.addButton(id, opts);
-                    })(buttonId, clone(this.config.tinymce_buttons[buttonId]));
+                    })(buttonId, clone(TinymcePlugin.config.tinymce_buttons[buttonId]));
                 }
             }
 
@@ -248,7 +264,7 @@ class TinymcePlugin extends BasePlugin {
             });
             editor.on('init', () => {
                 //console.log('tinymce editor init');
-                if (this.config.use_callback_tinymce_init) {
+                if (TinymcePlugin.config.use_callback_tinymce_init) {
                     var callback = window['callback_tinymce_init'];
                     if (typeof callback == 'function') {
                         callback(editor);
@@ -264,10 +280,10 @@ class TinymcePlugin extends BasePlugin {
             });
         };
 
-        var editor:TinyMceEditor = new this.tinymce.Editor(
+        var editor:TinyMceEditor = new TinymcePlugin.tinymce.Editor(
             'tinymce-plugin-editor',
             settings,
-            this.tinymce.EditorManager
+            TinymcePlugin.tinymce.EditorManager
         );
         editor.render();
         editor.show();

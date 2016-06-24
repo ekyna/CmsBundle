@@ -39,14 +39,13 @@ class PageTranslationType extends AbstractType
 
             /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
             $page = $form->getParent()->getParent()->getData();
-            if (null !== $page && null !== $parent = $page->getParent()) {
+            if (null !== $page && !$page->getStatic() && null !== $parent = $page->getParent()) {
                 $pathOptions = [
                     'label'        => 'ekyna_core.field.url',
                     'admin_helper' => 'CMS_PAGE_PATH',
                     'required'     => false,
                     'disabled'     => $page->getStatic(),
                 ];
-
                 $parentPath = $parent->translate($form->getName())->getPath();
                 if (1 < strlen($parentPath)) {
                     if (16 < strlen($parentPath)) {
@@ -106,24 +105,6 @@ class PageTranslationType extends AbstractType
             },
             // Reverse transform
             function ($data) {
-                /*if (null === $data) {
-                    return $data;
-                }*/
-
-                /**
-                 * @var \Ekyna\Bundle\CmsBundle\Entity\PageTranslation $data
-                 * @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page
-                 */
-                // Static pages's slug in not re-built by custom tree handler, need to do it there ...
-                /*if ((null !== $page = $data->getTranslatable()) && $page->getStatic() && (0 < strlen($path = $data->getPath()))) {
-                    $path = '/' . trim($data->getPath(), '/');
-                    if (null !== $parent = $page->getParent()) {
-                        $parentPath = $parent->translate($data->getLocale())->getPath();
-                        $path = rtrim($parentPath, '/') . $path;
-                    }
-                    $data->setPath($path);
-                }*/
-
                 return $data;
             }
         ));

@@ -7,9 +7,22 @@ var Promise = es6Promise.Promise;
 
 export class BasePlugin {
     protected window:Window;
+
     protected $element:JQuery;
     protected updated:boolean;
     protected destroyed:boolean;
+
+    static setup():Promise<any> {
+        return new Promise(function(resolve, reject) {
+            resolve();
+        })
+    }
+
+    static tearDown():Promise<any> {
+        return new Promise(function(resolve, reject) {
+            resolve();
+        })
+    }
 
     constructor($element:JQuery, win:Window) {
         this.window = win;
@@ -44,10 +57,6 @@ export class BasePlugin {
             .then(() => {
                 this.destroyed = true;
             });
-    }
-
-    focus ():void {
-
     }
 
     preventDocumentSelection ($target:JQuery):boolean {

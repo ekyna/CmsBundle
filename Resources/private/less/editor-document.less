@@ -1,48 +1,44 @@
 @import "editor-variables.less";
 
-@element-padding: 14px;
-@dotted-lighten: 20%;
-@solid-lighten: 10%;
-
 .cms-content {
 
   > .cms-container {
     border: 1px solid transparent;
 
     &:hover {
-      border: 1px dotted lighten(@editor-container-color, @dotted-lighten);
+      border: 1px dotted lighten(@document-container-color, @document-dotted-lighten);
     }
     &.selected, &.selected:hover {
-      border: 1px solid lighten(@editor-container-color, @solid-lighten);
+      border: 1px solid lighten(@document-container-color, @document-solid-lighten);
     }
 
     > .cms-inner-container {
-      padding: @element-padding;
+      padding: @document-element-padding;
 
       > .cms-row {
-        padding-top: @element-padding;
-        padding-bottom: @element-padding;
+        padding-top: @document-element-padding;
+        padding-bottom: @document-element-padding;
         border: 1px solid transparent;
 
         &:hover {
-          border: 1px dotted lighten(@editor-row-color, @dotted-lighten);
+          border: 1px dotted lighten(@document-row-color, @document-dotted-lighten);
         }
         &.selected, &.selected:hover {
-          border: 1px solid lighten(@editor-row-color, @solid-lighten);
+          border: 1px solid lighten(@document-row-color, @document-solid-lighten);
         }
 
         > .cms-column {
-          padding-left: @element-padding;
-          padding-right: @element-padding;
+          padding-left: @document-element-padding;
+          padding-right: @document-element-padding;
 
           > .cms-block {
             border: 1px dotted transparent;
 
             &:hover {
-              border: 1px dotted lighten(@editor-block-color, @dotted-lighten);
+              border: 1px dotted lighten(@document-block-color, @document-dotted-lighten);
             }
             &.selected, &.selected:hover {
-              border: 1px solid lighten(@editor-block-color, @solid-lighten);
+              border: 1px solid lighten(@document-block-color, @document-solid-lighten);
             }
           }
         }

@@ -4,6 +4,7 @@ import * as $ from 'jquery';
 import * as es6Promise from 'es6-promise';
 import * as Router from 'routing';
 import * as Modal from 'ekyna-modal';
+import Dispatcher from '../../dispatcher';
 
 import {BasePlugin} from '../base-plugin';
 import {BlockManager, ElementAttributes} from '../../document-manager';
@@ -31,6 +32,7 @@ class ImagePlugin extends BasePlugin {
 
                 if (e.content.hasOwnProperty('blocks')) {
                     BlockManager.parse(e.content.blocks);
+                    Dispatcher.trigger('document_manager.select', this.$element);
                 }
             }
         });
@@ -53,10 +55,6 @@ class ImagePlugin extends BasePlugin {
                     this.modal = null;
                 }
             });
-    }
-
-    focus() {
-
     }
 
     preventDocumentSelection ($target:JQuery):boolean {

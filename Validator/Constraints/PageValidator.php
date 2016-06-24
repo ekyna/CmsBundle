@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -14,6 +15,11 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class PageValidator extends ConstraintValidator
 {
+    /**
+     * @var UrlGeneratorInterface
+     */
+    private $urlGenerator;
+
     /**
      * @var array
      */
@@ -28,11 +34,13 @@ class PageValidator extends ConstraintValidator
     /**
      * Constructor.
      *
-     * @param array $pageConfig
-     * @param array $locales
+     * @param UrlGeneratorInterface $urlGenerator
+     * @param array                 $pageConfig
+     * @param array                 $locales
      */
-    public function __construct(array $pageConfig, array $locales)
+    public function __construct(UrlGeneratorInterface $urlGenerator, array $pageConfig, array $locales)
     {
+        $this->urlGenerator = $urlGenerator;
         $this->pageConfig = $pageConfig;
         $this->locales = $locales;
     }
@@ -54,16 +62,6 @@ class PageValidator extends ConstraintValidator
          * @var Page          $constraint
          */
 
-        // Check that the parent page is not locked
-        if (null !== $parentPage = $page->getParent()) {
-            if ($parentPage->getLocked()) {
-                $this->context
-                    ->buildViolation($constraint->invalidParent)
-                    ->atPath('parent')
-                    ->addViolation();
-            }
-        }
-
         // Validates the translations title
         if (!in_array('Generator', $constraint->groups)) {
             foreach ($this->locales as $locale) {
@@ -75,17 +73,52 @@ class PageValidator extends ConstraintValidator
 
                     return;
                 }
+                if ($page->getStatic()) {
+
+                }
             }
         }
 
         // Validates the controller
-        if (!$page->getStatic()) {
+        if ($page->getStatic()) {
+            if (!$page->getDynamicPath()) {
+                /** @var \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface $translation */
+                foreach ($page->getTranslations() as $translation) {
+                    $current = $translation->getPath();
+                    $locale = $translation->getLocale();
+                    $expected = $this->urlGenerator->generate($page->getRoute(), ['_locale' => $locale]);
+                    if (0 === strpos($expected, '/app_dev.php')) {
+                        $expected = substr($expected, strlen('/app_dev.php'));
+                    }
+                    if (0 === strpos($expected, '/'.$locale)) {
+                        $expected = substr($expected, strlen('/'.$locale));
+                    }
+                    if ($current != $expected) {
+                        $this->context
+                            ->buildViolation($constraint->invalidPath)
+                            ->atPath('translations[' . $locale . '].path')
+                            ->addViolation();
+                    }
+                }
+            }
+        } else {
+            // Check that the parent page is not locked
+            if (null !== $parentPage = $page->getParent()) {
+                if ($parentPage->getLocked()) {
+                    $this->context
+                        ->buildViolation($constraint->invalidParent)
+                        ->atPath('parent')
+                        ->addViolation();
+                }
+            }
+            // Check that the controller is defined
             if (null === $controller = $page->getController()) {
                 $this->context
                     ->buildViolation($constraint->controllerIsMandatory)
                     ->atPath('controller')
                     ->addViolation();
             }
+            // Check that the controller exists
             if (!array_key_exists($controller, $this->pageConfig['controllers'])) {
                 $this->context
                     ->buildViolation($constraint->invalidController)

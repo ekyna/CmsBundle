@@ -6,7 +6,7 @@ import * as es6Promise from 'es6-promise';
 import * as Router from 'routing';
 
 import Dispatcher from './dispatcher';
-import {OffsetInterface, Button, ButtonConfig, ButtonChoiceConfig, Toolbar, ToolbarView} from './ui';
+import {Util, OffsetInterface, Button, ButtonConfig, ButtonChoiceConfig, Toolbar, ToolbarView} from './ui';
 import {BasePlugin} from './plugin/base-plugin';
 import RouteParams = FOS.RouteParams;
 
@@ -154,6 +154,8 @@ export class BaseManager {
     }
 
     static request(settings:JQueryAjaxSettings):JQueryXHR {
+        Dispatcher.trigger('editor.set_busy');
+
         settings = _.extend({}, settings, {
             method: 'POST'
         });
@@ -185,6 +187,9 @@ export class BaseManager {
         });
         xhr.fail(function () {
             throw 'Editor request failed.';
+        });
+        xhr.always(function() {
+            Dispatcher.trigger('editor.unset_busy');
         });
 
         return xhr;
@@ -553,6 +558,8 @@ Dispatcher.on('container.add',
 
 interface PluginInterface {
     new($element:JQuery, window:Window):BasePlugin
+    setup():Promise<void>
+    tearDown():Promise<void>
 }
 
 interface PluginConfig {
@@ -569,6 +576,10 @@ export interface PluginRegistryConfig {
 export class PluginManager {
     private static activePlugin:BasePlugin;
     private static registry:PluginRegistryConfig;
+
+    // TODO store plugins after (requirejs) loading and call setup()
+
+    // TODO call tearDown on all stored plugins when viewport unload
 
     static load(config:PluginRegistryConfig):void {
         this.registry = config;
@@ -964,6 +975,7 @@ export class DocumentManager {
     private clickOrigin:OffsetInterface = null;
     private documentMouseDownHandler:(e:JQueryEventObject) => void;
     private documentMouseUpHandler:() => void;
+    private documentSelectHandler:($element:JQuery) => void;
 
     powerClickHandler:(button:Button) => void;
     viewportLoadHandler:(win:Window, doc:Document) => void;
@@ -979,6 +991,7 @@ export class DocumentManager {
 
         this.documentMouseDownHandler = (e:JQueryEventObject) => this.onDocumentMouseDown(e);
         this.documentMouseUpHandler = () => this.onDocumentMouseUp();
+        this.documentSelectHandler = ($element:JQuery) => this.select($element);
 
         this.powerClickHandler = (button:Button) => this.onPowerClick(button);
         this.viewportLoadHandler = (win:Window, doc:Document) => this.onViewportLoad(win, doc);
@@ -988,6 +1001,7 @@ export class DocumentManager {
 
     initialize() {
         Dispatcher.on('viewport.resize', this.viewportResizeHandler);
+        Dispatcher.on('document_manager.select', this.documentSelectHandler);
 
         Dispatcher.on('base_manager.response_parsed', (selectionId?:string) => {
             var $element:JQuery;
@@ -1028,11 +1042,13 @@ export class DocumentManager {
      */
     private onViewportLoad(win:Window, doc:Document):DocumentManager {
 
-        BaseManager.setContentWindow(win);
-        BaseManager.setContentDocument($(doc));
+        var $doc:JQuery = $(doc);
 
-        // Intercept anchors click + TODO form submit
-        BaseManager.getContentDocument().find('a[href]').off('click').on('click', (e:Event) => {
+        BaseManager.setContentWindow(win);
+        BaseManager.setContentDocument($doc);
+
+        // Intercept anchors click
+        $doc.find('a[href]').off('click').on('click', (e:Event) => {
             e.preventDefault();
             e.stopPropagation();
 
@@ -1042,6 +1058,26 @@ export class DocumentManager {
                 console.log('Attempt to navigate out of the website has been blocked.');
             } else {
                 Dispatcher.trigger('document_manager.navigate', anchor.href);
+            }
+        });
+
+        // Fix forms actions or intercept submit
+        $doc.find('form').each((index:number, element:any) => {
+            var $form = $(element),
+                action = $form.attr('action'),
+                anchor:HTMLAnchorElement = document.createElement('a');
+
+            anchor.href = action;
+
+            if (anchor.hostname !== this.hostname) {
+                $form.on('submit', function(e) {
+                    console.log('Attempt to navigate out of the website has been blocked.');
+
+                    e.preventDefault();
+                    return false;
+                });
+            } else {
+                $form.attr('action', Util.addEditorParameterToUrl(action))
             }
         });
 
@@ -1061,15 +1097,23 @@ export class DocumentManager {
 
         // Cancel if active plugin is updated
         if (PluginManager.hasActivePlugin()) {
+            // Abort reload
+            e.preventDefault();
+
+            // Ask user for pending document update
             if (PluginManager.getActivePlugin().isUpdated()) {
-                e.preventDefault();
                 e.returnValue = "Vos changements n'ont pas été sauvegardés !";
                 return this;
             }
-        }
 
-        // Clear active plugin.
-        PluginManager.clearActivePlugin();
+            // Deselect then re-trigger reload
+            this.deselect()
+                .then(() => {
+                    Dispatcher.trigger('document_manager.reload');
+                });
+
+            return this;
+        }
 
         // Clear content window, document and locale
         BaseManager.clear();

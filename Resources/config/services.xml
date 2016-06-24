@@ -305,6 +305,7 @@
 
         <!-- Validators -->
         <service id="ekyna_cms.page.validator" class="Ekyna\Bundle\CmsBundle\Validator\Constraints\PageValidator">
+            <argument type="service" id="router"></argument>
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%locales%</argument>
             <tag name="validator.constraint_validator"/>
