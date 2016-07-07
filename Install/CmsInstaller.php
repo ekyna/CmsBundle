@@ -24,6 +24,7 @@ class CmsInstaller extends AbstractInstaller implements OrderedInstallerInterfac
      */
     private $container;
 
+
     /**
      * Sets the container.
      *
