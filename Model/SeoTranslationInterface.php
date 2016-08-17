@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Ekyna\Bundle\AdminBundle\Model\TranslationInterface;
+use Ekyna\Component\Resource\Model\TranslationInterface;
 
 /**
  * Interface SeoTranslationInterface

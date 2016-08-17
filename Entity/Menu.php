@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
+use Ekyna\Component\Resource\Model\AbstractTranslatable;
 use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
 use Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;

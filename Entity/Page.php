@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
+use Ekyna\Component\Resource\Model\AbstractTranslatable;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use Ekyna\Bundle\CoreBundle\Model as Core;
 
@@ -65,17 +65,17 @@ class Page extends AbstractTranslatable implements Cms\PageInterface
      * @var string
      */
     protected $route;
-    
+
     /**
      * @var boolean
      */
     protected $static;
-    
+
     /**
      * @var boolean
      */
     protected $locked;
-    
+
     /**
      * @var string
      */
@@ -116,7 +116,7 @@ class Page extends AbstractTranslatable implements Cms\PageInterface
 
     /**
      * Returns a string representation
-     * 
+     *
      * @return string
      */
     public function __toString()

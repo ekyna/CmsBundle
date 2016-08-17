@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\AdminBundle\Model\TranslatableInterface;
+use Ekyna\Component\Resource\Model\TranslatableInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
 
 /**

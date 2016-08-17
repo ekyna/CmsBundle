@@ -40,9 +40,9 @@ class EditorPluginPass implements CompilerPassInterface
             'Ekyna\Bundle\CmsBundle\Entity\Block'            => 'Ekyna\Bundle\CmsBundle\Entity\BlockTranslation',
             'Ekyna\Bundle\CmsBundle\Entity\BlockTranslation' => 'Ekyna\Bundle\CmsBundle\Entity\Block',
         );
-        if ($container->hasParameter('ekyna_admin.translation_mapping')) {
-            $mapping = array_merge($container->getParameter('ekyna_admin.translation_mapping'), $mapping);
+        if ($container->hasParameter('ekyna_resource.translation_mapping')) {
+            $mapping = array_merge($container->getParameter('ekyna_resource.translation_mapping'), $mapping);
         }
-        $container->setParameter('ekyna_admin.translation_mapping', $mapping);
+        $container->setParameter('ekyna_resource.translation_mapping', $mapping);
     }
 }

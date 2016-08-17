@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Ekyna\Bundle\AdminBundle\Model\TranslatableInterface;
+use Ekyna\Component\Resource\Model\TranslatableInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
 
 /**

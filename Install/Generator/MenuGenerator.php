@@ -19,7 +19,7 @@ class MenuGenerator
     private $output;
 
     /**
-     * @var \Ekyna\Bundle\AdminBundle\Operator\ResourceOperatorInterface
+     * @var \Ekyna\Component\Resource\Operator\ResourceOperatorInterface
      */
     private $menuOperator;
 

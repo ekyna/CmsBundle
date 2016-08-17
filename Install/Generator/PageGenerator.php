@@ -23,12 +23,12 @@ class PageGenerator
     private $output;
 
     /**
-     * @var \Ekyna\Bundle\AdminBundle\Operator\ResourceOperatorInterface
+     * @var \Ekyna\Component\Resource\Operator\ResourceOperatorInterface
      */
     private $pageOperator;
 
     /**
-     * @var \Ekyna\Bundle\AdminBundle\Operator\ResourceOperatorInterface
+     * @var \Ekyna\Component\Resource\Operator\ResourceOperatorInterface
      */
     private $menuOperator;
 

@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\DependencyInjection;
 
-use Ekyna\Bundle\AdminBundle\DependencyInjection\AbstractExtension;
+use Ekyna\Bundle\ResourceBundle\DependencyInjection\AbstractExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;

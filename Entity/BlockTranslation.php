@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Bundle\AdminBundle\Model\AbstractTranslation;
+use Ekyna\Component\Resource\Model\AbstractTranslation;
 use Ekyna\Bundle\CmsBundle\Model\BlockTranslationInterface;
 
 /**

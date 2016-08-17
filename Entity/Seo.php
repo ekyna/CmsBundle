@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
+use Ekyna\Component\Resource\Model\AbstractTranslatable;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
@@ -127,7 +127,7 @@ class Seo extends AbstractTranslatable implements SeoInterface
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public function getChangefreq()
     {

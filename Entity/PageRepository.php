@@ -2,8 +2,8 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Bundle\AdminBundle\Doctrine\ORM\TranslatableResourceRepositoryInterface;
-use Ekyna\Bundle\AdminBundle\Doctrine\ORM\Util\TranslatableResourceRepositoryTrait;
+use Ekyna\Component\Resource\Doctrine\ORM\TranslatableResourceRepositoryInterface;
+use Ekyna\Component\Resource\Doctrine\ORM\Util\TranslatableResourceRepositoryTrait;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 /**

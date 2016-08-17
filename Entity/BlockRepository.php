@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Bundle\AdminBundle\Doctrine\ORM\TranslatableResourceRepository;
+use Ekyna\Component\Resource\Doctrine\ORM\TranslatableResourceRepository;
 
 /**
  * Class BlockRepository

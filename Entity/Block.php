@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Bundle\AdminBundle\Model\AbstractTranslatable;
+use Ekyna\Component\Resource\Model\AbstractTranslatable;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use Ekyna\Bundle\CoreBundle\Model as Core;
 
