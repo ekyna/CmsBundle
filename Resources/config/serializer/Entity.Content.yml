@@ -3,8 +3,8 @@ Ekyna\Bundle\CmsBundle\Entity\Content:
     properties:
         id:
             expose: true
-        blocks:
-            expose: true
+#        blocks:
+#            expose: true
 #    virtual_properties:
 #        getIndexableContents:
 #            expose: true
