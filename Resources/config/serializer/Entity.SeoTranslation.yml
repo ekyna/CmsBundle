@@ -1,7 +1,0 @@
-Ekyna\Bundle\CmsBundle\Entity\SeoTranslation:
-    exclusion_policy: ALL
-    properties:
-        title:
-            expose: true
-        description:
-            expose: true

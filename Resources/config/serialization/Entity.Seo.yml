@@ -1,0 +1,6 @@
+Ekyna\Bundle\CmsBundle\Entity\Seo:
+    attributes:
+        title:
+            groups: [Default]
+        description:
+            groups: [Default]

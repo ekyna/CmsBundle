@@ -1,9 +1,6 @@
 Ekyna\Bundle\CmsBundle\Editor\View\ContentView:
-    exclusion_policy: ALL
-    properties:
+    attributes:
         attributes:
-            expose: true
             groups: [Layout, Default]
         containers:
-            expose: true
             groups: [Layout, Default]

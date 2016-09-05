@@ -1,0 +1,8 @@
+Ekyna\Bundle\CmsBundle\Entity\Page:
+    attributes:
+        id:
+            groups: [Default, Search]
+#        content:
+#            groups: [Default]
+        seo:
+            groups: [Default, Search]

@@ -1,9 +1,6 @@
 Ekyna\Bundle\CmsBundle\Editor\View\RowView:
-    exclusion_policy: ALL
-    properties:
+    attributes:
         attributes:
-            expose: true
             groups: [Layout, Default]
         blocks:
-            expose: true
             groups: [Layout, Default]

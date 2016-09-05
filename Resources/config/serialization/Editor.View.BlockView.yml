@@ -1,12 +1,8 @@
 Ekyna\Bundle\CmsBundle\Editor\View\BlockView:
-    exclusion_policy: ALL
-    properties:
+    attributes:
         attributes:
-            expose: true
             groups: [Layout, Default]
         pluginAttributes:
-            expose: true
             groups: [Content, Default]
         content:
-            expose: true
             groups: [Content, Default]

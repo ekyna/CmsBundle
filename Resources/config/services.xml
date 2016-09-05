@@ -267,11 +267,6 @@
             <tag name="knp_menu.menu" alias="breadcrumb"/>
         </service>
 
-        <!-- Serializer handlers -->
-        <service id="ekyna_cms.serializer.content_handler" class="Ekyna\Bundle\CmsBundle\Serializer\ContentHandler">
-            <tag name="jms_serializer.subscribing_handler"/>
-        </service>
-
         <!-- Search -->
         <service id="ekyna_cms.wide_search" class="Ekyna\Bundle\CmsBundle\Search\Wide\Search">
             <argument type="collection"/>

@@ -3,8 +3,9 @@ fos_elastica:
         search:
             types:
                 ekyna_cms_page:
-                    _all: {enabled: false}
-                    indexable_callback: 'isIndexable'
+                    serializer:
+                        groups: [Search]
+                    indexable_callback: isIndexable
                     dynamic_templates:
                         en_title:
                             match_mapping_type: string
@@ -27,10 +28,9 @@ fos_elastica:
                             mapping: {type: string, search_analyzer: search, index_analyzer: index}
                     persistence:
                         driver: orm
-                        model: %ekyna_cms.page.class%
+                        model: "%ekyna_cms.page.class%"
                         provider:
                             batch_size: 20
-                        listener:
-                            immediate: ~
+                        listener: ~
                         finder: ~
                         repository: Ekyna\Bundle\CmsBundle\Search\PageRepository

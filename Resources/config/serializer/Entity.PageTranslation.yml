@@ -1,7 +1,0 @@
-Ekyna\Bundle\CmsBundle\Entity\PageTranslation:
-    exclusion_policy: ALL
-    properties:
-        title:
-            expose: true
-        html:
-            expose: true

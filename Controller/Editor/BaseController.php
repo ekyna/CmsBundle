@@ -127,9 +127,7 @@ class BaseController extends Controller
      */
     protected function serialize($data, $group = self::SERIALIZE_FULL)
     {
-        $context = SerializationContext::create()->setGroups($group);
-
-        return $this->get('serializer')->serialize($data, 'json', $context);
+        return $this->get('serializer')->serialize($data, 'json', ['groups' => [$group]]);
     }
 
     /**
