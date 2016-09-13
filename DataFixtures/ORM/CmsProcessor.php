@@ -50,9 +50,9 @@ class CmsProcessor implements ProcessorInterface
         if ($object instanceof CmsModel\SeoSubjectInterface) {
             $this->generateSeo($object);
         }
-        if ($object instanceof CmsModel\ContentSubjectInterface) {
+        /*if ($object instanceof CmsModel\ContentSubjectInterface) {
             $this->generateContent($object);
-        }
+        }*/
         if ($object instanceof CmsModel\TagsSubjectInterface) {
             $this->generateTags($object);
         }
@@ -91,7 +91,7 @@ class CmsProcessor implements ProcessorInterface
      *
      * @param CmsModel\ContentSubjectInterface $subject
      */
-    protected function generateContent(CmsModel\ContentSubjectInterface $subject)
+    /*protected function generateContent(CmsModel\ContentSubjectInterface $subject)
     {
         $html = '';
         for ($i = 0; $i < rand(3, 5); $i++) {
@@ -105,7 +105,7 @@ class CmsProcessor implements ProcessorInterface
         $content->addBlock($block);
 
         $subject->setContent($content);
-    }
+    }*/
 
     /**
      * Associates tags to the given subject.

@@ -1,6 +1,17 @@
 Ekyna\Bundle\CmsBundle\Entity\Seo:
     attributes:
+#        translations:
+#            groups: [Default, Search]
         title:
-            groups: [Default]
+            groups: [Default, Search]
         description:
-            groups: [Default]
+            groups: [Default, Search]
+
+#Ekyna\Bundle\CmsBundle\Entity\SeoTranslation:
+#    attributes:
+#        locale:
+#            groups: [Default, Search]
+#        title:
+#            groups: [Default, Search]
+#        description:
+#            groups: [Default, Search]

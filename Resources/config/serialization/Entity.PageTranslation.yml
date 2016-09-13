@@ -1,6 +1,0 @@
-Ekyna\Bundle\CmsBundle\Entity\PageTranslation:
-    attributes:
-        title:
-            groups: [Default]
-        html:
-            groups: [Default]

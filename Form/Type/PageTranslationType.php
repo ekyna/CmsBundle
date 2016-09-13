@@ -121,5 +121,4 @@ class PageTranslationType extends AbstractType
             ))
         ;
     }
-
 }

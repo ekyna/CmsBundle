@@ -85,11 +85,15 @@ class PageRepository extends Repository implements SearchRepositoryInterface, Pr
         $query
             ->setQuery($expression)
             ->setFields(array(
-                'translations.'.$locale.'.title',
-                'translations.'.$locale.'.html',
-                'seo.translations.'.$locale.'.title',
-                'seo.translations.'.$locale.'.description',
-                'content.'.$locale.'.content',
+//                'translations.'.$locale.'.title',
+//                'translations.'.$locale.'.html',
+//                'seo.translations.'.$locale.'.title',
+//                'seo.translations.'.$locale.'.description',
+//                'content.'.$locale.'.content',
+                'title',
+                'html',
+                'seo.title',
+                'seo.description',
             ));
 
         return $query;

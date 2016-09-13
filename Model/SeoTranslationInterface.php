@@ -12,13 +12,6 @@ use Ekyna\Component\Resource\Model\TranslationInterface;
 interface SeoTranslationInterface extends TranslationInterface
 {
     /**
-     * Returns the id.
-     *
-     * @return int
-     */
-    public function getId();
-
-    /**
      * Sets the title.
      *
      * @param string $title

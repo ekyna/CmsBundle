@@ -1,6 +1,0 @@
-Ekyna\Bundle\CmsBundle\Entity\SeoTranslation:
-    attributes:
-        title:
-            groups: [Default]
-        description:
-            groups: [Default]
