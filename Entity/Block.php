@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Component\Resource\Model\AbstractTranslatable;
+use Ekyna\Component\Resource\Model;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use Ekyna\Bundle\CoreBundle\Model as Core;
 
@@ -11,10 +11,10 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class Block extends AbstractTranslatable implements Cms\BlockInterface
+class Block extends Model\AbstractTranslatable implements Cms\BlockInterface
 {
-    use Core\SortableTrait,
-        Core\TimestampableTrait,
+    use Model\SortableTrait,
+        Model\TimestampableTrait,
         Core\TaggedEntityTrait;
 
     /**

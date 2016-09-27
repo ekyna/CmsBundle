@@ -4,7 +4,6 @@ namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
 use Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CoreBundle\Modal\Modal;
-use JMS\Serializer\SerializationContext;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -97,7 +96,6 @@ class BaseController extends Controller
      *
      * @param mixed $object
      *
-     * @return \Symfony\Component\Validator\ConstraintViolationListInterface
      * @throws BadRequestHttpException
      */
     protected function validate($object)
@@ -159,6 +157,7 @@ class BaseController extends Controller
      */
     protected function findContent($id)
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->findElementById($id, Entity\Content::class);
     }
 
@@ -171,6 +170,7 @@ class BaseController extends Controller
      */
     protected function findContainer($id)
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->findElementById($id, Entity\Container::class);
     }
 
@@ -183,6 +183,7 @@ class BaseController extends Controller
      */
     protected function findRow($id)
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->findElementById($id, Entity\Row::class);
     }
 
@@ -195,6 +196,7 @@ class BaseController extends Controller
      */
     protected function findBlock($id)
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->findElementById($id, Entity\Block::class);
     }
 

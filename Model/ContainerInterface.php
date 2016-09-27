@@ -4,13 +4,17 @@ namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CoreBundle\Model;
+use Ekyna\Component\Resource\Model as ResourceModel;
 
 /**
  * Interface ContainerInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-interface ContainerInterface extends Model\SortableInterface, Model\TimestampableInterface, Model\TaggedEntityInterface
+interface ContainerInterface
+    extends ResourceModel\SortableInterface,
+            ResourceModel\TimestampableInterface,
+            Model\TaggedEntityInterface
 {
     /**
      * Set content

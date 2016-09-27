@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Ekyna\Component\Resource\Model\TranslatableInterface;
 use Ekyna\Bundle\CoreBundle\Model as Core;
+use Ekyna\Component\Resource\Model as ResourceModel;
 
 /**
  * Interface BlockInterface
@@ -14,8 +15,8 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  */
 interface BlockInterface
     extends TranslatableInterface,
-            Core\SortableInterface,
-            Core\TimestampableInterface,
+            ResourceModel\SortableInterface,
+            ResourceModel\TimestampableInterface,
             Core\TaggedEntityInterface
 {
     /**

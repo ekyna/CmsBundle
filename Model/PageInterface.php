@@ -4,7 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Ekyna\Component\Resource\Model\TranslatableInterface;
 use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
-use Ekyna\Bundle\CoreBundle\Model\TimestampableInterface;
+use Ekyna\Component\Resource\Model\TimestampableInterface;
 
 /**
  * Class PageInterface

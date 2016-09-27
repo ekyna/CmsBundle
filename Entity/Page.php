@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Component\Resource\Model\AbstractTranslatable;
+use Ekyna\Component\Resource\Model;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use Ekyna\Bundle\CoreBundle\Model as Core;
 
@@ -14,11 +14,11 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  *
  * @method Cms\PageTranslationInterface translate($locale = null, $create = false)
  */
-class Page extends AbstractTranslatable implements Cms\PageInterface
+class Page extends Model\AbstractTranslatable implements Cms\PageInterface
 {
     use Cms\ContentSubjectTrait,
         Cms\SeoSubjectTrait,
-        Core\TimestampableTrait,
+        Model\TimestampableTrait,
         Core\TaggedEntityTrait;
 
     /**

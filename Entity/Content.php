@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ekyna\Component\Resource\Model;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use Ekyna\Bundle\CoreBundle\Model as Core;
 
@@ -13,7 +14,7 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  */
 class Content implements Cms\ContentInterface
 {
-    use Core\TimestampableTrait,
+    use Model\TimestampableTrait,
         Core\TaggedEntityTrait;
 
     /**

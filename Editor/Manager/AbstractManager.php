@@ -5,7 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
-use Ekyna\Bundle\CoreBundle\Model\SortableInterface;
+use Ekyna\Component\Resource\Model\SortableInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
