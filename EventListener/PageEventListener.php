@@ -5,11 +5,12 @@ namespace Ekyna\Bundle\CmsBundle\EventListener;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
-use Ekyna\Bundle\AdminBundle\Event\ResourceMessage;
-use Ekyna\Bundle\CmsBundle\Event\PageEvent;
+use Ekyna\Component\Resource\Event\ResourceEventInterface;
+use Ekyna\Component\Resource\Event\ResourceMessage;
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CoreBundle\Cache\TagManager;
+use Ekyna\Component\Resource\Exception\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -79,15 +80,16 @@ class PageEventListener implements EventSubscriberInterface
     /**
      * Pre create event handler.
      *
-     * @param PageEvent $event
+     * @param ResourceEventInterface $event
      */
-    public function onPreCreate(PageEvent $event)
+    public function onPreCreate(ResourceEventInterface $event)
     {
-        $page = $event->getPage();
+        $page = $this->getPageFromEvent($event);
 
         // Generate random route name.
         if (null === $page->getRoute()) {
             $class = get_class($page);
+            /** @noinspection SqlDialectInspection */
             $query = $this->em->createQuery("SELECT p.id FROM {$class} p WHERE p.route = :route");
             $query->setMaxResults(1);
 
@@ -105,11 +107,11 @@ class PageEventListener implements EventSubscriberInterface
     /**
      * Pre update event handler.
      *
-     * @param PageEvent $event
+     * @param ResourceEventInterface $event
      */
-    public function onPreUpdate(PageEvent $event)
+    public function onPreUpdate(ResourceEventInterface $event)
     {
-        $page = $event->getPage();
+        $page = $this->getPageFromEvent($event);
 
         // Don't disable if static
         if (!$page->getEnabled() && $page->getStatic()) {
@@ -150,21 +152,25 @@ class PageEventListener implements EventSubscriberInterface
     /**
      * Post update event handler.
      *
-     * @param PageEvent $event
+     * @param ResourceEventInterface $event
      */
-    public function onPostUpdate(PageEvent $event)
+    public function onPostUpdate(ResourceEventInterface $event)
     {
-        $this->deletePageCache($event->getPage());
+        $page = $this->getPageFromEvent($event);
+
+        $this->deletePageCache($page);
     }
 
     /**
      * Pre delete event handler.
      *
-     * @param PageEvent $event
+     * @param ResourceEventInterface $event
      */
-    public function onPreDelete(PageEvent $event)
+    public function onPreDelete(ResourceEventInterface $event)
     {
-        if ($event->getPage()->getStatic()) {
+        $page = $this->getPageFromEvent($event);
+
+        if ($page->getStatic()) {
             $event->addMessage(new ResourceMessage(
                 'ekyna_cms.page.alert.do_not_remove_static',
                 ResourceMessage::TYPE_ERROR
@@ -175,11 +181,13 @@ class PageEventListener implements EventSubscriberInterface
     /**
      * Post delete event handler.
      *
-     * @param PageEvent $event
+     * @param ResourceEventInterface $event
      */
-    public function onPostDelete(PageEvent $event)
+    public function onPostDelete(ResourceEventInterface $event)
     {
-        $this->deletePageCache($event->getPage());
+        $page = $this->getPageFromEvent($event);
+
+        $this->deletePageCache($page);
     }
 
     /**
@@ -268,6 +276,24 @@ class PageEventListener implements EventSubscriberInterface
             }
         }
         return $disabledMenus;
+    }
+
+    /**
+     * Returns the page from the event.
+     *
+     * @param ResourceEventInterface $event
+     *
+     * @return PageInterface
+     */
+    private function getPageFromEvent(ResourceEventInterface $event)
+    {
+        $resource = $event->getResource();
+
+        if (!$resource instanceof PageInterface) {
+            throw new InvalidArgumentException("Expected instance of PageInterface");
+        }
+
+        return $resource;
     }
 
     /**

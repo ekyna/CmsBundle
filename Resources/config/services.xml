@@ -53,13 +53,13 @@
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%ekyna_cms.menu.class%</argument>
             <argument type="service" id="doctrine.orm.default_result_cache" on-invalid="null"/>
-            <tag name="kernel.event_subscriber"/>
+            <tag name="resource.event_subscriber"/>
         </service>
         <service id="ekyna_cms.menu_event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\MenuEventListener">
             <argument type="service" id="doctrine.orm.default_entity_manager"/>
             <argument>%ekyna_cms.menu.class%</argument>
             <argument>%ekyna_cms.page.class%</argument>
-            <tag name="kernel.event_subscriber"/>
+            <tag name="resource.event_subscriber"/>
         </service>
 
         <!-- Doctrine subscribers/listeners -->

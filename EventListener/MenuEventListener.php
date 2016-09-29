@@ -4,9 +4,11 @@ namespace Ekyna\Bundle\CmsBundle\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
-use Ekyna\Bundle\AdminBundle\Event\ResourceMessage;
-use Ekyna\Bundle\CmsBundle\Event\MenuEvent;
+use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
+use Ekyna\Component\Resource\Event\ResourceEventInterface;
+use Ekyna\Component\Resource\Event\ResourceMessage;
 use Ekyna\Bundle\CmsBundle\Event\MenuEvents;
+use Ekyna\Component\Resource\Exception\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -49,11 +51,11 @@ class MenuEventListener implements EventSubscriberInterface
     /**
      * Pre create event handler.
      *
-     * @param MenuEvent $event
+     * @param ResourceEventInterface $event
      */
-    public function onPreUpdate(MenuEvent $event)
+    public function onPreUpdate(ResourceEventInterface $event)
     {
-        $menu = $event->getMenu();
+        $menu = $this->getMenuFromEvent($event);
 
         // Don't disable if locked
         if (!$menu->getEnabled() && $menu->getLocked()) {
@@ -62,6 +64,7 @@ class MenuEventListener implements EventSubscriberInterface
 
         // Don't enable if disabled relative page
         if ($menu->getEnabled() && !$menu->getLocked() && 0 < strlen($menu->getRoute())) {
+            /** @noinspection SqlDialectInspection */
             $disabledPageId = $this->em
                 ->createQuery("SELECT p.id FROM {$this->pageClass} p WHERE p.route = :route AND p.enabled = 0")
                 ->setParameter('route', $menu->getRoute())
@@ -87,6 +90,24 @@ class MenuEventListener implements EventSubscriberInterface
                 'right' => $menu->getRight(),
             ));
         }
+    }
+
+    /**
+     * Returns the menu from the event.
+     *
+     * @param ResourceEventInterface $event
+     *
+     * @return MenuInterface
+     */
+    private function getMenuFromEvent(ResourceEventInterface $event)
+    {
+        $resource = $event->getResource();
+
+        if (!$resource instanceof MenuInterface) {
+            throw new InvalidArgumentException("Expected instance of MenuInterface");
+        }
+
+        return $resource;
     }
 
     /**
