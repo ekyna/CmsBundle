@@ -5,7 +5,7 @@ require(['require', 'jquery', 'ekyna-cms/user', 'bootstrap', 'bootstrap/hover-dr
     $('.dropdown-toggle').dropdownHover();
 
     // Forms
-    var $forms = $('.form-body');
+    var $forms = $('form');
     if ($forms.size() > 0) {
         require(['ekyna-form'], function(Form) {
             $forms.each(function(i, f) {
