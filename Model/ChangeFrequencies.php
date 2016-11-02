@@ -2,14 +2,14 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Ekyna\Bundle\CoreBundle\Model\AbstractConstants;
+use Ekyna\Bundle\ResourceBundle\Model\AbstractConstants;
 
 /**
  * Class ChangeFrequencies
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class ChangeFrequencies extends AbstractConstants
+class ChangeFrequencies extends \Ekyna\Bundle\ResourceBundle\Model\AbstractConstants
 {
     const HOURLY  = 'hourly';
     const MONTHLY = 'monthly';
