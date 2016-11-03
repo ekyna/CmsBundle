@@ -95,3 +95,5 @@ ekyna_cms:
     wide_search:
         placeholder: Rechercher ...
         title: Résultats de votre recherche sur "{{expression}}"
+    editor:
+        title: Editeur partie publique

@@ -1,0 +1,15 @@
+ekyna_admin:
+    navbar:
+        buttons:
+            cms_editor:
+                title: ekyna_cms.editor.title
+                route: ekyna_cms_editor_index
+                icon: pencil
+                target: _blank
+                position: 99
+            cms_front:
+                title: ekyna_admin.navbar.go_to_front
+                route: "%ekyna_cms.home_route%"
+                icon: sitemap
+                target: _blank
+                position: 100

@@ -107,17 +107,6 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function getGlobals()
-    {
-        return array(
-            'ekyna_cms_home_route'       => $this->config['home_route'],
-            'ekyna_cms_seo_title_append' => $this->config['seo']['title_append'],
-        );
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getFunctions()
