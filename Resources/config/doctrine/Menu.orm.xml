@@ -12,12 +12,12 @@
             table="cms_menu">
 
         <indexes>
-            <index name="idx_name" columns="name" />
-            <index name="idx_parent" columns="parent_id" />
+            <index name="idx_cms_menu_name" columns="name" />
+            <index name="idx_cms_menu_parent" columns="parent_id" />
         </indexes>
 
         <unique-constraints>
-            <unique-constraint name="uniq_name" columns="name,parent_id" />
+            <unique-constraint name="uniq_cms_menu_name" columns="name,parent_id" />
         </unique-constraints>
 
         <entity-listeners>

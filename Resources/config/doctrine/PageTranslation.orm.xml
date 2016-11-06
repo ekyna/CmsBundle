@@ -10,7 +10,7 @@
             table="cms_page_translation">
 
         <unique-constraints>
-            <unique-constraint name="unique_path" columns="path,locale" />
+            <unique-constraint name="unique_cms_page_path" columns="path,locale" />
         </unique-constraints>
 
         <entity-listeners>
