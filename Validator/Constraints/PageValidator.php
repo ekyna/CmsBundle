@@ -51,10 +51,10 @@ class PageValidator extends ConstraintValidator
     public function validate($page, Constraint $constraint)
     {
         if (!$constraint instanceof Page) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\Page');
+            throw new UnexpectedTypeException($constraint, Page::class);
         }
         if (!$page instanceof PageInterface) {
-            throw new UnexpectedTypeException($page, 'Ekyna\Bundle\CmsBundle\Model\PageInterface');
+            throw new UnexpectedTypeException($page, PageInterface::class);
         }
 
         /**

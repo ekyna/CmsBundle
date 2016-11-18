@@ -105,7 +105,6 @@ class Page extends Model\AbstractTranslatable implements Cms\PageInterface
         parent::__construct();
 
         $this->children    = new ArrayCollection();
-        $this->seo         = new Seo();
 
         $this->static      = false;
         $this->locked      = false;

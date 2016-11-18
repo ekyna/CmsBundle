@@ -37,10 +37,10 @@ class ContainerValidator extends ConstraintValidator
     public function validate($container, Constraint $constraint)
     {
         if (!$constraint instanceof Container) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\Container');
+            throw new UnexpectedTypeException($constraint, Container::class);
         }
         if (!$container instanceof ContainerInterface) {
-            throw new UnexpectedTypeException($container, 'Ekyna\Bundle\CmsBundle\Model\ContainerInterface');
+            throw new UnexpectedTypeException($container, ContainerInterface::class);
         }
 
         /**

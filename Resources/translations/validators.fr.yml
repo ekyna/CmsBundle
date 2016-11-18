@@ -1,5 +1,6 @@
 ekyna_cms:
     seo:
+        required: Veuillez saisir les champs de référencement.
         unique_title: Une page est déjà définie avec ce titre.
     page:
         invalid_parent: La page parente sélectionnée n'est pas valide.

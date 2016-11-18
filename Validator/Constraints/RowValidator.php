@@ -17,10 +17,10 @@ class RowValidator extends ConstraintValidator
     public function validate($row, Constraint $constraint)
     {
         if (!$constraint instanceof Row) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\Row');
+            throw new UnexpectedTypeException($constraint, Row::class);
         }
         if (!$row instanceof RowInterface) {
-            throw new UnexpectedTypeException($row, 'Ekyna\Bundle\CmsBundle\Model\RowInterface');
+            throw new UnexpectedTypeException($row, RowInterface::class);
         }
 
         /**

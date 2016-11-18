@@ -2,10 +2,6 @@ ekyna_cms_page_admin:
     resource: "admin/page.yml"
     prefix:   /pages
 
-ekyna_cms_tag_admin:
-    resource: "admin/tag.yml"
-    prefix:   /tags
-
 ekyna_cms_menu_admin:
     resource: "admin/menu.yml"
     prefix:   /menus

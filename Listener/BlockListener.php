@@ -9,6 +9,8 @@ use Ekyna\Bundle\CoreBundle\Cache\TagManager;
  * Class BlockListener
  * @package Ekyna\Bundle\CmsBundle\Listener
  * @author Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @todo resource (persistence) event subscriber ?
  */
 class BlockListener
 {

@@ -17,10 +17,10 @@ class ContentValidator extends ConstraintValidator
     public function validate($content, Constraint $constraint)
     {
         if (!$constraint instanceof Content) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\Content');
+            throw new UnexpectedTypeException($constraint, Content::class);
         }
         if (!$content instanceof ContentInterface) {
-            throw new UnexpectedTypeException($content, 'Ekyna\Bundle\CmsBundle\Model\ContentInterface');
+            throw new UnexpectedTypeException($content, ContentInterface::class);
         }
 
         /**

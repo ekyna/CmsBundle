@@ -5,7 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Model;
 /**
  * Trait SeoSubjectTrait
  * @package Ekyna\Bundle\CmsBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 trait SeoSubjectTrait
 {
@@ -28,9 +28,10 @@ trait SeoSubjectTrait
      * Sets the seo.
      *
      * @param SeoInterface $seo
+     *
      * @return SeoSubjectTrait|$this
      */
-    public function setSeo(SeoInterface $seo)
+    public function setSeo(SeoInterface $seo = null)
     {
         $this->seo = $seo;
 

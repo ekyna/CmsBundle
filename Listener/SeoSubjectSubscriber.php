@@ -9,11 +9,11 @@ use Doctrine\ORM\Events;
 /**
  * Class SeoSubjectSubscriber
  * @package Ekyna\Bundle\CmsBundle\Listener
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class SeoSubjectSubscriber implements EventSubscriber
 {
-    const SEO_FQCN = 'Ekyna\Bundle\CmsBundle\Entity\Seo';
+    const SEO_CLASS         = 'Ekyna\Bundle\CmsBundle\Entity\Seo';
     const SUBJECT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface';
 
     /**
@@ -41,16 +41,16 @@ class SeoSubjectSubscriber implements EventSubscriber
 
         $metadata->mapOneToOne([
             'fieldName'     => 'seo',
-            'targetEntity'  => self::SEO_FQCN,
+            'targetEntity'  => self::SEO_CLASS,
             'cascade'       => ['all'],
 //            'fetch' => ClassMetadataInfo::FETCH_EAGER,
             'orphanRemoval' => true,
-            'joinColumns' => [
+            'joinColumns'   => [
                 [
-                    'name'                  => 'seo_id',
-                    'referencedColumnName'  => 'id',
-                    'onDelete'              => 'RESTRICT',
-                    'nullable'              => false,
+                    'name'                 => 'seo_id',
+                    'referencedColumnName' => 'id',
+                    'onDelete'             => 'RESTRICT',
+                    'nullable'             => true,
                 ],
             ],
         ]);

@@ -17,6 +17,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * Class PageTranslationListener
  * @package Ekyna\Bundle\CmsBundle\Listener
  * @author  Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @todo resource (persistence) event subscriber
  */
 class PageTranslationListener implements EventSubscriber
 {

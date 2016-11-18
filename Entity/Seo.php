@@ -10,7 +10,7 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
 /**
  * Class Seo
  * @package Ekyna\Bundle\CmsBundle\Entity
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  *
  * @method SeoTranslationInterface translate($locale = null, $create = false)
  */
@@ -166,6 +166,7 @@ class Seo extends AbstractTranslatable implements SeoInterface
     public function setFollow($follow)
     {
         $this->follow = (bool)$follow;
+
         return $this;
     }
 
@@ -183,6 +184,7 @@ class Seo extends AbstractTranslatable implements SeoInterface
     public function setIndex($index)
     {
         $this->index = (bool)$index;
+
         return $this;
     }
 
@@ -200,6 +202,7 @@ class Seo extends AbstractTranslatable implements SeoInterface
     public function setCanonical($canonical)
     {
         $this->canonical = $canonical;
+
         return $this;
     }
 

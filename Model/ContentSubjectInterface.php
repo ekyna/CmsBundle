@@ -15,7 +15,7 @@ interface ContentSubjectInterface
      * @param ContentInterface $content
      * @return ContentSubjectInterface|$this
      */
-    public function setContent(ContentInterface $content);
+    public function setContent(ContentInterface $content = null);
 
     /**
      * Returns the current content (last version).

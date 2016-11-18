@@ -23,7 +23,7 @@ trait ContentSubjectTrait
      *
      * @return ContentSubjectInterface|$this
      */
-    public function setContent(ContentInterface $content)
+    public function setContent(ContentInterface $content = null)
     {
         $this->content = $content;
 

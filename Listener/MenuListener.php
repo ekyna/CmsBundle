@@ -10,7 +10,9 @@ use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
 /**
  * Class MenuListener
  * @package Ekyna\Bundle\CmsBundle\Listener
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @todo    resource (persistence) event subscriber ?
  */
 class MenuListener
 {
@@ -19,7 +21,7 @@ class MenuListener
     /**
      * Pre persist event handler.
      *
-     * @param MenuInterface $menu
+     * @param MenuInterface      $menu
      * @param LifecycleEventArgs $event
      */
     public function prePersist(MenuInterface $menu, LifecycleEventArgs $event)
@@ -35,7 +37,7 @@ class MenuListener
     /**
      * Pre update event handler.
      *
-     * @param MenuInterface $menu
+     * @param MenuInterface      $menu
      * @param PreUpdateEventArgs $event
      */
     public function preUpdate(MenuInterface $menu, PreUpdateEventArgs $event)

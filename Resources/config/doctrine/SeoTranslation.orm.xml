@@ -12,8 +12,9 @@
             <generator strategy="AUTO" />
         </id>
 
-        <field name="title" type="string" column="title" length="255" />
-        <field name="description" type="string" column="description" length="255" />
+        <field name="title" column="title" type="string" length="255" />
+        <field name="description" column="description" type="string" length="255" nullable="true" />
+        <field name="keywords" column="keywords" type="string" length="255" nullable="true" />
 
     </entity>
 

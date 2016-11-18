@@ -7,7 +7,7 @@ use Ekyna\Component\Resource\Model\TranslationInterface;
 /**
  * Interface SeoTranslationInterface
  * @package Ekyna\Bundle\CmsBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 interface SeoTranslationInterface extends TranslationInterface
 {
@@ -15,6 +15,7 @@ interface SeoTranslationInterface extends TranslationInterface
      * Sets the title.
      *
      * @param string $title
+     *
      * @return SeoTranslationInterface|$this
      */
     public function setTitle($title);
@@ -30,6 +31,7 @@ interface SeoTranslationInterface extends TranslationInterface
      * Sets the description.
      *
      * @param string $description
+     *
      * @return SeoTranslationInterface|$this
      */
     public function setDescription($description);
@@ -40,4 +42,27 @@ interface SeoTranslationInterface extends TranslationInterface
      * @return string
      */
     public function getDescription();
+
+    /**
+     * Sets the keywords.
+     *
+     * @param mixed $keywords
+     *
+     * @return SeoTranslationInterface|$this
+     */
+    public function setKeywords($keywords);
+
+    /**
+     * Returns the keywords.
+     *
+     * @return mixed
+     */
+    public function getKeywords();
+
+    /**
+     * Returns whether or not the seo translation should be considered as empty.
+     *
+     * @return bool
+     */
+    public function isEmpty();
 }

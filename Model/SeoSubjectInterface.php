@@ -5,7 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Model;
 /**
  * Class SeoSubjectInterface
  * @package Ekyna\Bundle\CmsBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 interface SeoSubjectInterface
 {
@@ -20,7 +20,8 @@ interface SeoSubjectInterface
      * Sets the seo.
      *
      * @param SeoInterface $seo
+     *
      * @return SeoSubjectInterface|$this
      */
-    public function setSeo(SeoInterface $seo);
+    public function setSeo(SeoInterface $seo = null);
 }

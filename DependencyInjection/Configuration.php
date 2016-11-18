@@ -77,8 +77,8 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->arrayNode('controllers')
                             ->defaultValue(['default' => [
-                                'title' => 'Par défaut',
-                                'value' => 'EkynaCmsBundle:Cms:default',
+                                'title'    => 'Par défaut',
+                                'value'    => 'EkynaCmsBundle:Cms:default',
                                 'advanced' => true,
                             ]])
                             ->useAttributeAsKey('name')
@@ -124,7 +124,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->arrayNode('roots')
                             ->defaultValue(['main' => [
-                                'title' => 'Navigation principale',
+                                'title'       => 'Navigation principale',
                                 'description' => 'Barre de navigation principale',
                             ]])
                             ->useAttributeAsKey('name')
@@ -248,15 +248,9 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('seo')
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->variableNode('templates')->end()
-                                ->scalarNode('parent')->end()
                                 ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Seo')->end()
-                                ->scalarNode('controller')->end()
-                                ->scalarNode('operator')->end()
                                 ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\SeoRepository')->end()
                                 ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\SeoType')->end()
-                                ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\SeoType')->end()
-                                ->scalarNode('event')->end()
                                 ->arrayNode('translation')
                                     ->addDefaultsIfNotSet()
                                     ->children()
@@ -332,19 +326,6 @@ class Configuration implements ConfigurationInterface
                                         ->end()
                                     ->end()
                                 ->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('tag')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->variableNode('templates')->defaultNull()->end()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Tag')->end()
-                                ->scalarNode('controller')->end()
-                                ->scalarNode('repository')->end()
-                                ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\TagType')->end()
-                                ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\TagType')->end()
-                                ->scalarNode('parent')->end()
-                                ->scalarNode('event')->end()
                             ->end()
                         ->end()
                     ->end()

@@ -14,6 +14,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * Class PageListener
  * @package Ekyna\Bundle\CmsBundle\Listener
  * @author  Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @todo    resource (persistence) event subscriber ?
  */
 class PageListener
 {
@@ -108,7 +110,7 @@ class PageListener
     /**
      * Post remove event handler.
      *
-     * @param PageInterface      $page
+     * @param PageInterface $page
      */
     public function postRemove(PageInterface $page)
     {
@@ -155,6 +157,7 @@ class PageListener
                 return true;
             }
         }
+
         return false;
     }
 
@@ -173,9 +176,9 @@ class PageListener
             /** @var \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface $translation */
             foreach ($page->getTranslations() as $locale => $translation) {
                 $locales[$locale] = $locale;
-                $redirections[$locale] = array(
+                $redirections[$locale] = [
                     'from' => $translation->getPath(),
-                );
+                ];
             }
 
             // Find the first enabled ancestor
@@ -244,6 +247,7 @@ class PageListener
             }
             throw new \RuntimeException("Undefined page controller '{$controller}'.");
         }
+
         return null;
     }
 }

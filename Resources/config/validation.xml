@@ -6,23 +6,6 @@
                         http://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\Page">
-        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
-            <option name="fields">
-                <value>parent</value>
-                <value>name</value>
-            </option>
-            <option name="message">ekyna_cms.page.unique_name</option>
-            <option name="groups">
-                <value>Default</value>
-                <value>Generator</value>
-            </option>
-        </constraint>
-        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Page">
-            <option name="groups">
-                <value>Default</value>
-                <value>Generator</value>
-            </option>
-        </constraint>
         <property name="name">
             <constraint name="NotBlank">
                 <option name="groups">
@@ -40,25 +23,29 @@
             </constraint>
         </property>
         <property name="seo">
+            <constraint name="NotNull"/>
             <constraint name="Valid"/>
         </property>
-        <property name="translations">
-            <constraint name="Valid"/>
-        </property>
-    </class>
-
-    <class name="Ekyna\Bundle\CmsBundle\Entity\PageTranslation">
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
             <option name="fields">
-                <value>path</value>
-                <value>locale</value>
+                <value>parent</value>
+                <value>name</value>
             </option>
-            <option name="message">ekyna_cms.page.unique_path</option>
+            <option name="message">ekyna_cms.page.unique_name</option>
             <option name="groups">
                 <value>Default</value>
                 <value>Generator</value>
             </option>
         </constraint>
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Page">
+            <option name="groups">
+                <value>Default</value>
+                <value>Generator</value>
+            </option>
+        </constraint>
+    </class>
+
+    <class name="Ekyna\Bundle\CmsBundle\Entity\PageTranslation">
         <property name="title">
             <constraint name="NotBlank">
                 <option name="groups">
@@ -105,6 +92,17 @@
                 </option>
             </constraint>
         </property>
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>path</value>
+                <value>locale</value>
+            </option>
+            <option name="message">ekyna_cms.page.unique_path</option>
+            <option name="groups">
+                <value>Default</value>
+                <value>Generator</value>
+            </option>
+        </constraint>
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\Menu">
@@ -219,17 +217,6 @@
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\SeoTranslation">
-        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
-            <option name="fields">
-                <value>locale</value>
-                <value>title</value>
-            </option>
-            <option name="message">ekyna_cms.seo.unique_title</option>
-            <option name="groups">
-                <value>Default</value>
-                <value>Generator</value>
-            </option>
-        </constraint>
         <property name="title">
             <constraint name="NotBlank">
                 <option name="groups">
@@ -249,6 +236,17 @@
         <property name="description">
             <constraint name="NotBlank"/>
         </property>
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>locale</value>
+                <value>title</value>
+            </option>
+            <option name="message">ekyna_cms.seo.unique_title</option>
+            <option name="groups">
+                <value>Default</value>
+                <value>Generator</value>
+            </option>
+        </constraint>
     </class>
 
     <!-- Editor -->
@@ -267,7 +265,6 @@
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\Container">
-        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Container"/>
         <property name="rows">
             <constraint name="Count">
                 <option name="min">1</option>
@@ -277,20 +274,20 @@
         <property name="type">
             <constraint name="NotBlank"/>
         </property>
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Container"/>
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\Row">
-        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Row"/>
         <property name="blocks">
             <constraint name="Count">
                 <option name="min">1</option>
             </constraint>
             <constraint name="Valid"/>
         </property>
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Row"/>
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\Block">
-        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Block"/>
         <property name="position">
             <constraint name="Range">
                 <option name="min">0</option>
@@ -306,6 +303,7 @@
         <property name="type">
             <constraint name="NotBlank"/>
         </property>
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Block"/>
     </class>
 
 </constraint-mapping>

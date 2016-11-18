@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Install\Generator;
 
 use Ekyna\Bundle\CmsBundle\Entity\Seo;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\OptionsResolver\Options;
@@ -51,6 +52,11 @@ class PageGenerator
      * @var string
      */
     private $routesTranslationDomain = 'routes'; // TODO DI
+
+    /**
+     * @var \Ekyna\Bundle\CmsBundle\Entity\SeoRepository
+     */
+    private $seoRepository;
 
     /**
      * @var \Ekyna\Bundle\CmsBundle\Entity\PageRepository
@@ -108,6 +114,7 @@ class PageGenerator
         $this->validator = $container->get('validator');
         $this->translator = $container->get('translator');
         $this->locales = $container->getParameter('locales');
+        $this->seoRepository = $container->get('ekyna_cms.seo.repository');
         $this->pageRepository = $container->get('ekyna_cms.page.repository');
         $this->menuRepository = $container->get('ekyna_cms.menu.repository');
     }
@@ -360,7 +367,8 @@ class PageGenerator
 
             // Seo
             $seoDefinition = $definition->getSeo();
-            $seo = $page->getSeo();
+            /** @var SeoInterface $seo */
+            $seo = $this->seoRepository->createNew();
             $seo
                 ->setChangefreq($seoDefinition['changefreq'])
                 ->setPriority($seoDefinition['priority'])
@@ -387,9 +395,7 @@ class PageGenerator
 
                 $seoTranslation = $seo->translate($locale, true);
                 $seoTranslation
-                    ->setTitle($seoTitle)
-                    ->setDescription('') // empty to force edition in backend
-                ;
+                    ->setTitle($seoTitle);
 
                 if ($routeName === $path = $this->translator->trans(
                         $routeName, [], $this->routesTranslationDomain, $locale

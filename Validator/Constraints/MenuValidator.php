@@ -34,10 +34,10 @@ class MenuValidator extends ConstraintValidator
     public function validate($menu, Constraint $constraint)
     {
         if (!$constraint instanceof Menu) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\Menu');
+            throw new UnexpectedTypeException($constraint, Menu::class);
         }
         if (!$menu instanceof MenuInterface) {
-            throw new UnexpectedTypeException($menu, 'Ekyna\Bundle\CmsBundle\Model\MenuInterface');
+            throw new UnexpectedTypeException($menu, MenuInterface::class);
         }
 
         if (0 === $menu->getLevel() || $menu->getLocked()) {

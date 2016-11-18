@@ -9,11 +9,11 @@ use Doctrine\ORM\Events;
 /**
  * Class ContentSubjectSubscriber
  * @package Ekyna\Bundle\CmsBundle\Listener
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class ContentSubjectSubscriber implements EventSubscriber
 {
-    const CONTENT_FQCN = 'Ekyna\Bundle\CmsBundle\Entity\Content';
+    const CONTENT_CLASS     = 'Ekyna\Bundle\CmsBundle\Entity\Content';
     const SUBJECT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface';
 
     /**
@@ -42,18 +42,19 @@ class ContentSubjectSubscriber implements EventSubscriber
         $namingStrategy = $eventArgs
             ->getEntityManager()
             ->getConfiguration()
-            ->getNamingStrategy()
-        ;
+            ->getNamingStrategy();
 
         $metadata->mapOneToOne([
             'fieldName'     => 'content',
-            'targetEntity'  => self::CONTENT_FQCN,
+            'targetEntity'  => self::CONTENT_CLASS,
             'cascade'       => ['all'],
-            'joinColumn' => [
+            'orphanRemoval' => true,
+            'joinColumn'    => [
                 [
-                    'name'                  => $namingStrategy->joinKeyColumnName($metadata->getName()),
-                    'referencedColumnName'  => $namingStrategy->referenceColumnName(),
-                    'onDelete'              => 'CASCADE',
+                    'name'                 => $namingStrategy->joinKeyColumnName($metadata->getName()),
+                    'referencedColumnName' => $namingStrategy->referenceColumnName(),
+                    'onDelete'             => 'CASCADE',
+                    'nullable'             => true,
                 ],
             ],
         ]);

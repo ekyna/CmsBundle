@@ -7,6 +7,7 @@ use Ekyna\Bundle\CmsBundle\Entity as CmsEntity;
 use Ekyna\Bundle\CmsBundle\Model as CmsModel;
 use Ekyna\Bundle\MediaBundle\Entity as MediaEntity;
 use Ekyna\Bundle\MediaBundle\Model as MediaModel;
+use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepositoryInterface;
 use Faker\Factory;
 use Nelmio\Alice\ProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -24,6 +25,11 @@ class CmsProcessor implements ProcessorInterface
     protected $container;
 
     /**
+     * @var ResourceRepositoryInterface
+     */
+    protected $seoRepository;
+
+    /**
      * @var \Faker\Generator
      */
     protected $faker;
@@ -39,6 +45,7 @@ class CmsProcessor implements ProcessorInterface
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->seoRepository = $container->get('ekyna_cms.seo.repository');
         $this->faker = Factory::create($container->getParameter('hautelook_alice.locale'));
     }
 
@@ -53,9 +60,6 @@ class CmsProcessor implements ProcessorInterface
         /*if ($object instanceof CmsModel\ContentSubjectInterface) {
             $this->generateContent($object);
         }*/
-        if ($object instanceof CmsModel\TagsSubjectInterface) {
-            $this->generateTags($object);
-        }
     }
 
     /**
@@ -73,7 +77,7 @@ class CmsProcessor implements ProcessorInterface
      */
     protected function generateSeo(CmsModel\SeoSubjectInterface $subject)
     {
-        $seo = new CmsEntity\Seo(); // TODO use repo::createNew (translations)
+        $seo = $this->seoRepository->createNew();
         if (0 < strlen($name = $this->objectToString($subject))) {
             $seo
                 ->setTitle($name . ' seo title')
@@ -106,23 +110,6 @@ class CmsProcessor implements ProcessorInterface
 
         $subject->setContent($content);
     }*/
-
-    /**
-     * Associates tags to the given subject.
-     *
-     * @param CmsModel\TagsSubjectInterface $subject
-     */
-    protected function generateTags(CmsModel\TagsSubjectInterface $subject)
-    {
-        $qb = $this->container->get('ekyna_cms.tag.repository')->createQueryBuilder('t');
-        $tags = $qb
-            ->addSelect('RAND() as HIDDEN rand')
-            ->orderBy('rand')
-            ->setMaxResults(rand(1, 4))
-            ->getQuery()
-            ->getResult();
-        $subject->setTags(new ArrayCollection($tags));
-    }
 
     /**
      * Returns the string representation of the given object.

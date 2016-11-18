@@ -9,7 +9,7 @@ use Ekyna\Bundle\ResourceBundle\Model\AbstractConstants;
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class ChangeFrequencies extends \Ekyna\Bundle\ResourceBundle\Model\AbstractConstants
+class ChangeFrequencies extends AbstractConstants
 {
     const HOURLY  = 'hourly';
     const MONTHLY = 'monthly';

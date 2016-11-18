@@ -27,9 +27,14 @@ class SeoTranslation extends AbstractTranslation implements SeoTranslationInterf
      */
     protected $description;
 
+    /**
+     * @var string
+     */
+    protected $keywords;
+
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -37,7 +42,7 @@ class SeoTranslation extends AbstractTranslation implements SeoTranslationInterf
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setTitle($title)
     {
@@ -46,7 +51,7 @@ class SeoTranslation extends AbstractTranslation implements SeoTranslationInterf
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTitle()
     {
@@ -54,7 +59,7 @@ class SeoTranslation extends AbstractTranslation implements SeoTranslationInterf
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setDescription($description)
     {
@@ -63,10 +68,36 @@ class SeoTranslation extends AbstractTranslation implements SeoTranslationInterf
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setKeywords($keywords)
+    {
+        $this->keywords = $keywords;
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getKeywords()
+    {
+        return $this->keywords;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isEmpty()
+    {
+        return 0 == strlen($this->title);
     }
 }

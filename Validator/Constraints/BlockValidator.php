@@ -37,10 +37,10 @@ class BlockValidator extends ConstraintValidator
     public function validate($block, Constraint $constraint)
     {
         if (!$constraint instanceof Block) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\Block');
+            throw new UnexpectedTypeException($constraint, Block::class);
         }
         if (!$block instanceof BlockInterface) {
-            throw new UnexpectedTypeException($block, 'Ekyna\Bundle\CmsBundle\Model\BlockInterface');
+            throw new UnexpectedTypeException($block, BlockInterface::class);
         }
 
         /**

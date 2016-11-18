@@ -65,24 +65,6 @@ ekyna_cms:
         alert:
             no_item: Aucun menu configuré
             cant_enable_as_disabled_page: Ce menu ne peut être activé car la page ciblée est inactive.
-    tag:
-        label:
-            singular: Tag
-            plural: Tags
-        header:
-            list: Tags <small>Liste des tags</small>
-            show: Détail du tag <small>%name%</small>
-            new: Créer un nouveau tag
-            edit: Modifier le tag <small>%name%</small>
-            remove: Supprimer le tag <small>%name%</small>
-        button:
-            list: Liste des tags
-            show: Détail du tag
-            new: Nouveau tag
-            edit: Modifier le tag
-            remove: Supprimer le tag
-        alert:
-            no_item: Aucun tag configuré
     seo:
         label:
             singular: Référencement

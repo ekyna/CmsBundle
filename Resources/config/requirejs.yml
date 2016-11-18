@@ -1,11 +1,4 @@
 config:
-#    shim:
-#        'ekyna-cms/editor/document-manager':
-#            deps: ['routing']
-#        'ekyna-cms/editor/plugin/block/image':
-#            deps: ['routing']
-#        'ekyna-cms/editor/plugin/container/background':
-#            deps: ['routing']
     packages:
         -
             name: 'ekyna-cms/editor'
