@@ -10,6 +10,14 @@
             repository-class="Ekyna\Bundle\CmsBundle\Entity\ContentRepository"
             table="cms_content">
 
+        <indexes>
+            <index columns="name" name="index_cms_content_name"/>
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint columns="name" name="unique_cms_content_name"/>
+        </unique-constraints>
+
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>

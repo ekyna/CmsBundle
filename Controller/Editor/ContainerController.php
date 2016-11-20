@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorException;
+use Ekyna\Bundle\CoreBundle\Modal\Modal;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -61,7 +62,9 @@ class ContainerController extends BaseController
             throw new BadRequestHttpException($e->getMessage());
         }
 
-        if ($response instanceof Response) {
+        if ($response instanceof Modal) {
+            return $this->renderModal($response);
+        } elseif ($response instanceof Response) {
             return $response;
         }
 

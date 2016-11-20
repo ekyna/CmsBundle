@@ -55,9 +55,10 @@ class ContainerManager extends AbstractManager
     public function create($contentOrName, $type = null, array $data = [])
     {
         // Check if container or name is defined
-        if (!$contentOrName instanceof Model\ContentInterface
-            || (is_string($contentOrName) && 0 == strlen($contentOrName))
-        ) {
+        if (!(
+            $contentOrName instanceof Model\ContentInterface ||
+            (is_string($contentOrName) && 0 < strlen($contentOrName))
+        )) {
             throw new InvalidOperationException("Excepted instance of ContentInterface or string.");
         }
 

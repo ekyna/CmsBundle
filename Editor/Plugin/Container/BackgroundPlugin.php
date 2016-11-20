@@ -81,10 +81,7 @@ class BackgroundPlugin extends AbstractPlugin
             return null;
         }
 
-        $modal = $this->createModal('Modifier le conteneur.');
-        $modal->setContent($form->createView());
-
-        return $this->modalRenderer->render($modal);
+        return $this->createModal('Modifier le conteneur.', $form->createView()); // TODO trans
     }
 
     /**
@@ -100,7 +97,7 @@ class BackgroundPlugin extends AbstractPlugin
      */
     public function validate(ContainerInterface $container, ExecutionContextInterface $context)
     {
-        $data = $container->getData();
+        //$data = $container->getData();
 
         /* TODO if (array_key_exists('media_id', $data) && !(is_int($data['media_id']) && 0 < $data['media_id'])) {
             $context->addViolation(self::INVALID_DATA);
@@ -143,7 +140,7 @@ class BackgroundPlugin extends AbstractPlugin
      */
     public function getTitle()
     {
-        return 'Background';
+        return 'Background'; // TODO trans
     }
 
     /**

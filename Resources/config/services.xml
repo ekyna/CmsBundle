@@ -181,12 +181,11 @@
         <!-- Web Editor -->
         <service id="ekyna_cms.editor.plugin_registry" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry"/>
         <service id="ekyna_cms.editor.editor" class="Ekyna\Bundle\CmsBundle\Editor\Editor">
-            <argument type="collection"/>
             <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
-            <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="service" id="validator"/>
             <argument type="service" id="ekyna_cms.editor.document_locale_provider"/>
             <argument type="service" id="ekyna_cms.helper.page"/>
+            <argument type="collection"/>
         </service>
 
         <!-- Web Editor block plugins -->
@@ -196,9 +195,6 @@
             </call>
             <call method="setFormFactory">
                 <argument type="service" id="form.factory"/>
-            </call>
-            <call method="setModalRenderer">
-                <argument type="service" id="ekyna_core.modal"/>
             </call>
             <call method="setLocaleProvider">
                 <argument type="service" id="ekyna_cms.editor.document_locale_provider"/>
@@ -226,9 +222,6 @@
             </call>
             <call method="setFormFactory">
                 <argument type="service" id="form.factory"/>
-            </call>
-            <call method="setModalRenderer">
-                <argument type="service" id="ekyna_core.modal"/>
             </call>
         </service>
         <service id="ekyna_cms.editor.container_plugin.background"
@@ -276,7 +269,6 @@
 
         <!-- Twig extensions -->
         <service id="ekyna_cms.twig.cms_extension" class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
-            <argument type="collection"/>
             <argument type="service" id="ekyna_setting.manager"/>
             <argument type="service" id="ekyna_cms.menu.menu_provider"/>
             <argument type="service" id="knp_menu.helper"/>
@@ -284,10 +276,14 @@
             <argument type="service" id="ekyna_cms.seo.repository"/>
             <argument type="service" id="ekyna_core.cache.tag_manager"/>
             <argument type="service" id="fragment.handler"/>
+            <argument type="collection"/>
             <tag name="twig.extension"/>
         </service>
         <service id="ekyna_cms.twig.editor_extension" class="Ekyna\Bundle\CmsBundle\Twig\EditorExtension">
-            <argument type="service" id="service_container"/>
+            <argument type="service" id="doctrine.orm.default_entity_manager"/>
+            <argument type="service" id="ekyna_cms.editor.editor"/>
+            <argument type="service" id="ekyna_cms.helper.page"/>
+            <argument type="collection"/>
             <tag name="twig.extension"/>
         </service>
 

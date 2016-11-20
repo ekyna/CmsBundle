@@ -32,7 +32,6 @@ class Block extends Model\AbstractTranslatable implements Cms\BlockInterface
      */
     protected $name;
 
-
     /**
      * @var integer
      */

@@ -10,12 +10,20 @@
             repository-class="Ekyna\Bundle\CmsBundle\Entity\BlockRepository"
             table="cms_block">
 
+        <indexes>
+            <index columns="name" name="index_cms_block_name"/>
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint columns="name" name="unique_cms_block_name"/>
+        </unique-constraints>
+
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>
 
         <field name="name" type="string" column="name" nullable="true"/>
-        <field name="position" type="smallint" column="position" />
+        <field name="position" type="smallint" column="position"/>
         <field name="size" type="smallint" column="size"/>
 
         <field name="type" type="string" column="type" length="32"/>

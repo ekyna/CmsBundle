@@ -2,23 +2,40 @@
 
 namespace Ekyna\Bundle\CmsBundle\Twig;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
+use Ekyna\Bundle\CmsBundle\Editor\Exception;
 use Ekyna\Bundle\CmsBundle\Editor\View;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
+use Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CmsBundle\Model;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class EditorExtension
  * @package Ekyna\Bundle\CmsBundle\Twig
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class EditorExtension extends \Twig_Extension
+class EditorExtension extends \Twig_Extension implements \Twig_Extension_InitRuntimeInterface
 {
     /**
-     * @var ContainerInterface
+     * @var EntityManagerInterface
      */
-    protected $container;
+    protected $manager;
+
+    /**
+     * @var Editor
+     */
+    protected $editor;
+
+    /**
+     * @var PageHelper
+     */
+    protected $pageHelper;
+
+    /**
+     * @var array
+     */
+    protected $config;
 
     /**
      * @var \Twig_Template
@@ -29,41 +46,25 @@ class EditorExtension extends \Twig_Extension
     /**
      * Constructor.
      *
-     * @param ContainerInterface $container
+     * @param EntityManagerInterface $manager
+     * @param Editor                 $editor
+     * @param PageHelper             $pageHelper
+     * @param array                  $config
      */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
+    public function __construct(
+        EntityManagerInterface $manager,
+        Editor $editor,
+        PageHelper $pageHelper,
+        array $config
+    ) {
+        $this->manager = $manager;
+        $this->editor = $editor;
+        $this->pageHelper = $pageHelper;
 
-    /**
-     * Returns the editor.
-     *
-     * @return Editor
-     */
-    protected function getEditor()
-    {
-        return $this->container->get('ekyna_cms.editor.editor');
-    }
-
-    /**
-     * Returns the view builder.
-     *
-     * @return View\ViewBuilder
-     */
-    protected function getViewBuilder()
-    {
-        return $this->getEditor()->getViewBuilder();
-    }
-
-    /**
-     * Returns the page helper.
-     *
-     * @return PageHelper
-     */
-    protected function getPageHelper()
-    {
-        return $this->container->get('ekyna_cms.helper.page');
+        // TODO
+        // - classes
+        // - template
+        $this->config = array_replace($this->getDefaultConfig(), $config);
     }
 
     /**
@@ -73,12 +74,10 @@ class EditorExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('cms_document_data', [$this, 'renderDocumentData'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_content', [$this, 'renderContent'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_container', [$this, 'renderContainer'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_row', [$this, 'renderRow'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_block', [$this, 'renderBlock'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_static_container', [$this, 'renderStaticContainer'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_static_block', [$this, 'renderStaticBlock'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_content',       [$this, 'renderContent'],      ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_container',     [$this, 'renderContainer'],    ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_row',           [$this, 'renderRow'],          ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_block',         [$this, 'renderBlock'],        ['is_safe' => ['html']]),
         ];
     }
 
@@ -87,7 +86,7 @@ class EditorExtension extends \Twig_Extension
      */
     public function initRuntime(\Twig_Environment $twig)
     {
-        $this->template = $twig->loadTemplate('EkynaCmsBundle:Editor:content.html.twig'); // TODO config
+        $this->template = $twig->loadTemplate($this->config['template']);
 
         // TODO : hasBlock() does not use template inheritance.
 
@@ -98,6 +97,10 @@ class EditorExtension extends \Twig_Extension
         /** @noinspection PhpInternalEntityUsedInspection */
         if (!$this->template->hasBlock('cms_container')) {
             throw new \RuntimeException('Unable to find "cms_container" twig block.');
+        }
+        /** @noinspection PhpInternalEntityUsedInspection */
+        if (!$this->template->hasBlock('cms_row')) {
+            throw new \RuntimeException('Unable to find "cms_row" twig block.');
         }
         /** @noinspection PhpInternalEntityUsedInspection */
         if (!$this->template->hasBlock('cms_block')) {
@@ -112,31 +115,28 @@ class EditorExtension extends \Twig_Extension
      */
     public function renderDocumentData()
     {
-        $editor = $this->getEditor();
-
-        if (!$editor->isEnabled()) {
+        if (!$this->editor->isEnabled()) {
             return '';
         }
 
-        return " data-document-data='" . json_encode($editor->getContentData()) . "'";
+        return " data-cms-editor-document='" . json_encode($this->editor->getContentData()) . "'";
     }
 
     /**
      * Renders the content.
      *
-     * @param Model\ContentSubjectInterface|Model\ContentInterface|View\ContentView|null $subjectOrContentOrView
+     * @param Model\ContentSubjectInterface|Model\ContentInterface|View\ContentView|null $content
      *
      * @return string
+     * @throws Exception\InvalidArgumentException
      */
-    public function renderContent($subjectOrContentOrView = null)
+    public function renderContent($content = null)
     {
-        if (null === $subjectOrContentOrView) {
-            if (null !== $page = $this->getPageHelper()->getCurrent()) {
-                if (null !== $content = $page->getContent()) {
-                    $subjectOrContentOrView = $content;
-                } else {
+        if (null === $content) {
+            if (null !== $page = $this->pageHelper->getCurrent()) {
+                if (null === $content = $page->getContent()) {
                     if ($page->getAdvanced()) {
-                        $subjectOrContentOrView = $this->getEditor()->createDefaultContent($page);
+                        $this->persist($content = $this->editor->createDefaultContent($page));
                     } elseif (0 < strlen($html = $page->getHtml())) {
                         return $html;
                     } else {
@@ -146,137 +146,150 @@ class EditorExtension extends \Twig_Extension
             } else {
                 throw new \RuntimeException('Undefined content.');
             }
+        } elseif (is_string($content)) {
+            if (null === $element = $this->findByNameAndClass($content, Entity\Content::class)) {
+                $this->persist($element = $this->editor->createDefaultContent($content));
+            }
+            $content = $element;
         }
-        if ($subjectOrContentOrView instanceof Model\ContentSubjectInterface) {
-            $subjectOrContentOrView = $subjectOrContentOrView->getContent();
+
+        if ($content instanceof Model\ContentSubjectInterface) {
+            $content = $content->getContent();
         }
-        if ($subjectOrContentOrView instanceof Model\ContentInterface) {
+
+        if ($content instanceof Model\ContentInterface) {
             // TODO Tag response as Content relative
             /*if (null !== $subjectOrContentOrView->getId()) {
                 $this->tagManager->addTags($subjectOrContentOrView->getEntityTag());
             }*/
-            $subjectOrContentOrView = $this->getViewBuilder()->buildContent($subjectOrContentOrView);
+            $content = $this->editor->getViewBuilder()->buildContent($content);
         }
-        if (!$subjectOrContentOrView instanceof View\ContentView) {
-            throw new \InvalidArgumentException(
-                'Expected instance of ' . Model\ContentSubjectInterface::class . ', ' .
+
+        if (!$content instanceof View\ContentView) {
+            throw new Exception\InvalidArgumentException(
+                'Expected string or instance of ' . Model\ContentSubjectInterface::class . ', ' .
                 Model\ContentInterface::class . ' or ' . View\ContentView::class
             );
         }
 
         /** @noinspection PhpInternalEntityUsedInspection */
         return $this->template->renderBlock('cms_content', [
-            'content' => $subjectOrContentOrView,
+            'content' => $content,
         ]);
     }
 
     /**
      * Renders the container.
      *
-     * @param Model\ContainerInterface|View\ContainerView $containerOrView
+     * @param string|Model\ContainerInterface|View\ContainerView $container
      *
      * @return string
+     * @throws Exception\InvalidArgumentException
      */
-    public function renderContainer($containerOrView)
+    public function renderContainer($container)
     {
-        if ($containerOrView instanceof Model\ContainerInterface) {
+        if (is_string($container)) {
+            if (null === $element = $this->findByNameAndClass($container, Entity\Container::class)) {
+                $this->persist($element = $this->editor->getContainerManager()->create($container));
+            }
+            $container = $element;
+        }
+
+        if ($container instanceof Model\ContainerInterface) {
             // TODO Tags the response as Container relative
             //$this->tagManager->addTags($containerOrView->getEntityTag());
 
-            $containerOrView = $this->getViewBuilder()->buildContainer($containerOrView);
+            $container = $this->editor->getViewBuilder()->buildContainer($container);
+        }
+
+        if (!$container instanceof View\ContainerView) {
+            throw new Exception\InvalidArgumentException(
+                'Expected string or instance of ' .
+                Model\ContainerInterface::class . 'or ' .
+                View\ContainerView::class
+            );
         }
 
         /** @noinspection PhpInternalEntityUsedInspection */
         return $this->template->renderBlock('cms_container', [
-            'container' => $containerOrView,
+            'container' => $container,
         ]);
-    }
-
-    /**
-     * Renders the static container.
-     *
-     * @param string $name
-     * @param null $data
-     *
-     * @return string
-     */
-    public function renderStaticContainer($name, $data = null)
-    {
-        // TODO
-        return '<p>[TODO]</p>';
     }
 
     /**
      * Renders the row.
      *
-     * @param Model\RowInterface|View\RowView $rowOrView
+     * @param Model\RowInterface|View\RowView $row
      *
      * @return string
+     * @throws Exception\InvalidArgumentException
      */
-    public function renderRow($rowOrView)
+    public function renderRow($row)
     {
-        if ($rowOrView instanceof Model\RowInterface) {
+        if (is_string($row)) {
+            if (null === $element = $this->findByNameAndClass($row, Entity\Row::class)) {
+                $this->persist($element = $this->editor->getRowManager()->create($row));
+            }
+            $row = $element;
+        }
+
+        if ($row instanceof Model\RowInterface) {
             // TODO Tags the response as Row relative
             //$this->tagManager->addTags($containerOrView->getEntityTag());
 
-            $rowOrView = $this->getViewBuilder()->buildRow($rowOrView);
+            $row = $this->editor->getViewBuilder()->buildRow($row);
+        }
+
+        if (!$row instanceof View\RowView) {
+            throw new Exception\InvalidArgumentException(
+                'Expected string or instance of ' .
+                Model\RowInterface::class . 'or ' .
+                View\RowView::class
+            );
         }
 
         /** @noinspection PhpInternalEntityUsedInspection */
         return $this->template->renderBlock('cms_row', [
-            'row' => $rowOrView,
+            'row' => $row,
         ]);
-    }
-
-    /**
-     * Renders the static row.
-     *
-     * @param string $name
-     * @param null $data
-     *
-     * @return string
-     */
-    public function renderStaticRow($name, $data = null)
-    {
-        // TODO
-        return '<p>[TODO]</p>';
     }
 
     /**
      * Renders the block.
      *
-     * @param Model\BlockInterface|View\BlockView $blockOrView
+     * @param Model\BlockInterface|View\BlockView $block
      *
      * @return string
+     * @throws Exception\InvalidArgumentException
      */
-    public function renderBlock($blockOrView)
+    public function renderBlock($block)
     {
-        if ($blockOrView instanceof Model\BlockInterface) {
+        if (is_string($block)) {
+            if (null === $element = $this->findByNameAndClass($block, Entity\Block::class)) {
+                $this->persist($element = $this->editor->getBlockManager()->create($block));
+            }
+            $block = $element;
+        }
+
+        if ($block instanceof Model\BlockInterface) {
             // TODO Tags the response as Block relative
             //$this->tagManager->addTags($blockOrView->getEntityTag());
 
-            $blockOrView = $this->getViewBuilder()->buildBlock($blockOrView);
+            $block = $this->editor->getViewBuilder()->buildBlock($block);
+        }
+
+        if (!$block instanceof View\BlockView) {
+            throw new Exception\InvalidArgumentException(
+                'Expected string or instance of ' .
+                Model\BlockInterface::class . 'or ' .
+                View\BlockView::class
+            );
         }
 
         /** @noinspection PhpInternalEntityUsedInspection */
         return $this->template->renderBlock('cms_block', [
-            'block' => $blockOrView,
+            'block' => $block,
         ]);
-    }
-
-    /**
-     * Renders the static block.
-     *
-     * @param string $name
-     * @param string $type
-     * @param mixed  $data
-     *
-     * @return string
-     */
-    public function renderStaticBlock($name, $type = null, $data = null)
-    {
-        // TODO
-        return '<p>[TODO]</p>';
     }
 
     /**
@@ -285,5 +298,50 @@ class EditorExtension extends \Twig_Extension
     public function getName()
     {
         return 'ekyna_cms_editor';
+    }
+
+    /**
+     * Finds the element by name and class.
+     *
+     * @param string $name
+     * @param string $class
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return object|null
+     */
+    private function findByNameAndClass($name, $class)
+    {
+        if (!class_exists($class)) {
+            throw new \InvalidArgumentException(sprintf('Class %s does not exists.', $class));
+        }
+        if (0 == strlen($name)) {
+            throw new \InvalidArgumentException('Expected non empty name.');
+        }
+
+        return $this->manager->getRepository($class)->findOneBy(['name' => $name]);
+    }
+
+    /**
+     * Persists the element and flushes the manager.
+     *
+     * @param object $element
+     */
+    private function persist($element)
+    {
+        $this->manager->persist($element);
+        $this->manager->flush();
+    }
+
+    /**
+     * Returns the default config.
+     *
+     * @return array
+     */
+    private function getDefaultConfig()
+    {
+        return [
+            'template' => 'EkynaCmsBundle:Editor:content.html.twig',
+        ];
     }
 }

@@ -149,6 +149,18 @@ class BaseController extends Controller
     }
 
     /**
+     * Renders the modal.
+     *
+     * @param Modal $modal
+     *
+     * @return Response
+     */
+    protected function renderModal(Modal $modal)
+    {
+        return $this->get('ekyna_core.modal')->render($modal);
+    }
+
+    /**
      * Finds the content by id.
      *
      * @param int $id

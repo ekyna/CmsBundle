@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 /**
  * Class CmsExtension
  * @package Ekyna\Bundle\CmsBundle\Twig
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class CmsExtension extends \Twig_Extension
 {
@@ -65,7 +65,6 @@ class CmsExtension extends \Twig_Extension
     /**
      * Constructor.
      *
-     * @param array                    $config
      * @param SettingsManagerInterface $settings
      * @param MenuProvider             $menuProvider
      * @param Helper                   $menuHelper
@@ -73,37 +72,27 @@ class CmsExtension extends \Twig_Extension
      * @param SeoRepository            $seoRepository
      * @param TagManager               $tagManager
      * @param FragmentHandler          $fragmentHandler
+     * @param array                    $config
      */
     public function __construct(
-        array $config,
         SettingsManagerInterface $settings,
-        MenuProvider             $menuProvider,
-        Helper                   $menuHelper,
-        PageHelper               $pageHelper,
-        SeoRepository            $seoRepository,
-        TagManager               $tagManager,
-        FragmentHandler          $fragmentHandler
+        MenuProvider $menuProvider,
+        Helper $menuHelper,
+        PageHelper $pageHelper,
+        SeoRepository $seoRepository,
+        TagManager $tagManager,
+        FragmentHandler $fragmentHandler,
+        array $config
     ) {
-        $this->config = array_merge(array(
-            'home_route' => 'home',
-            'seo' => array(
-                'no_follow' => true,
-                'no_index' => true,
-                'title_append' => null,
-            ),
-            'page' => array(
-                'controllers' => array(),
-            ),
-            'esi_flashes' => false,
-        ), $config);
-
-        $this->settings        = $settings;
-        $this->menuProvider    = $menuProvider;
-        $this->menuHelper      = $menuHelper;
-        $this->pageHelper      = $pageHelper;
-        $this->tagManager      = $tagManager;
-        $this->seoRepository   = $seoRepository;
+        $this->settings = $settings;
+        $this->menuProvider = $menuProvider;
+        $this->menuHelper = $menuHelper;
+        $this->pageHelper = $pageHelper;
+        $this->tagManager = $tagManager;
+        $this->seoRepository = $seoRepository;
         $this->fragmentHandler = $fragmentHandler;
+
+        $this->config = array_merge($this->getDefaultConfig(), $config);
     }
 
     /**
@@ -111,17 +100,17 @@ class CmsExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
-            new \Twig_SimpleFunction('cms_page', array($this, 'getPage')),
-            new \Twig_SimpleFunction('cms_metas', array($this, 'renderMetas'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('cms_seo', array($this, 'renderSeo'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('cms_meta', array($this, 'renderMeta'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('cms_title', array($this, 'renderTitle'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('cms_menu', array($this, 'renderMenu'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('cms_breadcrumb', array($this, 'renderBreadcrumb'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('cms_flashes', array($this, 'renderFlashes'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('cms_page_controller', array($this, 'getPageControllerTitle'), array('is_safe' => array('html'))),
-        );
+        return [
+            new \Twig_SimpleFunction('cms_page', [$this, 'getPage']),
+            new \Twig_SimpleFunction('cms_metas', [$this, 'renderMetas'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_seo', [$this, 'renderSeo'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_meta', [$this, 'renderMeta'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_title', [$this, 'renderTitle'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_menu', [$this, 'renderMenu'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_breadcrumb', [$this, 'renderBreadcrumb'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_flashes', [$this, 'renderFlashes'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_page_controller', [$this, 'getPageControllerTitle'], ['is_safe' => ['html']]),
+        ];
     }
 
     /**
@@ -138,6 +127,7 @@ class CmsExtension extends \Twig_Extension
      * Generates document title and metas tags from the given Seo object or form the current page.
      *
      * @param mixed $seoOrSubject
+     *
      * @return string
      * @deprecated use renderSeo()
      */
@@ -154,6 +144,7 @@ class CmsExtension extends \Twig_Extension
      * Generates document title and metas tags from the given Seo object or form the current page.
      *
      * @param SeoInterface $seo
+     *
      * @return string
      */
     public function renderSeo(SeoInterface $seo = null)
@@ -168,26 +159,24 @@ class CmsExtension extends \Twig_Extension
                     ->setTitle($this->settings->getParameter('seo.title'))
                     ->setDescription($this->settings->getParameter('seo.description'))
                     ->setIndex(!$this->config['seo']['no_index'])
-                    ->setFollow(!$this->config['seo']['no_follow'])
-                ;
+                    ->setFollow(!$this->config['seo']['no_follow']);
             }
         }
 
         if (null !== $seo) {
             $follow = !$this->config['seo']['no_follow'] ? ($seo->getFollow() ? 'follow' : 'nofollow') : 'nofollow';
-            $index = !$this->config['seo']['no_index'] ? ($seo->getIndex() ?  'index'  : 'noindex') : 'noindex';
+            $index = !$this->config['seo']['no_index'] ? ($seo->getIndex() ? 'index' : 'noindex') : 'noindex';
 
             $metas =
-                $this->renderTitle('title', $seo->getTitle().$this->config['seo']['title_append']) . "\n" .
+                $this->renderTitle('title', $seo->getTitle() . $this->config['seo']['title_append']) . "\n" .
                 $this->renderMeta('description', $seo->getDescription()) . "\n" .
-                $this->renderMeta('robots', $follow.','.$index)
-            ;
+                $this->renderMeta('robots', $follow . ',' . $index);
 
             if (0 < strlen($canonical = $seo->getCanonical())) {
-                $metas .= "\n" .$this->renderTag('link', null, array(
-                    'rel' => 'canonical',
-                    'href' => $canonical,
-                ));
+                $metas .= "\n" . $this->renderTag('link', null, [
+                        'rel'  => 'canonical',
+                        'href' => $canonical,
+                    ]);
             }
 
             // Tags the response as Seo relative
@@ -211,7 +200,7 @@ class CmsExtension extends \Twig_Extension
      */
     public function renderMeta($name, $content)
     {
-        return $this->renderTag('meta', null, array('name' => $name, 'content' => $content));
+        return $this->renderTag('meta', null, ['name' => $name, 'content' => $content]);
     }
 
     /**
@@ -239,30 +228,6 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
-     * Renders the html tag.
-     *
-     * @param $tag
-     * @param string $content
-     * @param array $attributes
-     *
-     * @return string
-     */
-    private function renderTag($tag, $content = null, array $attributes = array())
-    {
-        $attr = [];
-
-        foreach($attributes as $key => $value) {
-            $attr[] = sprintf(' %s="%s"', $key, $value);
-        }
-
-        if (0 < strlen($content)) {
-            return sprintf('<%s%s>%s</%s>', $tag, implode('', $attr), $content, $tag);
-        } else {
-            return sprintf('<%s%s />', $tag, implode('', $attr));
-        }
-    }
-
-    /**
      * Renders the menu by his name.
      *
      * @param string $name
@@ -273,17 +238,17 @@ class CmsExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function renderMenu($name, array $options = array(), $renderer = null)
+    public function renderMenu($name, array $options = [], $renderer = null)
     {
         if (null === $menu = $this->menuProvider->findByName($name)) {
             throw new \InvalidArgumentException(sprintf('Menu named "%s" not found.', $name));
         }
 
         // Tags the response as Menu relative
-        $this->tagManager->addTags(array(
+        $this->tagManager->addTags([
             Menu::getEntityTagPrefix(),
-            sprintf('%s[id:%s]', Menu::getEntityTagPrefix(), $menu['id'])
-        ));
+            sprintf('%s[id:%s]', Menu::getEntityTagPrefix(), $menu['id']),
+        ]);
 
         return $this->menuHelper->render($name, $options, $renderer);
     }
@@ -295,13 +260,13 @@ class CmsExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function renderBreadcrumb(array $options = array())
+    public function renderBreadcrumb(array $options = [])
     {
-        return $this->menuHelper->render('breadcrumb', array_merge(array(
+        return $this->menuHelper->render('breadcrumb', array_merge([
             'template' => 'EkynaCmsBundle:Cms:breadcrumb.html.twig',
             //'currentAsLink' => false,
-            'depth' => 1,
-        ), $options));
+            'depth'    => 1,
+        ], $options));
     }
 
     /**
@@ -314,6 +279,7 @@ class CmsExtension extends \Twig_Extension
         if ($this->config['esi_flashes']) {
             return $this->fragmentHandler->render(new ControllerReference('EkynaCmsBundle:Cms:flashes'), 'esi');
         }
+
         return '<div id="cms-flashes"></div>';
     }
 
@@ -321,6 +287,7 @@ class CmsExtension extends \Twig_Extension
      * Returns the page controller title.
      *
      * @param string $name
+     *
      * @return string
      * @throws \InvalidArgumentException
      */
@@ -329,6 +296,7 @@ class CmsExtension extends \Twig_Extension
         if (!array_key_exists($name, $this->config['page']['controllers'])) {
             throw new \InvalidArgumentException(sprintf('Undefined controller "%s".', $name));
         }
+
         return $this->config['page']['controllers'][$name]['title'];
     }
 
@@ -338,5 +306,50 @@ class CmsExtension extends \Twig_Extension
     public function getName()
     {
         return 'ekyna_cms';
+    }
+
+    /**
+     * Renders the html tag.
+     *
+     * @param        $tag
+     * @param string $content
+     * @param array  $attributes
+     *
+     * @return string
+     */
+    private function renderTag($tag, $content = null, array $attributes = [])
+    {
+        $attr = [];
+
+        foreach ($attributes as $key => $value) {
+            $attr[] = sprintf(' %s="%s"', $key, $value);
+        }
+
+        if (0 < strlen($content)) {
+            return sprintf('<%s%s>%s</%s>', $tag, implode('', $attr), $content, $tag);
+        } else {
+            return sprintf('<%s%s />', $tag, implode('', $attr));
+        }
+    }
+
+    /**
+     * Returns the default configuration.
+     *
+     * @return array
+     */
+    private function getDefaultConfig()
+    {
+        return [
+            'home_route'  => 'home',
+            'seo'         => [
+                'no_follow'    => true,
+                'no_index'     => true,
+                'title_append' => null,
+            ],
+            'page'        => [
+                'controllers' => [],
+            ],
+            'esi_flashes' => false,
+        ];
     }
 }

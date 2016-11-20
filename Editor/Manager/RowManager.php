@@ -24,10 +24,11 @@ class RowManager extends AbstractManager
      */
     public function create($containerOrName, array $data = [])
     {
-        // Check if row or name is defined
-        if (!$containerOrName instanceof Model\ContainerInterface
-            || (is_string($containerOrName) && 0 == strlen($containerOrName))
-        ) {
+        // Check if parent or name is defined
+        if (!(
+            $containerOrName instanceof Model\ContainerInterface ||
+            (is_string($containerOrName) && 0 < strlen($containerOrName))
+        )) {
             throw new InvalidOperationException("Excepted instance of ContainerInterface or string.");
         }
 

@@ -54,7 +54,7 @@ class RowController extends BaseController
      */
     public function editAction(Request $request)
     {
-
+        throw new \Exception('Not yet implemented'); // TODO
     }
 
     /**

@@ -25,18 +25,10 @@ class EkynaCmsExtension extends AbstractExtension
         $container->setParameter('ekyna_cms.page.config', $config['page']);
         $container->setParameter('ekyna_cms.menu.config', $config['menu']);
 
-        $container
-            ->getDefinition('ekyna_cms.twig.cms_extension')
-            ->replaceArgument(0, [
-                'home_route'  => $config['home_route'],
-                'esi_flashes' => $config['esi_flashes'],
-                'seo'         => $config['seo'],
-                'page'        => $config['page'],
-            ]);
-
+        // Editor config
         $container
             ->getDefinition('ekyna_cms.editor.editor')
-            ->replaceArgument(0, [
+            ->replaceArgument(4, [
                 'locales'                  => $container->getParameter('locales'),
                 'layout'                   => $config['editor']['layout'],
                 'viewports'                => $config['editor']['viewports'],
@@ -45,16 +37,37 @@ class EkynaCmsExtension extends AbstractExtension
                 'default_container_plugin' => $config['editor']['plugins']['container']['default'],
             ]);
 
+        // Editor twig extension config
+        $container
+            ->getDefinition('ekyna_cms.twig.editor_extension')
+            ->replaceArgument(3, [
+                'template' => $config['editor']['template'],
+                //'classes'  => $config['editor']['classes'],
+            ]);
+
+        // Editor plugins config
         foreach ($config['editor']['plugins'] as $type => $pluginsConfigs) {
             foreach ($pluginsConfigs as $name => $pluginConfig) {
                 $container->setParameter('ekyna_cms.editor.' . $type . '_plugin.' . $name . '.config', $pluginConfig);
             }
         }
 
+        // Cms twig extension config
+        $container
+            ->getDefinition('ekyna_cms.twig.cms_extension')
+            ->replaceArgument(7, [
+                'home_route'  => $config['home_route'],
+                'esi_flashes' => $config['esi_flashes'],
+                'seo'         => $config['seo'],
+                'page'        => $config['page'],
+            ]);
+
+        // Social buttons bundle bridge
         $bundles = $container->getParameter('kernel.bundles');
         if (array_key_exists('EkynaSocialButtonsBundle', $bundles)) {
             $this->registerSocialSubjectEventSubscriber($container);
         }
+
     }
 
     /**

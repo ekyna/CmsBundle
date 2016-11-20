@@ -1,1 +1,10 @@
-.cms-container{background:center center no-repeat;-webkit-background-size:cover;background-size:cover}.cms-inner-container,.cms-row{padding-top:15px;padding-bottom:15px}
+.cms-container {
+  background: no-repeat center center;
+  -webkit-background-size: cover;
+  background-size: cover;
+}
+.cms-inner-container,
+.cms-row {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}

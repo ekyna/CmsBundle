@@ -31,9 +31,9 @@ class ImagePlugin extends AbstractPlugin
     /**
      * Constructor.
      *
-     * @param array                $config
-     * @param MediaRepository      $mediaRepository
-     * @param CacheManager         $cacheManager
+     * @param array           $config
+     * @param MediaRepository $mediaRepository
+     * @param CacheManager    $cacheManager
      */
     public function __construct(
         array $config,
@@ -42,7 +42,7 @@ class ImagePlugin extends AbstractPlugin
     ) {
         parent::__construct(array_replace([
             'default_path' => '/bundles/ekynacms/img/default-image.gif',
-            'default_alt' => 'Default image',
+            'default_alt'  => 'Default image',
         ], $config));
 
         $this->mediaRepository = $mediaRepository;
@@ -73,17 +73,14 @@ class ImagePlugin extends AbstractPlugin
     {
         $form = $this->formFactory->create(ImageBlockType::class, $block->getData(), [
             'repository' => $this->mediaRepository,
-            'action' => $this->urlGenerator->generate(
-                'ekyna_cms_editor_block_edit',
-                [
-                    'blockId' => $block->getId(),
-                    '_content_locale' => '', // TODO
-                ]
-            ),
-            'method' => 'post',
-            'attr' => [
-                'class' => 'form-horizontal'
-            ]
+            'action'     => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
+                'blockId'         => $block->getId(),
+                '_content_locale' => '', // TODO
+            ]),
+            'method'     => 'post',
+            'attr'       => [
+                'class' => 'form-horizontal',
+            ],
         ]);
 
         if ($request->getMethod() == 'POST' && $form->handleRequest($request) && $form->isValid()) {
@@ -94,10 +91,7 @@ class ImagePlugin extends AbstractPlugin
             return null;
         }
 
-        $modal = $this->createModal('Modifier le bloc image.');
-        $modal->setContent($form->createView());
-
-        return $this->modalRenderer->render($modal);
+        return $this->createModal('Modifier le bloc image.', $form->createView());
     }
 
     /**

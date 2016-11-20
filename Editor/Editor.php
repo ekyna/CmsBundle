@@ -2,7 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor;
 
-use Doctrine\ORM\EntityManager;
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin;
 use Ekyna\Bundle\CmsBundle\Entity;
@@ -18,20 +17,22 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class Editor
 {
-    /**
-     * @var array
-     */
-    private $config;
+//    const CLASS_CONTENT   = 'content';
+//    const CLASS_CONTAINER = 'container';
+//    const CLASS_ROW       = 'row';
+//    const CLASS_BLOCK     = 'block';
+
+    const VIEWPORT_PHONE   = 'phone';
+    const VIEWPORT_TABLET  = 'tablet';
+    const VIEWPORT_LAPTOP  = 'laptop';
+    const VIEWPORT_DESKTOP = 'desktop';
+    const VIEWPORT_ADJUST  = 'adjust';
+
 
     /**
      * @var Plugin\PluginRegistry
      */
     private $pluginRegistry;
-
-    /**
-     * @var EntityManager
-     */
-    private $manager;
 
     /**
      * @var ValidatorInterface
@@ -47,6 +48,11 @@ class Editor
      * @var PageHelper
      */
     private $pageHelper;
+
+    /**
+     * @var array
+     */
+    private $config;
 
     /**
      * @var bool
@@ -82,28 +88,25 @@ class Editor
     /**
      * Constructor.
      *
-     * @param array                   $config
      * @param Plugin\PluginRegistry   $pluginRegistry
-     * @param EntityManager           $manager
      * @param ValidatorInterface      $validator
      * @param LocaleProviderInterface $contentLocaleProvider
      * @param PageHelper              $pageHelper
+     * @param array                   $config
      */
     public function __construct(
-        array $config,
         Plugin\PluginRegistry $pluginRegistry,
-        EntityManager $manager,
         ValidatorInterface $validator,
         LocaleProviderInterface $contentLocaleProvider,
-        PageHelper $pageHelper
+        PageHelper $pageHelper,
+        array $config
     ) {
-        $this->config = array_replace(static::getDefaultConfig(), $config);
-
         $this->pluginRegistry = $pluginRegistry;
-        $this->manager = $manager;
         $this->validator = $validator;
         $this->contentLocaleProvider = $contentLocaleProvider;
         $this->pageHelper = $pageHelper;
+
+        $this->config = array_replace(static::getDefaultConfig(), $config);
     }
 
     /**
@@ -256,26 +259,20 @@ class Editor
         if (null !== $page = $this->pageHelper->getCurrent()) {
             $data['id'] = $page->getId();
         }
+
         return $data;
     }
 
     /**
      * Creates a default content for the given subject.
      *
-     * @param Model\ContentSubjectInterface $subject
+     * @param string|Model\ContentSubjectInterface $subjectOrName
      *
      * @return Model\ContentInterface
      */
-    public function createDefaultContent(Model\ContentSubjectInterface $subject)
+    public function createDefaultContent($subjectOrName)
     {
-        $content = $this->getContentManager()->create($subject);
-
-//        TODO (in controller)
-        //$this->manager->persist($content);
-        $this->manager->persist($subject);
-        $this->manager->flush($subject);
-
-        return $content;
+        return $this->getContentManager()->create($subjectOrName);
     }
 
     /**
@@ -357,6 +354,7 @@ class Editor
     {
         return [
             'locales'                  => ['en'],
+            //'classes'                  => static::getDefaultClassesConfig(),
             'viewports'                => static::getDefaultViewportsConfig(),
             'layout'                   => static::getDefaultLayoutConfig(),
             'block_min_size'           => 2,
@@ -370,14 +368,88 @@ class Editor
      *
      * @return array
      */
+    /*static function getDefaultClasses()
+    {
+        return [
+            'content'   => Entity\Content::class,
+            'container' => Entity\Container::class,
+            'row'       => Entity\Row::class,
+            'block'     => Entity\Block::class,
+        ];
+    }*/
+
+    /**
+     * Returns the default viewports configuration.
+     *
+     * @return array
+     */
+    /*static function getClassesKeys()
+    {
+        return [
+            static::CLASS_CONTENT,
+            static::CLASS_CONTAINER,
+            static::CLASS_ROW,
+            static::CLASS_BLOCK,
+        ];
+    }*/
+
+    /**
+     * Returns the default viewports configuration.
+     *
+     * @return array
+     */
     static function getDefaultViewportsConfig()
     {
         return [
-            ['name' => 'Smartphone', 'width' => 320, 'height' => 568, 'icon' => 'mobile', 'title' => 'Smartphone (320x568)'],
-            ['name' => 'Tablet', 'width' => 768, 'height' => 1024, 'icon' => 'tablet', 'title' => 'Tablet (768x1024)'],
-            ['name' => 'Laptop', 'width' => 1280, 'height' => 800, 'icon' => 'laptop', 'title' => 'Laptop (1280x800)'],
-            ['name' => 'Desktop', 'width' => 1920, 'height' => 1080, 'icon' => 'desktop', 'title' => 'Desktop (1920x1080)'],
-            ['name' => 'Adjust', 'width' => 0, 'height' => 0, 'icon' => 'arrows-alt', 'title' => 'Adjust to screen', 'active' => true],
+            [
+                'name'   => static::VIEWPORT_PHONE,
+                'width'  => 320,
+                'height' => 568,
+                'icon'   => 'mobile',
+                'title'  => 'Smartphone',
+            ],
+            [
+                'name'   => static::VIEWPORT_TABLET,
+                'width'  => 768,
+                'height' => 1024,
+                'icon'   => 'tablet',
+                'title'  => 'Tablet',
+            ],
+            [
+                'name'   => static::VIEWPORT_LAPTOP,
+                'width'  => 1280,
+                'height' => 800,
+                'icon'   => 'laptop',
+                'title'  => 'Laptop',
+            ],
+            [
+                'name'   => static::VIEWPORT_DESKTOP,
+                'width'  => 1920,
+                'height' => 1080,
+                'icon'   => 'desktop',
+                'title'  => 'Desktop'],
+            [
+                'name'   => static::VIEWPORT_ADJUST,
+                'icon'   => 'arrows-alt',
+                'title'  => 'Adjust to screen',
+                'active' => true,
+            ],
+        ];
+    }
+
+    /**
+     * Returns the default viewports configuration.
+     *
+     * @return array
+     */
+    static function getViewportsKeys()
+    {
+        return [
+            static::VIEWPORT_PHONE,
+            static::VIEWPORT_TABLET,
+            static::VIEWPORT_LAPTOP,
+            static::VIEWPORT_DESKTOP,
+            static::VIEWPORT_ADJUST,
         ];
     }
 

@@ -3,7 +3,6 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 
 use Ekyna\Bundle\CoreBundle\Modal\Modal;
-use Ekyna\Bundle\CoreBundle\Modal\Renderer as ModalRenderer;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -28,11 +27,6 @@ abstract class AbstractPlugin implements PluginInterface
      * @var FormFactoryInterface
      */
     protected $formFactory;
-
-    /**
-     * @var ModalRenderer
-     */
-    protected $modalRenderer;
 
 
     /**
@@ -63,16 +57,6 @@ abstract class AbstractPlugin implements PluginInterface
     public function setFormFactory(FormFactoryInterface $formFactory)
     {
         $this->formFactory = $formFactory;
-    }
-
-    /**
-     * Sets the modal renderer.
-     *
-     * @param ModalRenderer $renderer
-     */
-    public function setModalRenderer(ModalRenderer $renderer)
-    {
-        $this->modalRenderer = $renderer;
     }
 
     /**

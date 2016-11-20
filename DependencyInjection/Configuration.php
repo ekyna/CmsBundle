@@ -153,18 +153,43 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('editor')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->scalarNode('template')->defaultValue('EkynaCmsBundle:Editor:content.html.twig')->end()
+                        /*->arrayNode('classes')
+                            ->defaultValue(Editor::getDefaultClasses())
+                            ->requiresAtLeastOneElement()
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')->isRequired()->end()
+                            ->validate()
+                            ->ifTrue(function($classes) {
+                                if (0 < count(array_diff(Editor::getClassesKeys(), (array) $classes))) {
+                                    return true;
+                                }
+                                return false;
+                            })
+                                ->thenInvalid('Unexpected key(s) in editor classes configuration.')
+                            ->end()
+                        ->end()*/
                         ->arrayNode('viewports')
                             ->defaultValue(Editor::getDefaultViewportsConfig())
                             ->requiresAtLeastOneElement()
                             ->useAttributeAsKey('name')
                             ->prototype('array')
                                 ->children()
-                                    ->integerNode('width')->isRequired()->min(0)->end()
-                                    ->integerNode('height')->isRequired()->min(0)->end()
+                                    ->integerNode('width')->isRequired()->min(0)->defaultValue(0)->end()
+                                    ->integerNode('height')->isRequired()->min(0)->defaultValue(0)->end()
                                     ->scalarNode('icon')->isRequired()->cannotBeEmpty()->end()
                                     ->scalarNode('title')->isRequired()->cannotBeEmpty()->end()
                                     ->booleanNode('active')->defaultFalse()->end()
                                 ->end()
+                            ->end()
+                            ->validate()
+                            ->ifTrue(function($classes) {
+                                if (0 < count(array_diff(Editor::getViewportsKeys(), (array) $classes))) {
+                                    return true;
+                                }
+                                return false;
+                            })
+                            ->thenInvalid('Unexpected key(s) in editor classes configuration.')
                             ->end()
                         ->end()
                         ->arrayNode('layout')

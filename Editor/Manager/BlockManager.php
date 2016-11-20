@@ -56,7 +56,10 @@ class BlockManager extends AbstractManager
     public function create($rowOrName, $type = null, array $data = [])
     {
         // Check if row or name is defined
-        if (!$rowOrName instanceof Model\RowInterface || (is_string($rowOrName) && 0 == strlen($rowOrName))) {
+        if (!(
+            $rowOrName instanceof Model\RowInterface ||
+            (is_string($rowOrName) && 0 < strlen($rowOrName))
+        )) {
             throw new InvalidOperationException("Excepted instance of RowInterface or string.");
         }
 

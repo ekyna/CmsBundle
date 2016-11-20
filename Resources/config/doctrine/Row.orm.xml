@@ -9,6 +9,14 @@
     <entity name="Ekyna\Bundle\CmsBundle\Entity\Row"
             table="cms_row">
 
+        <indexes>
+            <index columns="name" name="index_cms_row_name"/>
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint columns="name" name="unique_cms_row_name"/>
+        </unique-constraints>
+
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>

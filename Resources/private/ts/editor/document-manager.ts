@@ -72,7 +72,7 @@ export class BaseManager {
     static setContentDocument($doc:JQuery):void {
         this.$contentDocument = $doc;
 
-        var data:DocumentData = $doc.find('html').data('document-data');
+        var data:DocumentData = $doc.find('html').data('cms-editor-document');
         if (!data) {
             throw "Undefined document data.\n" +
                 "Did you forget to use the cms_document_data() twig function in your template ?";
