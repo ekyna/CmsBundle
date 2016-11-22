@@ -235,6 +235,14 @@
         </property>
         <property name="description">
             <constraint name="NotBlank"/>
+            <constraint name="Length">
+                <option name="max">255</option>
+            </constraint>
+        </property>
+        <property name="keywords">
+            <constraint name="Length">
+                <option name="max">255</option>
+            </constraint>
         </property>
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
             <option name="fields">
