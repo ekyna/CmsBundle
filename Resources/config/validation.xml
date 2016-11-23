@@ -234,7 +234,7 @@
             </constraint>
         </property>
         <property name="description">
-            <constraint name="NotBlank"/>
+            <!--<constraint name="NotBlank"/>-->
             <constraint name="Length">
                 <option name="max">255</option>
             </constraint>
