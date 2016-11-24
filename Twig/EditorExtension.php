@@ -15,7 +15,7 @@ use Ekyna\Bundle\CmsBundle\Model;
  * @package Ekyna\Bundle\CmsBundle\Twig
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class EditorExtension extends \Twig_Extension implements \Twig_Extension_InitRuntimeInterface
+class EditorExtension extends \Twig_Extension
 {
     /**
      * @var EntityManagerInterface
@@ -146,15 +146,16 @@ class EditorExtension extends \Twig_Extension implements \Twig_Extension_InitRun
             } else {
                 throw new \RuntimeException('Undefined content.');
             }
+        } elseif ($content instanceof Model\ContentSubjectInterface) {
+            if (null === $element = $content->getContent()) {
+                $this->persist($element = $this->editor->createDefaultContent($content));
+            }
+            $content = $element;
         } elseif (is_string($content)) {
             if (null === $element = $this->findByNameAndClass($content, Entity\Content::class)) {
                 $this->persist($element = $this->editor->createDefaultContent($content));
             }
             $content = $element;
-        }
-
-        if ($content instanceof Model\ContentSubjectInterface) {
-            $content = $content->getContent();
         }
 
         if ($content instanceof Model\ContentInterface) {
