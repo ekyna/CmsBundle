@@ -10,6 +10,8 @@
         <parameter key="ekyna_cms.menu.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\MenuType</parameter>
         <parameter key="ekyna_cms.page.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
+
+        <parameter key="ekyna_cms.page.search_repository.class">Ekyna\Bundle\CmsBundle\Search\PageRepository</parameter>
     </parameters>
 
     <services>
@@ -257,14 +259,31 @@
         <service id="ekyna_cms.wide_search" class="Ekyna\Bundle\CmsBundle\Search\Wide\Search">
             <argument type="collection"/>
         </service>
-        <service id="ekyna_cms.search.page"
-                 class="Ekyna\Bundle\CmsBundle\Search\PageRepository">
+        <service id="ekyna_cms.page.search_repository"
+                 class="%ekyna_cms.page.search_repository.class%">
             <factory service="fos_elastica.manager" method="getRepository"/>
             <argument>%ekyna_cms.page.class%</argument>
-            <call method="setLocaleProvider">
-                <argument id="ekyna_core.locale_provider.request" type="service"/>
-            </call>
             <tag name="ekyna_cms.wide_search.provider"/>
+        </service>
+
+        <!-- Serialization -->
+        <service id="ekyna_cms.serializer.content_normalizer"
+                 class="Ekyna\Bundle\CmsBundle\Service\Serializer\ContentNormalizer"
+                 parent="ekyna_resource.serializer.resource_normalizer">
+            <tag name="serializer.normalizer"/>
+            <tag name="serializer.denormalizer"/>
+        </service>
+        <service id="ekyna_cms.serializer.page_normalizer"
+                 class="Ekyna\Bundle\CmsBundle\Service\Serializer\PageNormalizer"
+                 parent="ekyna_resource.serializer.resource_normalizer">
+            <tag name="serializer.normalizer"/>
+            <tag name="serializer.denormalizer"/>
+        </service>
+        <service id="ekyna_cms.serializer.seo_normalizer"
+                 class="Ekyna\Bundle\CmsBundle\Service\Serializer\SeoNormalizer"
+                 parent="ekyna_resource.serializer.resource_normalizer">
+            <tag name="serializer.normalizer"/>
+            <tag name="serializer.denormalizer"/>
         </service>
 
         <!-- Twig extensions -->

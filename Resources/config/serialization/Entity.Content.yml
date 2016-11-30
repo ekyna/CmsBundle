@@ -1,8 +1,0 @@
-Ekyna\Bundle\CmsBundle\Entity\Content:
-    attributes:
-        id:
-            groups: [Default]
-#        blocks:
-#            groups: [Default]
-#        indexableContents:
-#            groups: [Default]

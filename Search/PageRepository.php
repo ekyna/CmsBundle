@@ -2,43 +2,21 @@
 
 namespace Ekyna\Bundle\CmsBundle\Search;
 
-use Ekyna\Bundle\AdminBundle\Search\SearchRepositoryInterface;
+use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderAwareInterface;
+use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderAwareTrait;
+use Ekyna\Component\Resource\Search\Elastica\ResourceRepository;
 use Ekyna\Bundle\CmsBundle\Search\Wide\ProviderInterface;
 use Ekyna\Bundle\CmsBundle\Search\Wide\Result;
-use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
-use Elastica\Query;
-use FOS\ElasticaBundle\Repository;
 
 /**
  * Class PageRepository
  * @package Ekyna\Bundle\CmsBundle\Search
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class PageRepository extends Repository implements SearchRepositoryInterface, ProviderInterface
+class PageRepository extends ResourceRepository implements LocaleProviderAwareInterface, ProviderInterface
 {
-    /**
-     * @var LocaleProviderInterface
-     */
-    protected $localeProvider;
+    use LocaleProviderAwareTrait;
 
-    /**
-     * Sets the localeProvider.
-     *
-     * @param LocaleProviderInterface $localeProvider
-     */
-    public function setLocaleProvider($localeProvider)
-    {
-        $this->localeProvider = $localeProvider;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @return \Ekyna\Bundle\CmsBundle\Model\PageInterface[]
-     */
-    public function defaultSearch($expression, $limit = 10)
-    {
-        return $this->find($this->createQuery($expression), $limit);
-    }
 
     /**
      * {@inheritdoc}
@@ -47,7 +25,7 @@ class PageRepository extends Repository implements SearchRepositoryInterface, Pr
     {
         $results = [];
         /** @var \FOS\ElasticaBundle\HybridResult[] $elasticaResults */
-        $elasticaResults = $this->findHybrid($this->createQuery($expression), $limit);
+        $elasticaResults = $this->findHybrid($this->createMatchQuery($expression), $limit);
 
         foreach ($elasticaResults as $elasticaResult) {
             /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
@@ -67,37 +45,25 @@ class PageRepository extends Repository implements SearchRepositoryInterface, Pr
     }
 
     /**
-     * Creates the query.
-     *
-     * @param string $expression
-     *
-     * @return Query\AbstractQuery
+     * @inheritDoc
      */
-    private function createQuery($expression)
+    protected function getDefaultMatchFields()
     {
-        if (0 == strlen($expression)) {
-            return new Query\MatchAll();
-        }
-
         $locale = $this->localeProvider->getCurrentLocale();
 
-        $query = new Query\MultiMatch();
-        $query
-            ->setQuery($expression)
-            ->setFields(array(
-//                'translations.'.$locale.'.title',
-//                'translations.'.$locale.'.html',
-//                'seo.translations.'.$locale.'.title',
-//                'seo.translations.'.$locale.'.description',
-//                'content.'.$locale.'.content',
-                'title',
-                'html',
-                'seo.title',
-                'seo.description',
-            ));
-
-        return $query;
+        return [
+            'translations.'.$locale.'.title',
+            'translations.'.$locale.'.html',
+            'seo.translations.'.$locale.'.title',
+            'seo.translations.'.$locale.'.description',
+//            'content.'.$locale.'.content',
+//            'title',
+//            'html',
+//            'seo.title',
+//            'seo.description',
+        ];
     }
+
 
     /**
      * {@inheritdoc}

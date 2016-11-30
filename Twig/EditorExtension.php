@@ -206,7 +206,7 @@ class EditorExtension extends \Twig_Extension
         if (!$container instanceof View\ContainerView) {
             throw new Exception\InvalidArgumentException(
                 'Expected string or instance of ' .
-                Model\ContainerInterface::class . 'or ' .
+                Model\ContainerInterface::class . ' or ' .
                 View\ContainerView::class
             );
         }
@@ -244,7 +244,7 @@ class EditorExtension extends \Twig_Extension
         if (!$row instanceof View\RowView) {
             throw new Exception\InvalidArgumentException(
                 'Expected string or instance of ' .
-                Model\RowInterface::class . 'or ' .
+                Model\RowInterface::class . ' or ' .
                 View\RowView::class
             );
         }
@@ -282,7 +282,7 @@ class EditorExtension extends \Twig_Extension
         if (!$block instanceof View\BlockView) {
             throw new Exception\InvalidArgumentException(
                 'Expected string or instance of ' .
-                Model\BlockInterface::class . 'or ' .
+                Model\BlockInterface::class . ' or ' .
                 View\BlockView::class
             );
         }
