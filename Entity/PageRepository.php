@@ -38,6 +38,7 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
             ->andWhere($qb->expr()->eq('p.route', $qb->expr()->literal($routeName)))
             ->setMaxResults(1)
             ->getQuery()
+            ->useQueryCache(true)
             ->useResultCache(true, 3600, 'ekyna_cms.page[route:'.$routeName.']')
             ->getOneOrNullResult()
         ;
