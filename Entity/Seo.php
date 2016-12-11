@@ -2,21 +2,19 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Component\Resource\Model\AbstractTranslatable;
-use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
-use Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface;
-use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
+use Ekyna\Component\Resource\Model as RM;
+use Ekyna\Bundle\CmsBundle\Model as Cms;
 
 /**
  * Class Seo
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Étienne Dauvergne <contact@ekyna.com>
  *
- * @method SeoTranslationInterface translate($locale = null, $create = false)
+ * @method Cms\SeoTranslationInterface translate($locale = null, $create = false)
  */
-class Seo extends AbstractTranslatable implements SeoInterface
+class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
 {
-    use TaggedEntityTrait;
+    use RM\TaggedEntityTrait;
 
     /**
      * @var integer

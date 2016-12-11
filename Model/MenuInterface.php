@@ -3,22 +3,22 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Component\Resource\Model\TranslatableInterface;
-use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
+use Ekyna\Component\Resource\Model as RM;
 
 /**
  * Interface MenuInterface
  * @package Ekyna\Bundle\CmsBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  *
  * @method MenuTranslationInterface translate($locale = null, $create = false)
  */
-interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
+interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterface
 {
     /**
      * Sets the parent.
      *
      * @param MenuInterface $parent
+     *
      * @return MenuInterface|$this
      */
     public function setParent(MenuInterface $parent = null);
@@ -34,6 +34,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Sets the left.
      *
      * @param int $left
+     *
      * @return MenuInterface|$this
      */
     public function setLeft($left);
@@ -49,6 +50,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Sets the right.
      *
      * @param int $right
+     *
      * @return MenuInterface|$this
      */
     public function setRight($right);
@@ -64,6 +66,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Sets the root.
      *
      * @param int $root
+     *
      * @return MenuInterface|$this
      */
     public function setRoot($root);
@@ -79,6 +82,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Sets the level.
      *
      * @param int $level
+     *
      * @return MenuInterface|$this
      */
     public function setLevel($level);
@@ -94,6 +98,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Sets the children.
      *
      * @param ArrayCollection|MenuInterface[] $children
+     *
      * @return MenuInterface|$this
      */
     public function setChildren(ArrayCollection $children);
@@ -109,6 +114,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Adds the child menu.
      *
      * @param MenuInterface $menu
+     *
      * @return MenuInterface|$this
      */
     public function addChild(MenuInterface $menu);
@@ -117,6 +123,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Removes the child menu.
      *
      * @param MenuInterface $menu
+     *
      * @return MenuInterface|$this
      */
     public function removeChild(MenuInterface $menu);
@@ -130,6 +137,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Set name
      *
      * @param string $name
+     *
      * @return MenuInterface|$this
      */
     public function setName($name);
@@ -143,6 +151,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Set title
      *
      * @param string $title
+     *
      * @return MenuInterface|$this
      */
     public function setTitle($title);
@@ -158,6 +167,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Set description
      *
      * @param string $description
+     *
      * @return MenuInterface|$this
      */
     public function setDescription($description);
@@ -173,6 +183,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Sets the path.
      *
      * @param string $path
+     *
      * @return MenuInterface|$this
      */
     public function setPath($path);
@@ -188,6 +199,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Sets the route.
      *
      * @param string $route
+     *
      * @return MenuInterface|$this
      */
     public function setRoute($route);
@@ -203,6 +215,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Sets the route parameters.
      *
      * @param array $parameters
+     *
      * @return MenuInterface|$this
      */
     public function setParameters(array $parameters = []);
@@ -218,6 +231,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Sets the route attributes.
      *
      * @param array $attributes
+     *
      * @return MenuInterface|$this
      */
     public function setAttributes(array $attributes = []);
@@ -233,6 +247,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Sets the locked.
      *
      * @param boolean $locked
+     *
      * @return MenuInterface|$this
      */
     public function setLocked($locked);
@@ -248,6 +263,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Sets the enabled.
      *
      * @param boolean $enabled
+     *
      * @return MenuInterface|$this
      */
     public function setEnabled($enabled);
@@ -263,6 +279,7 @@ interface MenuInterface extends TaggedEntityInterface, TranslatableInterface
      * Sets the page (non mapped).
      *
      * @param PageInterface $page
+     *
      * @return MenuInterface|$this
      */
     public function setPage(PageInterface $page);

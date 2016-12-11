@@ -3,22 +3,19 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Component\Resource\Model\AbstractTranslatable;
-use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
-use Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface;
-use Ekyna\Bundle\CmsBundle\Model\PageInterface;
-use Ekyna\Bundle\CoreBundle\Model\TaggedEntityTrait;
+use Ekyna\Component\Resource\Model as RM;
+use Ekyna\Bundle\CmsBundle\Model as Cms;
 
 /**
  * Class Menu
  * @package Ekyna\Bundle\CmsBundle\Entity
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  *
- * @method MenuTranslationInterface translate($locale = null, $create = false)
+ * @method Cms\MenuTranslationInterface translate($locale = null, $create = false)
  */
-class Menu extends AbstractTranslatable implements MenuInterface
+class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
 {
-    use TaggedEntityTrait;
+    use RM\TaggedEntityTrait;
 
     /**
      * @var integer
@@ -96,7 +93,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     protected $options;
 
     /**
-     * @var PageInterface
+     * @var Cms\PageInterface
      */
     protected $page;
 
@@ -108,11 +105,11 @@ class Menu extends AbstractTranslatable implements MenuInterface
     {
         parent::__construct();
 
-        $this->children   = new ArrayCollection();
+        $this->children = new ArrayCollection();
         $this->parameters = [];
         $this->attributes = [];
-        $this->locked     = false;
-        $this->enabled    = true;
+        $this->locked = false;
+        $this->enabled = true;
     }
 
     /**
@@ -136,9 +133,10 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function setParent(MenuInterface $parent = null)
+    public function setParent(Cms\MenuInterface $parent = null)
     {
         $this->parent = $parent;
+
         return $this;
     }
 
@@ -156,6 +154,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setLeft($left)
     {
         $this->left = $left;
+
         return $this;
     }
 
@@ -173,6 +172,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setRight($right)
     {
         $this->right = $right;
+
         return $this;
     }
 
@@ -190,6 +190,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setRoot($root)
     {
         $this->root = $root;
+
         return $this;
     }
 
@@ -207,6 +208,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setLevel($level)
     {
         $this->level = $level;
+
         return $this;
     }
 
@@ -224,6 +226,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setChildren(ArrayCollection $children)
     {
         $this->children = $children;
+
         return $this;
     }
 
@@ -238,7 +241,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function addChild(MenuInterface $menu)
+    public function addChild(Cms\MenuInterface $menu)
     {
         $this->children[] = $menu;
 
@@ -248,7 +251,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function removeChild(MenuInterface $menu)
+    public function removeChild(Cms\MenuInterface $menu)
     {
         $this->children->removeElement($menu);
 
@@ -287,6 +290,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setTitle($title)
     {
         $this->translate()->setTitle($title);
+
         return $this;
     }
 
@@ -304,6 +308,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -321,6 +326,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setPath($path)
     {
         $this->translate()->setPath($path);
+
         return $this;
     }
 
@@ -338,6 +344,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setRoute($route)
     {
         $this->route = $route;
+
         return $this;
     }
 
@@ -355,6 +362,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setParameters(array $parameters = [])
     {
         $this->parameters = $parameters;
+
         return $this;
     }
 
@@ -372,6 +380,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setAttributes(array $attributes = [])
     {
         $this->attributes = $attributes;
+
         return $this;
     }
 
@@ -389,6 +398,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setLocked($locked)
     {
         $this->locked = $locked;
+
         return $this;
     }
 
@@ -406,6 +416,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+
         return $this;
     }
 
@@ -420,7 +431,7 @@ class Menu extends AbstractTranslatable implements MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function setPage(PageInterface $page)
+    public function setPage(Cms\PageInterface $page)
     {
         $this->page = $page;
     }

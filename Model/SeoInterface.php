@@ -2,8 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Ekyna\Component\Resource\Model\TranslatableInterface;
-use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
+use Ekyna\Component\Resource\Model as RM;
 
 /**
  * Interface SeoInterface
@@ -12,7 +11,7 @@ use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
  *
  * @method SeoTranslationInterface translate($locale = null, $create = false)
  */
-interface SeoInterface extends TaggedEntityInterface, TranslatableInterface
+interface SeoInterface extends RM\TaggedEntityInterface, RM\TranslatableInterface
 {
     /**
      * Returns the valid changefreq choices.

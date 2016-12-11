@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Component\Resource\Model;
+use Ekyna\Component\Resource\Model as RM;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use Ekyna\Bundle\CoreBundle\Model as Core;
 
@@ -14,9 +14,9 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  */
 class Row implements Cms\RowInterface
 {
-    use Model\SortableTrait,
-        Model\TimestampableTrait,
-        Core\TaggedEntityTrait;
+    use RM\SortableTrait,
+        RM\TimestampableTrait,
+        RM\TaggedEntityTrait;
 
     /**
      * @var integer

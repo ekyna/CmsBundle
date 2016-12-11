@@ -3,23 +3,23 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Component\Resource\Model;
+use Ekyna\Component\Resource\Model as RM;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use Ekyna\Bundle\CoreBundle\Model as Core;
 
 /**
  * Class Page
  * @package Ekyna\Bundle\CmsBundle\Entity
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  *
  * @method Cms\PageTranslationInterface translate($locale = null, $create = false)
  */
-class Page extends Model\AbstractTranslatable implements Cms\PageInterface
+class Page extends RM\AbstractTranslatable implements Cms\PageInterface
 {
     use Cms\ContentSubjectTrait,
         Cms\SeoSubjectTrait,
-        Model\TimestampableTrait,
-        Core\TaggedEntityTrait;
+        RM\TimestampableTrait,
+        RM\TaggedEntityTrait;
 
     /**
      * @var integer
@@ -104,13 +104,13 @@ class Page extends Model\AbstractTranslatable implements Cms\PageInterface
     {
         parent::__construct();
 
-        $this->children    = new ArrayCollection();
+        $this->children = new ArrayCollection();
 
-        $this->static      = false;
-        $this->locked      = false;
-        $this->advanced    = false;
+        $this->static = false;
+        $this->locked = false;
+        $this->advanced = false;
         $this->dynamicPath = false;
-        $this->enabled     = true;
+        $this->enabled = true;
     }
 
     /**
@@ -382,7 +382,7 @@ class Page extends Model\AbstractTranslatable implements Cms\PageInterface
      */
     public function setStatic($static)
     {
-        $this->static = (bool) $static;
+        $this->static = (bool)$static;
 
         return $this;
     }
@@ -400,7 +400,7 @@ class Page extends Model\AbstractTranslatable implements Cms\PageInterface
      */
     public function setLocked($locked)
     {
-        $this->locked = (bool) $locked;
+        $this->locked = (bool)$locked;
 
         return $this;
     }
@@ -436,7 +436,7 @@ class Page extends Model\AbstractTranslatable implements Cms\PageInterface
      */
     public function setAdvanced($advanced)
     {
-        $this->advanced = (bool) $advanced;
+        $this->advanced = (bool)$advanced;
 
         return $this;
     }
@@ -454,7 +454,8 @@ class Page extends Model\AbstractTranslatable implements Cms\PageInterface
      */
     public function setDynamicPath($dynamicPath)
     {
-        $this->dynamicPath = (bool) $dynamicPath;
+        $this->dynamicPath = (bool)$dynamicPath;
+
         return $this;
     }
 
@@ -471,7 +472,8 @@ class Page extends Model\AbstractTranslatable implements Cms\PageInterface
      */
     public function setEnabled($enabled)
     {
-        $this->enabled = (bool) $enabled;
+        $this->enabled = (bool)$enabled;
+
         return $this;
     }
 

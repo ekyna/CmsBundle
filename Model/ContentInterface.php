@@ -3,15 +3,14 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CoreBundle\Model;
-use Ekyna\Component\Resource\Model\TimestampableInterface;
+use Ekyna\Component\Resource\Model AS RM;
 
 /**
  * Interface ContentInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-interface ContentInterface extends TimestampableInterface, Model\TaggedEntityInterface
+interface ContentInterface extends RM\TimestampableInterface, RM\TaggedEntityInterface
 {
     /**
      * Sets the name

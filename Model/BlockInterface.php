@@ -2,9 +2,8 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Ekyna\Component\Resource\Model\TranslatableInterface;
 use Ekyna\Bundle\CoreBundle\Model as Core;
-use Ekyna\Component\Resource\Model as ResourceModel;
+use Ekyna\Component\Resource\Model as RM;
 
 /**
  * Interface BlockInterface
@@ -14,10 +13,10 @@ use Ekyna\Component\Resource\Model as ResourceModel;
  * @method BlockTranslationInterface translate($locale = null, $create = false)
  */
 interface BlockInterface
-    extends TranslatableInterface,
-            ResourceModel\SortableInterface,
-            ResourceModel\TimestampableInterface,
-            Core\TaggedEntityInterface
+    extends RM\TranslatableInterface,
+            RM\SortableInterface,
+            RM\TimestampableInterface,
+            RM\TaggedEntityInterface
 {
     /**
      * Set row

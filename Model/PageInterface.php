@@ -2,9 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Ekyna\Component\Resource\Model\TranslatableInterface;
-use Ekyna\Bundle\CoreBundle\Model\TaggedEntityInterface;
-use Ekyna\Component\Resource\Model\TimestampableInterface;
+use Ekyna\Component\Resource\Model as RM;
 
 /**
  * Class PageInterface
@@ -16,9 +14,9 @@ use Ekyna\Component\Resource\Model\TimestampableInterface;
 interface PageInterface extends
     ContentSubjectInterface,
     SeoSubjectInterface,
-    TimestampableInterface,
-    TaggedEntityInterface,
-    TranslatableInterface
+    RM\TimestampableInterface,
+    RM\TaggedEntityInterface,
+    RM\TranslatableInterface
 {
     /**
      * Set parent

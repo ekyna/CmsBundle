@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Component\Resource\Model;
+use Ekyna\Component\Resource\Model as RM;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use Ekyna\Bundle\CoreBundle\Model as Core;
 
@@ -10,12 +10,14 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  * Class Block
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @method Cms\BlockTranslationInterface translate($locale = null, $create = false)
  */
-class Block extends Model\AbstractTranslatable implements Cms\BlockInterface
+class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
 {
-    use Model\SortableTrait,
-        Model\TimestampableTrait,
-        Core\TaggedEntityTrait;
+    use RM\SortableTrait,
+        RM\TimestampableTrait,
+        RM\TaggedEntityTrait;
 
     /**
      * @var integer
@@ -97,7 +99,7 @@ class Block extends Model\AbstractTranslatable implements Cms\BlockInterface
      */
     public function setSize($size)
     {
-        $this->size = $size;
+        $this->size = (int)$size;
 
         return $this;
     }
@@ -181,11 +183,11 @@ class Block extends Model\AbstractTranslatable implements Cms\BlockInterface
     public function getInitDatas()
     {
         return [
-            'id'     => $this->id,
-            'type'   => $this->getType(),
-            'row'    => intval($this->row),
-            'column' => intval($this->column),
-            'size'   => intval($this->size),
+            'id'   => $this->id,
+            'row'  => intval($this->row),
+            'name' => intval($this->name),
+            'size' => intval($this->size),
+            'type' => $this->getType(),
         ];
     }
 }
