@@ -32,7 +32,7 @@ class GeneratePagesCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $truncate = $input->getOption('truncate');
+        $truncate = (bool)$input->getOption('truncate');
 
         $output->writeln(sprintf('Loading pages with truncate <info>%s</info>.', $truncate ? 'true' : 'false'));
 
@@ -40,7 +40,11 @@ class GeneratePagesCommand extends ContainerAwareCommand
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion('Do you want to continue ?', false);
 
-        if ($helper->ask($input, $output, $question)) {
+        if (!$helper->ask($input, $output, $question)) {
+            return;
+        }
+
+        if ($truncate) {
             $this->truncate($output);
         }
 

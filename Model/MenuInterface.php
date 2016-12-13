@@ -276,6 +276,31 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
     public function getEnabled();
 
     /**
+     * Returns the options.
+     *
+     * @return array
+     */
+    public function getOptions();
+
+    /**
+     * Returns the option for the given key.
+     *
+     * @param string $key
+     *
+     * @return mixed|null
+     */
+    public function getOption($key);
+
+    /**
+     * Sets the options.
+     *
+     * @param array $options
+     *
+     * @return MenuInterface|$this
+     */
+    public function setOptions(array $options);
+
+    /**
      * Sets the page (non mapped).
      *
      * @param PageInterface $page

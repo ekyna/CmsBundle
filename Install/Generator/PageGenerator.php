@@ -131,8 +131,10 @@ class PageGenerator
 
     private function configureOptionsResolver()
     {
+        /**
+         * Seo options
+         */
         $seoOptionResolver = new OptionsResolver();
-
         /** @noinspection PhpUnusedParameterInspection */
         $seoOptionResolver
             ->setDefaults([
@@ -159,8 +161,22 @@ class PageGenerator
                 return $value;
             });
 
-        $this->optionsResolver = new OptionsResolver();
+        /**
+         * Menus options
+         */
+        $menuOptionResolver = new OptionsResolver();
+        $menuOptionResolver
+            ->setDefaults([
+                'options'    => [],
+                'attributes' => [],
+            ])
+            ->setAllowedTypes('options', 'array')
+            ->setAllowedTypes('attributes', 'array');
 
+        /**
+         * Page options
+         */
+        $this->optionsResolver = new OptionsResolver();
         /** @noinspection PhpUnusedParameterInspection */
         $this->optionsResolver
             ->setDefaults([
@@ -168,20 +184,20 @@ class PageGenerator
                 'path'     => null,
                 'parent'   => null,
                 'locked'   => true,
-                'menus'    => [],
                 'advanced' => false,
-                'seo'      => null,
                 'position' => 0,
+                'seo'      => null,
+                'menus'    => [],
             ])
             ->setRequired(['name', 'path'])
             ->setAllowedTypes('name', 'string')
             ->setAllowedTypes('path', 'string')
             ->setAllowedTypes('parent', ['string', 'null'])
             ->setAllowedTypes('locked', 'bool')
-            ->setAllowedTypes('menus', 'array')
             ->setAllowedTypes('advanced', 'bool')
-            ->setAllowedTypes('seo', ['null', 'array'])
             ->setAllowedTypes('position', 'int')
+            ->setAllowedTypes('seo', ['null', 'array'])
+            ->setAllowedTypes('menus', 'array')
             ->setNormalizer('locked', function (Options $options, $value) {
                 // Lock pages with parameters in path
                 if (preg_match('#\{.*\}#', $options['path'])) {
@@ -189,6 +205,23 @@ class PageGenerator
                 }
 
                 return $value;
+            })
+            ->setNormalizer('menus', function (Options $options, $value) use ($menuOptionResolver) {
+                $normalized = [];
+                if (!empty($value)) {
+                    foreach ($value as $key => $val) {
+                        if (is_scalar($val)) {
+                            $normalized[$val] = [];
+                        } elseif (is_scalar($key) && null == $val) {
+                            $normalized[$key] = [];
+                        } elseif (is_array($val)) {
+                            $normalized[$key] = $menuOptionResolver->resolve((array)$val);
+                        } else {
+                            throw new \InvalidArgumentException("Unexpected menu options format.");
+                        }
+                    }
+                }
+                return $normalized;
             })
             ->setNormalizer('seo', function (Options $options, $value) use ($seoOptionResolver) {
                 return $seoOptionResolver->resolve((array)$value);
@@ -438,14 +471,14 @@ class PageGenerator
      * Creates the menus entries.
      *
      * @param PageInterface $page
-     * @param array         $parentNames
+     * @param array         $menus
      *
      * @return bool
      */
-    private function createMenus(PageInterface $page, array $parentNames)
+    private function createMenus(PageInterface $page, array $menus)
     {
-        if (!empty($parentNames)) {
-            foreach ($parentNames as $parentName) {
+        if (!empty($menus)) {
+            foreach ($menus as $parentName => $config) {
                 if (null === $parent = $this->menuRepository->findOneByName($parentName)) {
                     $this->output->writeln(sprintf(
                         '<error>Parent menu "%s" not found for route "%s".</error>',
@@ -464,6 +497,13 @@ class PageGenerator
                         ->setParent($parent)
                         ->setName($name)
                         ->setRoute($name);
+
+                    if (isset($config['options'])) {
+                        $menu->setOptions((array) $config['options']);
+                    }
+                    if (isset($config['attributes'])) {
+                        $menu->setAttributes((array) $config['attributes']);
+                    }
 
                     foreach ($this->locales as $locale) {
                         $menuTranslation = $menu->translate($locale, true);

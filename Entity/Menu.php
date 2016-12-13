@@ -108,6 +108,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
         $this->children = new ArrayCollection();
         $this->parameters = [];
         $this->attributes = [];
+        $this->options = [];
         $this->locked = false;
         $this->enabled = true;
     }
@@ -426,6 +427,32 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     public function getEnabled()
     {
         return $this->enabled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOption($key)
+    {
+        return isset($this->options[$key]) ? $this->options[$key] : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+
+        return $this;
     }
 
     /**

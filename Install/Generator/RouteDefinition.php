@@ -35,14 +35,14 @@ class RouteDefinition
     protected $locked;
 
     /**
-     * @var array
-     */
-    protected $menus;
-
-    /**
      * @var boolean
      */
     protected $advanced;
+
+    /**
+     * @var integer
+     */
+    protected $position = 0;
 
     /**
      * @var array
@@ -50,9 +50,9 @@ class RouteDefinition
     protected $seo;
 
     /**
-     * @var integer
+     * @var array
      */
-    protected $position = 0;
+    protected $menus;
 
     /**
      * @var array
@@ -76,10 +76,10 @@ class RouteDefinition
         $this->pageName = $options['name'];
         $this->path     = '/'.trim($options['path'], '/');
         $this->locked   = $options['locked'];
-        $this->menus    = $options['menus'];
         $this->advanced = $options['advanced'];
         $this->position = $options['position'];
         $this->seo      = $options['seo'];
+        $this->menus    = $options['menus'];
 
         $this->children = [];
     }
@@ -145,28 +145,6 @@ class RouteDefinition
     }
 
     /**
-     * Returns the menus.
-     *
-     * @return array
-     */
-    public function getMenus()
-    {
-        return $this->menus;
-    }
-
-    /**
-     * Sets the menus.
-     *
-     * @param array $menus
-     * @return RouteDefinition
-     */
-    public function setMenus(array $menus = [])
-    {
-        $this->menus = $menus;
-        return $this;
-    }
-
-    /**
      * Returns whether page has an advanced content
      *
      * @return boolean
@@ -186,6 +164,30 @@ class RouteDefinition
     public function setAdvanced($advanced)
     {
         $this->advanced = (bool)$advanced;
+
+        return $this;
+    }
+
+    /**
+     * Returns the position
+     *
+     * @return integer
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * Sets the position
+     *
+     * @param integer
+     *
+     * @return RouteDefinition
+     */
+    public function setPosition($position)
+    {
+        $this->position = intval($position);
 
         return $this;
     }
@@ -213,26 +215,24 @@ class RouteDefinition
     }
 
     /**
-     * Returns the position
+     * Returns the menus.
      *
-     * @return integer
+     * @return array
      */
-    public function getPosition()
+    public function getMenus()
     {
-        return $this->position;
+        return $this->menus;
     }
 
     /**
-     * Sets the position
+     * Sets the menus.
      *
-     * @param integer
-     *
+     * @param array $menus
      * @return RouteDefinition
      */
-    public function setPosition($position)
+    public function setMenus(array $menus = [])
     {
-        $this->position = intval($position);
-
+        $this->menus = $menus;
         return $this;
     }
 

@@ -4,6 +4,7 @@ ekyna_cms:
         unique_title: Une page est déjà définie avec ce titre.
     page:
         invalid_parent: La page parente sélectionnée n'est pas valide.
+        invalid_path: Le chemin (uri) de la page n'est pas valide.
         title_is_mandatory: Vous devez spécifier tous les champs "Titre" des traductions de page.
         controller_is_mandatory: Veuillez sélectionner un gabarit.
         invalid_controller: Ce gabarit n'est pas valide.

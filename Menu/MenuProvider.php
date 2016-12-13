@@ -2,19 +2,26 @@
 
 namespace Ekyna\Bundle\CmsBundle\Menu;
 
-use Doctrine\ORM\Query\Expr;
 use Ekyna\Bundle\CmsBundle\Entity\MenuRepository;
+use Ekyna\Bundle\CmsBundle\Event\MenuEvent;
+use Ekyna\Bundle\CmsBundle\Event\MenuEvents;
 use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\Provider\MenuProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class MenuProvider
  * @package Ekyna\Bundle\CmsBundle\Menu
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class MenuProvider implements MenuProviderInterface
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
     /**
      * @var FactoryInterface
      */
@@ -39,16 +46,19 @@ class MenuProvider implements MenuProviderInterface
     /**
      * Constructor.
      *
-     * @param FactoryInterface        $factory
-     * @param MenuRepository          $menuRepository
-     * @param LocaleProviderInterface $localeProvider
+     * @param EventDispatcherInterface $dispatcher
+     * @param FactoryInterface         $factory
+     * @param MenuRepository           $menuRepository
+     * @param LocaleProviderInterface  $localeProvider
      */
     public function __construct(
-        FactoryInterface        $factory,
-        MenuRepository          $menuRepository,
+        EventDispatcherInterface $dispatcher,
+        FactoryInterface $factory,
+        MenuRepository $menuRepository,
         LocaleProviderInterface $localeProvider
     ) {
-        $this->factory        = $factory;
+        $this->dispatcher = $dispatcher;
+        $this->factory = $factory;
         $this->menuRepository = $menuRepository;
         $this->localeProvider = $localeProvider;
     }
@@ -57,7 +67,8 @@ class MenuProvider implements MenuProviderInterface
      * Checks whether a menu exists in this provider
      *
      * @param string $name
-     * @param array $options
+     * @param array  $options
+     *
      * @return bool
      */
     public function has($name, array $options = [])
@@ -68,7 +79,8 @@ class MenuProvider implements MenuProviderInterface
     /**
      * Finds the menu by his name.
      *
-     * @param $name
+     * @param string $name
+     *
      * @return null
      */
     public function findByName($name)
@@ -97,7 +109,8 @@ class MenuProvider implements MenuProviderInterface
      * Retrieves a menu by its name.
      *
      * @param string $name
-     * @param array $options
+     * @param array  $options
+     *
      * @return \Knp\Menu\ItemInterface
      * @throws \InvalidArgumentException
      */
@@ -108,7 +121,7 @@ class MenuProvider implements MenuProviderInterface
         }
 
         return $this->buildItem($menu, array_merge([
-            'attributes' => ['id' => $menu['name'].'-nav'] // Root css id
+            'attributes' => ['id' => $menu['name'] . '-nav'] // Root css id
         ], $options));
     }
 
@@ -117,6 +130,7 @@ class MenuProvider implements MenuProviderInterface
      *
      * @param array $data
      * @param array $options
+     *
      * @return \Knp\Menu\ItemInterface
      */
     private function buildItem(array $data, array $options = [])
@@ -127,6 +141,8 @@ class MenuProvider implements MenuProviderInterface
         if (!empty($data['attributes'])) {
             $options['attributes'] = $data['attributes'];
         }
+
+        // Fix routing / url / path
         if (0 < strlen($data['path'])) {
             $options['uri'] = $data['path'];
         } elseif (0 < strlen($data['route'])) {
@@ -138,10 +154,16 @@ class MenuProvider implements MenuProviderInterface
 
         $item = $this->factory->createItem($data['name'], $options);
 
+        // Children items
         foreach ($this->menus as $menu) {
             if ($data['id'] === intval($menu['parent'])) {
                 $item->addChild($this->buildItem($menu));
             }
+        }
+
+        // Custom menu event
+        if (isset($data['options']['event']) && 0 < strlen($event = $data['options']['event'])) {
+            $this->dispatcher->dispatch($event, new MenuEvent($this->factory, $item));
         }
 
         return $item;
@@ -153,16 +175,7 @@ class MenuProvider implements MenuProviderInterface
     private function loadMenus()
     {
         if (null === $this->menus) {
-            $qb = $this->menuRepository->createQueryBuilder('m');
-            $qb
-                ->select('m.id, IDENTITY(m.parent) as parent, m.name, m.route, m.parameters, m.attributes, m.root, t.title, t.path')
-                ->join('m.translations', 't', Expr\Join::WITH, $qb->expr()->eq('t.locale',
-                    $qb->expr()->literal($this->localeProvider->getCurrentLocale())
-                ))
-                ->andWhere($qb->expr()->eq('m.enabled', true))
-                ->orderBy('m.left', 'asc')
-            ;
-            $this->menus = $qb->getQuery()->getArrayResult();
+            $this->menus = $this->menuRepository->findForProvider();
         }
     }
 }

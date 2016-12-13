@@ -237,6 +237,7 @@
 
         <!-- Menus -->
         <service id="ekyna_cms.menu.menu_provider" class="Ekyna\Bundle\CmsBundle\Menu\MenuProvider">
+            <argument type="service" id="event_dispatcher"/>
             <argument type="service" id="knp_menu.factory"/>
             <argument type="service" id="ekyna_cms.menu.repository"/>
             <argument type="service" id="ekyna_core.locale_provider.request"/>

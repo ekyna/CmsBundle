@@ -35,6 +35,7 @@
         <field name="parameters" type="array" column="parameters" />
 
         <field name="attributes" type="array" column="attributes" />
+        <field name="options" type="array" column="options" />
         <field name="locked" type="boolean" column="locked" />
         <field name="enabled" column="enabled" type="boolean" />
 

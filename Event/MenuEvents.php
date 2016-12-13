@@ -5,7 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Event;
 /**
  * Class MenuEvents
  * @package Ekyna\Bundle\CmsBundle\Event
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 final class MenuEvents
 {
@@ -17,4 +17,6 @@ final class MenuEvents
 
     const PRE_DELETE  = 'ekyna_cms.menu.pre_delete';
     const POST_DELETE = 'ekyna_cms.menu.post_delete';
+
+    const CONFIGURE   = 'ekyna_cms.menu.configure';
 }
