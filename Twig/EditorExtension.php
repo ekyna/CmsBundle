@@ -7,7 +7,6 @@ use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Exception;
 use Ekyna\Bundle\CmsBundle\Editor\View;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
-use Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CmsBundle\Model;
 
 /**
@@ -61,9 +60,6 @@ class EditorExtension extends \Twig_Extension
         $this->editor = $editor;
         $this->pageHelper = $pageHelper;
 
-        // TODO
-        // - classes
-        // - template
         $this->config = array_replace($this->getDefaultConfig(), $config);
     }
 
@@ -132,11 +128,14 @@ class EditorExtension extends \Twig_Extension
      */
     public function renderContent($content = null)
     {
+        $repository = $this->editor->getRepository();
+
         if (null === $content) {
             if (null !== $page = $this->pageHelper->getCurrent()) {
-                if (null === $content = $page->getContent()) {
+                if (null === $content = $repository->loadSubjectContent($page)) {
                     if ($page->getAdvanced()) {
-                        $this->persist($content = $this->editor->createDefaultContent($page));
+                        $content = $this->editor->createDefaultContent($page);
+                        $this->persist($page);
                     } elseif (0 < strlen($html = $page->getHtml())) {
                         return $html;
                     } else {
@@ -147,12 +146,13 @@ class EditorExtension extends \Twig_Extension
                 throw new \RuntimeException('Undefined content.');
             }
         } elseif ($content instanceof Model\ContentSubjectInterface) {
-            if (null === $element = $content->getContent()) {
-                $this->persist($element = $this->editor->createDefaultContent($content));
+            if (null === $element = $repository->loadSubjectContent($content)) {
+                $element = $this->editor->createDefaultContent($content);
+                $this->persist($content);
             }
             $content = $element;
         } elseif (is_string($content)) {
-            if (null === $element = $this->findByNameAndClass($content, Entity\Content::class)) {
+            if (null === $element = $this->editor->getRepository()->findContentByName($content)) {
                 $this->persist($element = $this->editor->createDefaultContent($content));
             }
             $content = $element;
@@ -190,7 +190,7 @@ class EditorExtension extends \Twig_Extension
     public function renderContainer($container)
     {
         if (is_string($container)) {
-            if (null === $element = $this->findByNameAndClass($container, Entity\Container::class)) {
+            if (null === $element = $this->editor->getRepository()->findContainerByName($container)) {
                 $this->persist($element = $this->editor->getContainerManager()->create($container));
             }
             $container = $element;
@@ -228,7 +228,7 @@ class EditorExtension extends \Twig_Extension
     public function renderRow($row)
     {
         if (is_string($row)) {
-            if (null === $element = $this->findByNameAndClass($row, Entity\Row::class)) {
+            if (null === $element = $this->editor->getRepository()->findRowByName($row)) {
                 $this->persist($element = $this->editor->getRowManager()->create($row));
             }
             $row = $element;
@@ -266,7 +266,7 @@ class EditorExtension extends \Twig_Extension
     public function renderBlock($block)
     {
         if (is_string($block)) {
-            if (null === $element = $this->findByNameAndClass($block, Entity\Block::class)) {
+            if (null === $element = $this->editor->getRepository()->findBlockByName($block)) {
                 $this->persist($element = $this->editor->getBlockManager()->create($block));
             }
             $block = $element;
@@ -302,28 +302,6 @@ class EditorExtension extends \Twig_Extension
     }
 
     /**
-     * Finds the element by name and class.
-     *
-     * @param string $name
-     * @param string $class
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return object|null
-     */
-    private function findByNameAndClass($name, $class)
-    {
-        if (!class_exists($class)) {
-            throw new \InvalidArgumentException(sprintf('Class %s does not exists.', $class));
-        }
-        if (0 == strlen($name)) {
-            throw new \InvalidArgumentException('Expected non empty name.');
-        }
-
-        return $this->manager->getRepository($class)->findOneBy(['name' => $name]);
-    }
-
-    /**
      * Persists the element and flushes the manager.
      *
      * @param object $element
@@ -331,7 +309,8 @@ class EditorExtension extends \Twig_Extension
     private function persist($element)
     {
         $this->manager->persist($element);
-        $this->manager->flush();
+        /** @noinspection PhpMethodParametersCountMismatchInspection */
+        $this->manager->flush($element);
     }
 
     /**

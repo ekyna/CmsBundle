@@ -5,9 +5,8 @@
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity
+    <mapped-superclass
             name="Ekyna\Bundle\CmsBundle\Entity\Seo"
-            repository-class="Ekyna\Bundle\CmsBundle\Entity\SeoRepository"
             table="cms_seo">
 
         <id name="id" type="integer" column="id">
@@ -20,6 +19,6 @@
         <field name="index" type="boolean" column="do_index" />
         <field name="canonical" type="string" column="canonical_url" length="255" nullable="true" />
 
-    </entity>
+    </mapped-superclass>
 
 </doctrine-mapping>

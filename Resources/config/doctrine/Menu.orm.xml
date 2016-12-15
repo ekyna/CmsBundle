@@ -8,7 +8,6 @@
 
     <mapped-superclass
             name="Ekyna\Bundle\CmsBundle\Entity\Menu"
-            repository-class="Ekyna\Bundle\CmsBundle\Entity\MenuRepository"
             table="cms_menu">
 
         <indexes>

@@ -6,8 +6,8 @@
         xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Ekyna\Bundle\CmsBundle\Entity\Content"
-            repository-class="Ekyna\Bundle\CmsBundle\Entity\ContentRepository"
+    <mapped-superclass
+            name="Ekyna\Bundle\CmsBundle\Entity\Content"
             table="cms_content">
 
         <indexes>
@@ -31,7 +31,7 @@
             <gedmo:timestampable on="update"/>
         </field>
 
-        <one-to-many field="containers" target-entity="Ekyna\Bundle\CmsBundle\Entity\Container" mapped-by="content"
+        <one-to-many field="containers" target-entity="Ekyna\Bundle\CmsBundle\Model\ContainerInterface" mapped-by="content"
                      orphan-removal="true">
             <cascade>
                 <cascade-all/>
@@ -41,6 +41,6 @@
             </order-by>
         </one-to-many>
 
-    </entity>
+    </mapped-superclass>
 
 </doctrine-mapping>

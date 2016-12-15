@@ -17,7 +17,7 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
     use TranslatableResourceRepositoryTrait;
 
     /**
-     * Finds the menu by his name, optionally filtered by root ("rootName:menuName" notation).
+     * Finds the menu by his name, optionally filtered by root ("rootName:menuName" format).
      *
      * @param string $name
      *
@@ -26,9 +26,10 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
      */
     public function findOneByName($name)
     {
+        $as = $this->getAlias();
         $qb = $this->getQueryBuilder();
 
-        $qb->andWhere($qb->expr()->eq('m.name', ':name'));
+        $qb->andWhere($qb->expr()->eq($as . '.name', ':name'));
 
         $parameters = ['name' => $name];
 
@@ -40,7 +41,7 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
                 throw new \InvalidArgumentException(sprintf('Root menu "%s" not found.', $rootName));
             }
 
-            $qb->andWhere($qb->expr()->eq('m.root', ':root'));
+            $qb->andWhere($qb->expr()->eq($as . '.root', ':root'));
 
             $parameters = [
                 'name' => $menuName,
@@ -64,20 +65,21 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
      */
     public function findForProvider()
     {
-        $qb = $this->getCollectionQueryBuilder();
+        $qb = $this->createQueryBuilder('m');
         $qb
             ->select(
                 'm.id, IDENTITY(m.parent) as parent, m.name, m.route, m.parameters, m.root, '.
                 'm.attributes, m.options, t.title, t.path'
             )
-            ->join('m.translations', 't', Expr\Join::WITH, $qb->expr()->eq('t.locale', ':locale'))
+            ->leftJoin('m.translations', 't', Expr\Join::WITH, $qb->expr()->eq('t.locale', ':locale'))
             ->andWhere($qb->expr()->eq('m.enabled', ':enabled'))
-            ->orderBy('m.left', 'asc');
+            ->orderBy('m.left', 'ASC')
+            ->addGroupBy('m.id');
 
         return $qb
             ->getQuery()
             ->useQueryCache(true)
-            ->useResultCache(true, 3600, Menu::getEntityTagPrefix()) // TODO Use a more unique cache id and invalidate it.
+            //->useResultCache(true, 3600, Menu::getEntityTagPrefix()) // TODO Use a more unique cache id and invalidate it.
             ->setParameters([
                 'locale'  => $this->localeProvider->getCurrentLocale(),
                 'enabled' => true,

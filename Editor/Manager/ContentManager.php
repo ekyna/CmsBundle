@@ -3,7 +3,6 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
-use Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CmsBundle\Model;
 
 /**
@@ -31,7 +30,7 @@ class ContentManager extends AbstractManager
         }
 
         // New instance
-        $content = new Entity\Content();
+        $content = $this->getEditor()->getRepository()->createContent();
 
         // Create default container
         $this->getEditor()->getContainerManager()->create($content);

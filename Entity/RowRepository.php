@@ -1,0 +1,69 @@
+<?php
+
+namespace Ekyna\Bundle\CmsBundle\Entity;
+
+use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
+
+/**
+ * Class RowRepository
+ * @package Ekyna\Bundle\CmsBundle\Entity
+ * @author  Etienne Dauvergne <contact@ekyna.com>
+ */
+class RowRepository extends ResourceRepository
+{
+    /**
+     * Finds the row by id.
+     *
+     * @param int $name
+     *
+     * @return \Ekyna\Bundle\CmsBundle\Model\RowInterface|null
+     */
+    public function findOneByName($name)
+    {
+        $qb = $this->getQueryBuilder();
+
+        return $qb
+            ->join('r.blocks', 'block')
+            ->join('block.translations', 'translation')
+            ->addSelect('block', 'translation')
+            ->andWhere($qb->expr()->eq('r.name', ':name'))
+            ->setMaxResults(1)
+            ->getQuery()
+            ->useQueryCache(true)
+            // TODO ->useResultCache(true, 3600, Row::getEntityTagPrefix() . '[name:'.$name.']')
+            ->setParameter('name', $name)
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * Finds the row by id.
+     *
+     * @param int $id
+     *
+     * @return \Ekyna\Bundle\CmsBundle\Model\RowInterface|null
+     */
+    public function findOneById($id)
+    {
+        $qb = $this->getQueryBuilder();
+
+        return $qb
+            ->join('r.blocks', 'block')
+            ->join('block.translations', 'translation')
+            ->addSelect('block', 'translation')
+            ->andWhere($qb->expr()->eq('r.id', ':id'))
+            ->setMaxResults(1)
+            ->getQuery()
+            ->useQueryCache(true)
+            // TODO ->useResultCache(true, 3600, Row::getEntityTagPrefix() . '[id:'.$id.']')
+            ->setParameter('id', $id)
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getAlias()
+    {
+        return 'r';
+    }
+}

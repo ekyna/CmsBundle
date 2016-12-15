@@ -5,7 +5,6 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry;
-use Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CmsBundle\Model;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -49,7 +48,7 @@ class ContainerManager extends AbstractManager
      * @param string                        $type
      * @param array                         $data
      *
-     * @return Entity\Container
+     * @return Model\ContainerInterface
      * @throws InvalidOperationException
      */
     public function create($contentOrName, $type = null, array $data = [])
@@ -68,7 +67,7 @@ class ContainerManager extends AbstractManager
         }
 
         // New instance
-        $container = new Entity\Container();
+        $container = $this->getEditor()->getRepository()->createContainer();
         $container->setType($type);
 
         // Plugin creation

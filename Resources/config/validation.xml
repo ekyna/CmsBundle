@@ -252,7 +252,7 @@
             <option name="message">ekyna_cms.seo.unique_title</option>
             <option name="groups">
                 <value>Default</value>
-                <value>Generator</value>
+                <!--<value>Generator</value>-->
             </option>
         </constraint>
     </class>

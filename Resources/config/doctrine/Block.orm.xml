@@ -6,8 +6,7 @@
         xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Ekyna\Bundle\CmsBundle\Entity\Block"
-            repository-class="Ekyna\Bundle\CmsBundle\Entity\BlockRepository"
+    <mapped-superclass name="Ekyna\Bundle\CmsBundle\Entity\Block"
             table="cms_block">
 
         <indexes>
@@ -36,10 +35,10 @@
             <gedmo:timestampable on="update"/>
         </field>
 
-        <many-to-one field="row" target-entity="Ekyna\Bundle\CmsBundle\Entity\Row" inversed-by="blocks">
+        <many-to-one field="row" target-entity="Ekyna\Bundle\CmsBundle\Model\RowInterface" inversed-by="blocks">
             <join-column name="row_id" referenced-column-name="id" on-delete="CASCADE" nullable="true"/>
         </many-to-one>
 
-    </entity>
+    </mapped-superclass>
 
 </doctrine-mapping>

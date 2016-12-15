@@ -3,8 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Editor;
 
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter;
+use Ekyna\Bundle\CmsBundle\Editor\Repository\RepositoryInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin;
-use Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Model;
 use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
@@ -17,17 +17,17 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class Editor
 {
-//    const CLASS_CONTENT   = 'content';
-//    const CLASS_CONTAINER = 'container';
-//    const CLASS_ROW       = 'row';
-//    const CLASS_BLOCK     = 'block';
-
     const VIEWPORT_PHONE   = 'phone';
     const VIEWPORT_TABLET  = 'tablet';
     const VIEWPORT_LAPTOP  = 'laptop';
     const VIEWPORT_DESKTOP = 'desktop';
     const VIEWPORT_ADJUST  = 'adjust';
 
+
+    /**
+     * @var RepositoryInterface
+     */
+    private $repository;
 
     /**
      * @var Plugin\PluginRegistry
@@ -88,6 +88,7 @@ class Editor
     /**
      * Constructor.
      *
+     * @param RepositoryInterface     $factory
      * @param Plugin\PluginRegistry   $pluginRegistry
      * @param ValidatorInterface      $validator
      * @param LocaleProviderInterface $contentLocaleProvider
@@ -95,12 +96,14 @@ class Editor
      * @param array                   $config
      */
     public function __construct(
+        RepositoryInterface $factory,
         Plugin\PluginRegistry $pluginRegistry,
         ValidatorInterface $validator,
         LocaleProviderInterface $contentLocaleProvider,
         PageHelper $pageHelper,
         array $config
     ) {
+        $this->repository = $factory;
         $this->pluginRegistry = $pluginRegistry;
         $this->validator = $validator;
         $this->contentLocaleProvider = $contentLocaleProvider;
@@ -117,6 +120,16 @@ class Editor
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * Returns the factory.
+     *
+     * @return RepositoryInterface
+     */
+    public function getRepository()
+    {
+        return $this->repository;
     }
 
     /**
@@ -354,7 +367,6 @@ class Editor
     {
         return [
             'locales'                  => ['en'],
-            //'classes'                  => static::getDefaultClassesConfig(),
             'viewports'                => static::getDefaultViewportsConfig(),
             'layout'                   => static::getDefaultLayoutConfig(),
             'block_min_size'           => 2,
@@ -362,36 +374,6 @@ class Editor
             'default_container_plugin' => 'ekyna_container_background',
         ];
     }
-
-    /**
-     * Returns the default viewports configuration.
-     *
-     * @return array
-     */
-    /*static function getDefaultClasses()
-    {
-        return [
-            'content'   => Entity\Content::class,
-            'container' => Entity\Container::class,
-            'row'       => Entity\Row::class,
-            'block'     => Entity\Block::class,
-        ];
-    }*/
-
-    /**
-     * Returns the default viewports configuration.
-     *
-     * @return array
-     */
-    /*static function getClassesKeys()
-    {
-        return [
-            static::CLASS_CONTENT,
-            static::CLASS_CONTAINER,
-            static::CLASS_ROW,
-            static::CLASS_BLOCK,
-        ];
-    }*/
 
     /**
      * Returns the default viewports configuration.

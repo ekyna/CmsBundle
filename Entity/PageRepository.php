@@ -2,6 +2,8 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use Doctrine\ORM\Query\Expr;
+use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Component\Resource\Doctrine\ORM\TranslatableResourceRepositoryInterface;
 use Ekyna\Component\Resource\Doctrine\ORM\Util\TranslatableResourceRepositoryTrait;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
@@ -9,38 +11,71 @@ use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 /**
  * Class PageRepository
  * @package Ekyna\Bundle\CmsBundle\Entity
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class PageRepository extends NestedTreeRepository implements TranslatableResourceRepositoryInterface
 {
     use TranslatableResourceRepositoryTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createQueryBuilder($alias, $indexBy = null)
-    {
-        return parent::createQueryBuilder($alias, $indexBy)
-            ->innerJoin($alias.'.seo', 'seo');
-    }
 
     /**
      * Finds a page by request.
      *
      * @param string $routeName
-     * @return null|\Ekyna\Bundle\CmsBundle\Model\PageInterface
+     *
+     * @return null|PageInterface
      */
     public function findOneByRoute($routeName)
     {
-        $qb = $this->createQueryBuilder('p');
+        $alias = $this->getAlias();
+        $qb = $this->getQueryBuilder();
 
         return $qb
-            ->andWhere($qb->expr()->eq('p.route', $qb->expr()->literal($routeName)))
-            ->setMaxResults(1)
+            ->leftJoin($alias . '.seo', 's')
+            ->leftJoin('s.translations', 's_t', Expr\Join::WITH, $this->getLocaleCondition('s_t'))
+            ->addSelect('s', 's_t')
+            ->andWhere($qb->expr()->eq($alias . '.route', ':route_name'))
             ->getQuery()
+            ->setParameter('route_name', $routeName)
             ->useQueryCache(true)
-            ->useResultCache(true, 3600, 'ekyna_cms.page[route:'.$routeName.']')
-            ->getOneOrNullResult()
-        ;
+            ->useResultCache(true, 3600, 'ekyna_cms.page[route:' . $routeName . ']')
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * Finds the parents pages (including the given one) for breadcrumb.
+     *
+     * @param PageInterface $current
+     *
+     * @return array
+     */
+    public function findParentsForBreadcrumb(PageInterface $current)
+    {
+        $qb = $this->createQueryBuilder();
+        $alias = $this->getAlias();
+
+        return $qb
+            ->select([$alias . '.id', $alias . '.route', $alias . '.dynamicPath', 't.breadcrumb'])
+            ->leftJoin($alias . '.translations', 't', Expr\Join::WITH, $this->getLocaleCondition('t'))
+            ->andWhere($qb->expr()->lte($alias . '.left', ':left'))
+            ->andWhere($qb->expr()->gte($alias . '.right', ':right'))
+            ->addOrderBy($alias . '.left', 'asc')
+            ->addGroupBy($alias . '.id')
+            ->getQuery()
+            ->setParameters([
+                'left'  => $current->getLeft(),
+                'right' => $current->getRight(),
+            ])
+            ->useQueryCache(true)
+            ->useResultCache(true, 3600, $this->getCachePrefix())
+            ->getArrayResult();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getAlias()
+    {
+        return 'p';
     }
 }

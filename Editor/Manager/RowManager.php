@@ -3,7 +3,6 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
-use Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CmsBundle\Model;
 
 /**
@@ -19,7 +18,7 @@ class RowManager extends AbstractManager
      * @param Model\ContainerInterface|string $containerOrName
      * @param array                           $data
      *
-     * @return Entity\Row
+     * @return Model\RowInterface
      * @throws InvalidOperationException
      */
     public function create($containerOrName, array $data = [])
@@ -35,7 +34,7 @@ class RowManager extends AbstractManager
         $editor = $this->getEditor();
 
         // New instance
-        $row = new Entity\Row();
+        $row = $this->getEditor()->getRepository()->createRow();
 
         // Create default block
         $editor->getBlockManager()->create($row);

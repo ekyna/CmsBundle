@@ -49,7 +49,7 @@ class BreadcrumbBuilder
 
     /**
      * Constructor.
-     * 
+     *
      * @param FactoryInterface        $factory
      * @param RouterInterface         $router
      * @param PageHelper              $pageHelper
@@ -77,7 +77,7 @@ class BreadcrumbBuilder
      * @param string $label
      * @param string $route
      * @param array $parameters
-     * 
+     *
      * @throws \RuntimeException
      */
     public function breadcrumbAppend($name, $label, $route = null, array $parameters = array())
@@ -127,20 +127,9 @@ class BreadcrumbBuilder
             // If found, build the breadcrumb
             if (null !== $currentPage) {
                 $repository = $this->pageHelper->getPageRepository();
-                $qb = $repository->createQueryBuilder('p');
-                $qb
-                    ->select('p.id, p.route, p.dynamicPath, t.breadcrumb')
-                    ->join('p.translations', 't', Expr\Join::WITH, $qb->expr()->eq('t.locale',
-                        $qb->expr()->literal($this->localeProvider->getCurrentLocale())
-                    ))
-                    ->andWhere('p.left <= ' . $currentPage->getLeft())
-                    ->andWhere('p.right >= ' . $currentPage->getRight())
-                    ->orderBy('p.left', 'asc')
-                ;
-                $pages = $qb->getQuery()->getArrayResult();
+                $pages = $repository->findParentsForBreadcrumb($currentPage);
 
                 // Fill the menu
-                $tagPrefix = call_user_func($repository->getClassName().'::getEntityTagPrefix');
                 foreach ($pages as $page) {
                     if ($page['dynamicPath']) {
                         $params = array('uri' => null);
@@ -151,7 +140,7 @@ class BreadcrumbBuilder
                         ->addChild('page-'.$page['id'], $params)
                         ->setLabel($page['breadcrumb'])
                     ;
-                    $this->tagManager->addTags(sprintf('%s[id:%s]', $tagPrefix, $page['id']));
+                    $this->tagManager->addTags(sprintf('%s[id:%s]', $repository->getCachePrefix(), $page['id']));
                 }
             }
         }

@@ -8,7 +8,6 @@
 
     <mapped-superclass
             name="Ekyna\Bundle\CmsBundle\Entity\Page"
-            repository-class="Ekyna\Bundle\CmsBundle\Entity\PageRepository"
             table="cms_page">
 
         <indexes>

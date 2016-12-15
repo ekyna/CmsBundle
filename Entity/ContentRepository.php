@@ -2,31 +2,101 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Doctrine\ORM\EntityRepository;
+use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
+use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
 
 /**
  * Class ContentRepository
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class ContentRepository extends EntityRepository
+class ContentRepository extends ResourceRepository
 {
     /**
      * Finds the content by id.
      *
-     * @param int $contentId
+     * @param int $name
      *
-     * @return null|\Ekyna\Bundle\CmsBundle\Model\ContentInterface
+     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface|null
      */
-    public function findOneById($contentId)
+    public function findOneByName($name)
     {
-        $qb = $this->createQueryBuilder('s');
-        $query = $qb
-            ->andWhere($qb->expr()->eq('s.id', $contentId))
-            ->setMaxResults(1)
-            ->getQuery()//->useResultCache(true, 3600, 'ekyna_cms.content[id:'.$contentId.']') // TODO doctrine cache clear/update
-        ;
+        $qb = $this->getQueryBuilder();
 
-        return $query->getOneOrNullResult();
+        return $qb
+            ->leftJoin('c.containers', 'container')
+            ->leftJoin('container.rows', 'row')
+            ->leftJoin('row.blocks', 'block')
+            ->leftJoin('block.translations', 'block_t')
+            ->addSelect('container', 'row', 'block', 'block_t')
+            ->andWhere($qb->expr()->eq('c.name', ':name'))
+            ->getQuery()
+            ->useQueryCache(true)
+            // TODO ->useResultCache(true, 3600, Content::getEntityTagPrefix() . '[name:'.$name.']')
+            ->setParameter('name', $name)
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * Finds the content by id.
+     *
+     * @param int $id
+     *
+     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface|null
+     */
+    public function findOneById($id)
+    {
+        $qb = $this->getQueryBuilder();
+
+        return $qb
+            ->leftJoin('c.containers', 'container')
+            ->leftJoin('container.rows', 'row')
+            ->leftJoin('row.blocks', 'block')
+            ->leftJoin('block.translations', 'block_t')
+            ->addSelect('container', 'row', 'block', 'block_t')
+            ->andWhere($qb->expr()->eq('c.id', ':id'))
+            ->getQuery()
+            ->useQueryCache(true)
+            // TODO ->useResultCache(true, 3600, Content::getEntityTagPrefix() . '[id:'.$id.']')
+            ->setParameter('id', $id)
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * Finds the content by subject.
+     *
+     * @param ContentSubjectInterface $subject
+     *
+     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface|null
+     */
+    public function findBySubject(ContentSubjectInterface $subject)
+    {
+        $content = $subject->getContent();
+
+        if (null !== $content && property_exists($content, '__isInitialized__') && !$content->{'__isInitialized__'}) {
+            $qb = $this->getQueryBuilder();
+            $qb
+                ->leftJoin('c.containers', 'container')
+                ->leftJoin('container.rows', 'row')
+                ->leftJoin('row.blocks', 'block')
+                ->leftJoin('block.translations', 'block_t')
+                ->select('PARTIAL c.{id}', 'container', 'row', 'block', 'block_t')
+                ->andWhere($qb->expr()->eq('c.id', ':id'))
+                ->getQuery()
+                ->useQueryCache(true)
+                // TODO ->useResultCache(true, 3600, Content::getEntityTagPrefix() . '[id:'.$id.']')
+                ->setParameter('id', $content->getId())
+                ->getOneOrNullResult();
+        }
+
+        return $content;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getAlias()
+    {
+        return 'c';
     }
 }

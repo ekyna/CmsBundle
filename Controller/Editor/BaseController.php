@@ -2,13 +2,12 @@
 
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
-use Ekyna\Bundle\CmsBundle\Entity;
+use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CoreBundle\Modal\Modal;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class BaseController
@@ -22,6 +21,12 @@ class BaseController extends Controller
     const SERIALIZE_CONTENT = 'Content';
 
     /**
+     * @var Editor
+     */
+    private $editor;
+
+
+    /**
      * Creates a modal.
      *
      * @param string $title
@@ -33,8 +38,6 @@ class BaseController extends Controller
     protected function createModal($title, $content = null, array $buttons = [])
     {
         $modal = new Modal($title);
-
-        $buttons = [];
 
         if (empty($buttons)) {
             $buttons['submit'] = [
@@ -145,7 +148,13 @@ class BaseController extends Controller
      */
     protected function getEditor()
     {
-        return $this->get('ekyna_cms.editor.editor')->setEnabled(true); // TODO Enable somewhere else
+        if (null !== $this->editor) {
+            return $this->editor;
+        }
+
+        return $this->editor = $this
+            ->get('ekyna_cms.editor.editor')
+            ->setEnabled(true); // TODO Do this somewhere else
     }
 
     /**
@@ -169,8 +178,9 @@ class BaseController extends Controller
      */
     protected function findContent($id)
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->findElementById($id, Entity\Content::class);
+        return $this
+            ->get('ekyna_cms.content.repository')
+            ->findOneById($id);
     }
 
     /**
@@ -182,8 +192,7 @@ class BaseController extends Controller
      */
     protected function findContainer($id)
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->findElementById($id, Entity\Container::class);
+        return $this->getEditor()->getRepository()->findContainerById($id);
     }
 
     /**
@@ -195,8 +204,7 @@ class BaseController extends Controller
      */
     protected function findRow($id)
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->findElementById($id, Entity\Row::class);
+        return $this->getEditor()->getRepository()->findRowById($id);
     }
 
     /**
@@ -208,8 +216,7 @@ class BaseController extends Controller
      */
     protected function findBlock($id)
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->findElementById($id, Entity\Block::class);
+        return $this->getEditor()->getRepository()->findBlockById($id);
     }
 
     /**
@@ -258,37 +265,5 @@ class BaseController extends Controller
     protected function findContentByRequest(Request $request)
     {
         return $this->findContent(intval($request->attributes->get('contentId')));
-    }
-
-    /**
-     * Finds the element by id and class.
-     *
-     * @param int    $id
-     * @param string $class
-     *
-     * @throws \InvalidArgumentException
-     * @throws NotFoundHttpException
-     *
-     * @return object
-     */
-    private function findElementById($id, $class)
-    {
-        if (!class_exists($class)) {
-            throw new \InvalidArgumentException(sprintf('Class %s does not exists.', $class));
-        }
-        if (!(is_int($id) && 0 < $id)) {
-            throw new \InvalidArgumentException('Expected integer greater than zero.');
-        }
-
-        $entity = $this
-            ->getDoctrine()
-            ->getRepository($class)
-            ->find($id);
-
-        if (null === $entity) {
-            throw new NotFoundHttpException(sprintf('Entity not found for class %s and id %d.', $class, $id));
-        }
-
-        return $entity;
     }
 }

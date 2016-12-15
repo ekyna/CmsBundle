@@ -6,7 +6,8 @@
         xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Ekyna\Bundle\CmsBundle\Entity\Row"
+    <mapped-superclass
+            name="Ekyna\Bundle\CmsBundle\Entity\Row"
             table="cms_row">
 
         <indexes>
@@ -31,7 +32,7 @@
             <gedmo:timestampable on="update"/>
         </field>
 
-        <one-to-many field="blocks" target-entity="Ekyna\Bundle\CmsBundle\Entity\Block" mapped-by="row"
+        <one-to-many field="blocks" target-entity="Ekyna\Bundle\CmsBundle\Model\BlockInterface" mapped-by="row"
                      orphan-removal="true">
             <cascade>
                 <cascade-all/>
@@ -41,10 +42,10 @@
             </order-by>
         </one-to-many>
 
-        <many-to-one field="container" target-entity="Ekyna\Bundle\CmsBundle\Entity\Container" inversed-by="rows">
+        <many-to-one field="container" target-entity="Ekyna\Bundle\CmsBundle\Model\ContainerInterface" inversed-by="rows">
             <join-column name="container_id" referenced-column-name="id" on-delete="CASCADE" nullable="true"/>
         </many-to-one>
 
-    </entity>
+    </mapped-superclass>
 
 </doctrine-mapping>

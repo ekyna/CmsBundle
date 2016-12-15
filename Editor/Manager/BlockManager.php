@@ -5,7 +5,6 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry;
-use Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CmsBundle\Model;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -69,7 +68,7 @@ class BlockManager extends AbstractManager
         }
 
         // New instance
-        $block = new Entity\Block();
+        $block = $this->getEditor()->getRepository()->createBlock();
         $block->setType($type);
 
         // Plugin creation

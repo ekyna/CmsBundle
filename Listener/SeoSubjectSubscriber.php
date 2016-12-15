@@ -13,7 +13,7 @@ use Doctrine\ORM\Events;
  */
 class SeoSubjectSubscriber implements EventSubscriber
 {
-    const SEO_CLASS         = 'Ekyna\Bundle\CmsBundle\Entity\Seo';
+    const SEO_INTERFACE     = 'Ekyna\Bundle\CmsBundle\Model\SeoInterface';
     const SUBJECT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface';
 
     /**
@@ -41,7 +41,7 @@ class SeoSubjectSubscriber implements EventSubscriber
 
         $metadata->mapOneToOne([
             'fieldName'     => 'seo',
-            'targetEntity'  => self::SEO_CLASS,
+            'targetEntity'  => self::SEO_INTERFACE,
             'cascade'       => ['all'],
 //            'fetch' => ClassMetadataInfo::FETCH_EAGER,
             'orphanRemoval' => true,

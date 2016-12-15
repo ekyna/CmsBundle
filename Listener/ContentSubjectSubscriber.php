@@ -13,7 +13,7 @@ use Doctrine\ORM\Events;
  */
 class ContentSubjectSubscriber implements EventSubscriber
 {
-    const CONTENT_CLASS     = 'Ekyna\Bundle\CmsBundle\Entity\Content';
+    const CONTENT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\ContentInterface';
     const SUBJECT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface';
 
     /**
@@ -46,7 +46,7 @@ class ContentSubjectSubscriber implements EventSubscriber
 
         $metadata->mapOneToOne([
             'fieldName'     => 'content',
-            'targetEntity'  => self::CONTENT_CLASS,
+            'targetEntity'  => self::CONTENT_INTERFACE,
             'cascade'       => ['all'],
             'orphanRemoval' => true,
             'joinColumn'    => [

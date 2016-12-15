@@ -34,12 +34,6 @@
             <tag name="form.type"/>
         </service>
 
-        <!-- Repositories -->
-        <service id="ekyna_cms.content.repository" class="Ekyna\Bundle\CmsBundle\Entity\ContentRepository">
-            <factory service="doctrine.orm.default_entity_manager" method="getRepository"/>
-            <argument>Ekyna\Bundle\CmsBundle\Entity\Content</argument>
-        </service>
-
         <!-- Event listeners -->
         <service id="ekyna_cms.kernel_event_listener" class="Ekyna\Bundle\CmsBundle\EventListener\KernelEventListener">
             <argument id="ekyna_cms.editor.editor" type="service"/>
@@ -181,13 +175,27 @@
         </service>
 
         <!-- Web Editor -->
-        <service id="ekyna_cms.editor.plugin_registry" class="Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry"/>
-        <service id="ekyna_cms.editor.editor" class="Ekyna\Bundle\CmsBundle\Editor\Editor">
+        <service id="ekyna_cms.editor.plugin_registry"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry"
+                 public="false"/>
+        <service id="ekyna_cms.editor.editor"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Editor">
+            <argument type="service" id="ekyna_cms.editor.repository"/>
             <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
             <argument type="service" id="validator"/>
             <argument type="service" id="ekyna_cms.editor.document_locale_provider"/>
             <argument type="service" id="ekyna_cms.helper.page"/>
             <argument type="collection"/>
+        </service>
+
+        <!-- Web Editor Factory -->
+        <service id="ekyna_cms.editor.repository"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Repository\Repository"
+                 public="false">
+            <argument type="service" id="ekyna_cms.content.repository"/>
+            <argument type="service" id="ekyna_cms.container.repository"/>
+            <argument type="service" id="ekyna_cms.row.repository"/>
+            <argument type="service" id="ekyna_cms.block.repository"/>
         </service>
 
         <!-- Web Editor block plugins -->
@@ -204,13 +212,15 @@
         </service>
         <service id="ekyna_cms.editor.block_plugin.tinymce"
                  class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\TinymcePlugin"
-                 parent="ekyna_cms.editor.block_plugin.abstract">
+                 parent="ekyna_cms.editor.block_plugin.abstract"
+                 public="false">
             <argument>%ekyna_cms.editor.block_plugin.tinymce.config%</argument>
             <tag name="ekyna_cms.editor.block_plugin"/>
         </service>
         <service id="ekyna_cms.editor.block_plugin.image"
                  class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\ImagePlugin"
-                 parent="ekyna_cms.editor.block_plugin.abstract">
+                 parent="ekyna_cms.editor.block_plugin.abstract"
+                 public="false">
             <argument>%ekyna_cms.editor.block_plugin.image.config%</argument>
             <argument type="service" id="ekyna_media.media.repository"/>
             <argument type="service" id="liip_imagine.cache.manager"/>
@@ -228,7 +238,8 @@
         </service>
         <service id="ekyna_cms.editor.container_plugin.background"
                  class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Container\BackgroundPlugin"
-                 parent="ekyna_cms.editor.container_plugin.abstract">
+                 parent="ekyna_cms.editor.container_plugin.abstract"
+                 public="false">
             <argument>%ekyna_cms.editor.container_plugin.background.config%</argument>
             <argument type="service" id="ekyna_media.media.repository"/>
             <argument type="service" id="liip_imagine.cache.manager"/>
@@ -288,7 +299,8 @@
         </service>
 
         <!-- Twig extensions -->
-        <service id="ekyna_cms.twig.cms_extension" class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
+        <service id="ekyna_cms.twig.cms_extension"
+                 class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
             <argument type="service" id="ekyna_setting.manager"/>
             <argument type="service" id="ekyna_cms.menu.menu_provider"/>
             <argument type="service" id="knp_menu.helper"/>
@@ -299,7 +311,8 @@
             <argument type="collection"/>
             <tag name="twig.extension"/>
         </service>
-        <service id="ekyna_cms.twig.editor_extension" class="Ekyna\Bundle\CmsBundle\Twig\EditorExtension">
+        <service id="ekyna_cms.twig.editor_extension"
+                 class="Ekyna\Bundle\CmsBundle\Twig\EditorExtension">
             <argument type="service" id="doctrine.orm.default_entity_manager"/>
             <argument type="service" id="ekyna_cms.editor.editor"/>
             <argument type="service" id="ekyna_cms.helper.page"/>
@@ -308,17 +321,20 @@
         </service>
 
         <!-- Validators -->
-        <service id="ekyna_cms.page.validator" class="Ekyna\Bundle\CmsBundle\Validator\Constraints\PageValidator">
+        <service id="ekyna_cms.page.validator"
+                 class="Ekyna\Bundle\CmsBundle\Validator\Constraints\PageValidator">
             <argument type="service" id="router" />
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%locales%</argument>
             <tag name="validator.constraint_validator"/>
         </service>
-        <service id="ekyna_cms.menu.validator" class="Ekyna\Bundle\CmsBundle\Validator\Constraints\MenuValidator">
+        <service id="ekyna_cms.menu.validator"
+                 class="Ekyna\Bundle\CmsBundle\Validator\Constraints\MenuValidator">
             <argument>%locales%</argument>
             <tag name="validator.constraint_validator"/>
         </service>
-        <service id="ekyna_cms.block.validator" class="Ekyna\Bundle\CmsBundle\Validator\Constraints\BlockValidator">
+        <service id="ekyna_cms.block.validator"
+                 class="Ekyna\Bundle\CmsBundle\Validator\Constraints\BlockValidator">
             <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
             <tag name="validator.constraint_validator"/>
         </service>

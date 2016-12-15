@@ -28,7 +28,7 @@ class EkynaCmsExtension extends AbstractExtension
         // Editor config
         $container
             ->getDefinition('ekyna_cms.editor.editor')
-            ->replaceArgument(4, [
+            ->replaceArgument(5, [
                 'locales'                  => $container->getParameter('locales'),
                 'layout'                   => $config['editor']['layout'],
                 'viewports'                => $config['editor']['viewports'],
@@ -42,7 +42,6 @@ class EkynaCmsExtension extends AbstractExtension
             ->getDefinition('ekyna_cms.twig.editor_extension')
             ->replaceArgument(3, [
                 'template' => $config['editor']['template'],
-                //'classes'  => $config['editor']['classes'],
             ]);
 
         // Editor plugins config

@@ -31,8 +31,14 @@ class EkynaCmsBundle extends AbstractBundle
     protected function getModelInterfaces()
     {
         return [
+            'Ekyna\Bundle\CmsBundle\Model\SeoInterface'  => 'ekyna_cms.seo.class',
             'Ekyna\Bundle\CmsBundle\Model\PageInterface' => 'ekyna_cms.page.class',
             'Ekyna\Bundle\CmsBundle\Model\MenuInterface' => 'ekyna_cms.menu.class',
+
+            'Ekyna\Bundle\CmsBundle\Model\BlockInterface'     => 'ekyna_cms.block.class',
+            'Ekyna\Bundle\CmsBundle\Model\ContainerInterface' => 'ekyna_cms.container.class',
+            'Ekyna\Bundle\CmsBundle\Model\ContentInterface'   => 'ekyna_cms.content.class',
+            'Ekyna\Bundle\CmsBundle\Model\RowInterface'       => 'ekyna_cms.row.class',
         ];
     }
 }
