@@ -69,6 +69,22 @@ ekyna_cms:
         label:
             singular: Référencement
             plural: Référencements
+    content:
+        label:
+            singular: Contenu
+            plural: Contenus
+    container:
+        label:
+            singular: Conteneur
+            plural: Conteneurs
+    row:
+        label:
+            singular: Ligne
+            plural: Lignes
+    block:
+        label:
+            singular: Bloc
+            plural: Blocs
     field:
         main_menu: Menu principal
         footer_menu: Menu pied de page
