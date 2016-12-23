@@ -235,7 +235,7 @@ interface PageInterface extends
      *
      * @return boolean
      */
-    public function getStatic();
+    public function isStatic();
 
     /**
      * Set locked
@@ -250,7 +250,7 @@ interface PageInterface extends
      *
      * @return boolean
      */
-    public function getLocked();
+    public function isLocked();
 
     /**
      * Set controller
@@ -280,7 +280,7 @@ interface PageInterface extends
      *
      * @return boolean
      */
-    public function getAdvanced();
+    public function isAdvanced();
 
     /**
      * Sets the dynamicPath.
@@ -295,7 +295,7 @@ interface PageInterface extends
      *
      * @return boolean
      */
-    public function getDynamicPath();
+    public function isDynamicPath();
 
     /**
      * Sets the enabled.
@@ -310,7 +310,7 @@ interface PageInterface extends
      *
      * @return boolean
      */
-    public function getEnabled();
+    public function isEnabled();
 
     /**
      * Returns whether the exhibitor should be indexed or not by elasticsearch.

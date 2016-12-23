@@ -78,7 +78,7 @@ class KernelEventListener implements EventSubscriberInterface
         }
 
         if (null !== $page = $this->pageHelper->init($request)) {
-            if (!$page->getEnabled()) {
+            if (!$page->isEnabled()) {
                 if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                     $this->session->getFlashBag()->add('warning', 'ekyna_cms.page.alert.disabled.allow_as_admin');
 

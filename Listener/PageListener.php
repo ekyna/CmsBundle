@@ -77,7 +77,7 @@ class PageListener
 
         /*$changeSet = $event->getEntityChangeSet();
         if (array_key_exists('enabled', $changeSet)) {
-            if ($page->getEnabled()) {
+            if ($page->isEnabled()) {
                 $this->discardPageRedirections($page);
             } else {
                 $this->buildPageRedirections($page);
@@ -99,7 +99,7 @@ class PageListener
 
         $changeSet = $uow->getEntityChangeSet($page);
         if (array_key_exists('enabled', $changeSet)) {
-            if ($page->getEnabled()) {
+            if ($page->isEnabled()) {
                 $this->discardPageRedirections($page);
             } else {
                 $this->buildPageRedirections($page);
@@ -129,13 +129,13 @@ class PageListener
         $doRecompute = false;
 
         $dynamicPath = $this->hasDynamicPath($page);
-        if ($dynamicPath != $page->getDynamicPath()) {
+        if ($dynamicPath != $page->isDynamicPath()) {
             $page->setDynamicPath($dynamicPath);
             $doRecompute = true;
         }
 
         $advanced = $this->isAdvanced($page);
-        if (null !== $advanced && $advanced != $page->getAdvanced()) {
+        if (null !== $advanced && $advanced != $page->isAdvanced()) {
             $page->setAdvanced($advanced);
             $doRecompute = true;
         }
@@ -168,7 +168,7 @@ class PageListener
      */
     private function buildPageRedirections(PageInterface $page)
     {
-        if (!$page->getEnabled()) {
+        if (!$page->isEnabled()) {
             $redirections = [];
 
             // Store "from" paths for each locale
@@ -184,7 +184,7 @@ class PageListener
             // Find the first enabled ancestor
             $parentPage = $page;
             while (null !== $parentPage = $parentPage->getParent()) {
-                if ($parentPage->getEnabled()) {
+                if ($parentPage->isEnabled()) {
                     // Store "to" paths for each locale
                     foreach ($parentPage->getTranslations() as $locale => $translation) {
                         if (array_key_exists($locale, $redirections)) {
@@ -220,7 +220,7 @@ class PageListener
      */
     private function discardPageRedirections(PageInterface $page)
     {
-        if ($page->getEnabled()) {
+        if ($page->isEnabled()) {
             /** @var \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface $translation */
             foreach ($page->getTranslations() as $locale => $translation) {
                 // TODO use url generator or i18n routing prefix strategy

@@ -73,15 +73,15 @@ class PageValidator extends ConstraintValidator
 
                     return;
                 }
-                if ($page->getStatic()) {
+                if ($page->isStatic()) {
 
                 }
             }
         }
 
         // Validates the controller
-        if ($page->getStatic()) {
-            if (!$page->getDynamicPath()) {
+        if ($page->isStatic()) {
+            if (!$page->isDynamicPath()) {
                 /** @var \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface $translation */
                 foreach ($page->getTranslations() as $translation) {
                     $current = $translation->getPath();
@@ -104,7 +104,7 @@ class PageValidator extends ConstraintValidator
         } else {
             // Check that the parent page is not locked
             if (null !== $parentPage = $page->getParent()) {
-                if ($parentPage->getLocked()) {
+                if ($parentPage->isLocked()) {
                     $this->context
                         ->buildViolation($constraint->invalidParent)
                         ->atPath('parent')

@@ -361,16 +361,17 @@ class PageGenerator
                 $page->setName($definition->getPageName());
                 $updated = true;
             }
-            if ($page->getLocked() !== $definition->getLocked()) {
-                $page->setLocked($definition->getLocked());
+            if ($page->isLocked() !== $definition->isLocked()) {
+                $page->setLocked($definition->isLocked());
                 $updated = true;
             }
-            if ($page->getAdvanced() !== $definition->getAdvanced()) {
-                $page->setAdvanced($definition->getAdvanced());
+            if ($page->isAdvanced() !== $definition->isAdvanced()) {
+                $page->setAdvanced($definition->isAdvanced());
                 $updated = true;
             }
 
             // Watch for paths update
+            $dynamic = false;
             foreach ($this->locales as $locale) {
                 if ($routeName === $path = $this->translator->trans(
                         $routeName, [], $this->routesTranslationDomain, $locale
@@ -378,11 +379,21 @@ class PageGenerator
                 ) {
                     $path = $definition->getPath();
                 }
-                $pageTranslation = $page->translate($locale);
+
+                $pageTranslation = $page->translate($locale, true);
                 if ($pageTranslation->getPath() !== $path) {
                     $pageTranslation->setPath($path);
                     $updated = true;
                 }
+
+                if (0 < preg_match('~\{.*\}~', $path)) {
+                    $dynamic = true;
+                }
+            }
+
+            if ($dynamic != $page->isDynamicPath()) {
+                $page->setDynamicPath($dynamic);
+                $updated = true;
             }
 
             if ($updated) {
@@ -415,11 +426,12 @@ class PageGenerator
                 ->setRoute($routeName)
                 ->setPath($definition->getPath())
                 ->setStatic(true)
-                ->setLocked($definition->getLocked())
-                ->setAdvanced($definition->getAdvanced())
+                ->setLocked($definition->isLocked())
+                ->setAdvanced($definition->isAdvanced())
                 ->setParent($parentPage)
                 ->setSeo($seo);
 
+            $dynamic = false;
             foreach ($this->locales as $locale) {
                 $title = $seoTitle = $definition->getPageName();
                 if (null !== $parentPage && $parentPage->getRoute() !== $this->homeRouteName) {
@@ -442,6 +454,14 @@ class PageGenerator
                     ->setTitle($title)
                     ->setBreadcrumb($title)
                     ->setPath($path);
+
+                if (0 < preg_match('~\{.*\}~', $path)) {
+                    $dynamic = true;
+                }
+            }
+
+            if ($dynamic != $page->isDynamicPath()) {
+                $page->setDynamicPath($dynamic);
             }
 
             if (!$this->validate($page)) {

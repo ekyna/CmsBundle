@@ -58,12 +58,12 @@ class MenuEventListener implements EventSubscriberInterface
         $menu = $this->getMenuFromEvent($event);
 
         // Don't disable if locked
-        if (!$menu->getEnabled() && $menu->getLocked()) {
+        if (!$menu->isEnabled() && $menu->isLocked()) {
             $menu->setEnabled(true);
         }
 
         // Don't enable if disabled relative page
-        if ($menu->getEnabled() && !$menu->getLocked() && 0 < strlen($menu->getRoute())) {
+        if ($menu->isEnabled() && !$menu->isLocked() && 0 < strlen($menu->getRoute())) {
             /** @noinspection SqlDialectInspection */
             $disabledPageId = $this->em
                 ->createQuery("SELECT p.id FROM {$this->pageClass} p WHERE p.route = :route AND p.enabled = 0")
@@ -80,7 +80,7 @@ class MenuEventListener implements EventSubscriberInterface
         }
 
         // Disable menu children
-        if (!$menu->getEnabled()) {
+        if (!$menu->isEnabled()) {
             $this->em->createQuery(sprintf(
                 'UPDATE %s m SET m.enabled = 0 WHERE m.root = :root AND m.left > :left AND m.right < :right',
                 $this->menuClass

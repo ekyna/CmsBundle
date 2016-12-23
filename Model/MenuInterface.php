@@ -257,7 +257,7 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
      *
      * @return boolean
      */
-    public function getLocked();
+    public function isLocked();
 
     /**
      * Sets the enabled.
@@ -273,7 +273,7 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
      *
      * @return boolean
      */
-    public function getEnabled();
+    public function isEnabled();
 
     /**
      * Returns the options.

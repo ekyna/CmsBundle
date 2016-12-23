@@ -133,7 +133,7 @@ class EditorExtension extends \Twig_Extension
         if (null === $content) {
             if (null !== $page = $this->pageHelper->getCurrent()) {
                 if (null === $content = $repository->loadSubjectContent($page)) {
-                    if ($page->getAdvanced()) {
+                    if ($page->isAdvanced()) {
                         $content = $this->editor->createDefaultContent($page);
                         $this->persist($page);
                     } elseif (0 < strlen($html = $page->getHtml())) {

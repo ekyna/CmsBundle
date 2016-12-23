@@ -40,7 +40,7 @@ class MenuValidator extends ConstraintValidator
             throw new UnexpectedTypeException($menu, MenuInterface::class);
         }
 
-        if (0 === $menu->getLevel() || $menu->getLocked()) {
+        if (0 === $menu->getLevel() || $menu->isLocked()) {
             return;
         }
 

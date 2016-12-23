@@ -406,7 +406,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getLocked()
+    public function isLocked()
     {
         return $this->locked;
     }
@@ -424,7 +424,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * {@inheritdoc}
      */
-    public function getEnabled()
+    public function isEnabled()
     {
         return $this->enabled;
     }

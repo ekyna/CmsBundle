@@ -77,7 +77,7 @@ class MenuType extends ResourceFormType
             /** @var \Ekyna\Bundle\CmsBundle\Entity\Menu $menu */
             $menu = $event->getData();
             $form = $event->getForm();
-            $disabled = $menu->getLocked();
+            $disabled = $menu->isLocked();
 
             $form
                 ->add('name', Type\TextType::class, [

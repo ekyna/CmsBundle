@@ -139,7 +139,7 @@ class RouteDefinition
      *
      * @return boolean
      */
-    public function getLocked()
+    public function isLocked()
     {
         return $this->locked;
     }
@@ -149,7 +149,7 @@ class RouteDefinition
      *
      * @return boolean
      */
-    public function getAdvanced()
+    public function isAdvanced()
     {
         return $this->advanced;
     }

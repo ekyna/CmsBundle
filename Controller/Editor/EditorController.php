@@ -67,9 +67,9 @@ class EditorController extends BaseController
         return [
             'value'    => $page->getId(),
             'title'    => $page->translate($locale)->getTitle(),
-            'disabled' => $page->getDynamicPath(),
+            'disabled' => $page->isDynamicPath(),
             'data'     => [
-                'locked' => $page->getLocked(),
+                'locked' => $page->isLocked(),
                 'path'   => $this->generateUrl($page->getRoute(), ['_locale' => $locale]),
             ],
         ];

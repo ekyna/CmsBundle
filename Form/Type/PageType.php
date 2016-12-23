@@ -58,7 +58,7 @@ class PageType extends ResourceFormType
             $page = $event->getData();
             $form = $event->getForm();
 
-            if ($page->getStatic()) {
+            if ($page->isStatic()) {
                 $form
                     ->add('name', Type\TextType::class, [
                         'label'        => 'ekyna_core.field.name',

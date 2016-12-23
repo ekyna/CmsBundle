@@ -114,15 +114,15 @@ class PageEventListener implements EventSubscriberInterface
         $page = $this->getPageFromEvent($event);
 
         // Don't disable if static
-        if (!$page->getEnabled() && $page->getStatic()) {
+        if (!$page->isEnabled() && $page->isStatic()) {
             $page->setEnabled(true);
         }
 
         // Don't enable if at least one ancestor is disabled.
-        if ($page->getEnabled()) {
+        if ($page->isEnabled()) {
             $parentPage = $page;
             while (null !== $parentPage = $parentPage->getParent()) {
-                if (!$parentPage->getEnabled()) {
+                if (!$parentPage->isEnabled()) {
                     $page->setEnabled(false);
                     $event->addMessage(new ResourceMessage(
                         'ekyna_cms.page.alert.parent_disabled',
@@ -170,7 +170,7 @@ class PageEventListener implements EventSubscriberInterface
     {
         $page = $this->getPageFromEvent($event);
 
-        if ($page->getStatic()) {
+        if ($page->isStatic()) {
             $event->addMessage(new ResourceMessage(
                 'ekyna_cms.page.alert.do_not_remove_static',
                 ResourceMessage::TYPE_ERROR
@@ -212,10 +212,10 @@ class PageEventListener implements EventSubscriberInterface
     private function disablePageChildren(PageInterface $page)
     {
         $childrenDisabled = false;
-        if (!$page->getEnabled()) {
+        if (!$page->isEnabled()) {
             if (0 < $page->getChildren()->count()) {
                 foreach ($page->getChildren() as $child) {
-                    if ($child->getEnabled()) {
+                    if ($child->isEnabled()) {
                         $child->setEnabled(false);
                         $childrenDisabled = true;
 
@@ -245,7 +245,7 @@ class PageEventListener implements EventSubscriberInterface
     private function disablePageRelativeMenus(PageInterface $page)
     {
         $disabledMenus = false;
-        if (!$page->getEnabled()) {
+        if (!$page->isEnabled()) {
 
             // Disable menu children query
             $disableChildrenQuery = $this->em->createQuery(sprintf(
@@ -261,7 +261,7 @@ class PageEventListener implements EventSubscriberInterface
                 ->getResult();
             if (!empty($menus)) {
                 foreach ($menus as $menu) {
-                    if ($menu->getEnabled()) {
+                    if ($menu->isEnabled()) {
                         $menu->setEnabled(false);
                         $this->em->persist($menu);
                         $disabledMenus = true;

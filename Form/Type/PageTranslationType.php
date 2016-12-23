@@ -39,12 +39,12 @@ class PageTranslationType extends AbstractType
 
             /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
             $page = $form->getParent()->getParent()->getData();
-            if (null !== $page && !$page->getStatic() && null !== $parent = $page->getParent()) {
+            if (null !== $page && !$page->isStatic() && null !== $parent = $page->getParent()) {
                 $pathOptions = [
                     'label'        => 'ekyna_core.field.url',
                     'admin_helper' => 'CMS_PAGE_PATH',
                     'required'     => false,
-                    'disabled'     => $page->getStatic(),
+                    'disabled'     => $page->isStatic(),
                 ];
                 $parentPath = $parent->translate($form->getName())->getPath();
                 if (1 < strlen($parentPath)) {
@@ -63,11 +63,11 @@ class PageTranslationType extends AbstractType
                     'label'        => 'ekyna_core.field.url',
                     'admin_helper' => 'CMS_PAGE_PATH',
                     'required'     => false,
-                    'disabled'     => (null !== $page && $page->getStatic()),
+                    'disabled'     => (null !== $page && $page->isStatic()),
                 ));
             }
 
-            if (!$page->getAdvanced()) {
+            if (!$page->isAdvanced()) {
                 $form->add('html', TinymceType::class, array(
                     'label'        => 'ekyna_core.field.content',
                     'admin_helper' => 'CMS_PAGE_CONTENT',
@@ -91,7 +91,7 @@ class PageTranslationType extends AbstractType
                 if (0 < strlen($path = $data->getPath())) {
                     $page = $data->getTranslatable();
                     // Path field is disabled for static pages : skip transform.
-                    if ($page->getStatic()) {
+                    if ($page->isStatic()) {
                         return $data;
                     }
                     if (null !== $parent = $page->getParent()) {

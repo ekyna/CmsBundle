@@ -390,7 +390,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * {@inheritdoc}
      */
-    public function getStatic()
+    public function isStatic()
     {
         return $this->static;
     }
@@ -408,7 +408,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * {@inheritdoc}
      */
-    public function getLocked()
+    public function isLocked()
     {
         return $this->locked;
     }
@@ -444,7 +444,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * {@inheritdoc}
      */
-    public function getAdvanced()
+    public function isAdvanced()
     {
         return $this->advanced;
     }
@@ -462,7 +462,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * {@inheritdoc}
      */
-    public function getDynamicPath()
+    public function isDynamicPath()
     {
         return $this->dynamicPath;
     }
@@ -480,7 +480,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * {@inheritdoc}
      */
-    public function getEnabled()
+    public function isEnabled()
     {
         return $this->enabled;
     }
