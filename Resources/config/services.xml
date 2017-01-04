@@ -79,20 +79,20 @@
             <argument id="event_dispatcher" type="service"/>
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%locales%</argument>
-            <tag name="doctrine.entity_listener"/>
+            <tag name="doctrine.orm.entity_listener"/>
         </service>
         <service id="ekyna_core.page_translation.listener"
                  class="Ekyna\Bundle\CmsBundle\Listener\PageTranslationListener">
             <argument id="event_dispatcher" type="service"/>
-            <tag name="doctrine.entity_listener"/>
+            <tag name="doctrine.orm.entity_listener"/>
             <tag name="doctrine.event_subscriber"/>
         </service>
         <service id="ekyna_core.menu.listener" class="Ekyna\Bundle\CmsBundle\Listener\MenuListener">
-            <tag name="doctrine.entity_listener"/>
+            <tag name="doctrine.orm.entity_listener"/>
         </service>
         <service id="ekyna_core.block.listener" class="Ekyna\Bundle\CmsBundle\Listener\BlockListener">
             <argument type="service" id="ekyna_core.cache.tag_manager"/>
-            <tag name="doctrine.entity_listener"/>
+            <tag name="doctrine.orm.entity_listener"/>
         </service>
 
         <!-- Settings Schema -->

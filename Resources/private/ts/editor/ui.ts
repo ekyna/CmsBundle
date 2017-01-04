@@ -18,11 +18,11 @@ import Dispatcher from './dispatcher';
 
 export class Util {
     static addEditorParameterToUrl(url:string):string {
-        var anchor:HTMLAnchorElement = <HTMLAnchorElement>document.createElement('a');
+        let anchor:HTMLAnchorElement = <HTMLAnchorElement>document.createElement('a');
         anchor.href = url;
 
         // Parse search query string
-        var params:Backbone.ObjectHash = {},
+        let params:Backbone.ObjectHash = {},
             seg:any = anchor.search.replace('?','').split('&'),
             len:number = seg.length, i:number = 0, s:any;
         for (;i<len;i++) {
@@ -37,7 +37,7 @@ export class Util {
 
             // Rebuild search query string
             seg = [];
-            for (var k in params) {
+            for (let k in params) {
                 if (params.hasOwnProperty(k)) {
                     seg.push(k + '=' + params[k]);
                 }
@@ -66,7 +66,7 @@ interface ControlConfig extends Backbone.ObjectHash {
     disabled: boolean
 }
 
-const CONTROL_DEFAULTS = {
+const CONTROL_DEFAULTS:ControlConfig = {
     name: null,
     title: null,
     disabled: false
@@ -225,7 +225,7 @@ export class ButtonView extends ControlView<Button> {
     onClick(e:JQueryEventObject):void {
         e.preventDefault();
 
-        var dispatch = () => { Dispatcher.trigger(this.model.get('event'), this.model);},
+        let dispatch = () => { Dispatcher.trigger(this.model.get('event'), this.model);},
             message:string = this.model.get('confirm');
         if (message && 0 < message.length) {
             if (confirm(message)) {
@@ -285,9 +285,9 @@ export class ButtonDropdownView extends ControlView<Button> {
     onClick(e:JQueryEventObject):void {
         e.preventDefault();
 
-        var $target = $(e.target).closest('a');
+        let $target = $(e.target).closest('a');
 
-        var choice:ButtonChoiceConfig = _.findWhere(
+        let choice:ButtonChoiceConfig = _.findWhere(
             (<Array<ButtonChoiceConfig>>this.model.get('choices')),
             {name: $target.data('choice')}
         );
@@ -295,7 +295,7 @@ export class ButtonDropdownView extends ControlView<Button> {
             throw 'Choice not found';
         }
 
-        var dispatch = () => { Dispatcher.trigger(this.model.get('event'), this.model, choice); },
+        let dispatch = () => { Dispatcher.trigger(this.model.get('event'), this.model, choice); },
             message:string = choice.confirm;
         if (message && 0 < message.length) {
             if (confirm(message)) {
@@ -316,10 +316,10 @@ export class ButtonDropdownView extends ControlView<Button> {
             .toggleClass('rotate', this.model.get('rotate'))
             .find('span').toggleClass('fa-spin', this.model.get('spinning'));
 
-        var $ul:JQuery = this.$('ul');
+        let $ul:JQuery = this.$('ul');
 
         this.model.get('choices').forEach(function(choice:ButtonChoiceConfig) {
-            var $a = $('<a></a>')
+            let $a = $('<a></a>')
                 .attr('href', 'javascript:void(0)')
                 .data('choice', choice.name)
                 .text(choice.title)
@@ -384,7 +384,7 @@ export class Select extends Control {
 
     setChoices(choices:Array<SelectChoiceConfig>):Select {
         if (choices.length) {
-            var activeChoice = (<SelectChoiceConfig>_.findWhere(choices, {active: true}));
+            let activeChoice = (<SelectChoiceConfig>_.findWhere(choices, {active: true}));
             if (activeChoice) {
                 this.setValue(activeChoice.value);
             } else {
@@ -424,7 +424,7 @@ export class Select extends Control {
             return false;
         }
 
-        var choice;
+        let choice:SelectChoiceConfig;
         this.get('choices').forEach(function(c:SelectChoiceConfig) {
             if (c.value == value) {
                 c.active = true;
@@ -476,10 +476,10 @@ export class SelectView extends ControlView<Select> {
     render():SelectView {
         this.$el.html(this.template(this.model.attributes));
 
-        var $select = this.$('select')
+        let $select = this.$('select')
             .empty()
             .prop('disabled', this.model.get('disabled'));
-        var width = this.model.get('width');
+        let width = this.model.get('width');
         if (0 < width) {
             $select.removeAttr('style').css({'width': width});
         }
@@ -558,7 +558,7 @@ export class ControlGroupView extends Backbone.View<ControlGroup> {
         this.clear();
 
         this.model.get('controls').each((control:Control) => {
-            var view = control.createView();
+            let view = control.createView();
             this.$el.append(view.render().$el);
             this.subViews.push(view);
         });
@@ -669,7 +669,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
     }
 
     protected position(origin: OffsetInterface):void {
-        var position:any = {};
+        let position:any = {};
         if (origin.left > (window.innerWidth / 2)) {
             this.$el.addClass('right').removeClass('left');
             position.right = window.innerWidth - origin.left;
@@ -700,7 +700,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
         this.clear();
 
         this.model.get('groups').each((group:ControlGroup) => {
-            var view = new ControlGroupView({
+            let view = new ControlGroupView({
                 model: group
             });
             this.$el.append(view.render().$el);
