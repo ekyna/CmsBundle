@@ -16,8 +16,11 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
 class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
 {
     use RM\SortableTrait,
-        RM\TimestampableTrait,
-        RM\TaggedEntityTrait;
+        RM\TimestampableTrait;
+
+    use RM\TaggedEntityTrait {
+            getEntityTag as traitGetEntityTag;
+        }
 
     /**
      * @var integer
@@ -43,6 +46,11 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
      * @var string
      */
     protected $type;
+
+    /**
+     * @var array
+     */
+    protected $layout = [];
 
     /**
      * @var array
@@ -97,24 +105,6 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setSize($size)
-    {
-        $this->size = (int)$size;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSize()
-    {
-        return $this->size;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setType($type)
     {
         $this->type = $type;
@@ -128,6 +118,26 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Sets the layout.
+     *
+     * @param array $layout
+     */
+    public function setLayout(array $layout)
+    {
+        $this->layout = $layout;
+    }
+
+    /**
+     * Returns the layout.
+     *
+     * @return array
+     */
+    public function getLayout()
+    {
+        return $this->layout;
     }
 
     /**
@@ -146,6 +156,18 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityTag()
+    {
+        if (0 == strlen($this->name) && null !== $this->row) {
+            return $this->row->getEntityTag();
+        }
+
+        return $this->traitGetEntityTag();
     }
 
     /**

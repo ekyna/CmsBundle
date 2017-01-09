@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor;
 
+use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter;
 use Ekyna\Bundle\CmsBundle\Editor\Repository\RepositoryInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin;
@@ -58,6 +59,16 @@ class Editor
      * @var bool
      */
     private $enabled;
+
+    /**
+     * @var int
+     */
+    private $viewportWidth;
+
+    /**
+     * @var AdapterInterface
+     */
+    private $layoutAdapter;
 
     /**
      * @var Manager\BlockManager
@@ -141,10 +152,9 @@ class Editor
     {
         if (null === $this->blockManager) {
             $this->blockManager = new Manager\BlockManager(
-                $this,
-                $this->pluginRegistry,
                 $this->config['default_block_plugin']
             );
+            $this->blockManager->setEditor($this);
         }
 
         return $this->blockManager;
@@ -159,6 +169,7 @@ class Editor
     {
         if (null === $this->rowManager) {
             $this->rowManager = new Manager\RowManager($this);
+            $this->rowManager->setEditor($this);
         }
 
         return $this->rowManager;
@@ -173,10 +184,9 @@ class Editor
     {
         if (null === $this->containerManager) {
             $this->containerManager = new Manager\ContainerManager(
-                $this,
-                $this->pluginRegistry,
                 $this->config['default_container_plugin']
             );
+            $this->containerManager->setEditor($this);
         }
 
         return $this->containerManager;
@@ -191,9 +201,27 @@ class Editor
     {
         if (null === $this->contentManager) {
             $this->contentManager = new Manager\ContentManager($this);
+            $this->contentManager->setEditor($this);
         }
 
         return $this->contentManager;
+    }
+
+    /**
+     * Returns the layout adapter.
+     *
+     * @return AdapterInterface
+     */
+    public function getLayoutAdapter()
+    {
+        if (null === $this->layoutAdapter) {
+            $class = $this->config['layout']['adapter'];
+
+            $this->layoutAdapter = new $class;
+            $this->layoutAdapter->setEditor($this);
+        }
+
+        return $this->layoutAdapter;
     }
 
     /**
@@ -204,8 +232,8 @@ class Editor
     public function getViewBuilder()
     {
         if (null === $this->viewBuilder) {
-            $adapterClass = $this->config['layout']['adapter'];
-            $this->viewBuilder = new View\ViewBuilder($this, new $adapterClass());
+            $this->viewBuilder = new View\ViewBuilder();
+            $this->viewBuilder->setEditor($this);
         }
 
         return $this->viewBuilder;
@@ -233,6 +261,26 @@ class Editor
     public function isEnabled()
     {
         return $this->enabled;
+    }
+
+    /**
+     * Returns the viewport width.
+     *
+     * @return int
+     */
+    public function getViewportWidth()
+    {
+        return $this->viewportWidth;
+    }
+
+    /**
+     * Sets the viewport width.
+     *
+     * @param int $width
+     */
+    public function setViewportWidth($width)
+    {
+        $this->viewportWidth = $width;
     }
 
     /**

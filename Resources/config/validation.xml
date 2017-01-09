@@ -302,12 +302,12 @@
                 <option name="max">11</option>
             </constraint>
         </property>
-        <property name="size">
+        <!--<property name="size">
             <constraint name="Range">
                 <option name="min">1</option>
                 <option name="max">12</option>
             </constraint>
-        </property>
+        </property>-->
         <property name="type">
             <constraint name="NotBlank"/>
         </property>

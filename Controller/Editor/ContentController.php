@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
-use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorException;
+use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -27,7 +27,7 @@ class ContentController extends BaseController
 
         try {
             $container = $this->getEditor()->createDefaultContainer($type, [], $content);
-        } catch (EditorException $e) {
+        } catch (EditorExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
@@ -37,7 +37,7 @@ class ContentController extends BaseController
         $viewBuilder = $this->getViewBuilder();
 
         $data = [
-            'created' => $viewBuilder->buildContainer($container)->attributes['id'],
+            'created' => $viewBuilder->buildContainer($container)->getAttributes()->get('id'),
             'content' => $viewBuilder->buildContent($content),
         ];
 

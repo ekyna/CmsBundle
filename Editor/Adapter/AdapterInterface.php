@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Adapter;
 
+use Ekyna\Bundle\CmsBundle\Editor\EditorAwareInterface;
 use Ekyna\Bundle\CmsBundle\Editor\View;
 use Ekyna\Bundle\CmsBundle\Model;
 
@@ -10,7 +11,7 @@ use Ekyna\Bundle\CmsBundle\Model;
  * @package Ekyna\Bundle\CmsBundle\Editor\Adapter
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-interface AdapterInterface
+interface AdapterInterface extends EditorAwareInterface
 {
     /**
      * Builds the content view.
@@ -43,4 +44,46 @@ interface AdapterInterface
      * @param View\BlockView       $view
      */
     public function buildBlock(Model\BlockInterface $block, View\BlockView $view);
+
+    /**
+     * Expands the block.
+     *
+     * @param Model\BlockInterface $block
+     */
+    public function expandBlock(Model\BlockInterface $block);
+
+    /**
+     * Compresses the block.
+     *
+     * @param Model\BlockInterface $block
+     */
+    public function compressBlock(Model\BlockInterface $block);
+
+    /**
+     * Pulls the block.
+     *
+     * @param Model\BlockInterface $block
+     */
+    public function pullBlock(Model\BlockInterface $block);
+
+    /**
+     * Pushes the block.
+     *
+     * @param Model\BlockInterface $block
+     */
+    public function pushBlock(Model\BlockInterface $block);
+
+    /**
+     * Offsets the block to the left.
+     *
+     * @param Model\BlockInterface $block
+     */
+    public function offsetLeftBlock(Model\BlockInterface $block);
+
+    /**
+     * Offsets the block to the right.
+     *
+     * @param Model\BlockInterface $block
+     */
+    public function offsetRightBlock(Model\BlockInterface $block);
 }

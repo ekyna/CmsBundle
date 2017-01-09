@@ -10,14 +10,14 @@ namespace Ekyna\Bundle\CmsBundle\Editor\View;
 class ContainerView
 {
     /**
-     * @var array
+     * @var AttributesInterface
      */
-    public $attributes = [];
+    private $attributes;
 
     /**
-     * @var array
+     * @var AttributesInterface
      */
-    public $innerAttributes = [];
+    private $innerAttributes;
 
     /**
      * @var array|RowView[]
@@ -28,4 +28,34 @@ class ContainerView
      * @var string
      */
     public $content = '';
+
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->attributes = new Attributes();
+        $this->innerAttributes = new Attributes();
+    }
+
+    /**
+     * Returns the attributes.
+     *
+     * @return AttributesInterface
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Returns the inner attributes.
+     *
+     * @return AttributesInterface
+     */
+    public function getInnerAttributes()
+    {
+        return $this->innerAttributes;
+    }
 }

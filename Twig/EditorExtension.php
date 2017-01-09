@@ -8,6 +8,7 @@ use Ekyna\Bundle\CmsBundle\Editor\Exception;
 use Ekyna\Bundle\CmsBundle\Editor\View;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 
 /**
  * Class EditorExtension
@@ -32,6 +33,11 @@ class EditorExtension extends \Twig_Extension
     protected $pageHelper;
 
     /**
+     * @var TagManager
+     */
+    protected $tagManager;
+
+    /**
      * @var array
      */
     protected $config;
@@ -48,17 +54,20 @@ class EditorExtension extends \Twig_Extension
      * @param EntityManagerInterface $manager
      * @param Editor                 $editor
      * @param PageHelper             $pageHelper
+     * @param TagManager             $tagManager
      * @param array                  $config
      */
     public function __construct(
         EntityManagerInterface $manager,
         Editor $editor,
         PageHelper $pageHelper,
+        TagManager $tagManager,
         array $config
     ) {
         $this->manager = $manager;
         $this->editor = $editor;
         $this->pageHelper = $pageHelper;
+        $this->tagManager = $tagManager;
 
         $this->config = array_replace($this->getDefaultConfig(), $config);
     }
@@ -159,10 +168,8 @@ class EditorExtension extends \Twig_Extension
         }
 
         if ($content instanceof Model\ContentInterface) {
-            // TODO Tag response as Content relative
-            /*if (null !== $subjectOrContentOrView->getId()) {
-                $this->tagManager->addTags($subjectOrContentOrView->getEntityTag());
-            }*/
+            $this->tagManager->addTags($content->getEntityTag());
+
             $content = $this->editor->getViewBuilder()->buildContent($content);
         }
 
@@ -197,8 +204,7 @@ class EditorExtension extends \Twig_Extension
         }
 
         if ($container instanceof Model\ContainerInterface) {
-            // TODO Tags the response as Container relative
-            //$this->tagManager->addTags($containerOrView->getEntityTag());
+            $this->tagManager->addTags($container->getEntityTag());
 
             $container = $this->editor->getViewBuilder()->buildContainer($container);
         }
@@ -235,8 +241,7 @@ class EditorExtension extends \Twig_Extension
         }
 
         if ($row instanceof Model\RowInterface) {
-            // TODO Tags the response as Row relative
-            //$this->tagManager->addTags($containerOrView->getEntityTag());
+            $this->tagManager->addTags($row->getEntityTag());
 
             $row = $this->editor->getViewBuilder()->buildRow($row);
         }
@@ -273,8 +278,7 @@ class EditorExtension extends \Twig_Extension
         }
 
         if ($block instanceof Model\BlockInterface) {
-            // TODO Tags the response as Block relative
-            //$this->tagManager->addTags($blockOrView->getEntityTag());
+            $this->tagManager->addTags($block->getEntityTag());
 
             $block = $this->editor->getViewBuilder()->buildBlock($block);
         }

@@ -10,17 +10,47 @@ namespace Ekyna\Bundle\CmsBundle\Editor\View;
 class BlockView
 {
     /**
-     * @var array
+     * @var AttributesInterface
      */
-    public $attributes = [];
+    private $attributes;
 
     /**
-     * @var array
+     * @var AttributesInterface
      */
-    public $pluginAttributes = [];
+    private $pluginAttributes;
 
     /**
      * @var string
      */
     public $content = '';
+
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->attributes = new Attributes();
+        $this->pluginAttributes = new Attributes();
+    }
+
+    /**
+     * Returns the attributes.
+     *
+     * @return AttributesInterface
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Returns the plugin attributes.
+     *
+     * @return AttributesInterface
+     */
+    public function getPluginAttributes()
+    {
+        return $this->pluginAttributes;
+    }
 }

@@ -314,19 +314,25 @@
         </service>
 
         <!-- Serialization -->
-        <service id="ekyna_cms.serializer.content_normalizer"
+        <service id="ekyna_cms.attributes.normalizer"
+                 class="Ekyna\Bundle\CmsBundle\Service\Serializer\AttributesNormalizer"
+                 parent="ekyna_resource.serializer.resource_normalizer">
+            <tag name="serializer.normalizer"/>
+            <tag name="serializer.denormalizer"/>
+        </service>
+        <service id="ekyna_cms.content.normalizer"
                  class="Ekyna\Bundle\CmsBundle\Service\Serializer\ContentNormalizer"
                  parent="ekyna_resource.serializer.resource_normalizer">
             <tag name="serializer.normalizer"/>
             <tag name="serializer.denormalizer"/>
         </service>
-        <service id="ekyna_cms.serializer.page_normalizer"
+        <service id="ekyna_cms.page.normalizer"
                  class="Ekyna\Bundle\CmsBundle\Service\Serializer\PageNormalizer"
                  parent="ekyna_resource.serializer.resource_normalizer">
             <tag name="serializer.normalizer"/>
             <tag name="serializer.denormalizer"/>
         </service>
-        <service id="ekyna_cms.serializer.seo_normalizer"
+        <service id="ekyna_cms.seo.normalizer"
                  class="Ekyna\Bundle\CmsBundle\Service\Serializer\SeoNormalizer"
                  parent="ekyna_resource.serializer.resource_normalizer">
             <tag name="serializer.normalizer"/>
@@ -351,6 +357,7 @@
             <argument type="service" id="doctrine.orm.default_entity_manager"/>
             <argument type="service" id="ekyna_cms.editor.editor"/>
             <argument type="service" id="ekyna_cms.helper.page"/>
+            <argument type="service" id="ekyna_core.cache.tag_manager"/>
             <argument type="collection"/>
             <tag name="twig.extension"/>
         </service>

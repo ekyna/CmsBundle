@@ -23,12 +23,11 @@ class ContainerRepository extends ResourceRepository
         $qb = $this->getQueryBuilder();
 
         return $qb
-            ->join('c.rows', 'row')
-            ->join('row.blocks', 'block')
-            ->join('block.translations', 'translation')
+            ->leftJoin('c.rows', 'row')
+            ->leftJoin('row.blocks', 'block')
+            ->leftJoin('block.translations', 'translation')
             ->addSelect('row', 'block', 'translation')
             ->andWhere($qb->expr()->eq('c.name', ':name'))
-            ->setMaxResults(1)
             ->getQuery()
             ->useQueryCache(true)
             // TODO ->useResultCache(true, 3600, Container::getEntityTagPrefix() . '[name:'.$name.']')
@@ -48,12 +47,11 @@ class ContainerRepository extends ResourceRepository
         $qb = $this->getQueryBuilder();
 
         return $qb
-            ->join('c.rows', 'row')
-            ->join('row.blocks', 'block')
-            ->join('block.translations', 'translation')
+            ->leftJoin('c.rows', 'row')
+            ->leftJoin('row.blocks', 'block')
+            ->leftJoin('block.translations', 'translation')
             ->addSelect('row', 'block', 'translation')
             ->andWhere($qb->expr()->eq('c.id', ':id'))
-            ->setMaxResults(1)
             ->getQuery()
             ->useQueryCache(true)
             // TODO ->useResultCache(true, 3600, Container::getEntityTagPrefix() . '[id:'.$id.']')

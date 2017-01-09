@@ -31,13 +31,11 @@ class RowManager extends AbstractManager
             throw new InvalidOperationException("Excepted instance of ContainerInterface or string.");
         }
 
-        $editor = $this->getEditor();
-
         // New instance
-        $row = $this->getEditor()->getRepository()->createRow();
+        $row = $this->editor->getRepository()->createRow();
 
         // Create default block
-        $editor->getBlockManager()->create($row);
+        $this->editor->getBlockManager()->create($row);
 
         // Add to row if available
         if ($containerOrName instanceof Model\ContainerInterface) {
@@ -78,8 +76,7 @@ class RowManager extends AbstractManager
 
         $rows->removeElement($row);
 
-        $this
-            ->getEditor()
+        $this->editor
             ->getContainerManager()
             ->fixRowPositions($container);
 
@@ -143,44 +140,45 @@ class RowManager extends AbstractManager
      *
      * @return RowManager
      */
-    public function fixBlockSizes(Model\RowInterface $row)
-    {
-        $blocks = $row->getBlocks();
-
-        $total = 0;
-        foreach ($blocks as $block) {
-            $total += $block->getSize();
-        }
-
-        $diff = 12 - $total;
-        if (0 == $diff) {
-            return $this;
-        }
-
-        if (0 < $diff) { // too small
-            $avg = ceil(12 / $blocks->count());
-            $mod = 1;
-        } else { // too large
-            $avg = floor(12 / $blocks->count());
-            $mod = -1;
-        }
-
-        while (0 != $diff) {
-            foreach ($blocks as $block) {
-                if ($avg != $block->getSize()) {
-                    $block->setSize($block->getSize() + $mod);
-                    $diff -= $mod;
-
-                    if (0 == $diff) {
-                        break 2;
-                    }
-                }
-            }
-            reset($blocks);
-        }
-
-        return $this;
-    }
+//    public function fixBlockSizes(Model\RowInterface $row)
+//    {
+//        /** @var Model\BlockInterface[] $blocks */
+//        $blocks = $row->getBlocks();
+//
+//        $total = 0;
+//        foreach ($blocks as $block) {
+//            $total += $block->getSize();
+//        }
+//
+//        $diff = 12 - $total;
+//        if (0 == $diff) {
+//            return $this;
+//        }
+//
+//        if (0 < $diff) { // too small
+//            $avg = ceil(12 / $blocks->count());
+//            $mod = 1;
+//        } else { // too large
+//            $avg = floor(12 / $blocks->count());
+//            $mod = -1;
+//        }
+//
+//        while (0 != $diff) {
+//            foreach ($blocks as $block) {
+//                if ($avg != $block->getSize()) {
+//                    $block->setSize($block->getSize() + $mod);
+//                    $diff -= $mod;
+//
+//                    if (0 == $diff) {
+//                        break 2;
+//                    }
+//                }
+//            }
+//            reset($blocks);
+//        }
+//
+//        return $this;
+//    }
 
     /**
      * Fix the block positions.
@@ -193,6 +191,7 @@ class RowManager extends AbstractManager
     {
         $this->sortChildrenByPosition($row, 'blocks');
 
+        /** @var Model\BlockInterface[] $blocks */
         $blocks = $row->getBlocks();
 
         $position = 0;

@@ -76,7 +76,11 @@ class KernelEventListener implements EventSubscriberInterface
         if (1 === intval($request->query->get('cms-editor-enable', 0))) {
             $this->editor->setEnabled(true);
         }
+        if (0 < intval($width = $request->request->get('cms_viewport_width', 0))) {
+            $this->editor->setViewportWidth($width);
+        }
 
+        // TODO This is greedy
         if (null !== $page = $this->pageHelper->init($request)) {
             if (!$page->isEnabled()) {
                 if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {

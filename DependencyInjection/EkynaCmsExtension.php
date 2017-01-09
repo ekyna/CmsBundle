@@ -40,7 +40,7 @@ class EkynaCmsExtension extends AbstractExtension
         // Editor twig extension config
         $container
             ->getDefinition('ekyna_cms.twig.editor_extension')
-            ->replaceArgument(3, [
+            ->replaceArgument(4, [
                 'template' => $config['editor']['template'],
             ]);
 

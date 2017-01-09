@@ -63,7 +63,7 @@ export interface OffsetInterface {
 interface ControlConfig extends Backbone.ObjectHash {
     name: string
     title: string
-    disabled: boolean
+    disabled?: boolean
 }
 
 const CONTROL_DEFAULTS:ControlConfig = {
@@ -115,7 +115,7 @@ abstract class ControlView<T extends Backbone.Model> extends Backbone.View<T> {
  * ButtonChoiceConfig
  */
 export interface ButtonChoiceConfig extends ControlConfig {
-    confirm: string
+    confirm?: string
     data: any
 }
 

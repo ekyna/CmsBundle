@@ -6,14 +6,32 @@ import * as es6Promise from 'es6-promise';
 import * as Router from 'routing';
 
 import Dispatcher from './dispatcher';
-import {Util, OffsetInterface, Button, ButtonConfig, ButtonChoiceConfig, Toolbar, ToolbarView} from './ui';
+import {Util, OffsetInterface, Button, ButtonChoiceConfig, Toolbar, ToolbarView} from './ui';
+import {SizeInterface, ResizeEventData} from "./viewport";
 import {BasePlugin} from './plugin/base-plugin';
 import RouteParams = FOS.RouteParams;
 
 
 es6Promise.polyfill();
-var Promise = es6Promise.Promise;
+let Promise = es6Promise.Promise;
 
+
+const DEFAULT_BLOCK_ACTIONS = {
+    type: false,
+    edit: false,
+    move_left: false,
+    move_right: false,
+    move_up: false,
+    move_down: false,
+    pull: false,
+    push: false,
+    offset_left: false,
+    offset_right: false,
+    compress: false,
+    expand: false,
+    add: false,
+    remove: false
+};
 
 export interface ElementAttributes {
     id: string
@@ -57,76 +75,83 @@ interface ResponseData {
 }
 
 export class BaseManager {
-    private static contentWindow:Window;
-    static setContentWindow(win:Window):void {
+    private static contentWindow: Window;
+
+    static setContentWindow(win: Window): void {
         this.contentWindow = win;
     }
-    static getContentWindow():Window {
+
+    static getContentWindow(): Window {
         if (!this.contentWindow) {
             throw 'Window is not defined.';
         }
         return this.contentWindow;
     }
 
-    private static $contentDocument:JQuery;
-    static setContentDocument($doc:JQuery):void {
+    private static $contentDocument: JQuery;
+
+    static setContentDocument($doc: JQuery): void {
         this.$contentDocument = $doc;
 
-        var data:DocumentData = $doc.find('html').data('cms-editor-document');
+        let data: DocumentData = $doc.find('html').data('cms-editor-document');
         if (!data) {
             throw "Undefined document data.\n" +
-                "Did you forget to use the cms_document_data() twig function in your template ?";
+            "Did you forget to use the cms_document_data() twig function in your template ?";
         }
 
         this.setDocumentData(data);
     }
-    static getContentDocument():JQuery {
+
+    static getContentDocument(): JQuery {
         if (!this.$contentDocument) {
             throw 'Document is not defined.';
         }
         return this.$contentDocument;
     }
 
-    private static documentData:DocumentData;
-    static setDocumentData(data:DocumentData):void {
+    private static documentData: DocumentData;
+
+    static setDocumentData(data: DocumentData): void {
         this.documentData = data;
     }
-    static getDocumentData():DocumentData {
+
+    static getDocumentData(): DocumentData {
         return this.documentData;
     }
-    static getDocumentLocale():string {
+
+    static getDocumentLocale(): string {
         if (!this.documentData) {
             throw 'Content data is not defined.';
         }
         return this.documentData.locale;
     }
 
-    static clear():void {
+    static clear(): void {
         this.contentWindow = null;
         this.$contentDocument = null;
         this.documentData = null;
     }
 
-    static findElementById(id:string):JQuery {
+    static findElementById(id: string): JQuery {
         return this.$contentDocument.find('#' + id);
     }
 
-    static createElement(id:string, $parent:JQuery):JQuery {
+    static createElement(id: string, $parent: JQuery): JQuery {
         if (!$parent) {
             throw "Undefined parent.";
         }
         return $('<div></div>').attr('id', id).appendTo($parent);
     }
 
-    static findOrCreateElement(id:string, $parent:JQuery) {
-        var $element = this.findElementById(id);
+    static findOrCreateElement(id: string, $parent: JQuery) {
+        let $element = this.findElementById(id);
         if (0 == $element.length) {
             $element = this.createElement(id, $parent);
         }
         return $element;
     }
 
-    static setElementAttributes($element:JQuery, attributes:ElementAttributes):void {
+    static setElementAttributes($element: JQuery, attributes: ElementAttributes): void {
         $element
             .removeAttr('class').attr('class', attributes.classes)
             .removeAttr('data-cms').data('cms', attributes.data);
@@ -136,35 +161,40 @@ export class BaseManager {
         }
     }
 
-    static sortChildren($element:JQuery) {
-        let $children:JQuery = $element.children();
+    static sortChildren($element: JQuery) {
+        let $children: JQuery = $element.children();
         $children.detach().get().sort(function (a, b) {
             let aPos = $(a).data('cms').position,
                 bPos = $(b).data('cms').position;
             return (aPos == bPos) ? 0 : (aPos > bPos) ? 1 : -1;
-        }).forEach(function (e:JQuery) {
+        }).forEach(function (e: JQuery) {
             $element.append(e);
         });
     }
 
-    static generateUrl(route:string, params?:RouteParams) {
-        return Router.generate(route, _.extend({}, params || {}, {
+    static generateUrl(route: string, params?: RouteParams) {
+        return Router.generate(route, _.extend({}, params || {}, {
             _document_locale: BaseManager.getDocumentLocale()
         }));
     }
 
-    static request(settings:JQueryAjaxSettings):JQueryXHR {
+    static request(settings: JQueryAjaxSettings): JQueryXHR {
         Dispatcher.trigger('editor.set_busy');
 
         settings = _.extend({}, settings, {
             method: 'POST'
         });
 
-        var xhr = $.ajax(settings);
-        xhr.done((data:ResponseData) => {
+        if (!settings.data) {
+            settings.data = {};
+        }
+        settings.data.cms_viewport_width = BaseManager.getContentWindow().innerWidth;
+
+        let xhr = $.ajax(settings);
+        xhr.done((data: ResponseData) => {
             // Remove elements by id
             if (data.hasOwnProperty('removed')) {
-                data.removed.forEach((id:string) => {
+                data.removed.forEach((id: string) => {
                     this.$contentDocument.find('#' + id).remove();
                 });
             }
@@ -188,7 +218,7 @@ export class BaseManager {
         xhr.fail(function () {
             throw 'Editor request failed.';
         });
-        xhr.always(function() {
+        xhr.always(function () {
             Dispatcher.trigger('editor.unset_busy');
         });
 
@@ -197,12 +227,12 @@ export class BaseManager {
 }
 
 export class ContentManager {
-    static parse(content:ContentData) {
+    static parse(content: ContentData) {
         // Parse layout
         if (!content.hasOwnProperty('attributes')) {
             throw 'Unexpected content data';
         }
-        var $content:JQuery = BaseManager.findElementById(content.attributes.id);
+        let $content: JQuery = BaseManager.findElementById(content.attributes.id);
         if (0 == $content.length) {
             throw 'Content not found.';
         }
@@ -217,17 +247,17 @@ export class ContentManager {
         BaseManager.sortChildren($content);
     }
 
-    static generateUrl($content:JQuery, route:string, params?:RouteParams) {
-        var id = (<ElementAttributes>$content.data('cms')).id;
+    static generateUrl($content: JQuery, route: string, params?: RouteParams) {
+        let id = (<ElementAttributes>$content.data('cms')).id;
         if (!id) {
             throw 'Invalid id';
         }
-        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
+        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
             contentId: id
         }));
     }
 
-    static request($container:JQuery, route:string, params?:RouteParams, settings?:JQueryAjaxSettings):JQueryXHR {
+    static request($container: JQuery, route: string, params?: RouteParams, settings?: JQueryAjaxSettings): JQueryXHR {
         settings = settings || {};
         settings.url = this.generateUrl($container, route, params);
 
@@ -236,23 +266,23 @@ export class ContentManager {
 }
 
 export class ContainerManager {
-    static parse(containers:Array<ContainerData>, $content?:JQuery) {
-        containers.forEach((container:ContainerData, i:number) => {
+    static parse(containers: Array<ContainerData>, $content?: JQuery) {
+        containers.forEach((container: ContainerData, i: number) => {
             // Parse layout
             if (!container.hasOwnProperty('attributes')) {
                 throw 'Unexpected container data';
             }
 
-            var $container:JQuery = BaseManager.findOrCreateElement(container.attributes.id, $content);
+            let $container: JQuery = BaseManager.findOrCreateElement(container.attributes.id, $content);
             BaseManager.setElementAttributes($container, container.attributes);
 
             // Parse content
-            var content:string = container.hasOwnProperty('content') ? container.content : null;
+            let content: string = container.hasOwnProperty('content') ? container.content : null;
             if (content && 0 < content.length) {
                 $container.html(container.content);
             } else {
                 // Inner container
-                var $innerContainer:JQuery;
+                let $innerContainer: JQuery;
                 if (container.hasOwnProperty('inner_attributes')) {
                     $innerContainer = BaseManager.findOrCreateElement(container.inner_attributes.id, $container);
                     BaseManager.setElementAttributes($innerContainer, container.inner_attributes);
@@ -276,60 +306,60 @@ export class ContainerManager {
         });
     }
 
-    static generateUrl($container:JQuery, route:string, params?:RouteParams) {
-        var id = (<ElementAttributes>$container.data('cms')).id;
+    static generateUrl($container: JQuery, route: string, params?: RouteParams) {
+        let id = (<ElementAttributes>$container.data('cms')).id;
         if (!id) {
             throw 'Invalid id';
         }
-        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
+        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
             containerId: id
         }));
     }
 
-    static request($container:JQuery, route:string, params?:RouteParams, settings?:JQueryAjaxSettings):JQueryXHR {
+    static request($container: JQuery, route: string, params?: RouteParams, settings?: JQueryAjaxSettings): JQueryXHR {
         settings = settings || {};
         settings.url = this.generateUrl($container, route, params);
 
         return BaseManager.request(settings);
     }
 
-    static edit($container:JQuery) {
+    static edit($container: JQuery) {
         PluginManager.createContainerPlugin((<ElementAttributes>$container.data('cms')).type, $container);
     }
 
-    static changeType($container:JQuery, type: string) {
+    static changeType($container: JQuery, type: string) {
         ContainerManager.request($container, 'ekyna_cms_editor_container_change_type', null, {data: {type: type}});
     }
 
-    static remove($container:JQuery) {
+    static remove($container: JQuery) {
         ContainerManager.request($container, 'ekyna_cms_editor_container_remove');
     }
 
-    static add($container:JQuery, type: string) {
-        var $content = $container.closest('.cms-content');
+    static add($container: JQuery, type: string) {
+        let $content = $container.closest('.cms-content');
         if (1 != $content.length) {
             throw 'Container content not found.';
         }
         ContentManager.request($content, 'ekyna_cms_editor_content_create_container', null, {data: {type: type}});
     }
 
-    static moveUp($container:JQuery) {
+    static moveUp($container: JQuery) {
         ContainerManager.request($container, 'ekyna_cms_editor_container_move_up');
     }
 
-    static moveDown($container:JQuery) {
+    static moveDown($container: JQuery) {
         ContainerManager.request($container, 'ekyna_cms_editor_container_move_down');
     }
 }
 
 export class RowManager {
-    static parse(rows:Array<RowData>, $container?:JQuery) {
-        rows.forEach((row:RowData, i:number) => {
+    static parse(rows: Array<RowData>, $container?: JQuery) {
+        rows.forEach((row: RowData, i: number) => {
             // Parse layout
             if (!row.hasOwnProperty('attributes')) {
                 throw 'Unexpected row data';
             }
-            var $row:JQuery = BaseManager.findOrCreateElement(row.attributes.id, $container);
+            let $row: JQuery = BaseManager.findOrCreateElement(row.attributes.id, $container);
             BaseManager.setElementAttributes($row, row.attributes);
 
             // Parse children
@@ -347,48 +377,48 @@ export class RowManager {
         });
     }
 
-    static generateUrl($row:JQuery, route:string, params?:RouteParams) {
-        var id = (<ElementAttributes>$row.data('cms')).id;
+    static generateUrl($row: JQuery, route: string, params?: RouteParams) {
+        let id = (<ElementAttributes>$row.data('cms')).id;
         if (!id) {
             throw 'Invalid id';
         }
-        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
+        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
             rowId: id
         }));
     }
 
-    static request($row:JQuery, route:string, params?:RouteParams, settings?:JQueryAjaxSettings):JQueryXHR {
+    static request($row: JQuery, route: string, params?: RouteParams, settings?: JQueryAjaxSettings): JQueryXHR {
         settings = settings || {};
         settings.url = this.generateUrl($row, route, params);
 
         return BaseManager.request(settings);
     }
 
-    static remove($row:JQuery) {
+    static remove($row: JQuery) {
         RowManager.request($row, 'ekyna_cms_editor_row_remove');
     }
 
-    static add($row:JQuery) {
-        var $container = $row.closest('.cms-container');
+    static add($row: JQuery) {
+        let $container = $row.closest('.cms-container');
         if (1 != $container.length) {
             throw 'Row container not found.';
         }
         ContainerManager.request($container, 'ekyna_cms_editor_container_create_row');
     }
 
-    static moveUp($row:JQuery) {
+    static moveUp($row: JQuery) {
         RowManager.request($row, 'ekyna_cms_editor_row_move_up');
     }
 
-    static moveDown($row:JQuery) {
+    static moveDown($row: JQuery) {
         RowManager.request($row, 'ekyna_cms_editor_row_move_down');
     }
 }
 
 export class BlockManager {
-    static parse(blocks:Array<BlockData>, $row?:JQuery) {
-        blocks.forEach((block:BlockData, i:number) => {
-            var $column:JQuery, $block:JQuery;
+    static parse(blocks: Array<BlockData>, $row?: JQuery) {
+        blocks.forEach((block: BlockData, i: number) => {
+            let $column: JQuery, $block: JQuery;
 
             // Parse layout
             if (block.hasOwnProperty('attributes')) {
@@ -417,64 +447,80 @@ export class BlockManager {
         });
     }
 
-    static generateUrl($block:JQuery, route:string, params?:RouteParams) {
-        var id = (<ElementAttributes>$block.data('cms')).id;
+    static generateUrl($block: JQuery, route: string, params?: RouteParams) {
+        let id = (<ElementAttributes>$block.data('cms')).id;
         if (!id) {
             throw 'Invalid id';
         }
-        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
+        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
             blockId: id
         }));
     }
 
-    static request($block:JQuery, route:string, params?:RouteParams, settings?:JQueryAjaxSettings):JQueryXHR {
+    static request($block: JQuery, route: string, params?: RouteParams, settings?: JQueryAjaxSettings): JQueryXHR {
         settings = settings || {};
         settings.url = this.generateUrl($block, route, params);
 
         return BaseManager.request(settings);
     }
 
-    static edit($block:JQuery) {
+    static edit($block: JQuery) {
         PluginManager.createBlockPlugin((<ElementAttributes>$block.data('cms')).type, $block);
     }
 
-    static changeType($block:JQuery, type: string) {
+    static changeType($block: JQuery, type: string) {
         BlockManager.request($block, 'ekyna_cms_editor_block_change_type', null, {data: {type: type}});
     }
 
-    static remove($block:JQuery) {
+    static remove($block: JQuery) {
         BlockManager.request($block, 'ekyna_cms_editor_block_remove');
     }
 
-    static add($block:JQuery, type: string) {
-        var $row = $block.closest('.cms-row');
+    static add($block: JQuery, type: string) {
+        let $row = $block.closest('.cms-row');
         if (1 != $row.length) {
             throw 'Block row not found.';
         }
         RowManager.request($row, 'ekyna_cms_editor_row_create_block', null, {data: {type: type}});
     }
 
-    static moveLeft($block:JQuery) {
+    static moveUp($block: JQuery) {
+        BlockManager.request($block, 'ekyna_cms_editor_block_move_up');
+    }
+
+    static moveDown($block: JQuery) {
         BlockManager.request($block, 'ekyna_cms_editor_block_move_left');
     }
 
-    static moveRight($block:JQuery) {
+    static moveLeft($block: JQuery) {
+        BlockManager.request($block, 'ekyna_cms_editor_block_move_left');
+    }
+
+    static moveRight($block: JQuery) {
         BlockManager.request($block, 'ekyna_cms_editor_block_move_right');
     }
 
-    static moveUp($block:JQuery) {
-        throw 'Not yet implemented'; // TODO
+    static pull($block: JQuery) {
+        BlockManager.request($block, 'ekyna_cms_editor_block_pull');
     }
 
-    static moveDown($block:JQuery) {
-        throw 'Not yet implemented'; // TODO
+    static push($block: JQuery) {
+        BlockManager.request($block, 'ekyna_cms_editor_block_push');
     }
 
-    static expand($block:JQuery) {
+    static offsetLeft($block: JQuery) {
+        BlockManager.request($block, 'ekyna_cms_editor_block_offset_left');
+    }
+
+    static offsetRight($block: JQuery) {
+        BlockManager.request($block, 'ekyna_cms_editor_block_offset_right');
+    }
+
+    static expand($block: JQuery) {
         BlockManager.request($block, 'ekyna_cms_editor_block_expand');
     }
 
-    static compress($block:JQuery) {
+    static compress($block: JQuery) {
         BlockManager.request($block, 'ekyna_cms_editor_block_compress');
     }
 }
@@ -483,35 +529,47 @@ export class BlockManager {
  * Block events
  */
 Dispatcher.on('block.edit',
-    (button:Button) => BlockManager.edit(button.get('data').$block)
+    (button: Button) => BlockManager.edit(button.get('data').$block)
 );
 Dispatcher.on('block.change-type',
-    (button:Button, choice:ButtonChoiceConfig) =>
+    (button: Button, choice: ButtonChoiceConfig) =>
         BlockManager.changeType(button.get('data').$block, choice.data.type)
 );
-Dispatcher.on('block.move-left',
-    (button:Button) => BlockManager.moveLeft(button.get('data').$block)
-);
-Dispatcher.on('block.move-right',
-    (button:Button) => BlockManager.moveRight(button.get('data').$block)
-);
 Dispatcher.on('block.move-up',
-    (button:Button) => BlockManager.moveUp(button.get('data').$block)
+    (button: Button) => BlockManager.moveUp(button.get('data').$block)
 );
 Dispatcher.on('block.move-down',
-    (button:Button) => BlockManager.moveDown(button.get('data').$block)
+    (button: Button) => BlockManager.moveDown(button.get('data').$block)
 );
-Dispatcher.on('block.expand',
-    (button:Button) => BlockManager.expand(button.get('data').$block)
+Dispatcher.on('block.move-left',
+    (button: Button) => BlockManager.moveLeft(button.get('data').$block)
+);
+Dispatcher.on('block.move-right',
+    (button: Button) => BlockManager.moveRight(button.get('data').$block)
+);
+Dispatcher.on('block.pull',
+    (button: Button) => BlockManager.pull(button.get('data').$block)
+);
+Dispatcher.on('block.push',
+    (button: Button) => BlockManager.push(button.get('data').$block)
+);
+Dispatcher.on('block.offset-left',
+    (button: Button) => BlockManager.offsetLeft(button.get('data').$block)
+);
+Dispatcher.on('block.offset-right',
+    (button: Button) => BlockManager.offsetRight(button.get('data').$block)
 );
 Dispatcher.on('block.compress',
-    (button:Button) => BlockManager.compress(button.get('data').$block)
+    (button: Button) => BlockManager.compress(button.get('data').$block)
+);
+Dispatcher.on('block.expand',
+    (button: Button) => BlockManager.expand(button.get('data').$block)
 );
 Dispatcher.on('block.remove',
-    (button:Button) => BlockManager.remove(button.get('data').$block)
+    (button: Button) => BlockManager.remove(button.get('data').$block)
 );
 Dispatcher.on('block.add',
-    (button:Button, choice:ButtonChoiceConfig) =>
+    (button: Button, choice: ButtonChoiceConfig) =>
         BlockManager.add(button.get('data').$block, choice.data.type)
 );
 
@@ -519,53 +577,53 @@ Dispatcher.on('block.add',
  * Row events
  */
 Dispatcher.on('row.move-up',
-    (button:Button) => RowManager.moveUp(button.get('data').$row)
+    (button: Button) => RowManager.moveUp(button.get('data').$row)
 );
 Dispatcher.on('row.move-down',
-    (button:Button) => RowManager.moveDown(button.get('data').$row)
+    (button: Button) => RowManager.moveDown(button.get('data').$row)
 );
 Dispatcher.on('row.remove',
-    (button:Button) => RowManager.remove(button.get('data').$row)
+    (button: Button) => RowManager.remove(button.get('data').$row)
 );
 Dispatcher.on('row.add',
-    (button:Button) => RowManager.add(button.get('data').$row)
+    (button: Button) => RowManager.add(button.get('data').$row)
 );
 
 /**
  * Container events
  */
 Dispatcher.on('container.edit',
-    (button:Button) => ContainerManager.edit(button.get('data').$container)
+    (button: Button) => ContainerManager.edit(button.get('data').$container)
 );
 Dispatcher.on('container.change-type',
-    (button:Button, choice:ButtonChoiceConfig) =>
+    (button: Button, choice: ButtonChoiceConfig) =>
         ContainerManager.changeType(button.get('data').$container, choice.data.type)
 );
 Dispatcher.on('container.move-up',
-    (button:Button) => ContainerManager.moveUp(button.get('data').$container)
+    (button: Button) => ContainerManager.moveUp(button.get('data').$container)
 );
 Dispatcher.on('container.move-down',
-    (button:Button) => ContainerManager.moveDown(button.get('data').$container)
+    (button: Button) => ContainerManager.moveDown(button.get('data').$container)
 );
 Dispatcher.on('container.remove',
-    (button:Button) => ContainerManager.remove(button.get('data').$container)
+    (button: Button) => ContainerManager.remove(button.get('data').$container)
 );
 Dispatcher.on('container.add',
-    (button:Button, choice:ButtonChoiceConfig) =>
+    (button: Button, choice: ButtonChoiceConfig) =>
         ContainerManager.add(button.get('data').$container, choice.data.type)
 );
 
 
 interface PluginInterface {
-    new($element:JQuery, window:Window):BasePlugin
-    setup():Promise<void>
-    tearDown():Promise<void>
+    new($element: JQuery, window: Window): BasePlugin
+    setup(): Promise<void>
+    tearDown(): Promise<void>
 }
 
 interface PluginConfig {
-    name:string
-    title:string
-    path:string
+    name: string
+    title: string
+    path: string
 }
 
 export interface PluginRegistryConfig {
@@ -574,29 +632,29 @@ export interface PluginRegistryConfig {
 }
 
 export class PluginManager {
-    private static activePlugin:BasePlugin;
-    private static registry:PluginRegistryConfig;
+    private static activePlugin: BasePlugin;
+    private static registry: PluginRegistryConfig;
 
     // TODO store plugins after (requirejs) loading and call setup()
 
     // TODO call tearDown on all stored plugins when viewport unload
 
-    static load(config:PluginRegistryConfig):void {
+    static load(config: PluginRegistryConfig): void {
         this.registry = config;
     }
 
-    static getActivePlugin():BasePlugin {
+    static getActivePlugin(): BasePlugin {
         if (!this.hasActivePlugin()) {
             throw 'Active plugin is not set';
         }
         return this.activePlugin;
     }
 
-    static hasActivePlugin():boolean {
+    static hasActivePlugin(): boolean {
         return !!this.activePlugin;
     }
 
-    static clearActivePlugin():Promise<any> {
+    static clearActivePlugin(): Promise<any> {
         if (this.hasActivePlugin()) {
             return this.activePlugin
                 .destroy()
@@ -607,14 +665,12 @@ export class PluginManager {
         return Promise.resolve();
     }
 
-    private static createPlugin(registry:Array<PluginConfig>, type:string, $element:JQuery) {
-        //console.log('PluginManager::createPlugin', registry, type, $element);
+    private static createPlugin(registry: Array<PluginConfig>, type: string, $element: JQuery) {
         this.clearActivePlugin()
             .then(() => {
-                registry.forEach((config:PluginConfig) => {
+                registry.forEach((config: PluginConfig) => {
                     if (config.name === type) {
-                        require([config.path], (plugin:PluginInterface) => {
-                            //console.log('plugin loaded', plugin);
+                        require([config.path], (plugin: PluginInterface) => {
                             this.activePlugin = new plugin($element, BaseManager.getContentWindow());
                             this.activePlugin.edit();
                         });
@@ -625,22 +681,22 @@ export class PluginManager {
             });
     }
 
-    static createBlockPlugin(type:string, $block:JQuery):void {
+    static createBlockPlugin(type: string, $block: JQuery): void {
         this.createPlugin(this.getBlockPluginsConfig(), type, $block);
     }
 
-    static createContainerPlugin(type:string, $container:JQuery):void {
+    static createContainerPlugin(type: string, $container: JQuery): void {
         this.createPlugin(this.getContainerPluginsConfig(), type, $container);
     }
 
-    static getBlockPluginsConfig():Array<PluginConfig> {
+    static getBlockPluginsConfig(): Array<PluginConfig> {
         if (!this.registry) {
             throw 'Plugins registry is not configured';
         }
         return this.registry.block;
     }
 
-    static getContainerPluginsConfig():Array<PluginConfig> {
+    static getContainerPluginsConfig(): Array<PluginConfig> {
         if (!this.registry) {
             throw 'Plugins registry is not configured';
         }
@@ -649,27 +705,27 @@ export class PluginManager {
 }
 
 class ToolbarManager {
-    private static toolbar:ToolbarView<Toolbar>;
+    private static toolbar: ToolbarView<Toolbar>;
 
-    static getToolbar():ToolbarView<Toolbar> {
+    static getToolbar(): ToolbarView<Toolbar> {
         if (!this.hasToolbar()) {
             throw 'Toolbar is not set';
         }
         return this.toolbar;
     }
 
-    static hasToolbar():boolean {
+    static hasToolbar(): boolean {
         return !!this.toolbar;
     }
 
-    static clearToolbar():void {
+    static clearToolbar(): void {
         if (this.hasToolbar()) {
             this.toolbar.remove();
             this.toolbar = null;
         }
     }
 
-    private static createToolbar(toolbar:Toolbar):void {
+    private static createToolbar(toolbar: Toolbar): void {
         this.clearToolbar();
 
         // Create and render the toolbar view
@@ -680,25 +736,32 @@ class ToolbarManager {
         this.toolbar.render();
     }
 
-    static createBlockToolbar($block:JQuery, origin:OffsetInterface):void {
-        var $column = $block.closest('.cms-column'),
+    static createBlockToolbar($block: JQuery, origin: OffsetInterface): void {
+        let $column = $block.closest('.cms-column'),
             $row = $column.closest('.cms-row'),
             toolbar = new Toolbar({
                 classes: ['vertical', 'block-toolbar'],
                 origin: origin
             });
 
+        let actions = _.extend(
+            DEFAULT_BLOCK_ACTIONS,
+            $block.data('cms').actions,
+            $column.length ? $column.data('cms').actions : {}
+        );
+
         // Edit button
         toolbar.addControl('default', new Button({
             name: 'edit',
             title: 'Edit',
             icon: 'pencil',
+            disabled: !actions.edit,
             event: 'block.edit',
             data: {$block: $block}
         }));
         // Change type button
-        var choices = [];
-        PluginManager.getBlockPluginsConfig().forEach(function(config:PluginConfig) {
+        let choices: Array<ButtonChoiceConfig> = [];
+        PluginManager.getBlockPluginsConfig().forEach(function (config: PluginConfig) {
             choices.push({
                 name: config.name,
                 title: config.title,
@@ -710,17 +773,38 @@ class ToolbarManager {
             name: 'change-type',
             title: 'Change type',
             icon: 'cog',
+            disabled: !actions.type,
             event: 'block.change-type',
             data: {$block: $block},
             choices: choices
         }));
+
         if (1 == $row.length) {
+            // Move top
+            toolbar.addControl('vertical', new Button({
+                name: 'move-up',
+                title: 'Move up',
+                icon: 'arrow-up',
+                disabled: !actions.move_up,
+                event: 'block.move-up',
+                data: {$block: $block}
+            }));
+            // Move bottom
+            toolbar.addControl('vertical', new Button({
+                name: 'move-down',
+                title: 'Move down',
+                icon: 'arrow-down',
+                disabled: !actions.move_down,
+                event: 'block.move-down',
+                data: {$block: $block}
+            }));
+
             // Move left
             toolbar.addControl('horizontal', new Button({
                 name: 'move-left',
                 title: 'Move left',
                 icon: 'arrow-left',
-                disabled: $column.is(':first-child'),
+                disabled: !actions.move_left,
                 event: 'block.move-left',
                 data: {$block: $block}
             }));
@@ -729,68 +813,81 @@ class ToolbarManager {
                 name: 'move-right',
                 title: 'Move right',
                 icon: 'arrow-right',
-                disabled: $column.is(':last-child'),
+                disabled: !actions.move_right,
                 event: 'block.move-right',
                 data: {$block: $block}
             }));
-            // Move top
-            /*toolbar.addControl('vertical', new Button({
-                name: 'move-up',
-                title: 'Move up',
-                icon: 'arrow-up',
-                disabled: (function ($row:JQuery) {
-                    var $prev = $row.prev('.cms-row');
-                    return (0 == $prev.length) || (6 <= $prev.children('.cms-column').length); // TODO min size parameter
-                })($row),
-                event: 'block.move-up',
-                data: {$block: $block}
-            }));*/
-            // Move bottom
-            /*toolbar.addControl('vertical', new Button({
-                name: 'move-down',
-                title: 'Move down',
-                icon: 'arrow-down',
-                disabled: (function ($row:JQuery) {
-                    var $next = $row.next('.cms-row');
-                    return (0 == $next.length) || (6 <= $next.children('.cms-column').length); // TODO min size parameter
-                })($row),
-                event: 'block.move-down',
-                data: {$block: $block}
-            }));*/
-            // Grow
-            toolbar.addControl('resize', new Button({
-                name: 'expand',
-                title: 'Expand size',
-                icon: 'expand',
-                disabled: (function ($row:JQuery) {
-                    var childrenLength = $row.children('.cms-column').length; // TODO min size parameter
-                    return !(1 < childrenLength && 6 >= childrenLength);
-                })($row),
-                event: 'block.expand',
+
+            // Pull
+            toolbar.addControl('ordering', new Button({
+                name: 'pull',
+                title: 'Pull',
+                icon: 'arrow-left',
+                disabled: !actions.pull,
+                event: 'block.pull',
                 data: {$block: $block}
             }));
-            // Reduce
+            // Push
+            toolbar.addControl('ordering', new Button({
+                name: 'push',
+                title: 'Push',
+                icon: 'arrow-right',
+                disabled: !actions.push,
+                event: 'block.push',
+                data: {$block: $block}
+            }));
+
+            // Offset left
+            toolbar.addControl('offset', new Button({
+                name: 'offset-left',
+                title: 'Offset left',
+                icon: 'arrow-left',
+                disabled: !actions.offset_left,
+                event: 'block.offset-left',
+                data: {$block: $block}
+            }));
+            // Offset right
+            toolbar.addControl('offset', new Button({
+                name: 'offset-right',
+                title: 'Offset right',
+                icon: 'arrow-right',
+                disabled: !actions.offset_right,
+                event: 'block.offset-right',
+                data: {$block: $block}
+            }));
+
+            // Compress
             toolbar.addControl('resize', new Button({
                 name: 'compress',
                 title: 'Compress size',
                 icon: 'compress',
-                disabled: 1 == $row.children('.cms-column').length || 2 >= parseInt($column.data('cms').size), // TODO min size parameter
+                disabled: !actions.compress,
                 event: 'block.compress',
                 data: {$block: $block}
             }));
+            // Expand
+            toolbar.addControl('resize', new Button({
+                name: 'expand',
+                title: 'Expand size',
+                icon: 'expand',
+                disabled: !actions.expand,
+                event: 'block.expand',
+                data: {$block: $block}
+            }));
+
             // Remove
             toolbar.addControl('add', new Button({
                 name: 'remove',
                 title: 'Remove',
                 icon: 'remove',
-                disabled: 1 >= $row.children('.cms-column').length,
+                disabled: !actions.remove,
                 confirm: 'Êtes-vous sûr de vouloir supprimer ce bloc ?',
                 event: 'block.remove',
                 data: {$block: $block}
             }));
             // Add
             choices = [];
-            PluginManager.getBlockPluginsConfig().forEach(function(config:PluginConfig) {
+            PluginManager.getBlockPluginsConfig().forEach(function (config: PluginConfig) {
                 choices.push({
                     name: config.name,
                     title: config.title,
@@ -801,7 +898,7 @@ class ToolbarManager {
                 name: 'add',
                 title: 'Create a new block after this one',
                 icon: 'plus',
-                disabled: 6 <= $row.children('.cms-column').length, // TODO min size parameter
+                disabled: !actions.add,
                 event: 'block.add',
                 data: {$block: $block},
                 choices: choices,
@@ -811,8 +908,8 @@ class ToolbarManager {
         this.createToolbar(toolbar);
     }
 
-    static createRowToolbar($row:JQuery, origin:OffsetInterface):void {
-        var $container:JQuery = $row.closest('.cms-inner-container'),
+    static createRowToolbar($row: JQuery, origin: OffsetInterface): void {
+        let $container: JQuery = $row.closest('.cms-inner-container'),
             toolbar = new Toolbar({
                 classes: ['vertical', 'row-toolbar'],
                 origin: origin
@@ -820,13 +917,13 @@ class ToolbarManager {
 
         // Edit button
         /*toolbar.addButton('default', new Button({
-            name: 'edit',
-            title: 'Edit',
-            icon: 'pencil',
-            disabled: true,
-            event: 'row.edit',
-            data: {$row: $row}
-        }));*/
+         name: 'edit',
+         title: 'Edit',
+         icon: 'pencil',
+         disabled: true,
+         event: 'row.edit',
+         data: {$row: $row}
+         }));*/
         if (1 == $container.length) {
             // Move top
             toolbar.addControl('move', new Button({
@@ -869,8 +966,8 @@ class ToolbarManager {
         this.createToolbar(toolbar);
     }
 
-    static createContainerToolbar($container:JQuery, origin:OffsetInterface):void {
-        var $content:JQuery = $container.closest('.cms-content'),
+    static createContainerToolbar($container: JQuery, origin: OffsetInterface): void {
+        let $content: JQuery = $container.closest('.cms-content'),
             toolbar = new Toolbar({
                 classes: ['vertical', 'container-toolbar'],
                 origin: origin
@@ -884,8 +981,8 @@ class ToolbarManager {
             data: {$container: $container}
         }));
         // Change type button
-        var choices = [];
-        PluginManager.getContainerPluginsConfig().forEach(function(config:PluginConfig) {
+        let choices: Array<ButtonChoiceConfig> = [];
+        PluginManager.getContainerPluginsConfig().forEach(function (config: PluginConfig) {
             choices.push({
                 name: config.name,
                 title: config.title,
@@ -931,7 +1028,7 @@ class ToolbarManager {
                 data: {$container: $container}
             }));// Add
             choices = [];
-            PluginManager.getContainerPluginsConfig().forEach(function(config:PluginConfig) {
+            PluginManager.getContainerPluginsConfig().forEach(function (config: PluginConfig) {
                 choices.push({
                     name: config.name,
                     title: config.title,
@@ -958,53 +1055,55 @@ class ToolbarManager {
  */
 export class DocumentManager {
 
-    private hostname:string;
+    private hostname: string;
 
-    private viewportOrigin:OffsetInterface;
-    private selectionOffset:OffsetInterface;
+    private viewportOrigin: OffsetInterface;
+    private viewportSize: SizeInterface;
+    private selectionOffset: OffsetInterface;
 
-    private selectionId:string;
+    private selectionId: string;
 
-    private enabled:boolean = false;
+    private enabled: boolean = false;
 
     /**
      * Store the click target between mouseDown and mouseUp handlers
      * @type {JQuery|null}
      */
-    private $clickTarget:JQuery = null;
-    private clickOrigin:OffsetInterface = null;
-    private documentMouseDownHandler:(e:JQueryEventObject) => void;
-    private documentMouseUpHandler:() => void;
-    private documentSelectHandler:($element:JQuery) => void;
+    private $clickTarget: JQuery = null;
+    private clickOrigin: OffsetInterface = null;
+    private documentMouseDownHandler: (e: JQueryEventObject) => void;
+    private documentMouseUpHandler: () => void;
+    private documentSelectHandler: ($element: JQuery) => void;
 
-    powerClickHandler:(button:Button) => void;
-    viewportLoadHandler:(win:Window, doc:Document) => void;
-    viewportUnloadHandler:(e:BeforeUnloadEvent) => void;
-    viewportResizeHandler:(origin:OffsetInterface) => void;
+    powerClickHandler: (button: Button) => void;
+    viewportLoadHandler: (win: Window, doc: Document) => void;
+    viewportUnloadHandler: (e: BeforeUnloadEvent) => void;
+    viewportResizeHandler: (event: ResizeEventData) => void;
 
-    constructor(hostname:string) {
+    constructor(hostname: string) {
         this.hostname = hostname;
 
         this.viewportOrigin = {top: 50, left: 0}; // Editor relative : viewport top-left corner
+        this.viewportSize = {width: 0, height: 0}; // Editor relative : viewport size
         this.selectionOffset = {top: 0, left: 0}; // Document relative : offset between click origin and element top-left corner
         this.selectionId = null;
 
-        this.documentMouseDownHandler = (e:JQueryEventObject) => this.onDocumentMouseDown(e);
+        this.documentMouseDownHandler = (e: JQueryEventObject) => this.onDocumentMouseDown(e);
         this.documentMouseUpHandler = () => this.onDocumentMouseUp();
-        this.documentSelectHandler = ($element:JQuery) => this.select($element);
+        this.documentSelectHandler = ($element: JQuery) => this.select($element);
 
-        this.powerClickHandler = (button:Button) => this.onPowerClick(button);
-        this.viewportLoadHandler = (win:Window, doc:Document) => this.onViewportLoad(win, doc);
-        this.viewportUnloadHandler = (e:BeforeUnloadEvent) => this.onViewportUnload(e);
-        this.viewportResizeHandler = (origin:OffsetInterface) => this.onViewportResize(origin);
+        this.powerClickHandler = (button: Button) => this.onPowerClick(button);
+        this.viewportLoadHandler = (win: Window, doc: Document) => this.onViewportLoad(win, doc);
+        this.viewportUnloadHandler = (e: BeforeUnloadEvent) => this.onViewportUnload(e);
+        this.viewportResizeHandler = (e: ResizeEventData) => this.onViewportResize(e);
     }
 
     initialize() {
         Dispatcher.on('viewport.resize', this.viewportResizeHandler);
         Dispatcher.on('document_manager.select', this.documentSelectHandler);
 
-        Dispatcher.on('base_manager.response_parsed', (selectionId?:string) => {
-            var $element:JQuery;
+        Dispatcher.on('base_manager.response_parsed', (selectionId?: string) => {
+            let $element: JQuery;
             if (selectionId) {
                 $element = BaseManager.findElementById(selectionId);
             } else if (this.selectionId) {
@@ -1021,8 +1120,8 @@ export class DocumentManager {
         Dispatcher.on('block.edit', () => ToolbarManager.clearToolbar());
     }
 
-    private onPowerClick(button:Button) {
-        var active = button.get('active');
+    private onPowerClick(button: Button) {
+        let active = button.get('active');
         if (active && !this.enabled) {
             this.enabled = true;
             this.enableEdition();
@@ -1040,19 +1139,19 @@ export class DocumentManager {
      * @param win
      * @param doc
      */
-    private onViewportLoad(win:Window, doc:Document):DocumentManager {
+    private onViewportLoad(win: Window, doc: Document): DocumentManager {
 
-        var $doc:JQuery = $(doc);
+        let $doc: JQuery = $(doc);
 
         BaseManager.setContentWindow(win);
         BaseManager.setContentDocument($doc);
 
         // Intercept anchors click
-        $doc.find('a[href]').off('click').on('click', (e:Event) => {
+        $doc.find('a[href]').off('click').on('click', (e: Event) => {
             e.preventDefault();
             e.stopPropagation();
 
-            var anchor:HTMLAnchorElement = <HTMLAnchorElement>e.currentTarget;
+            let anchor: HTMLAnchorElement = <HTMLAnchorElement>e.currentTarget;
 
             if (anchor.hostname !== this.hostname) {
                 console.log('Attempt to navigate out of the website has been blocked.');
@@ -1062,15 +1161,15 @@ export class DocumentManager {
         });
 
         // Fix forms actions or intercept submit
-        $doc.find('form').each((index:number, element:any) => {
-            var $form = $(element),
+        $doc.find('form').each((index: number, element: any) => {
+            let $form = $(element),
                 action = $form.attr('action'),
-                anchor:HTMLAnchorElement = document.createElement('a');
+                anchor: HTMLAnchorElement = document.createElement('a');
 
             anchor.href = action;
 
             if (anchor.hostname !== this.hostname) {
-                $form.on('submit', function(e) {
+                $form.on('submit', function (e) {
                     console.log('Attempt to navigate out of the website has been blocked.');
 
                     e.preventDefault();
@@ -1090,7 +1189,7 @@ export class DocumentManager {
         return this;
     }
 
-    private onViewportUnload(e:BeforeUnloadEvent):DocumentManager {
+    private onViewportUnload(e: BeforeUnloadEvent): DocumentManager {
         if (e.defaultPrevented) {
             return;
         }
@@ -1121,23 +1220,23 @@ export class DocumentManager {
         return this;
     }
 
-    private onViewportResize(origin:OffsetInterface):DocumentManager {
-        this.viewportOrigin = origin;
+    private onViewportResize(e: ResizeEventData): DocumentManager {
+        this.viewportOrigin = e.origin;
+        this.viewportSize = e.size;
 
         if (ToolbarManager.hasToolbar()) {
-            ToolbarManager.getToolbar().applyOriginOffset(origin);
+            ToolbarManager.getToolbar().applyOriginOffset(e.origin);
         }
 
         return this;
     }
 
-    private onDocumentMouseDown(e:JQueryEventObject):void {
-        //console.log('onDocumentMouseDown');
+    private onDocumentMouseDown(e: JQueryEventObject): void {
         this.$clickTarget = null;
         this.clickOrigin = null;
 
-        var origin: OffsetInterface = {top: e.clientY, left: e.clientX},
-            $target:JQuery = $(e.target);
+        let origin: OffsetInterface = {top: e.clientY, left: e.clientX},
+            $target: JQuery = $(e.target);
 
         // Do nothing on toolbars click
         if (0 < $target.closest('#editor-document-toolbar').length) {
@@ -1150,7 +1249,7 @@ export class DocumentManager {
             }
         }
 
-        var $element:JQuery = $target.closest('.cms-block, .cms-row, .cms-container');
+        let $element: JQuery = $target.closest('.cms-block, .cms-row, .cms-container');
         if (1 == $element.length) {
             if ($element.attr('id') != this.selectionId) {
                 this.clickOrigin = origin;
@@ -1161,8 +1260,7 @@ export class DocumentManager {
         }
     }
 
-    private onDocumentMouseUp():void {
-        //console.log('onDocumentMouseUp');
+    private onDocumentMouseUp(): void {
         if (this.clickOrigin) {
             this.deselect()
                 .then(() => {
@@ -1177,7 +1275,7 @@ export class DocumentManager {
         }
     }
 
-    private deselect():Promise<any> {
+    private deselect(): Promise<any> {
         return PluginManager
             .clearActivePlugin()
             .then(() => {
@@ -1192,7 +1290,7 @@ export class DocumentManager {
             });
     }
 
-    private select($element:JQuery, origin?:OffsetInterface):void {
+    private select($element: JQuery, origin?: OffsetInterface): void {
         if (1 != $element.length) {
             return;
         }
@@ -1202,7 +1300,7 @@ export class DocumentManager {
         this.createToolbar($element, origin);
     }
 
-    private createToolbar($element?:JQuery, origin?:OffsetInterface):void {
+    private createToolbar($element?: JQuery, origin?: OffsetInterface): void {
         $element = $element || BaseManager.findElementById(this.selectionId);
         if (1 != $element.length) {
             return;
@@ -1233,15 +1331,15 @@ export class DocumentManager {
         ToolbarManager.getToolbar().applyOriginOffset(this.viewportOrigin);
     }
 
-    private enableEdition():DocumentManager {
-        var $document = BaseManager.getContentDocument();
+    private enableEdition(): DocumentManager {
+        let $document = BaseManager.getContentDocument();
 
         if (!this.enabled || null === $document) {
             return;
         }
 
         if (0 == $document.find('link#cms-editor-stylesheet').length) {
-            var stylesheet:HTMLLinkElement = document.createElement('link');
+            let stylesheet: HTMLLinkElement = document.createElement('link');
             stylesheet.id = 'cms-editor-stylesheet';
             stylesheet.href = '/bundles/ekynacms/css/editor-document.css';
             stylesheet.type = 'text/css';
@@ -1255,8 +1353,8 @@ export class DocumentManager {
         return this;
     }
 
-    private disableEdition():DocumentManager {
-        var $document = BaseManager.getContentDocument();
+    private disableEdition(): DocumentManager {
+        let $document = BaseManager.getContentDocument();
 
         if (this.enabled || null === $document) {
             return;
@@ -1267,7 +1365,7 @@ export class DocumentManager {
         $document.off('mousedown', this.documentMouseDownHandler);
         $document.off('mouseup', this.documentMouseUpHandler);
 
-        var $stylesheet:JQuery = $document.find('link#cms-editor-stylesheet');
+        let $stylesheet: JQuery = $document.find('link#cms-editor-stylesheet');
         if ($stylesheet.length) {
             $stylesheet.remove();
         }

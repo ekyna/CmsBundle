@@ -41,7 +41,9 @@ class EditorController extends BaseController
         $list = [];
 
         /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface[] $pages */
-        $pages = $this->get('ekyna_cms.page.repository')->findBy([], ['left' => 'ASC']);
+        $pages = $this
+            ->get('ekyna_cms.page.repository')
+            ->findBy(['dynamicPath' => false], ['left' => 'ASC']);
 
         foreach ($pages as $page) {
             $list[] = $this->pageToArray($page, $documentLocale);

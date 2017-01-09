@@ -30,10 +30,10 @@ class ContentManager extends AbstractManager
         }
 
         // New instance
-        $content = $this->getEditor()->getRepository()->createContent();
+        $content = $this->editor->getRepository()->createContent();
 
         // Create default container
-        $this->getEditor()->getContainerManager()->create($content);
+        $this->editor->getContainerManager()->create($content);
 
         // Add to container if available
         if ($subjectOrName instanceof Model\ContentSubjectInterface) {

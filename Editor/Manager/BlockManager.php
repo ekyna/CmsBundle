@@ -2,9 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
-use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
-use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry;
 use Ekyna\Bundle\CmsBundle\Model;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,11 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 class BlockManager extends AbstractManager
 {
     /**
-     * @var PluginRegistry
-     */
-    private $pluginRegistry;
-
-    /**
      * @var string
      */
     private $defaultType;
@@ -29,15 +22,10 @@ class BlockManager extends AbstractManager
     /**
      * Constructor.
      *
-     * @param Editor         $editor
-     * @param PluginRegistry $pluginRegistry
-     * @param string         $defaultType
+     * @param string $defaultType
      */
-    public function __construct(Editor $editor, PluginRegistry $pluginRegistry, $defaultType)
+    public function __construct($defaultType)
     {
-        parent::__construct($editor);
-
-        $this->pluginRegistry = $pluginRegistry;
         $this->defaultType = $defaultType;
     }
 
@@ -58,7 +46,8 @@ class BlockManager extends AbstractManager
         if (!(
             $rowOrName instanceof Model\RowInterface ||
             (is_string($rowOrName) && 0 < strlen($rowOrName))
-        )) {
+        )
+        ) {
             throw new InvalidOperationException("Excepted instance of RowInterface or string.");
         }
 
@@ -68,24 +57,22 @@ class BlockManager extends AbstractManager
         }
 
         // New instance
-        $block = $this->getEditor()->getRepository()->createBlock();
+        $block = $this->editor->getRepository()->createBlock();
         $block->setType($type);
 
+        // Layout creation
+        $this->editor->getLayoutAdapter()->createBlock($block, $data);
+
         // Plugin creation
-        $this->pluginRegistry
-            ->getBlockPlugin($type)
-            ->create($block, $data);
+        $this->editor->getBlockPlugin($type)->create($block, $data);
 
         // Add to row if available
         if ($rowOrName instanceof Model\RowInterface) {
             $count = $rowOrName->getBlocks()->count();
             $block
-                ->setPosition($count)
-                ->setSize(floor(12 / ($count + 1)));
+                ->setPosition($count);
 
             $rowOrName->addBlock($block);
-
-            $this->getEditor()->getRowManager()->fixBlockSizes($rowOrName);
         } else {
             $block->setName($rowOrName);
         }
@@ -105,8 +92,7 @@ class BlockManager extends AbstractManager
     public function update(Model\BlockInterface $block, Request $request)
     {
         // Plugin update
-        return $this
-            ->pluginRegistry
+        return $this->editor
             ->getBlockPlugin($block->getType())
             ->update($block, $request);
     }
@@ -125,7 +111,7 @@ class BlockManager extends AbstractManager
         }
 
         // Plugin removal
-        $this->pluginRegistry
+        $this->editor
             ->getBlockPlugin($block->getType())
             ->remove($block);
 
@@ -133,7 +119,7 @@ class BlockManager extends AbstractManager
         $block->setType($type);
 
         // Plugin creation
-        $this->pluginRegistry
+        $this->editor
             ->getBlockPlugin($block->getType())
             ->create($block, $data);
     }
@@ -165,71 +151,39 @@ class BlockManager extends AbstractManager
         }
 
         // Plugin remove
-        $this->pluginRegistry
+        $this->editor
             ->getBlockPlugin($block->getType())
             ->remove($block);
 
         // Remove from row
         $blocks->removeElement($block);
 
-        // Fix row's blocks sizes and positions
-        $this
-            ->getEditor()
+        // Fix row's blocks positions
+        $this->editor
             ->getRowManager()
-            ->fixBlockSizes($row)
             ->fixBlockPositions($row);
 
         return $block;
     }
 
     /**
-     * Expands the block.
+     * Moves the block up.
      *
      * @param Model\BlockInterface $block
-     *
-     * @return Model\BlockInterface The sibling block that has been compressed.
-     * @throws InvalidOperationException
      */
-    public function expand(Model\BlockInterface $block)
+    public function moveUp(Model\BlockInterface $block)
     {
-        $sibling = $this->findSibling($block, 2); // TODO min size parameter
-        if (null === $sibling) {
-            throw new InvalidOperationException(
-                "The block can't be expanded as no compressible sibling block has been found."
-            );
-        }
-
-        $block->setSize($block->getSize() + 1);
-        $sibling->setSize($sibling->getSize() - 1);
-
-        return $sibling;
+        throw new \Exception('Not yet implemented'); // TODO
     }
 
     /**
-     * Compresses the block.
+     * Moves the block down.
      *
      * @param Model\BlockInterface $block
-     *
-     * @return Model\BlockInterface The sibling block that has been compressed.
-     * @throws InvalidOperationException
      */
-    public function compress(Model\BlockInterface $block)
+    public function moveDown(Model\BlockInterface $block)
     {
-        if ($block->getSize() == 2) { // TODO min size parameter
-            throw new InvalidOperationException("The block is too small to be expanded.");
-        }
-
-        $sibling = $this->findSibling($block);
-        if (null === $sibling) {
-            throw new InvalidOperationException(
-                "The block can't be expanded as no compressible sibling block has been found."
-            );
-        }
-
-        $block->setSize($block->getSize() - 1);
-        $sibling->setSize($sibling->getSize() + 1);
-
-        return $sibling;
+        throw new \Exception('Not yet implemented'); // TODO
     }
 
     /**
@@ -283,54 +237,14 @@ class BlockManager extends AbstractManager
     }
 
     /**
-     * Moves the block up.
-     *
-     * @param Model\BlockInterface $block
-     */
-    public function moveUp(Model\BlockInterface $block)
-    {
-        throw new \Exception('Not yet implemented'); // TODO
-    }
-
-    /**
-     * Moves the block down.
-     *
-     * @param Model\BlockInterface $block
-     */
-    public function moveDown(Model\BlockInterface $block)
-    {
-        throw new \Exception('Not yet implemented'); // TODO
-    }
-
-    /**
-     * Finds the sibling block.
-     *
-     * @param Model\BlockInterface $block
-     * @param int                  $minSize
-     *
-     * @return Model\BlockInterface
-     * @throws InvalidOperationException
-     */
-    private function findSibling(Model\BlockInterface $block, $minSize = null)
-    {
-        $sibling = $this->findNextSibling($block, $minSize);
-        if (null === $sibling) {
-            $sibling = $this->findPreviousSibling($block, $minSize);
-        }
-
-        return $sibling;
-    }
-
-    /**
      * The block's previous sibling.
      *
      * @param Model\BlockInterface $block
-     * @param int                  $minSize
      *
      * @return Model\BlockInterface|null
      * @throws InvalidOperationException
      */
-    private function findPreviousSibling(Model\BlockInterface $block, $minSize = null)
+    private function findPreviousSibling(Model\BlockInterface $block)
     {
         if (null === $row = $block->getRow()) {
             throw new InvalidOperationException('The block does not have a parent row.');
@@ -338,8 +252,8 @@ class BlockManager extends AbstractManager
 
         $blocks = $row->getBlocks();
 
-        $sibling = $blocks->filter(function (Model\BlockInterface $b) use ($block, $minSize) {
-            return $b->getPosition() < $block->getPosition() && ($minSize == 0 || $b->getSize() > $minSize);
+        $sibling = $blocks->filter(function (Model\BlockInterface $b) use ($block) {
+            return $b->getPosition() < $block->getPosition();
         })->last();
 
         return $sibling ? $sibling : null;
@@ -349,12 +263,11 @@ class BlockManager extends AbstractManager
      * Finds the block's next sibling.
      *
      * @param Model\BlockInterface $block
-     * @param int                  $minSize
      *
      * @return Model\BlockInterface|null
      * @throws InvalidOperationException
      */
-    private function findNextSibling(Model\BlockInterface $block, $minSize = null)
+    private function findNextSibling(Model\BlockInterface $block)
     {
         if (null === $row = $block->getRow()) {
             throw new InvalidOperationException('The block does not have a parent row.');
@@ -362,8 +275,8 @@ class BlockManager extends AbstractManager
 
         $blocks = $row->getBlocks();
 
-        $sibling = $blocks->filter(function (Model\BlockInterface $b) use ($block, $minSize) {
-            return $b->getPosition() > $block->getPosition() && ($minSize == 0 || $b->getSize() > $minSize);
+        $sibling = $blocks->filter(function (Model\BlockInterface $b) use ($block) {
+            return $b->getPosition() > $block->getPosition();
         })->first();
 
         return $sibling ? $sibling : null;

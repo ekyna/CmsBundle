@@ -10,12 +10,31 @@ namespace Ekyna\Bundle\CmsBundle\Editor\View;
 class RowView
 {
     /**
-     * @var array
+     * @var AttributesInterface
      */
-    public $attributes = [];
+    private $attributes = [];
 
     /**
      * @var array|BlockView[]
      */
     public $blocks = [];
+
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->attributes = new Attributes();
+    }
+
+    /**
+     * Returns the attributes.
+     *
+     * @return AttributesInterface
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
 }

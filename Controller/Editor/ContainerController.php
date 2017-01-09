@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
-use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorException;
+use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
 use Ekyna\Bundle\CoreBundle\Modal\Modal;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +28,7 @@ class ContainerController extends BaseController
 
         try {
             $row = $this->getEditor()->createDefaultRow([], $container);
-        } catch (EditorException $e) {
+        } catch (EditorExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
@@ -38,7 +38,7 @@ class ContainerController extends BaseController
         $viewBuilder = $this->getViewBuilder();
 
         $data = [
-            'created'    => $viewBuilder->buildRow($row)->attributes['id'],
+            'created'    => $viewBuilder->buildRow($row)->getAttributes()->get('id'),
             'containers' => [$viewBuilder->buildContainer($container)],
         ];
 
@@ -58,7 +58,7 @@ class ContainerController extends BaseController
 
         try {
             $response = $this->getEditor()->getContainerManager()->update($container, $request);
-        } catch (EditorException $e) {
+        } catch (EditorExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
@@ -91,12 +91,12 @@ class ContainerController extends BaseController
 
         try {
             $this->getEditor()->getContainerManager()->delete($container);
-        } catch (EditorException $e) {
+        } catch (EditorExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
         // Stores id for front removal
-        $removedId = $this->getViewBuilder()->buildContainer($container)->attributes['id'];
+        $removedId = $this->getViewBuilder()->buildContainer($container)->getAttributes()->get('id');
         $content = $container->getContent();
 
         $this->validate($content);
@@ -124,7 +124,7 @@ class ContainerController extends BaseController
 
         try {
             $sibling = $this->getEditor()->getContainerManager()->moveUp($container);
-        } catch (EditorException $e) {
+        } catch (EditorExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
@@ -155,7 +155,7 @@ class ContainerController extends BaseController
 
         try {
             $sibling = $this->getEditor()->getContainerManager()->moveDown($container);
-        } catch (EditorException $e) {
+        } catch (EditorExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 

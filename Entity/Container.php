@@ -15,8 +15,11 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
 class Container implements Cms\ContainerInterface
 {
     use RM\SortableTrait,
-        RM\TimestampableTrait,
-        RM\TaggedEntityTrait;
+        RM\TimestampableTrait;
+
+    use RM\TaggedEntityTrait {
+        getEntityTag as traitGetEntityTag;
+    }
 
     /**
      * @var integer
@@ -200,6 +203,18 @@ class Container implements Cms\ContainerInterface
         }*/
 
         return $contents;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEntityTag()
+    {
+        if (0 == strlen($this->name) && null !== $this->content) {
+            return $this->content->getEntityTag();
+        }
+
+        return $this->traitGetEntityTag();
     }
 
     /**

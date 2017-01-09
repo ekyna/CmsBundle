@@ -131,7 +131,7 @@ class BackgroundPlugin extends AbstractPlugin
         }
 
         if (0 < strlen($style)) {
-            $view->attributes['style'] = $style;
+            $view->getAttributes()->set('style', $style);
         }
     }
 

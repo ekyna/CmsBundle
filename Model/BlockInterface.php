@@ -51,22 +51,6 @@ interface BlockInterface
     public function getName();
 
     /**
-     * Set size
-     *
-     * @param integer $size
-     *
-     * @return BlockInterface|$this
-     */
-    public function setSize($size);
-
-    /**
-     * Get size
-     *
-     * @return integer
-     */
-    public function getSize();
-
-    /**
      * Sets the type.
      *
      * @param string $type
@@ -81,6 +65,20 @@ interface BlockInterface
      * @return string
      */
     public function getType();
+
+    /**
+     * Sets the layout.
+     *
+     * @param array $layout
+     */
+    public function setLayout(array $layout);
+
+    /**
+     * Returns the layout.
+     *
+     * @return array
+     */
+    public function getLayout();
 
     /**
      * Sets the data.

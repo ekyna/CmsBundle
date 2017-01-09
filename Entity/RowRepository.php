@@ -23,11 +23,10 @@ class RowRepository extends ResourceRepository
         $qb = $this->getQueryBuilder();
 
         return $qb
-            ->join('r.blocks', 'block')
-            ->join('block.translations', 'translation')
+            ->leftJoin('r.blocks', 'block')
+            ->leftJoin('block.translations', 'translation')
             ->addSelect('block', 'translation')
             ->andWhere($qb->expr()->eq('r.name', ':name'))
-            ->setMaxResults(1)
             ->getQuery()
             ->useQueryCache(true)
             // TODO ->useResultCache(true, 3600, Row::getEntityTagPrefix() . '[name:'.$name.']')
@@ -47,11 +46,10 @@ class RowRepository extends ResourceRepository
         $qb = $this->getQueryBuilder();
 
         return $qb
-            ->join('r.blocks', 'block')
-            ->join('block.translations', 'translation')
+            ->leftJoin('r.blocks', 'block')
+            ->leftJoin('block.translations', 'translation')
             ->addSelect('block', 'translation')
             ->andWhere($qb->expr()->eq('r.id', ':id'))
-            ->setMaxResults(1)
             ->getQuery()
             ->useQueryCache(true)
             // TODO ->useResultCache(true, 3600, Row::getEntityTagPrefix() . '[id:'.$id.']')

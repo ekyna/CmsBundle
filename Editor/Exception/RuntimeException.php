@@ -3,11 +3,11 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Exception;
 
 /**
- * Class RenderingException
+ * Class RuntimeException
  * @package Ekyna\Bundle\CmsBundle\Editor\Exception
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class RenderingException extends \Exception implements EditorExceptionInterface
+class RuntimeException extends \RuntimeException implements EditorExceptionInterface
 {
 
 }

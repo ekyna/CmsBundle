@@ -15,8 +15,11 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
 class Row implements Cms\RowInterface
 {
     use RM\SortableTrait,
-        RM\TimestampableTrait,
-        RM\TaggedEntityTrait;
+        RM\TimestampableTrait;
+
+    use RM\TaggedEntityTrait {
+        getEntityTag as traitGetEntityTag;
+    }
 
     /**
      * @var integer
@@ -132,6 +135,18 @@ class Row implements Cms\RowInterface
     public function getBlocks()
     {
         return $this->blocks;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEntityTag()
+    {
+        if (0 == strlen($this->name) && null !== $this->container) {
+            return $this->container->getEntityTag();
+        }
+
+        return $this->traitGetEntityTag();
     }
 
     /**

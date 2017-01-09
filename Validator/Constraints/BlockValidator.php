@@ -55,9 +55,7 @@ class BlockValidator extends ConstraintValidator
             $this->context->addViolation($constraint->rowOrNameButNotBoth);
         }
 
-        if (2 > $block->getSize()) { // TODO min size parameter
-            $this->context->addViolation($constraint->tooSmallBlock);
-        }
+        // TODO layout validation ?
 
         // Plugin validation
         $plugin = $this->pluginRegistry->getBlockPlugin($block->getType());

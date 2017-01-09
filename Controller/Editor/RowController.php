@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
-use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorException;
+use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -28,7 +28,7 @@ class RowController extends BaseController
 
         try {
             $block = $this->getEditor()->createDefaultBlock($type, [], $row);
-        } catch (EditorException $e) {
+        } catch (EditorExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
@@ -38,7 +38,7 @@ class RowController extends BaseController
         $viewBuilder = $this->getViewBuilder();
 
         $data = [
-            'created' => $viewBuilder->buildBlock($block)->pluginAttributes['id'],
+            'created' => $viewBuilder->buildBlock($block)->getPluginAttributes()->get('id'), // TODO why plugin attributes -> id ?
             'rows'    => [$viewBuilder->buildRow($row)],
         ];
 
@@ -71,12 +71,12 @@ class RowController extends BaseController
 
         try {
             $this->getEditor()->getRowManager()->delete($row);
-        } catch (EditorException $e) {
+        } catch (EditorExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
         // Stores id for front removal
-        $removedId = $this->getViewBuilder()->buildRow($row)->attributes['id'];
+        $removedId = $this->getViewBuilder()->buildRow($row)->getAttributes()->get('id');
         $container = $row->getContainer();
 
         $this->validate($container);
@@ -104,7 +104,7 @@ class RowController extends BaseController
 
         try {
             $sibling = $this->getEditor()->getRowManager()->moveUp($row);
-        } catch (EditorException $e) {
+        } catch (EditorExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
@@ -135,7 +135,7 @@ class RowController extends BaseController
 
         try {
             $sibling = $this->getEditor()->getRowManager()->moveDown($row);
-        } catch (EditorException $e) {
+        } catch (EditorExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 

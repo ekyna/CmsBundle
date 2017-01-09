@@ -1,5 +1,5 @@
 {% block attributes %}
-    {%- for attrname, attrvalue in attr %}
+    {%- for attrname, attrvalue in attr.all %}
         {% if attrname == 'classes' %}
             class="{{ attrvalue }}"
         {% elseif attrname == 'data' %}

@@ -2,7 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
-use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry;
 use Ekyna\Bundle\CmsBundle\Model;
@@ -16,11 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 class ContainerManager extends AbstractManager
 {
     /**
-     * @var PluginRegistry
-     */
-    private $pluginRegistry;
-
-    /**
      * @var string
      */
     private $defaultType;
@@ -29,15 +23,10 @@ class ContainerManager extends AbstractManager
     /**
      * Constructor.
      *
-     * @param Editor         $editor
-     * @param PluginRegistry $pluginRegistry
-     * @param string         $defaultType
+     * @param string $defaultType
      */
-    public function __construct(Editor $editor, PluginRegistry $pluginRegistry, $defaultType)
+    public function __construct($defaultType)
     {
-        parent::__construct($editor);
-
-        $this->pluginRegistry = $pluginRegistry;
         $this->defaultType = $defaultType;
     }
 
@@ -57,7 +46,8 @@ class ContainerManager extends AbstractManager
         if (!(
             $contentOrName instanceof Model\ContentInterface ||
             (is_string($contentOrName) && 0 < strlen($contentOrName))
-        )) {
+        )
+        ) {
             throw new InvalidOperationException("Excepted instance of ContentInterface or string.");
         }
 
@@ -67,16 +57,16 @@ class ContainerManager extends AbstractManager
         }
 
         // New instance
-        $container = $this->getEditor()->getRepository()->createContainer();
+        $container = $this->editor->getRepository()->createContainer();
         $container->setType($type);
 
         // Plugin creation
-        $this->pluginRegistry
+        $this->editor
             ->getContainerPlugin($type)
             ->create($container, $data);
 
         // Create default row
-        $this->getEditor()->getRowManager()->create($container);
+        $this->editor->getRowManager()->create($container);
 
         // Add to container if available
         if ($contentOrName instanceof Model\ContentInterface) {
@@ -102,8 +92,7 @@ class ContainerManager extends AbstractManager
     public function update(Model\ContainerInterface $container, Request $request)
     {
         // Plugin update
-        return $this
-            ->pluginRegistry
+        return $this->editor
             ->getContainerPlugin($container->getType())
             ->update($container, $request);
     }
@@ -134,14 +123,13 @@ class ContainerManager extends AbstractManager
         }
 
         // Plugin remove
-        $this->pluginRegistry
+        $this->editor
             ->getContainerPlugin($container->getType())
             ->remove($container);
 
         $containers->removeElement($container);
 
-        $this
-            ->getEditor()
+        $this->editor
             ->getContentManager()
             ->fixContainerPositions($content);
 

@@ -34,22 +34,5 @@ class RowValidator extends ConstraintValidator
         if ((null === $container && 0 === strlen($name)) || (null !== $container && 0 < strlen($name))) {
             $this->context->addViolation($constraint->containerOrNameButNotBoth);
         }
-
-        // Check layout
-        $position = 0;
-        $size = 0;
-        foreach ($row->getBlocks() as $block) {
-            if ($position != $block->getPosition()) {
-                $this->context->addViolation($constraint->badColumnIndex);
-            }
-            $size += $block->getSize();
-            $position++;
-        }
-
-        if (12 < $size) {
-            $this->context->addViolation($constraint->tooLargeRow);
-        } elseif (12 > $size) {
-            $this->context->addViolation($constraint->tooSmallRow);
-        }
     }
 }

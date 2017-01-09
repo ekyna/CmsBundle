@@ -5,6 +5,8 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
+use Ekyna\Bundle\CmsBundle\Editor\EditorAwareInterface;
+use Ekyna\Bundle\CmsBundle\Editor\EditorAwareTrait;
 use Ekyna\Component\Resource\Model\SortableInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -13,38 +15,15 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  * @package Ekyna\Bundle\CmsBundle\Editor\Manager
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-abstract class AbstractManager
+abstract class AbstractManager implements EditorAwareInterface
 {
-    /**
-     * @var Editor
-     */
-    private $editor;
+    use EditorAwareTrait;
 
     /**
      * @var \Symfony\Component\PropertyAccess\PropertyAccessorInterface
      */
     private $propertyAccessor;
 
-
-    /**
-     * Constructor.
-     *
-     * @param Editor $editor
-     */
-    public function __construct(Editor $editor)
-    {
-        $this->editor = $editor;
-    }
-
-    /**
-     * Returns the editor.
-     *
-     * @return Editor
-     */
-    protected function getEditor()
-    {
-        return $this->editor;
-    }
 
     /**
      * Returns the property accessor.
