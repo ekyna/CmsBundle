@@ -214,17 +214,7 @@ export class BaseManager {
             }
 
             // Parse elements
-            if (data.hasOwnProperty('content')) {
-                ContentManager.parse(data.content);
-            } else if (data.hasOwnProperty('containers')) {
-                ContainerManager.parse(data.containers);
-            } else if (data.hasOwnProperty('rows')) {
-                RowManager.parse(data.rows);
-            } else if (data.hasOwnProperty('blocks')) {
-                BlockManager.parse(data.blocks);
-            } else if (data.hasOwnProperty('widgets')) {
-                WidgetManager.parse(data.widgets);
-            }
+            BaseManager.parse(data);
 
             // Dispatch response parsed
             let event:SelectionEvent = new SelectionEvent();
@@ -241,6 +231,20 @@ export class BaseManager {
         });
 
         return xhr;
+    }
+
+    static parse(data: ResponseData) {
+        if (data.hasOwnProperty('content')) {
+            ContentManager.parse(data.content);
+        } else if (data.hasOwnProperty('containers')) {
+            ContainerManager.parse(data.containers);
+        } else if (data.hasOwnProperty('rows')) {
+            RowManager.parse(data.rows);
+        } else if (data.hasOwnProperty('blocks')) {
+            BlockManager.parse(data.blocks);
+        } else if (data.hasOwnProperty('widgets')) {
+            WidgetManager.parse(data.widgets);
+        }
     }
 }
 
@@ -548,7 +552,7 @@ export class WidgetManager {
                 throw 'Unexpected block data';
             }
 
-            let $widget: JQuery= BaseManager.findOrCreateElement(widget.attributes.id, $block);
+            let $widget: JQuery = BaseManager.findOrCreateElement(widget.attributes.id, $block);
             BaseManager.setElementAttributes($widget, widget.attributes);
 
             // Parse content

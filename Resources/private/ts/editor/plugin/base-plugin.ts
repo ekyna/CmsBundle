@@ -3,6 +3,7 @@
 import * as es6Promise from 'es6-promise';
 import * as Modal from 'ekyna-modal';
 import Dispatcher from '../dispatcher';
+import {BaseManager, SelectionEvent} from "../document-manager";
 
 es6Promise.polyfill();
 let Promise = es6Promise.Promise;
@@ -74,7 +75,7 @@ export class BasePlugin {
         this.updated = updated;
     }
 
-    protected openModal(url: string, jsonCallback: (e:Ekyna.ModalResponseEvent) => void):void {
+    protected openModal(url: string, callback?: (e:Ekyna.ModalResponseEvent) => void):void {
         Dispatcher.trigger('editor.set_busy');
 
         this.modal = new Modal();
@@ -88,7 +89,15 @@ export class BasePlugin {
                 if (e.contentType == 'json') {
                     e.preventDefault();
 
-                    jsonCallback(e);
+                    BaseManager.parse(e.content);
+
+                    let event:SelectionEvent = new SelectionEvent();
+                    event.$element = this.$element;
+                    Dispatcher.trigger('document_manager.select', event);
+                }
+
+                if (callback) {
+                    callback(e);
                 }
             })
             .on('ekyna.modal.show', () => {
