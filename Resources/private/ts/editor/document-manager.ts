@@ -46,6 +46,7 @@ export interface ElementData {
 }
 
 export interface ElementAttributes {
+    id: string
     data: ElementData
     [key: string]: any
 }
@@ -81,8 +82,9 @@ interface ResponseData {
     removed?: Array<string>
     content?: ContentData
     containers?: Array<ContainerData>
-    rows: Array<RowData>
-    blocks: Array<BlockData>
+    rows?: Array<RowData>
+    blocks?: Array<BlockData>
+    widgets?: Array<WidgetData>
 }
 
 export class BaseManager {
@@ -210,6 +212,7 @@ export class BaseManager {
                     this.$contentDocument.find('#' + id).remove();
                 });
             }
+
             // Parse elements
             if (data.hasOwnProperty('content')) {
                 ContentManager.parse(data.content);
@@ -219,6 +222,8 @@ export class BaseManager {
                 RowManager.parse(data.rows);
             } else if (data.hasOwnProperty('blocks')) {
                 BlockManager.parse(data.blocks);
+            } else if (data.hasOwnProperty('widgets')) {
+                WidgetManager.parse(data.widgets);
             }
 
             // Dispatch response parsed
@@ -245,6 +250,7 @@ export class ContentManager {
         if (!content.hasOwnProperty('attributes')) {
             throw 'Unexpected content data';
         }
+
         let $content: JQuery = BaseManager.findElementById(content.attributes['id']);
         if (0 == $content.length) {
             throw 'Content not found.';
@@ -372,6 +378,7 @@ export class RowManager {
             if (!row.hasOwnProperty('attributes')) {
                 throw 'Unexpected row data';
             }
+
             let $row: JQuery = BaseManager.findOrCreateElement(row.attributes['id'], $container);
             BaseManager.setElementAttributes($row, row.attributes);
 
@@ -431,33 +438,24 @@ export class RowManager {
 export class BlockManager {
     static parse(blocks: Array<BlockData>, $row?: JQuery) {
         blocks.forEach((block: BlockData, i: number) => {
-            let $block: JQuery,
-                $widget: JQuery;
-
-            // Block layout
-            if (block.hasOwnProperty('attributes')) {
-                $block = BaseManager.findOrCreateElement(block.attributes['id'], $row);
-                BaseManager.setElementAttributes($block, block.attributes);
+            // Parse layout
+            if (!block.hasOwnProperty('attributes')) {
+                throw 'Unexpected block data';
             }
+
+            let $block: JQuery = BaseManager.findOrCreateElement(block.attributes.id, $row);
+            BaseManager.setElementAttributes($block, block.attributes);
 
             // Parse children
             if (block.hasOwnProperty('widgets')) {
-                block.widgets.forEach((widget: WidgetData) => {
-                    // Parse block
-                    if (widget.hasOwnProperty('attributes')) {
-                        $widget = BaseManager.findOrCreateElement(widget.attributes['id'], $block);
-                        BaseManager.setElementAttributes($widget, widget.attributes);
-
-                        // Parse content
-                        if (widget.hasOwnProperty('content')) {
-                            $widget.html(widget.content);
-                        }
-                    }
-                });
+                WidgetManager.parse(block.widgets, $block);
             }
 
+            // Reorder widgets
+            BaseManager.sortChildren($block);
+
             // Sort blocks if not made by the row manager.
-            if ($block && !$row && i == blocks.length - 1) {
+            if (!$row && i == blocks.length - 1) {
                 BaseManager.sortChildren($block.closest('.cms-row'));
             }
         });
@@ -539,6 +537,30 @@ export class BlockManager {
 
     static compress($block: JQuery) {
         BlockManager.request($block, 'ekyna_cms_editor_block_compress');
+    }
+}
+
+export class WidgetManager {
+    static parse(widgets: Array<WidgetData>, $block?: JQuery) {
+        widgets.forEach((widget: WidgetData, i: number) => {
+            // Parse layout
+            if (!widget.hasOwnProperty('attributes')) {
+                throw 'Unexpected block data';
+            }
+
+            let $widget: JQuery= BaseManager.findOrCreateElement(widget.attributes.id, $block);
+            BaseManager.setElementAttributes($widget, widget.attributes);
+
+            // Parse content
+            if (widget.hasOwnProperty('content')) {
+                $widget.html(widget.content);
+            }
+
+            // Sort widgets if not made by the block manager.
+            if (!$block && i == widgets.length - 1) {
+                BaseManager.sortChildren($widget.closest('.cms-block'));
+            }
+        });
     }
 }
 

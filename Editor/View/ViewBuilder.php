@@ -182,6 +182,13 @@ class ViewBuilder implements EditorAwareInterface
                 'editable' => $this->editor->isEnabled(),
             ]);
 
+        // Set widgets positions
+        $p = 0;
+        foreach ($view->widgets as $widgetView) {
+            $widgetView->getAttributes()->setData('position', $p);
+            $p++;
+        }
+
         // Prevent type change on a named block
         if (0 < strlen($block->getName())) {
             $attributes->setData('actions', ['change_type' => false]);

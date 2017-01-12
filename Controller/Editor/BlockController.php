@@ -41,9 +41,13 @@ class BlockController extends BaseController
         $this->validate($block);
         $this->persist($block);
 
-        $data = [
-            'blocks' => [$this->getViewBuilder()->buildBlock($block)],
-        ];
+        $view = $this->getViewBuilder()->buildBlock($block);
+
+        if (0 < strlen($block->getName())) {
+            $data = ['widgets' => $view->widgets];
+        } else {
+            $data = ['blocks' => [$view]];
+        }
 
         return $this->buildResponse($data, self::SERIALIZE_CONTENT);
     }

@@ -71,7 +71,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             'action'            => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
                 'blockId'    => $block->getId(),
                 'widgetType' => $request->get('widgetType', $block->getType()),
-                //'_content_locale' => $this->localeProvider->getCurrentLocale(), // TODO
+                '_content_locale' => $this->localeProvider->getCurrentLocale(),
             ]),
             'method'            => 'post',
             'attr'              => [

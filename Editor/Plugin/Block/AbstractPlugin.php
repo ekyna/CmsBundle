@@ -88,9 +88,9 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
             $attributes
                 ->setId('cms-widget-' . $block->getId())
                 ->setData([
-                    'id'      => $block->getId(),
-                    'type'    => $this->getName(),
-                    'actions' => [
+                    'id'       => $block->getId(),
+                    'type'     => $this->getName(),
+                    'actions'  => [
                         'edit'        => true,
                         'change_type' => true,
                     ],
