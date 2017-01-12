@@ -3,6 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\AbstractPlugin as BasePlugin;
+use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
+use Ekyna\Bundle\CmsBundle\Editor\View\WidgetView;
 use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
 
@@ -22,7 +24,7 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
 
 
     /**
-     * Sets the localeProvider.
+     * Sets the locale provider.
      *
      * @param LocaleProviderInterface $localeProvider
      */
@@ -42,7 +44,7 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function create(BlockInterface $block, array $data = [])
     {
@@ -51,18 +53,55 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function remove(BlockInterface $block)
     {
-        $block->setData([]);
+        $block->unsetData();
         foreach ($block->getTranslations() as $blockTranslation) {
-            $blockTranslation->setData([]);
+            $blockTranslation->unsetData();
         }
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
+     */
+    public function render(BlockInterface $block, BlockView $view, array $options)
+    {
+        $view->widgets[] = $this->createWidget($block, $options);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function createWidget(BlockInterface $block, array $options)
+    {
+        // TODO option resolver ?
+        $options = array_replace([
+            'editable' => false,
+        ], $options);
+
+        $view = new WidgetView();
+        $attributes = $view->getAttributes()->addClass('cms-widget');
+
+        if ($options['editable']) {
+            $attributes
+                ->setId('cms-widget-' . $block->getId())
+                ->setData([
+                    'id'      => $block->getId(),
+                    'type'    => $this->getName(),
+                    'actions' => [
+                        'edit'        => true,
+                        'change_type' => true,
+                    ],
+                ]);
+        }
+
+        return $view;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function supports(BlockInterface $block)
     {

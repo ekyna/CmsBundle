@@ -3,11 +3,11 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\View;
 
 /**
- * Class BlockView
+ * Class WidgetView
  * @package Ekyna\Bundle\CmsBundle\Editor\View
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class BlockView
+class WidgetView
 {
     /**
      * @var AttributesInterface
@@ -15,9 +15,9 @@ class BlockView
     private $attributes;
 
     /**
-     * @var array|WidgetView[]
+     * @var string
      */
-    public $widgets = [];
+    public $content = '';
 
 
     /**

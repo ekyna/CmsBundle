@@ -38,7 +38,7 @@ class RowController extends BaseController
         $viewBuilder = $this->getViewBuilder();
 
         $data = [
-            'created' => $viewBuilder->buildBlock($block)->getPluginAttributes()->get('id'), // TODO why plugin attributes -> id ?
+            'created' => $viewBuilder->buildBlock($block)->getAttributes()->getId(),
             'rows'    => [$viewBuilder->buildRow($row)],
         ];
 
@@ -76,7 +76,7 @@ class RowController extends BaseController
         }
 
         // Stores id for front removal
-        $removedId = $this->getViewBuilder()->buildRow($row)->getAttributes()->get('id');
+        $removedId = $this->getViewBuilder()->buildRow($row)->getAttributes()->getId();
         $container = $row->getContainer();
 
         $this->validate($container);

@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ekyna\Bundle\CmsBundle\Editor\Model\DataInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -11,12 +12,13 @@ use Ekyna\Component\Resource\Model as RM;
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
 interface ContainerInterface
-    extends RM\SortableInterface,
+    extends DataInterface,
+            RM\SortableInterface,
             RM\TimestampableInterface,
             RM\TaggedEntityInterface
 {
     /**
-     * Set content
+     * Sets the content.
      *
      * @param ContentInterface $content
      * @return ContainerInterface|$this
@@ -24,14 +26,14 @@ interface ContainerInterface
     public function setContent(ContentInterface $content = null);
 
     /**
-     * Get content
+     * Returns the content.
      *
      * @return ContentInterface
      */
     public function getContent();
 
     /**
-     * Sets the name
+     * Sets the name.
      *
      * @param string $name
      * @return ContainerInterface|$this
@@ -39,7 +41,7 @@ interface ContainerInterface
     public function setName($name);
 
     /**
-     * Returns the name
+     * Returns the name.
      *
      * @return string
      */
@@ -62,23 +64,7 @@ interface ContainerInterface
     public function getType();
 
     /**
-     * Sets the data.
-     *
-     * @param array $data
-     *
-     * @return ContentInterface|$this
-     */
-    public function setData(array $data);
-
-    /**
-     * Returns the data.
-     *
-     * @return array
-     */
-    public function getData();
-
-    /**
-     * Set rows
+     * Sets the rows.
      *
      * @param ArrayCollection|RowInterface[] $rows
      *
@@ -87,7 +73,7 @@ interface ContainerInterface
     public function setRows(ArrayCollection $rows);
 
     /**
-     * Add row
+     * Adds the row.
      *
      * @param RowInterface $row
      *
@@ -96,7 +82,7 @@ interface ContainerInterface
     public function addRow(RowInterface $row);
 
     /**
-     * Remove row
+     * Removes the row.
      *
      * @param RowInterface $row
      *
@@ -105,7 +91,7 @@ interface ContainerInterface
     public function removeRow(RowInterface $row);
 
     /**
-     * Get rows
+     * Returns the rows.
      *
      * @return ArrayCollection|RowInterface[]
      */

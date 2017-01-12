@@ -10,54 +10,141 @@ namespace Ekyna\Bundle\CmsBundle\Editor\View;
 interface AttributesInterface
 {
     /**
-     * Checks if an attribute is defined.
-     *
-     * @param string $name The attribute name
-     *
-     * @return bool true if the attribute is defined, false otherwise
+     * Clears the attributes.
      */
-    public function has($name);
+    public function clear();
 
     /**
-     * Returns an attribute.
+     * Sets the id.
      *
-     * @param string $name    The attribute name
-     * @param mixed  $default The default value if not found
+     * @param string $id
      *
-     * @return mixed
+     * @return AttributesInterface
      */
-    public function get($name, $default = null);
+    public function setId($id);
 
     /**
-     * Sets an attribute.
+     * Returns the id.
+     *
+     * @return string
+     */
+    public function getId();
+
+    /**
+     * Returns whether or not the data exists for the given key.
+     *
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function hasData($key);
+
+    /**
+     * Sets the data.
      *
      * It will recursively replace current value if both old and new values are arrays.
      *
-     * @param string $name
+     * @param string $key
      * @param mixed  $value
+     *
+     * @return AttributesInterface
      */
-    public function set($name, $value);
+    public function setData($key, $value = null);
 
     /**
-     * Returns attributes.
+     * Returns the data for the given key, or all data if key is omitted.
      *
-     * @return array Attributes
+     * @param string $key
+     * @param mixed $default
+     *
+     * @return mixed
      */
-    public function all();
+    public function getData($key = null, $default = null);
 
     /**
-     * Sets attributes.
+     * Returns whether or not the extra exists for the given key.
      *
-     * @param array $attributes Attributes
+     * @param string $key
+     *
+     * @return bool
      */
-    public function replace(array $attributes);
+    public function hasExtra($key);
 
     /**
-     * Removes an attribute.
+     * Sets the extra.
      *
-     * @param string $name
+     * @param string $key
+     * @param string $value
      *
-     * @return mixed The removed value or null when it does not exist
+     * @return AttributesInterface
      */
-    public function remove($name);
+    public function setExtra($key, $value);
+
+    /**
+     * Returns the extra for the given key, or all extras if key is omitted.
+     *
+     * @param string $key
+     * @param string $default
+     *
+     * @return string|array
+     */
+    public function getExtra($key = null, $default = null);
+
+    /**
+     * Adds the css class.
+     *
+     * @param array|string $class
+     *
+     * @return AttributesInterface
+     */
+    public function addClass($class);
+
+    /**
+     * Removes the css class.
+     *
+     * @param string $class
+     *
+     * @return AttributesInterface
+     */
+    public function removeClass($class);
+
+    /**
+     * Returns the css classes.
+     *
+     * @return array
+     */
+    public function getClasses();
+
+    /**
+     * Adds the css style.
+     *
+     * @param string $key
+     * @param string $value
+     *
+     * @return AttributesInterface
+     */
+    public function addStyle($key, $value);
+
+    /**
+     * Removes the css style.
+     *
+     * @param string $key
+     *
+     * @return AttributesInterface
+     */
+    public function removeStyle($key);
+
+    /**
+     * Returns the css styles.
+     *
+     * @return array
+     */
+    public function getStyles();
+
+    /**
+     * Transforms to an array.
+     *
+     * @return array
+     */
+    public function toArray();
 }

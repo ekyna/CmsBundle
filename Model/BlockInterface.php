@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+use Ekyna\Bundle\CmsBundle\Editor\Model\DataInterface;
 use Ekyna\Bundle\CoreBundle\Model as Core;
 use Ekyna\Component\Resource\Model as RM;
 
@@ -13,7 +14,8 @@ use Ekyna\Component\Resource\Model as RM;
  * @method BlockTranslationInterface translate($locale = null, $create = false)
  */
 interface BlockInterface
-    extends RM\TranslatableInterface,
+    extends DataInterface,
+            RM\TranslatableInterface,
             RM\SortableInterface,
             RM\TimestampableInterface,
             RM\TaggedEntityInterface
@@ -79,22 +81,6 @@ interface BlockInterface
      * @return array
      */
     public function getLayout();
-
-    /**
-     * Sets the data.
-     *
-     * @param array $data
-     *
-     * @return BlockInterface|$this
-     */
-    public function setData(array $data);
-
-    /**
-     * Returns the data.
-     *
-     * @return array
-     */
-    public function getData();
 
     /**
      * Returns the init datas for JS editor.

@@ -37,7 +37,7 @@ class ContentController extends BaseController
         $viewBuilder = $this->getViewBuilder();
 
         $data = [
-            'created' => $viewBuilder->buildContainer($container)->getAttributes()->get('id'),
+            'created' => $viewBuilder->buildContainer($container)->getAttributes()->getId(),
             'content' => $viewBuilder->buildContent($content),
         ];
 

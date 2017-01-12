@@ -26,16 +26,17 @@ class ViewBuilder implements EditorAwareInterface
     public function buildContent(Model\ContentInterface $content)
     {
         $view = new ContentView();
-        $attributes = $view->getAttributes();
+        $attributes = $view->getAttributes()->addClass('cms-content');
 
         if ($this->editor->isEnabled()) {
-            $attributes->set('id', 'cms-content-' . $content->getId());
-            $attributes->set('data', [
-                'id'      => $content->getId(),
-                'actions' => [
-                    // TODO
-                ],
-            ]);
+            $attributes
+                ->setId('cms-content-' . $content->getId())
+                ->setData([
+                    'id'      => $content->getId(),
+                    'actions' => [
+                        // TODO
+                    ],
+                ]);
         }
 
         // Layout
@@ -44,10 +45,6 @@ class ViewBuilder implements EditorAwareInterface
         foreach ($content->getContainers() as $container) {
             $view->containers[] = $this->buildContainer($container);
         }
-
-        $attributes->set('classes', trim(
-                $attributes->get('classes', '') . ' cms-content')
-        );
 
         return $view;
     }
@@ -62,23 +59,24 @@ class ViewBuilder implements EditorAwareInterface
     public function buildContainer(Model\ContainerInterface $container)
     {
         $view = new ContainerView();
-        $attributes = $view->getAttributes();
-        $innerAttributes = $view->getInnerAttributes();
+        $attributes = $view->getAttributes()->addClass('cms-container');
+        $innerAttributes = $view->getInnerAttributes()->addClass('cms-inner-container');
 
         if ($this->editor->isEnabled()) {
             // Container
-            $attributes->set('id', 'cms-container-' . $container->getId());
-            $attributes->set('data', [
-                'id'       => $container->getId(),
-                'position' => $container->getPosition(),
-                'type'     => $container->getType(),
-                'actions'  => [
-                    // TODO
-                ],
-            ]);
+            $attributes
+                ->setId('cms-container-' . $container->getId())
+                ->setData([
+                    'id'       => $container->getId(),
+                    'position' => $container->getPosition(),
+                    'type'     => $container->getType(),
+                    'actions'  => [
+                        // TODO
+                    ],
+                ]);
 
             // Inner container
-            $innerAttributes->set('id', 'cms-inner-container-' . $container->getId());
+            $innerAttributes->setId('cms-inner-container-' . $container->getId());
         }
 
         // Layout
@@ -94,16 +92,6 @@ class ViewBuilder implements EditorAwareInterface
             }
         }
 
-        // Container
-        $attributes->set('classes', trim(
-            $attributes->get('classes', '') . ' cms-container'
-        ));
-
-        // Inner container
-        $innerAttributes->set('classes', trim(
-            $innerAttributes->get('classes', '') . ' cms-inner-container'
-        ));
-
         return $view;
     }
 
@@ -117,18 +105,18 @@ class ViewBuilder implements EditorAwareInterface
     public function buildRow(Model\RowInterface $row)
     {
         $view = new RowView();
-        $attributes = $view->getAttributes();
+        $attributes = $view->getAttributes()->addClass('cms-row');
 
         if ($this->editor->isEnabled()) {
-            // Row
-            $attributes->set('id', 'cms-row-' . $row->getId());
-            $attributes->set('data', [
-                'id'       => $row->getId(),
-                'position' => $row->getPosition(),
-                'actions'  => [
-                    // TODO
-                ],
-            ]);
+            $attributes
+                ->setId('cms-row-' . $row->getId())
+                ->setData([
+                    'id'       => $row->getId(),
+                    'position' => $row->getPosition(),
+                    'actions'  => [
+                        // TODO
+                    ],
+                ]);
         }
 
         // Layout
@@ -137,11 +125,6 @@ class ViewBuilder implements EditorAwareInterface
         foreach ($row->getBlocks() as $block) {
             $view->blocks[] = $this->buildBlock($block);
         }
-
-        // Row
-        $attributes->set('classes', trim(
-            $attributes->get('classes', '') . ' cms-row'
-        ));
 
         return $view;
     }
@@ -155,59 +138,52 @@ class ViewBuilder implements EditorAwareInterface
      */
     public function buildBlock(Model\BlockInterface $block)
     {
+        $editable = $this->editor->isEnabled();
+
         $view = new BlockView();
-        $attributes = $view->getAttributes();
-        $pluginAttributes = $view->getPluginAttributes();
+        $attributes = $view->getAttributes()->addClass('cms-block');
 
-        if ($this->editor->isEnabled()) {
+        if ($editable) {
             // Column
-            $attributes->set('id', 'cms-column-' . $block->getId());
-            $attributes->set('data', [
-                'id'       => $block->getId(),
-                'position' => $block->getPosition(),
-                'actions'  => [
-                    'move_left'    => 0 < $block->getPosition(),
-                    'move_right'   => true, // TODO is not last
-                    'move_up'      => false, // TODO
-                    'move_down'    => false, // TODO
-                    'offset_left'  => true,
-                    'offset_right' => true,
-                    'push'         => true,
-                    'pull'         => true,
-                    'expand'       => true,
-                    'compress'     => true,
-                    'add'          => true,
-                    'remove'       => true,
-                ],
-            ]);
-
-            // Block
-            $pluginAttributes->set('id', 'cms-block-' . $block->getId());
-            $pluginAttributes->set('data', [
-                'id'      => $block->getId(),
-                'type'    => $block->getType(),
-                'actions' => [
-                    'type' => true,
-                    'edit' => true,
-                ],
-            ]);
+            $attributes
+                ->setId('cms-block-' . $block->getId())
+                ->setData([
+                    'id'       => $block->getId(),
+                    'type'     => $block->getType(),
+                    'position' => $block->getPosition(),
+                    'actions'  => [
+                        'edit'         => true,
+                        'change_type'  => true,
+                        'move_left'    => 0 < $block->getPosition(),
+                        'move_right'   => true, // TODO is not last
+                        'move_up'      => false, // TODO
+                        'move_down'    => false, // TODO
+                        'offset_left'  => true,
+                        'offset_right' => true,
+                        'push'         => true,
+                        'pull'         => true,
+                        'expand'       => true,
+                        'compress'     => true,
+                        'add'          => true,
+                        'remove'       => true,
+                    ],
+                ]);
         }
 
         // Layout
-        $this->editor->getLayoutAdapter()->buildBlock($block, $view);
+        $this->editor
+            ->getLayoutAdapter()
+            ->buildBlock($block, $view);
 
         // Plugin
-        $this->editor->getBlockPlugin($block->getType())->render($block, $view);
+        $this->editor
+            ->getBlockPlugin($block->getType())
+            ->render($block, $view, [
+                'editable' => $this->editor->isEnabled(),
+            ]);
 
-        // Column
-        $attributes->set('classes', trim(
-            $attributes->get('classes', '') . ' cms-column'
-        ));
-
-        // Block
-        $pluginAttributes->set('classes', trim(
-            $pluginAttributes->get('classes', '') . ' cms-block'
-        ));
+        // Prevent type change on a named block
+        $attributes->setData('actions', ['change_type' => false]);
 
         return $view;
     }

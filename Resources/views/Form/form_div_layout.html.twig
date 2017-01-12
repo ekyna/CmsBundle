@@ -1,5 +1,6 @@
 {% extends 'EkynaAdminBundle:Form:form_div_layout.html.twig' %}
 
+
 {% block ekyna_cms_seo_widget %}
 {% spaceless %}
     {{ form_errors(form) }}
@@ -19,3 +20,21 @@
     {{ form_rest(form) }}
 {% endspaceless %}
 {% endblock ekyna_cms_seo_widget %}
+
+
+{% block ekyna_cms_container_background_widget %}
+{% spaceless %}
+    {{ form_errors(form) }}
+    <div class="row">
+        <div class="col-md-4">
+            {{ form_row(form.media_id) }}
+        </div>
+        <div class="col-md-8">
+            {{ form_row(form.color, {'label_col': 6, 'widget_col': 6}) }}
+            {{ form_row(form.padding_top, {'label_col': 6, 'widget_col': 6}) }}
+            {{ form_row(form.padding_bottom, {'label_col': 6, 'widget_col': 6}) }}
+        </div>
+    </div>
+    {{ form_rest(form) }}
+{% endspaceless %}
+{% endblock ekyna_cms_container_background_widget %}

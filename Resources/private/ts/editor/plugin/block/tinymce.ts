@@ -1,6 +1,5 @@
 /// <reference path="../../../../../../../../../typings/index.d.ts" />
 
-import * as $ from 'jquery';
 import * as es6Promise from 'es6-promise';
 
 import Dispatcher from '../../dispatcher';
@@ -8,19 +7,19 @@ import {BasePlugin} from '../base-plugin';
 import {BlockManager} from '../../document-manager';
 
 es6Promise.polyfill();
-var Promise = es6Promise.Promise;
+let Promise = es6Promise.Promise;
 
-declare var clone:(object:Object) => Object;
+declare let clone:(object:Object) => Object;
 
 interface TinymceConfig {
     language: string
     language_url: string
     selector: string
-    theme: Object
+    theme: any
     tinymce_url: string
 
-    external_plugins?: Object
-    tinymce_buttons?: Object
+    external_plugins?: any
+    tinymce_buttons?: any
     use_callback_tinymce_init?: any
 }
 
@@ -31,6 +30,7 @@ interface TinyMceObservable {
 }
 
 interface TinyMceEditor extends TinyMceObservable {
+    constructor(id:string, settings:Object, em:TinyMceEditorManager):void
     id: string
     undoManager: TinyMceUndoManager
     settings: Object
@@ -66,7 +66,7 @@ interface TinyMceStatic extends TinyMceObservable {
     activeEditor: TinyMceEditor
     editors: Array<TinyMceEditor>
 
-    Editor: (id:string, settings:Object, em:TinyMceEditorManager) => void
+    Editor: any
     PluginManager:TinyMceAddOnManager
     EditorManager:TinyMceEditorManager
 
@@ -81,20 +81,8 @@ interface TinyMceStatic extends TinyMceObservable {
 class TinymcePlugin extends BasePlugin {
     private static initPromise:Promise<TinyMceStatic>;
     private static config:TinymceConfig;
-    private static externalPlugins:Array<Object>;
+    private static externalPlugins:any;
     private static tinymce:TinyMceStatic;
-
-    static setup():Promise<any> {
-        return new Promise(function(resolve, reject) {
-            resolve();
-        })
-    }
-
-    static tearDown():Promise<any> {
-        return new Promise(function(resolve, reject) {
-            resolve();
-        });
-    }
 
     private static clear() {
         TinymcePlugin.initPromise = null;
@@ -109,7 +97,7 @@ class TinymcePlugin extends BasePlugin {
         this.initialize()
             .then(() => {
                 if (this.destroyed) {
-                    return;
+                    return Promise.resolve();
                 }
 
                 this.createEditor();
@@ -123,12 +111,12 @@ class TinymcePlugin extends BasePlugin {
                 if (this.isUpdated()) {
                     Dispatcher.trigger('editor.set_busy');
                     //console.log('Tinymce block plugin : save.');
-                    var editor = TinymcePlugin.tinymce.get('tinymce-plugin-editor');
+                    let editor = TinymcePlugin.tinymce.get('tinymce-plugin-editor');
                     if (!editor) {
                         throw 'Failed to get tinymce editor instance.';
                     }
 
-                    var content:string = editor.getContent();
+                    let content:string = editor.getContent();
 
                     return BlockManager.request(
                             this.$element,
@@ -140,8 +128,12 @@ class TinymcePlugin extends BasePlugin {
                             this.$element.html(content);
                             this.updated = false;
                             Dispatcher.trigger('editor.unset_busy');
+
+                            return super.save();
                         });
                 }
+
+                return Promise.resolve();
             });
     }
 
@@ -150,15 +142,17 @@ class TinymcePlugin extends BasePlugin {
             .save()
             .then(() => {
                 //console.log('Tinymce block plugin : remove editor.');
-                var editor = TinymcePlugin.tinymce.get('tinymce-plugin-editor');
+                let editor = TinymcePlugin.tinymce.get('tinymce-plugin-editor');
                 if (editor) {
                     editor.remove();
                 }
-                var $wrapper = this.$element.find('#tinymce-plugin-editor');
+                let $wrapper = this.$element.find('#tinymce-plugin-editor');
                 if ($wrapper.length) {
                     $wrapper.children().first().unwrap();
                 }
                 TinymcePlugin.clear();
+
+                return super.destroy();
             });
     }
 
@@ -191,11 +185,11 @@ class TinymcePlugin extends BasePlugin {
                         // Load external plugins
                         TinymcePlugin.externalPlugins = [];
                         if (typeof TinymcePlugin.config.external_plugins == 'object') {
-                            for (var pluginId in TinymcePlugin.config.external_plugins) {
+                            for (let pluginId in TinymcePlugin.config.external_plugins) {
                                 if (!TinymcePlugin.config.external_plugins.hasOwnProperty(pluginId)) {
                                     continue;
                                 }
-                                var opts:any = TinymcePlugin.config.external_plugins[pluginId],
+                                let opts:any = TinymcePlugin.config.external_plugins[pluginId],
                                     url:string = opts.url || null;
                                 if (url) {
                                     TinymcePlugin.externalPlugins.push({
@@ -223,10 +217,10 @@ class TinymcePlugin extends BasePlugin {
             this.$element.wrapInner('<div id="tinymce-plugin-editor"></div>');
         }
 
-        var settings:any = TinymcePlugin.config.theme['advanced'];
+        let settings:any = TinymcePlugin.config.theme['advanced'];
 
         settings.external_plugins = settings.external_plugins || {};
-        for (var p = 0; p < TinymcePlugin.externalPlugins.length; p++) {
+        for (let p = 0; p < TinymcePlugin.externalPlugins.length; p++) {
             settings.external_plugins[TinymcePlugin.externalPlugins[p]['id']] = TinymcePlugin.externalPlugins[p]['url'];
         }
 
@@ -241,12 +235,12 @@ class TinymcePlugin extends BasePlugin {
 
         settings.setup = (editor:TinyMceEditor) => {
             if (typeof TinymcePlugin.config.tinymce_buttons == 'object') {
-                for (var buttonId in TinymcePlugin.config.tinymce_buttons) {
+                for (let buttonId in TinymcePlugin.config.tinymce_buttons) {
                     if (!TinymcePlugin.config.tinymce_buttons.hasOwnProperty(buttonId)) continue;
-                    // Some tricky function to isolate variables values
+                    // Some tricky function to isolate letiables values
                     (function (id, opts) {
                         opts.onclick = function () {
-                            var callback = window['tinymce_button_' + id];
+                            let callback = this.window['tinymce_button_' + id];
                             if (typeof callback == 'function') {
                                 callback(editor);
                             } else {
@@ -254,18 +248,18 @@ class TinymcePlugin extends BasePlugin {
                             }
                         };
                         editor.addButton(id, opts);
-                    })(buttonId, clone(TinymcePlugin.config.tinymce_buttons[buttonId]));
+                    })(buttonId, <any>clone(TinymcePlugin.config.tinymce_buttons[buttonId]));
                 }
             }
 
-            editor.on('click', (e) => {
+            editor.on('click', (e:Event) => {
                 //console.log('tinymce editor click');
                 e.stopPropagation();
             });
             editor.on('init', () => {
                 //console.log('tinymce editor init');
                 if (TinymcePlugin.config.use_callback_tinymce_init) {
-                    var callback = window['callback_tinymce_init'];
+                    let callback = this.window['callback_tinymce_init'];
                     if (typeof callback == 'function') {
                         callback(editor);
                     } else {
@@ -280,7 +274,7 @@ class TinymcePlugin extends BasePlugin {
             });
         };
 
-        var editor:TinyMceEditor = new TinymcePlugin.tinymce.Editor(
+        let editor:TinyMceEditor = new TinymcePlugin.tinymce.Editor(
             'tinymce-plugin-editor',
             settings,
             TinymcePlugin.tinymce.EditorManager

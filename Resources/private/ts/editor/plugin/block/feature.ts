@@ -1,34 +1,29 @@
 /// <reference path="../../../../../../../../../typings/index.d.ts" />
 
 import * as $ from 'jquery';
+import * as AOS from 'aos';
 import * as es6Promise from 'es6-promise';
 import * as Modal from 'ekyna-modal';
 import Dispatcher from '../../dispatcher';
 
 import {BasePlugin} from '../base-plugin';
-import {ContainerManager, SelectionEvent, ElementData} from '../../document-manager';
+import {BlockManager, SelectionEvent} from '../../document-manager';
 
 es6Promise.polyfill();
 let Promise = es6Promise.Promise;
 
 /**
- * BackgroundPlugin
- * @todo use CamanJS (http://camanjs.com/guides/)
+ * FeaturePlugin
  */
-class BackgroundPlugin extends BasePlugin {
+class FeaturePlugin extends BasePlugin {
     modal:Ekyna.Modal;
 
     edit() {
         super.edit();
 
-        let id = (<ElementData>this.$element.data('cms')).id;
-        if (!id) {
-            throw 'Invalid block id';
-        }
-
         this.modal = new Modal();
         this.modal.load({
-            url: ContainerManager.generateUrl(this.$element, 'ekyna_cms_editor_container_edit'),
+            url: BlockManager.generateUrl(this.$element, 'ekyna_cms_editor_block_edit'),
             method: 'GET'
         });
 
@@ -36,12 +31,14 @@ class BackgroundPlugin extends BasePlugin {
             if (e.contentType == 'json') {
                 e.preventDefault();
 
-                if (e.content.hasOwnProperty('containers')) {
-                    ContainerManager.parse(e.content.containers);
+                if (e.content.hasOwnProperty('blocks')) {
+                    BlockManager.parse(e.content.blocks);
 
                     let event:SelectionEvent = new SelectionEvent();
                     event.$element = this.$element;
                     Dispatcher.trigger('document_manager.select', event);
+
+                    AOS.refresh();
                 }
             }
         });
@@ -59,11 +56,6 @@ class BackgroundPlugin extends BasePlugin {
                 return super.destroy();
             });
     }
-
-    preventDocumentSelection ($target:JQuery):boolean {
-        return false;
-    }
 }
 
-export = BackgroundPlugin;
-
+export = FeaturePlugin;

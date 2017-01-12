@@ -2,15 +2,14 @@
 
 import * as $ from 'jquery';
 import * as es6Promise from 'es6-promise';
-import * as Router from 'routing';
 import * as Modal from 'ekyna-modal';
 import Dispatcher from '../../dispatcher';
 
 import {BasePlugin} from '../base-plugin';
-import {BlockManager, ElementAttributes} from '../../document-manager';
+import {BlockManager, SelectionEvent} from '../../document-manager';
 
 es6Promise.polyfill();
-var Promise = es6Promise.Promise;
+let Promise = es6Promise.Promise;
 
 /**
  * ImagePlugin
@@ -20,6 +19,8 @@ class ImagePlugin extends BasePlugin {
     modal:Ekyna.Modal;
 
     edit() {
+        super.edit();
+
         this.modal = new Modal();
         this.modal.load({
             url: BlockManager.generateUrl(this.$element, 'ekyna_cms_editor_block_edit'),
@@ -32,17 +33,12 @@ class ImagePlugin extends BasePlugin {
 
                 if (e.content.hasOwnProperty('blocks')) {
                     BlockManager.parse(e.content.blocks);
-                    Dispatcher.trigger('document_manager.select', this.$element);
+
+                    let event:SelectionEvent = new SelectionEvent();
+                    event.$element = this.$element;
+                    Dispatcher.trigger('document_manager.select', event);
                 }
             }
-        });
-    }
-
-    save():Promise<any> {
-        return new Promise((resolve, reject) => {
-            // TODO
-
-            resolve();
         });
     }
 
@@ -54,11 +50,9 @@ class ImagePlugin extends BasePlugin {
                     this.modal.close();
                     this.modal = null;
                 }
-            });
-    }
 
-    preventDocumentSelection ($target:JQuery):boolean {
-        return false;
+                return super.destroy();
+            });
     }
 }
 

@@ -16,9 +16,14 @@ es6Promise.polyfill();
 let Promise = es6Promise.Promise;
 
 
-const DEFAULT_BLOCK_ACTIONS = {
-    type: false,
+const DEFAULT_WIDGET_ACTIONS = {
     edit: false,
+    change_type: false,
+};
+
+const DEFAULT_BLOCK_ACTIONS = {
+    edit: false,
+    change_type: false,
     move_left: false,
     move_right: false,
     move_up: false,
@@ -33,18 +38,24 @@ const DEFAULT_BLOCK_ACTIONS = {
     remove: false
 };
 
-export interface ElementAttributes {
+export interface ElementData {
     id: string
-    type?: string
-    classes: string
-    style?: string
-    content: any
-    data: any
+    type: string
+    position: number
+    actions: {[key: string]: any}
+}
+
+export interface ElementAttributes {
+    data: ElementData
+    [key: string]: any
+}
+interface WidgetData {
+    attributes: ElementAttributes
+    content: string
 }
 interface BlockData {
     attributes: ElementAttributes
-    plugin_attributes: ElementAttributes
-    content: string
+    widgets: Array<WidgetData>
 }
 interface RowData {
     attributes: ElementAttributes
@@ -152,12 +163,12 @@ export class BaseManager {
     }
 
     static setElementAttributes($element: JQuery, attributes: ElementAttributes): void {
-        $element
-            .removeAttr('class').attr('class', attributes.classes)
-            .removeAttr('data-cms').data('cms', attributes.data);
-
-        if (attributes.style) {
-            $element.removeAttr('style').attr('style', attributes.style);
+        for (let key in attributes) {
+            if (key == 'data') {
+                $element.removeAttr('data-cms').data('cms', attributes[key]);
+                continue;
+            }
+            $element.removeAttr(key).attr(key, attributes[key]);
         }
     }
 
@@ -210,10 +221,11 @@ export class BaseManager {
             }
 
             // Dispatch response parsed
-            Dispatcher.trigger(
-                'base_manager.response_parsed',
-                data.hasOwnProperty('created') ? data.created : undefined
-            );
+            let event:SelectionEvent = new SelectionEvent();
+            if (data.hasOwnProperty('created')) {
+                event.$element = BaseManager.findElementById(data.created);
+            }
+            Dispatcher.trigger('base_manager.response_parsed', event);
         });
         xhr.fail(function () {
             throw 'Editor request failed.';
@@ -232,7 +244,7 @@ export class ContentManager {
         if (!content.hasOwnProperty('attributes')) {
             throw 'Unexpected content data';
         }
-        let $content: JQuery = BaseManager.findElementById(content.attributes.id);
+        let $content: JQuery = BaseManager.findElementById(content.attributes['id']);
         if (0 == $content.length) {
             throw 'Content not found.';
         }
@@ -248,7 +260,7 @@ export class ContentManager {
     }
 
     static generateUrl($content: JQuery, route: string, params?: RouteParams) {
-        let id = (<ElementAttributes>$content.data('cms')).id;
+        let id = (<ElementData>$content.data('cms')).id;
         if (!id) {
             throw 'Invalid id';
         }
@@ -273,7 +285,7 @@ export class ContainerManager {
                 throw 'Unexpected container data';
             }
 
-            let $container: JQuery = BaseManager.findOrCreateElement(container.attributes.id, $content);
+            let $container: JQuery = BaseManager.findOrCreateElement(container.attributes['id'], $content);
             BaseManager.setElementAttributes($container, container.attributes);
 
             // Parse content
@@ -284,7 +296,7 @@ export class ContainerManager {
                 // Inner container
                 let $innerContainer: JQuery;
                 if (container.hasOwnProperty('inner_attributes')) {
-                    $innerContainer = BaseManager.findOrCreateElement(container.inner_attributes.id, $container);
+                    $innerContainer = BaseManager.findOrCreateElement(container.inner_attributes['id'], $container);
                     BaseManager.setElementAttributes($innerContainer, container.inner_attributes);
                 } else {
                     $innerContainer = $container.find('> .cms-inner-container');
@@ -307,7 +319,7 @@ export class ContainerManager {
     }
 
     static generateUrl($container: JQuery, route: string, params?: RouteParams) {
-        let id = (<ElementAttributes>$container.data('cms')).id;
+        let id = (<ElementData>$container.data('cms')).id;
         if (!id) {
             throw 'Invalid id';
         }
@@ -324,7 +336,7 @@ export class ContainerManager {
     }
 
     static edit($container: JQuery) {
-        PluginManager.createContainerPlugin((<ElementAttributes>$container.data('cms')).type, $container);
+        PluginManager.createContainerPlugin((<ElementData>$container.data('cms')).type, $container);
     }
 
     static changeType($container: JQuery, type: string) {
@@ -359,7 +371,7 @@ export class RowManager {
             if (!row.hasOwnProperty('attributes')) {
                 throw 'Unexpected row data';
             }
-            let $row: JQuery = BaseManager.findOrCreateElement(row.attributes.id, $container);
+            let $row: JQuery = BaseManager.findOrCreateElement(row.attributes['id'], $container);
             BaseManager.setElementAttributes($row, row.attributes);
 
             // Parse children
@@ -378,7 +390,7 @@ export class RowManager {
     }
 
     static generateUrl($row: JQuery, route: string, params?: RouteParams) {
-        let id = (<ElementAttributes>$row.data('cms')).id;
+        let id = (<ElementData>$row.data('cms')).id;
         if (!id) {
             throw 'Invalid id';
         }
@@ -418,42 +430,46 @@ export class RowManager {
 export class BlockManager {
     static parse(blocks: Array<BlockData>, $row?: JQuery) {
         blocks.forEach((block: BlockData, i: number) => {
-            let $column: JQuery, $block: JQuery;
+            let $block: JQuery,
+                $widget: JQuery;
 
-            // Parse layout
+            // Block layout
             if (block.hasOwnProperty('attributes')) {
-                $column = BaseManager.findOrCreateElement(block.attributes.id, $row);
-                BaseManager.setElementAttributes($column, block.attributes);
+                $block = BaseManager.findOrCreateElement(block.attributes['id'], $row);
+                BaseManager.setElementAttributes($block, block.attributes);
             }
 
-            // Parse block
-            if (block.hasOwnProperty('plugin_attributes')) {
-                $block = BaseManager.findOrCreateElement(block.plugin_attributes.id, $column);
-                BaseManager.setElementAttributes($block, block.plugin_attributes);
+            // Parse children
+            if (block.hasOwnProperty('widgets')) {
+                block.widgets.forEach((widget: WidgetData) => {
+                    // Parse block
+                    if (widget.hasOwnProperty('attributes')) {
+                        $widget = BaseManager.findOrCreateElement(widget.attributes['id'], $block);
+                        BaseManager.setElementAttributes($widget, widget.attributes);
 
-                // Parse content
-                if (block.hasOwnProperty('content')) {
-                    $block.html(block.content);
-                }
+                        // Parse content
+                        if (widget.hasOwnProperty('content')) {
+                            $widget.html(widget.content);
+                        }
+                    }
+                });
             }
 
-            // Sort columns if not made by the row manager.
-            if (($block || $column) && !$row && i == blocks.length - 1) {
-                if (!$column) {
-                    $column = $block.closest('.cms-column');
-                }
-                BaseManager.sortChildren($column.closest('.cms-row'));
+            // Sort blocks if not made by the row manager.
+            if ($block && !$row && i == blocks.length - 1) {
+                BaseManager.sortChildren($block.closest('.cms-row'));
             }
         });
     }
 
     static generateUrl($block: JQuery, route: string, params?: RouteParams) {
-        let id = (<ElementAttributes>$block.data('cms')).id;
-        if (!id) {
+        let data:ElementData = <ElementData>$block.data('cms');
+        if (!data.id) {
             throw 'Invalid id';
         }
         return BaseManager.generateUrl(route, _.extend({}, params || {}, {
-            blockId: id
+            blockId: data.id,
+            widgetType: data.type,
         }));
     }
 
@@ -465,7 +481,7 @@ export class BlockManager {
     }
 
     static edit($block: JQuery) {
-        PluginManager.createBlockPlugin((<ElementAttributes>$block.data('cms')).type, $block);
+        PluginManager.createBlockPlugin((<ElementData>$block.data('cms')).type, $block);
     }
 
     static changeType($block: JQuery, type: string) {
@@ -736,18 +752,62 @@ class ToolbarManager {
         this.toolbar.render();
     }
 
-    static createBlockToolbar($block: JQuery, origin: OffsetInterface): void {
-        let $column = $block.closest('.cms-column'),
-            $row = $column.closest('.cms-row'),
+    static createWidgetToolbar(e:SelectionEvent): void {
+        let $widget = e.$element,
+            toolbar = new Toolbar({
+                classes: ['vertical', 'widget-toolbar'],
+                origin: e.origin
+            });
+
+        let actions = _.extend(
+            DEFAULT_WIDGET_ACTIONS,
+            $widget.data('cms').actions
+        );
+
+        // Edit button
+        toolbar.addControl('default', new Button({
+            name: 'edit',
+            title: 'Edit',
+            icon: 'pencil',
+            disabled: !actions.edit,
+            event: 'block.edit',
+            data: {$block: $widget}
+        }));
+        // Change type button
+        let choices: Array<ButtonChoiceConfig> = [];
+        PluginManager.getBlockPluginsConfig().forEach(function (config: PluginConfig) {
+            choices.push({
+                name: config.name,
+                title: config.title,
+                confirm: 'Êtes-vous sûr de vouloir changer le type de ce bloc ? (Le contenu actuel sera définitivement perdu).',
+                data: {type: config.name}
+            });
+        });
+        toolbar.addControl('default', new Button({
+            name: 'change-type',
+            title: 'Change type',
+            icon: 'cog',
+            disabled: !actions.change_type,
+            event: 'block.change-type',
+            data: {$block: $widget},
+            choices: choices
+        }));
+
+        this.createToolbar(toolbar);
+    }
+
+    static createBlockToolbar(e:SelectionEvent): void {
+        let $block = e.$element,
+            $row = $block.closest('.cms-row'),
             toolbar = new Toolbar({
                 classes: ['vertical', 'block-toolbar'],
-                origin: origin
+                origin: e.origin
             });
 
         let actions = _.extend(
             DEFAULT_BLOCK_ACTIONS,
             $block.data('cms').actions,
-            $column.length ? $column.data('cms').actions : {}
+            $block.length ? $block.data('cms').actions : {}
         );
 
         // Edit button
@@ -773,7 +833,7 @@ class ToolbarManager {
             name: 'change-type',
             title: 'Change type',
             icon: 'cog',
-            disabled: !actions.type,
+            disabled: !actions.change_type,
             event: 'block.change-type',
             data: {$block: $block},
             choices: choices
@@ -908,11 +968,12 @@ class ToolbarManager {
         this.createToolbar(toolbar);
     }
 
-    static createRowToolbar($row: JQuery, origin: OffsetInterface): void {
-        let $container: JQuery = $row.closest('.cms-inner-container'),
+    static createRowToolbar(e:SelectionEvent): void {
+        let $row = e.$element,
+            $container: JQuery = $row.closest('.cms-inner-container'),
             toolbar = new Toolbar({
                 classes: ['vertical', 'row-toolbar'],
-                origin: origin
+                origin: e.origin
             });
 
         // Edit button
@@ -924,53 +985,55 @@ class ToolbarManager {
          event: 'row.edit',
          data: {$row: $row}
          }));*/
-        if (1 == $container.length) {
-            // Move top
-            toolbar.addControl('move', new Button({
-                name: 'move-up',
-                title: 'Move up',
-                icon: 'arrow-up',
-                disabled: $row.is(':first-child'),
-                event: 'row.move-up',
-                data: {$row: $row}
-            }));
-            // Move bottom
-            toolbar.addControl('move', new Button({
-                name: 'move-down',
-                title: 'Move down',
-                icon: 'arrow-down',
-                disabled: $row.is(':last-child'),
-                event: 'row.move-down',
-                data: {$row: $row}
-            }));
-            // Remove
-            toolbar.addControl('add', new Button({
-                name: 'remove',
-                title: 'Remove',
-                icon: 'remove',
-                disabled: 1 >= $container.children('.cms-row').length,
-                confirm: 'Êtes-vous sûr de vouloir supprimer cette ligne ?',
-                event: 'row.remove',
-                data: {$row: $row}
-            }));
-            // Add
-            toolbar.addControl('add', new Button({
-                name: 'add',
-                title: 'Create a new row',
-                icon: 'plus',
-                event: 'row.add',
-                data: {$row: $row}
-            }));
+        if (0 == $container.length) {
+            return;
         }
+        // Move top
+        toolbar.addControl('move', new Button({
+            name: 'move-up',
+            title: 'Move up',
+            icon: 'arrow-up',
+            disabled: $row.is(':first-child'),
+            event: 'row.move-up',
+            data: {$row: $row}
+        }));
+        // Move bottom
+        toolbar.addControl('move', new Button({
+            name: 'move-down',
+            title: 'Move down',
+            icon: 'arrow-down',
+            disabled: $row.is(':last-child'),
+            event: 'row.move-down',
+            data: {$row: $row}
+        }));
+        // Remove
+        toolbar.addControl('add', new Button({
+            name: 'remove',
+            title: 'Remove',
+            icon: 'remove',
+            disabled: 1 >= $container.children('.cms-row').length,
+            confirm: 'Êtes-vous sûr de vouloir supprimer cette ligne ?',
+            event: 'row.remove',
+            data: {$row: $row}
+        }));
+        // Add
+        toolbar.addControl('add', new Button({
+            name: 'add',
+            title: 'Create a new row',
+            icon: 'plus',
+            event: 'row.add',
+            data: {$row: $row}
+        }));
 
         this.createToolbar(toolbar);
     }
 
-    static createContainerToolbar($container: JQuery, origin: OffsetInterface): void {
-        let $content: JQuery = $container.closest('.cms-content'),
+    static createContainerToolbar(e:SelectionEvent): void {
+        let $container = e.$element,
+            $content: JQuery = $container.closest('.cms-content'),
             toolbar = new Toolbar({
                 classes: ['vertical', 'container-toolbar'],
-                origin: origin
+                origin: e.origin
             });
 
         toolbar.addControl('default', new Button({
@@ -1049,39 +1112,43 @@ class ToolbarManager {
     }
 }
 
+export class SelectionEvent {
+    $element: JQuery;
+    $target: JQuery;
+    origin: OffsetInterface;
+}
+
+interface DocumentManagerConfig {
+    hostname: string
+    css_path: string
+}
 
 /**
  * DocumentManager
  */
 export class DocumentManager {
-
-    private hostname: string;
+    private config: DocumentManagerConfig;
 
     private viewportOrigin: OffsetInterface;
     private viewportSize: SizeInterface;
-    private selectionOffset: OffsetInterface;
 
+    private selectionOffset: OffsetInterface;
     private selectionId: string;
 
     private enabled: boolean = false;
 
-    /**
-     * Store the click target between mouseDown and mouseUp handlers
-     * @type {JQuery|null}
-     */
-    private $clickTarget: JQuery = null;
-    private clickOrigin: OffsetInterface = null;
+    private clickEvent: SelectionEvent = null;
     private documentMouseDownHandler: (e: JQueryEventObject) => void;
     private documentMouseUpHandler: () => void;
-    private documentSelectHandler: ($element: JQuery) => void;
+    private documentSelectHandler: (e: SelectionEvent) => void;
 
     powerClickHandler: (button: Button) => void;
     viewportLoadHandler: (win: Window, doc: Document) => void;
     viewportUnloadHandler: (e: BeforeUnloadEvent) => void;
     viewportResizeHandler: (event: ResizeEventData) => void;
 
-    constructor(hostname: string) {
-        this.hostname = hostname;
+    constructor(config: DocumentManagerConfig) {
+        this.config = config;
 
         this.viewportOrigin = {top: 50, left: 0}; // Editor relative : viewport top-left corner
         this.viewportSize = {width: 0, height: 0}; // Editor relative : viewport size
@@ -1090,7 +1157,7 @@ export class DocumentManager {
 
         this.documentMouseDownHandler = (e: JQueryEventObject) => this.onDocumentMouseDown(e);
         this.documentMouseUpHandler = () => this.onDocumentMouseUp();
-        this.documentSelectHandler = ($element: JQuery) => this.select($element);
+        this.documentSelectHandler = (e: SelectionEvent) => this.select(e);
 
         this.powerClickHandler = (button: Button) => this.onPowerClick(button);
         this.viewportLoadHandler = (win: Window, doc: Document) => this.onViewportLoad(win, doc);
@@ -1102,18 +1169,14 @@ export class DocumentManager {
         Dispatcher.on('viewport.resize', this.viewportResizeHandler);
         Dispatcher.on('document_manager.select', this.documentSelectHandler);
 
-        Dispatcher.on('base_manager.response_parsed', (selectionId?: string) => {
-            let $element: JQuery;
-            if (selectionId) {
-                $element = BaseManager.findElementById(selectionId);
-            } else if (this.selectionId) {
-                $element = BaseManager.findElementById(this.selectionId);
+        Dispatcher.on('base_manager.response_parsed', (e: SelectionEvent) => {
+            if (!e.$element && this.selectionId) {
+                // TODO where event is triggered : e.$element = BaseManager.findElementById(selectionId);
+                e.$element = BaseManager.findElementById(this.selectionId);
             }
             this.deselect()
                 .then(() => {
-                    if ($element && $element.length == 1) {
-                        this.select($element);
-                    }
+                    this.select(e);
                 });
         });
 
@@ -1153,7 +1216,7 @@ export class DocumentManager {
 
             let anchor: HTMLAnchorElement = <HTMLAnchorElement>e.currentTarget;
 
-            if (anchor.hostname !== this.hostname) {
+            if (anchor.hostname !== this.config.hostname) {
                 console.log('Attempt to navigate out of the website has been blocked.');
             } else {
                 Dispatcher.trigger('document_manager.navigate', anchor.href);
@@ -1168,7 +1231,7 @@ export class DocumentManager {
 
             anchor.href = action;
 
-            if (anchor.hostname !== this.hostname) {
+            if (anchor.hostname !== this.config.hostname) {
                 $form.on('submit', function (e) {
                     console.log('Attempt to navigate out of the website has been blocked.');
 
@@ -1217,6 +1280,9 @@ export class DocumentManager {
         // Clear content window, document and locale
         BaseManager.clear();
 
+        // Clear toolbar
+        ToolbarManager.clearToolbar();
+
         return this;
     }
 
@@ -1232,12 +1298,9 @@ export class DocumentManager {
     }
 
     private onDocumentMouseDown(e: JQueryEventObject): void {
-        this.$clickTarget = null;
-        this.clickOrigin = null;
+        this.clickEvent = null;
 
-        let origin: OffsetInterface = {top: e.clientY, left: e.clientX},
-            $target: JQuery = $(e.target);
-
+        let $target: JQuery = $(e.target);
         // Do nothing on toolbars click
         if (0 < $target.closest('#editor-document-toolbar').length) {
             return;
@@ -1249,28 +1312,28 @@ export class DocumentManager {
             }
         }
 
-        let $element: JQuery = $target.closest('.cms-block, .cms-row, .cms-container');
+        this.clickEvent = new SelectionEvent();
+        this.clickEvent.origin = {top: e.clientY, left: e.clientX};
+
+        let $element: JQuery = $target.closest('.cms-widget, .cms-block, .cms-row, .cms-container');
         if (1 == $element.length) {
             if ($element.attr('id') != this.selectionId) {
-                this.clickOrigin = origin;
-                this.$clickTarget = $element;
+                this.clickEvent.$element = $element;
+                this.clickEvent.$target = $target;
             }
-        } else {
-            this.clickOrigin = origin;
         }
     }
 
     private onDocumentMouseUp(): void {
-        if (this.clickOrigin) {
+        if (this.clickEvent) {
             this.deselect()
                 .then(() => {
-                    if (this.$clickTarget) {
-                        this.select(this.$clickTarget, this.clickOrigin);
+                    if (this.clickEvent.$element) {
+                        this.select(this.clickEvent);
                     } else {
                         this.createToolbar();
                     }
-                    this.$clickTarget = null;
-                    this.clickOrigin = null;
+                    this.clickEvent = null;
                 });
         }
     }
@@ -1290,40 +1353,45 @@ export class DocumentManager {
             });
     }
 
-    private select($element: JQuery, origin?: OffsetInterface): void {
-        if (1 != $element.length) {
+    private select(e: SelectionEvent): void {
+        if (!(e.$element && 1 == e.$element.length)) {
             return;
         }
 
-        this.selectionId = $element.addClass('selected').attr('id');
+        this.selectionId = e.$element.addClass('selected').attr('id');
 
-        this.createToolbar($element, origin);
+        this.createToolbar(e);
     }
 
-    private createToolbar($element?: JQuery, origin?: OffsetInterface): void {
-        $element = $element || BaseManager.findElementById(this.selectionId);
-        if (1 != $element.length) {
-            return;
+    private createToolbar(e?: SelectionEvent): void {
+        if (!e.$element) {
+            let $element:JQuery = BaseManager.findElementById(this.selectionId);
+            if (1 != $element.length) {
+                return;
+            }
+            e.$element = $element;
         }
 
-        if (origin) {
+        if (e.origin) {
             this.selectionOffset = {
-                top: (origin.top - $element.offset().top),
-                left: (origin.left - $element.offset().left)
+                top: (e.origin.top - e.$element.offset().top),
+                left: (e.origin.left - e.$element.offset().left)
             };
         } else {
-            origin = {
-                top: ($element.offset().top + this.selectionOffset.top),
-                left: ($element.offset().left + this.selectionOffset.left)
+            e.origin = {
+                top: (e.$element.offset().top + this.selectionOffset.top),
+                left: (e.$element.offset().left + this.selectionOffset.left)
             }
         }
 
-        if ($element.hasClass('cms-block')) {
-            ToolbarManager.createBlockToolbar($element, origin);
-        } else if ($element.hasClass('cms-row')) {
-            ToolbarManager.createRowToolbar($element, origin);
-        } else if ($element.hasClass('cms-container')) {
-            ToolbarManager.createContainerToolbar($element, origin);
+        if (e.$element.hasClass('cms-widget')) {
+            ToolbarManager.createWidgetToolbar(e);
+        } else if (e.$element.hasClass('cms-block')) {
+            ToolbarManager.createBlockToolbar(e);
+        } else if (e.$element.hasClass('cms-row')) {
+            ToolbarManager.createRowToolbar(e);
+        } else if (e.$element.hasClass('cms-container')) {
+            ToolbarManager.createContainerToolbar(e);
         } else {
             throw 'Unexpected element';
         }
@@ -1341,7 +1409,7 @@ export class DocumentManager {
         if (0 == $document.find('link#cms-editor-stylesheet').length) {
             let stylesheet: HTMLLinkElement = document.createElement('link');
             stylesheet.id = 'cms-editor-stylesheet';
-            stylesheet.href = '/bundles/ekynacms/css/editor-document.css';
+            stylesheet.href = this.config.css_path;
             stylesheet.type = 'text/css';
             stylesheet.rel = 'stylesheet';
             $document.find('head').append(stylesheet);

@@ -38,7 +38,7 @@ class ContainerController extends BaseController
         $viewBuilder = $this->getViewBuilder();
 
         $data = [
-            'created'    => $viewBuilder->buildRow($row)->getAttributes()->get('id'),
+            'created'    => $viewBuilder->buildRow($row)->getAttributes()->getId(),
             'containers' => [$viewBuilder->buildContainer($container)],
         ];
 
@@ -96,7 +96,7 @@ class ContainerController extends BaseController
         }
 
         // Stores id for front removal
-        $removedId = $this->getViewBuilder()->buildContainer($container)->getAttributes()->get('id');
+        $removedId = $this->getViewBuilder()->buildContainer($container)->getAttributes()->getId();
         $content = $container->getContent();
 
         $this->validate($content);

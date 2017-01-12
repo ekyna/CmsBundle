@@ -2,6 +2,8 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidArgumentException;
+use Ekyna\Bundle\CmsBundle\Editor\Model\DataTrait;
 use Ekyna\Component\Resource\Model\AbstractTranslation;
 use Ekyna\Bundle\CmsBundle\Model\BlockTranslationInterface;
 
@@ -12,15 +14,13 @@ use Ekyna\Bundle\CmsBundle\Model\BlockTranslationInterface;
  */
 class BlockTranslation extends AbstractTranslation implements BlockTranslationInterface
 {
+    use DataTrait;
+
+
     /**
      * @var integer
      */
     protected $id;
-
-    /**
-     * @var array
-     */
-    protected $data = [];
 
 
     /**
@@ -29,29 +29,5 @@ class BlockTranslation extends AbstractTranslation implements BlockTranslationIn
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Sets the data.
-     *
-     * @param array $data
-     *
-     * @return BlockTranslation
-     */
-    public function setData(array $data)
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    /**
-     * Returns the data.
-     *
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
     }
 }

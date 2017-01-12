@@ -1,8 +1,6 @@
 {% block attributes %}
-    {%- for attrname, attrvalue in attr.all %}
-        {% if attrname == 'classes' %}
-            class="{{ attrvalue }}"
-        {% elseif attrname == 'data' %}
+    {%- for attrname, attrvalue in attr.toArray %}
+        {% if attrname == 'data' %}
             data-cms='{{ attrvalue|json_encode }}'
         {% else %}
             {{ attrname }}="{{ attrvalue }}"
@@ -51,9 +49,14 @@
 {% endblock cms_row %}
 
 {% block cms_block %}
-    {% set attr = block.pluginAttributes %}
-    <div{{ block('attributes') }}>
-        {{ block.content|raw }}
-    </div>
+{% spaceless %}
+    {% for widget in block.widgets %}
+        {% set attr = widget.attributes %}
+        <div{{ block('attributes') }}>
+            {{ widget.content|raw }}
+        </div>
+    {% endfor %}
+{% endspaceless %}
 {% endblock cms_block %}
+
 

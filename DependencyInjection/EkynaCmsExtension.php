@@ -30,6 +30,7 @@ class EkynaCmsExtension extends AbstractExtension
             ->getDefinition('ekyna_cms.editor.editor')
             ->replaceArgument(5, [
                 'locales'                  => $container->getParameter('locales'),
+                'css_path'                 => $config['editor']['css_path'],
                 'layout'                   => $config['editor']['layout'],
                 'viewports'                => $config['editor']['viewports'],
                 'block_min_size'           => $config['editor']['plugins']['block']['min_size'],
@@ -66,7 +67,6 @@ class EkynaCmsExtension extends AbstractExtension
         if (array_key_exists('EkynaSocialButtonsBundle', $bundles)) {
             $this->registerSocialSubjectEventSubscriber($container);
         }
-
     }
 
     /**

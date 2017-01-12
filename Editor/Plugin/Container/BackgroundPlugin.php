@@ -31,9 +31,9 @@ class BackgroundPlugin extends AbstractPlugin
     /**
      * Constructor.
      *
-     * @param array                $config
-     * @param MediaRepository      $mediaRepository
-     * @param CacheManager         $cacheManager
+     * @param array           $config
+     * @param MediaRepository $mediaRepository
+     * @param CacheManager    $cacheManager
      */
     public function __construct(
         array $config,
@@ -41,6 +41,7 @@ class BackgroundPlugin extends AbstractPlugin
         CacheManager $cacheManager
     ) {
         parent::__construct(array_replace([
+            'filter'        => 'cms_container_background',
             'default_color' => '',
         ], $config));
 
@@ -63,14 +64,14 @@ class BackgroundPlugin extends AbstractPlugin
     {
         $form = $this->formFactory->create(BackgroundContainerType::class, $container->getData(), [
             'repository' => $this->mediaRepository,
-            'action' => $this->urlGenerator->generate(
+            'action'     => $this->urlGenerator->generate(
                 'ekyna_cms_editor_container_edit',
                 ['containerId' => $container->getId()]
             ),
-            'method' => 'post',
-            'attr' => [
-                'class' => 'form-horizontal'
-            ]
+            'method'     => 'post',
+            'attr'       => [
+                'class' => 'form-horizontal',
+            ],
         ]);
 
         if ($request->getMethod() == 'POST' && $form->handleRequest($request) && $form->isValid()) {
@@ -87,51 +88,45 @@ class BackgroundPlugin extends AbstractPlugin
     /**
      * {@inheritdoc}
      */
-    /*public function remove(ContainerInterface $container)
-    {
-        parent::remove($container);
-    }*/
-
-    /**
-     * {@inheritdoc}
-     */
     public function validate(ContainerInterface $container, ExecutionContextInterface $context)
     {
-        //$data = $container->getData();
 
-        /* TODO if (array_key_exists('media_id', $data) && !(is_int($data['media_id']) && 0 < $data['media_id'])) {
-            $context->addViolation(self::INVALID_DATA);
-        }*/
     }
 
     /**
      * {@inheritdoc}
      */
-    public function render(ContainerInterface $container, ContainerView $view)
+    public function render(ContainerInterface $container, ContainerView $view, $editable = false)
     {
-        $style = '';
-
         $data = $container->getData();
+        $attributes = $view->getAttributes();
 
         // Background color
         $bgColor = array_key_exists('color', $data) ? $data['color'] : $this->config['default_color'];
         if (0 < strlen($bgColor)) {
-            $style .= 'background-color:' . $bgColor . ';';
+            $attributes->addStyle('background-color', $bgColor);
+        }
+
+        // PaddingTop
+        $paddingTop = array_key_exists('padding_top', $data) ? intval($data['padding_top']) : 0;
+        if (0 < $paddingTop) {
+            $attributes->addStyle('padding-top', $paddingTop . 'px');
+        }
+
+        // PaddingBottom
+        $paddingBottom = array_key_exists('padding_bottom', $data) ? intval($data['padding_bottom']) : 0;
+        if (0 < $paddingBottom) {
+            $attributes->addStyle('padding-bottom', $paddingBottom . 'px');
         }
 
         // Background image
         if (array_key_exists('media_id', $data) && 0 < $mediaId = intval($data['media_id'])) {
             /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $media */
             if (null !== $media = $this->mediaRepository->find($mediaId)) {
-                // TODO use MediaPlayer / MediaGenerator
-                $path = $this->cacheManager->getBrowserPath($media->getPath(), 'media_front');
+                $path = $this->cacheManager->getBrowserPath($media->getPath(), $this->config['filter']);
 
-                $style .= 'background-image: url('.$path.');';
+                $attributes->addStyle('background-image', 'url(' . $path . ')');
             }
-        }
-
-        if (0 < strlen($style)) {
-            $view->getAttributes()->set('style', $style);
         }
     }
 

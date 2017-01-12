@@ -58,6 +58,12 @@ class BlockController extends BaseController
     public function changeTypeAction(Request $request)
     {
         $block = $this->findBlockByRequest($request);
+
+        $removed = [];
+        foreach ($this->getViewBuilder()->buildBlock($block)->widgets as $widget) {
+            $removed[] = $widget->getAttributes()->getId();
+        }
+
         $type = $request->request->get('type', null);
 
         try {
@@ -69,9 +75,12 @@ class BlockController extends BaseController
         $this->validate($block);
         $this->persist($block);
 
-        $data = ['blocks' => [
-            $this->getViewBuilder()->buildBlock($block)
-        ]];
+        $data = [
+            'removed' => $removed,
+            'blocks'  => [
+                $this->getViewBuilder()->buildBlock($block),
+            ],
+        ];
 
         return $this->buildResponse($data, self::SERIALIZE_CONTENT);
     }
@@ -94,7 +103,7 @@ class BlockController extends BaseController
         }
 
         // Stores id for front removal
-        $removedId = $this->getViewBuilder()->buildBlock($block)->getAttributes()->get('id');
+        $removedId = $this->getViewBuilder()->buildBlock($block)->getAttributes()->getId();
         $row = $block->getRow();
 
         $this->validate($row);

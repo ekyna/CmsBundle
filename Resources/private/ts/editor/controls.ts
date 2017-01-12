@@ -4,7 +4,7 @@ import * as Backbone from 'backbone';
 import * as _ from 'underscore';
 
 import Dispatcher from './dispatcher';
-import {OffsetInterface, Button, Select, SelectChoiceConfig, Toolbar, ToolbarView} from './ui';
+import {OffsetInterface, Button, Select, Toolbar, ToolbarView} from './ui';
 
 export interface ViewportButtonConfig {
     width: number

@@ -104,12 +104,12 @@
                  public="false">
             <tag name="doctrine.orm.entity_listener"/>
         </service>
-        <service id="ekyna_core.block.listener"
+        <!--<service id="ekyna_core.block.listener"
                  class="Ekyna\Bundle\CmsBundle\Listener\BlockListener"
                  public="false">
             <argument type="service" id="ekyna_core.cache.tag_manager"/>
             <tag name="doctrine.orm.entity_listener"/>
-        </service>
+        </service>-->
 
         <!-- Settings Schema -->
         <service id="ekyna_cms.settings.seo"
@@ -206,27 +206,26 @@
         </service>
 
         <!-- Web Editor -->
+        <service id="ekyna_cms.editor.repository"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Repository\Repository"
+                 lazy="true" public="false">
+            <argument type="service" id="ekyna_cms.content.repository"/>
+            <argument type="service" id="ekyna_cms.container.repository"/>
+            <argument type="service" id="ekyna_cms.row.repository"/>
+            <argument type="service" id="ekyna_cms.block.repository"/>
+        </service>
         <service id="ekyna_cms.editor.plugin_registry"
                  class="Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry"
-                 public="false"/>
+                 lazy="true" public="false"/>
         <service id="ekyna_cms.editor.editor"
-                 class="Ekyna\Bundle\CmsBundle\Editor\Editor">
+                 class="Ekyna\Bundle\CmsBundle\Editor\Editor"
+                 lazy="true" >
             <argument type="service" id="ekyna_cms.editor.repository"/>
             <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
             <argument type="service" id="validator"/>
             <argument type="service" id="ekyna_cms.editor.document_locale_provider"/>
             <argument type="service" id="ekyna_cms.helper.page"/>
             <argument type="collection"/>
-        </service>
-
-        <!-- Web Editor Factory -->
-        <service id="ekyna_cms.editor.repository"
-                 class="Ekyna\Bundle\CmsBundle\Editor\Repository\Repository"
-                 public="false">
-            <argument type="service" id="ekyna_cms.content.repository"/>
-            <argument type="service" id="ekyna_cms.container.repository"/>
-            <argument type="service" id="ekyna_cms.row.repository"/>
-            <argument type="service" id="ekyna_cms.block.repository"/>
         </service>
 
         <!-- Web Editor block plugins -->
@@ -255,6 +254,13 @@
             <argument>%ekyna_cms.editor.block_plugin.image.config%</argument>
             <argument type="service" id="ekyna_media.media.repository"/>
             <argument type="service" id="liip_imagine.cache.manager"/>
+            <tag name="ekyna_cms.editor.block_plugin"/>
+        </service>
+        <service id="ekyna_cms.editor.block_plugin.feature"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\FeaturePlugin"
+                 parent="ekyna_cms.editor.block_plugin.abstract"
+                 public="false">
+            <argument>%ekyna_cms.editor.block_plugin.feature.config%</argument>
             <tag name="ekyna_cms.editor.block_plugin"/>
         </service>
 

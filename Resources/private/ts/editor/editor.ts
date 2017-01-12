@@ -7,11 +7,12 @@ import Dispatcher from './dispatcher';
 
 import {MainToolbar, MainToolbarView, ViewportButtonConfig} from './controls';
 import {ViewportModel, ViewportView} from './viewport';
-import {DocumentManager, DocumentData, BaseManager, PluginManager, PluginRegistryConfig} from './document-manager';
+import {DocumentManager, DocumentData, PluginManager, PluginRegistryConfig} from './document-manager';
 import {Button, Select, SelectChoiceConfig} from "./ui";
 
 interface EditorConfig {
     hostname: string
+    css_path: string
     path: string
     locales: Array<{name:string, title:string}>
     viewports: Array<ViewportButtonConfig>
@@ -53,7 +54,10 @@ class Editor {
 
 
         // Document manager
-        this.documentManager = new DocumentManager(config.hostname);
+        this.documentManager = new DocumentManager({
+            hostname: config.hostname,
+            css_path: config.css_path
+        });
         this.documentManager.initialize();
 
 
@@ -146,7 +150,7 @@ class Editor {
 
     private loadPagesList(locale:string):JQueryXHR {
         // TODO use resource controller
-        var pageSelect = this.mainToolbar.getPageSelect(),
+        let pageSelect = this.mainToolbar.getPageSelect(),
             pagesListXhr = $.ajax({
                 url: Router.generate('ekyna_cms_editor_pages_list', {'document_locale': locale}),
                 method: 'GET',
@@ -165,7 +169,7 @@ class Editor {
     }
 
     private onLocaleSelectChange(select:Select) {
-        var pageSelect:Select = this.mainToolbar.getPageSelect(),
+        let pageSelect:Select = this.mainToolbar.getPageSelect(),
             pageId:string = pageSelect.getActiveChoice().value;
 
         this.loadPagesList(select.getActiveChoice().value)
@@ -177,7 +181,7 @@ class Editor {
     }
 
     private onDocumentData(data:DocumentData):void {
-        var localeSelect = this.mainToolbar.getLocaleSelect(),
+        let localeSelect = this.mainToolbar.getLocaleSelect(),
             pageSelect = this.mainToolbar.getPageSelect(),
             currentLocale = localeSelect.get('value');
 
@@ -195,8 +199,9 @@ class Editor {
         this.viewport.reload();
     }
 
+    //noinspection JSUnusedLocalSymbols
     private onNewPageClick(button:Button):void {
-        var modal:Ekyna.Modal = new Modal(),
+        let modal:Ekyna.Modal = new Modal(),
             parentPageId:string = this.mainToolbar.getPageSelect().getValue();
 
         modal.load({
@@ -208,15 +213,16 @@ class Editor {
             if (e.contentType == 'json') {
                 e.preventDefault();
 
-                var data:{id:string} = e.content;
+                let data:{id:string} = e.content;
                 this.loadPagesList(this.mainToolbar.getLocaleSelect().getValue())
                     .then(() => this.updateDocumentControls(data.id));
             }
         });
     }
 
+    //noinspection JSUnusedLocalSymbols
     private onEditPageClick(button:Button):void {
-        var modal:Ekyna.Modal = new Modal(),
+        let modal:Ekyna.Modal = new Modal(),
             pageId:string = this.mainToolbar.getPageSelect().getValue();
 
         modal.load({
@@ -228,7 +234,7 @@ class Editor {
             if (e.contentType == 'json') {
                 e.preventDefault();
 
-                var data:{id:string} = e.content;
+                let data:{id:string} = e.content;
                 this.loadPagesList(this.mainToolbar.getLocaleSelect().getValue())
                     .then(() => this.updateDocumentControls(data.id));
             }
@@ -237,7 +243,7 @@ class Editor {
 
     private updateDocumentControls(pageId:string, reload:boolean = true):SelectChoiceConfig {
 
-        var newButton:Button = this.mainToolbar.getNewPageButton(),
+        let newButton:Button = this.mainToolbar.getNewPageButton(),
             editButton:Button = this.mainToolbar.getEditPageButton(),
             pageSelect:Select = this.mainToolbar.getPageSelect();
 
@@ -246,7 +252,7 @@ class Editor {
 
         pageSelect.select(pageId);
 
-        var pageChoice:SelectChoiceConfig = pageSelect.getActiveChoice();
+        let pageChoice:SelectChoiceConfig = pageSelect.getActiveChoice();
         if (pageChoice) {
             editButton.enable();
             if (!pageChoice.data.locked) {

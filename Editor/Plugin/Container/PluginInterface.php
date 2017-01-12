@@ -53,10 +53,11 @@ interface PluginInterface extends BaseInterface
      *
      * @param ContainerInterface $container
      * @param ContainerView      $view
+     * @param bool               $editable
      *
      * @return string
      */
-    public function render(ContainerInterface $container, ContainerView $view);
+    public function render(ContainerInterface $container, ContainerView $view, $editable = false);
 
     /**
      * Returns whether the container is supported.

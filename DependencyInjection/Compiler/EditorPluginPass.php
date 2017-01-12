@@ -27,22 +27,22 @@ class EditorPluginPass implements CompilerPassInterface
         // Block plugins
         $taggedServices = $container->findTaggedServiceIds('ekyna_cms.editor.block_plugin');
         foreach ($taggedServices as $id => $tagAttributes) {
-            $registry->addMethodCall('addBlockPlugin', array(new Reference($id)));
+            $registry->addMethodCall('addBlockPlugin', [new Reference($id)]);
         }
 
         // Container plugins
         $taggedServices = $container->findTaggedServiceIds('ekyna_cms.editor.container_plugin');
         foreach ($taggedServices as $id => $tagAttributes) {
-            $registry->addMethodCall('addContainerPlugin', array(new Reference($id)));
+            $registry->addMethodCall('addContainerPlugin', [new Reference($id)]);
         }
 
-        $mapping = array(
+        /*$mapping = [
             'Ekyna\Bundle\CmsBundle\Entity\Block'            => 'Ekyna\Bundle\CmsBundle\Entity\BlockTranslation',
             'Ekyna\Bundle\CmsBundle\Entity\BlockTranslation' => 'Ekyna\Bundle\CmsBundle\Entity\Block',
-        );
+        ];
         if ($container->hasParameter('ekyna_resource.translation_mapping')) {
             $mapping = array_merge($container->getParameter('ekyna_resource.translation_mapping'), $mapping);
         }
-        $container->setParameter('ekyna_resource.translation_mapping', $mapping);
+        $container->setParameter('ekyna_resource.translation_mapping', $mapping);*/
     }
 }

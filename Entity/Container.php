@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ekyna\Bundle\CmsBundle\Editor\Model\DataTrait;
 use Ekyna\Component\Resource\Model as RM;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use Ekyna\Bundle\CoreBundle\Model as Core;
@@ -14,7 +15,8 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  */
 class Container implements Cms\ContainerInterface
 {
-    use RM\SortableTrait,
+    use DataTrait,
+        RM\SortableTrait,
         RM\TimestampableTrait;
 
     use RM\TaggedEntityTrait {
@@ -121,24 +123,6 @@ class Container implements Cms\ContainerInterface
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setData(array $data)
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
-    {
-        return $this->data;
     }
 
     /**

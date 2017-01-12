@@ -28,7 +28,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      */
     public function buildContent(Model\ContentInterface $content, View\ContentView $view)
     {
-        $view->getAttributes()->set('classes', 'content');
+        $view->getAttributes()->addClass('content');
     }
 
     /**
@@ -36,7 +36,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      */
     public function buildContainer(Model\ContainerInterface $container, View\ContainerView $view)
     {
-        $view->getInnerAttributes()->set('classes', 'container');
+        $view->getInnerAttributes()->addClass('container');
     }
 
     /**
@@ -44,7 +44,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      */
     public function buildRow(Model\RowInterface $row, View\RowView $view)
     {
-        $view->getAttributes()->set('classes', 'row');
+        $view->getAttributes()->addClass('row');
     }
 
     /**
@@ -86,11 +86,10 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
         if (empty($classes)) {
             $classes[] = 'col-md-12';
         }
-        $view->getAttributes()->set('classes', implode(' ', $classes));
 
         // Editor data
         if ($this->editor->isEnabled()) {
-            $attributes->set('data', [
+            $attributes->setData([
                 'actions' => [ // TODO
                     'offset_left'  => true,
                     'offset_right' => true,
@@ -103,6 +102,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
                 ],
             ]);
         }
+        $attributes->addClass($classes);
     }
 
     /**

@@ -1,0 +1,6 @@
+Ekyna\Bundle\CmsBundle\Editor\View\WidgetView:
+    attributes:
+        attributes:
+            groups: [Layout, Content, Default]
+        content:
+            groups: [Content, Default]

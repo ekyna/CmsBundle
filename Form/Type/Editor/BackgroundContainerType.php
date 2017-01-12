@@ -10,6 +10,7 @@ use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Exception\TransformationFailedException;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -35,6 +36,12 @@ class BackgroundContainerType extends AbstractType
             ])
             ->add('color', ColorPickerType::class, [
                 'label' => 'ekyna_core.field.color',
+            ])
+            ->add('padding_top', IntegerType::class, [
+                'required' => false,
+            ])
+            ->add('padding_bottom', IntegerType::class, [
+                'required' => false,
             ]);
 
         $builder->addModelTransformer(new CallbackTransformer(
@@ -67,5 +74,13 @@ class BackgroundContainerType extends AbstractType
         $resolver
             ->setRequired('repository')
             ->setAllowedTypes('repository', MediaRepository::class);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBlockPrefix()
+    {
+        return 'ekyna_cms_container_background';
     }
 }

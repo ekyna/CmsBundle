@@ -91,6 +91,8 @@ class EditorExtension extends \Twig_Extension
      */
     public function initRuntime(\Twig_Environment $twig)
     {
+        // TODO Need a CmsRenderer
+
         $this->template = $twig->loadTemplate($this->config['template']);
 
         // TODO : hasBlock() does not use template inheritance.

@@ -19,7 +19,31 @@ class AttributesNormalizer extends AbstractTranslatableNormalizer
     {
         /** @var AttributesInterface $attributes */
 
-        return $attributes->all();
+        return $attributes->toArray();
+
+        /*$result = [];
+
+        if (null !== $id = $attributes->getId()) {
+            $result['id'] = $id;
+        }
+        if (!empty($classes = $attributes->getClasses())) {
+            $result['class'] = implode(' ', $classes);
+        }
+        if (!empty($styles = $attributes->getClasses())) {
+            $result['style'] = implode(';', array_map(function($key, $value) {
+                return "$key:$value";
+            }, array_keys($styles), array_values($styles)));
+        }
+        if (!empty($data = $attributes->getData())) {
+            $result['data-cms'] = json_encode($data);
+        }
+        if (!empty($extra = $attributes->getExtra())) {
+            foreach ($extra as $key => $value) {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;*/
     }
 
     /**

@@ -47,6 +47,11 @@ class PluginRegistry
                 $plugin->getName()
             ));
         }
+
+        if ($plugin instanceof PluginRegistryAwareInterface) {
+            $plugin->setPluginRegistry($this);
+        }
+
         $this->blockPlugins[$plugin->getName()] = $plugin;
     }
 
@@ -104,6 +109,11 @@ class PluginRegistry
                 $plugin->getName()
             ));
         }
+
+        if ($plugin instanceof PluginRegistryAwareInterface) {
+            $plugin->setPluginRegistry($this);
+        }
+
         $this->containerPlugins[$plugin->getName()] = $plugin;
     }
 

@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use Ekyna\Bundle\CmsBundle\Editor\Model\DataTrait;
 use Ekyna\Component\Resource\Model as RM;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use Ekyna\Bundle\CoreBundle\Model as Core;
@@ -15,7 +16,8 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  */
 class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
 {
-    use RM\SortableTrait,
+    use DataTrait,
+        RM\SortableTrait,
         RM\TimestampableTrait;
 
     use RM\TaggedEntityTrait {
@@ -138,24 +140,6 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     public function getLayout()
     {
         return $this->layout;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setData(array $data)
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
-    {
-        return $this->data;
     }
 
     /**

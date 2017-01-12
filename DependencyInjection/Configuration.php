@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\DependencyInjection;
 
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
+use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\FeaturePlugin;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -154,6 +155,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('template')->defaultValue('EkynaCmsBundle:Editor:content.html.twig')->end()
+                        ->scalarNode('css_path')->defaultValue('/bundles/ekynacms/css/editor-document.css')->end()
                         ->arrayNode('viewports')
                             ->defaultValue(Editor::getDefaultViewportsConfig())
                             ->requiresAtLeastOneElement()
@@ -220,6 +222,22 @@ class Configuration implements ConfigurationInterface
                                                 ->end()
                                             ->end()
                                         ->end()
+                                        ->arrayNode('feature')
+                                            ->addDefaultsIfNotSet()
+                                            ->children()
+                                                ->scalarNode('image_filter')->defaultValue('cms_block_feature')->end()
+                                                ->arrayNode('styles')
+                                                    ->useAttributeAsKey('name')
+                                                    ->prototype('scalar')->end()
+                                                    ->defaultValue(FeaturePlugin::getDefaultStyleChoices())
+                                                ->end()
+                                                ->arrayNode('animations')
+                                                    ->useAttributeAsKey('name')
+                                                    ->prototype('scalar')->end()
+                                                    ->defaultValue(FeaturePlugin::getDefaultAnimationChoices())
+                                                ->end()
+                                            ->end()
+                                        ->end()
                                     ->end()
                                 ->end()
                                 ->arrayNode('container')
@@ -229,6 +247,7 @@ class Configuration implements ConfigurationInterface
                                         ->arrayNode('background')
                                             ->addDefaultsIfNotSet()
                                             ->children()
+                                                ->scalarNode('filter')->defaultValue('cms_container_background')->end()
                                                 ->scalarNode('default_color')->defaultValue('')->end()
                                             ->end()
                                         ->end()

@@ -1,8 +1,6 @@
 Ekyna\Bundle\CmsBundle\Editor\View\BlockView:
     attributes:
         attributes:
-            groups: [Layout, Default]
-        pluginAttributes:
-            groups: [Content, Default]
-        content:
-            groups: [Content, Default]
+            groups: [Layout, Content, Default]
+        widgets:
+            groups: [Layout, Content, Default]

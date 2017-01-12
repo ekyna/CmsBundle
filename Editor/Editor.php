@@ -260,7 +260,7 @@ class Editor
      */
     public function isEnabled()
     {
-        return $this->enabled;
+        return (bool)$this->enabled;
     }
 
     /**

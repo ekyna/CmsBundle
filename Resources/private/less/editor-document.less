@@ -36,12 +36,9 @@ html[data-cms-editor-document] {
         }
     }
 
-    .cms-column {
+    .cms-block {
         padding-left: @document-element-padding;
         padding-right: @document-element-padding;
-    }
-
-    .cms-block {
         border: 1px dotted transparent;
         transition: border-color linear 1s;
 
@@ -51,6 +48,20 @@ html[data-cms-editor-document] {
         }
         &.selected, &.selected:hover {
             border: 1px solid lighten(@document-block-color, @document-solid-lighten);
+            transition-duration: .2s;
+        }
+    }
+
+    .cms-widget {
+        border: 1px dotted transparent;
+        transition: border-color linear 1s;
+
+        &:hover {
+            border: 1px dotted lighten(@document-widget-color, @document-dotted-lighten);
+            transition-duration: .2s;
+        }
+        &.selected, &.selected:hover {
+            border: 1px solid lighten(@document-widget-color, @document-solid-lighten);
             transition-duration: .2s;
         }
     }

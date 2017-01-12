@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+use Ekyna\Bundle\CmsBundle\Editor\Model\DataInterface;
 use Ekyna\Component\Resource\Model\TranslationInterface;
 
 /**
@@ -9,21 +10,7 @@ use Ekyna\Component\Resource\Model\TranslationInterface;
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-interface BlockTranslationInterface extends TranslationInterface
+interface BlockTranslationInterface extends TranslationInterface, DataInterface
 {
-    /**
-     * Sets the data.
-     *
-     * @param array $data
-     *
-     * @return BlockTranslationInterface|$this
-     */
-    public function setData(array $data);
 
-    /**
-     * Returns the data.
-     *
-     * @return array
-     */
-    public function getData();
 }

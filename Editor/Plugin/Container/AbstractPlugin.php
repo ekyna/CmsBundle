@@ -29,7 +29,7 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
      */
     public function remove(ContainerInterface $container)
     {
-        $container->setData([]);
+        $container->unsetData();
     }
 
     /**
