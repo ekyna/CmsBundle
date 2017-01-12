@@ -61,7 +61,7 @@ class BlockManager extends AbstractManager
         $block->setType($type);
 
         // Layout creation
-        $this->editor->getLayoutAdapter()->createBlock($block, $data);
+//        $this->editor->getLayoutAdapter()->createBlock($block, $data);
 
         // Plugin creation
         $this->editor->getBlockPlugin($type)->create($block, $data);

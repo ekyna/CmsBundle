@@ -183,7 +183,12 @@ class ViewBuilder implements EditorAwareInterface
             ]);
 
         // Prevent type change on a named block
-        $attributes->setData('actions', ['change_type' => false]);
+        if (0 < strlen($block->getName())) {
+            $attributes->setData('actions', ['change_type' => false]);
+            foreach ($view->widgets as $widgetView){
+                $widgetView->getAttributes()->setData('actions', ['change_type' => false]);
+            }
+        }
 
         return $view;
     }

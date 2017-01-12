@@ -79,10 +79,10 @@ class EditorExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('cms_document_data', [$this, 'renderDocumentData'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_content',       [$this, 'renderContent'],      ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_container',     [$this, 'renderContainer'],    ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_row',           [$this, 'renderRow'],          ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_block',         [$this, 'renderBlock'],        ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_content', [$this, 'renderContent'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_container', [$this, 'renderContainer'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_row', [$this, 'renderRow'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_block', [$this, 'renderBlock'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -192,15 +192,17 @@ class EditorExtension extends \Twig_Extension
      * Renders the container.
      *
      * @param string|Model\ContainerInterface|View\ContainerView $container
+     * @param string                                             $type
+     * @param array                                              $data
      *
      * @return string
      * @throws Exception\InvalidArgumentException
      */
-    public function renderContainer($container)
+    public function renderContainer($container, $type = null, array $data = [])
     {
         if (is_string($container)) {
             if (null === $element = $this->editor->getRepository()->findContainerByName($container)) {
-                $this->persist($element = $this->editor->getContainerManager()->create($container));
+                $this->persist($element = $this->editor->getContainerManager()->create($container, $type, $data));
             }
             $container = $element;
         }
@@ -229,15 +231,16 @@ class EditorExtension extends \Twig_Extension
      * Renders the row.
      *
      * @param Model\RowInterface|View\RowView $row
+     * @param array                           $data
      *
      * @return string
      * @throws Exception\InvalidArgumentException
      */
-    public function renderRow($row)
+    public function renderRow($row, array $data = [])
     {
         if (is_string($row)) {
             if (null === $element = $this->editor->getRepository()->findRowByName($row)) {
-                $this->persist($element = $this->editor->getRowManager()->create($row));
+                $this->persist($element = $this->editor->getRowManager()->create($row, $data));
             }
             $row = $element;
         }
@@ -266,15 +269,17 @@ class EditorExtension extends \Twig_Extension
      * Renders the block.
      *
      * @param Model\BlockInterface|View\BlockView $block
+     * @param string                              $type
+     * @param array                               $data
      *
      * @return string
      * @throws Exception\InvalidArgumentException
      */
-    public function renderBlock($block)
+    public function renderBlock($block, $type = null, array $data = [])
     {
         if (is_string($block)) {
             if (null === $element = $this->editor->getRepository()->findBlockByName($block)) {
-                $this->persist($element = $this->editor->getBlockManager()->create($block));
+                $this->persist($element = $this->editor->getBlockManager()->create($block, $type, $data));
             }
             $block = $element;
         }

@@ -106,22 +106,20 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritdoc
+     * Creates the initial block layout regarding to given data.
+     *
+     * $data = [
+     *   'layout' => [
+     *      'size'   => (int),
+     *      'order'  => (int),
+     *      'offset' => (int),
+     *   ]
+     * ]
      */
-    public function createBlock(Model\BlockInterface $block, array $data)
+    /*public function createBlock(Model\BlockInterface $block, array $data)
     {
-        /**
-         * $data = [
-         *   'layout' => [
-         *      'size'   => (int),
-         *      'order'  => (int),
-         *      'offset' => (int),
-         *   ]
-         * ]
-         */
 
-        // TODO Default layout regarding to given data.
-    }
+    }*/
 
     /**
      * @inheritdoc

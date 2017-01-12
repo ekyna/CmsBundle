@@ -151,6 +151,7 @@ export class BaseManager {
         if (!$parent) {
             throw "Undefined parent.";
         }
+
         return $('<div></div>').attr('id', id).appendTo($parent);
     }
 

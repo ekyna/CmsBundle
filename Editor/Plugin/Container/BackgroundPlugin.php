@@ -107,14 +107,18 @@ class BackgroundPlugin extends AbstractPlugin
             $attributes->addStyle('background-color', $bgColor);
         }
 
-        // PaddingTop
-        $paddingTop = array_key_exists('padding_top', $data) ? intval($data['padding_top']) : 0;
+        // Padding top
+        $paddingTop = array_key_exists('padding_top', $data)
+            ? intval($data['padding_top'])
+            : $this->config['default_padding_top'];
         if (0 < $paddingTop) {
             $attributes->addStyle('padding-top', $paddingTop . 'px');
         }
 
-        // PaddingBottom
-        $paddingBottom = array_key_exists('padding_bottom', $data) ? intval($data['padding_bottom']) : 0;
+        // Padding bottom
+        $paddingBottom = array_key_exists('padding_bottom', $data)
+            ? intval($data['padding_bottom'])
+            : $this->config['default_padding_bottom'];
         if (0 < $paddingBottom) {
             $attributes->addStyle('padding-bottom', $paddingBottom . 'px');
         }
