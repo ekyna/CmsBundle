@@ -54,7 +54,7 @@ export class MainToolbar extends Toolbar {
             title: 'Toggle editor on/off',
             size: 'md',
             theme: 'primary',
-            icon: 'power-off',
+            icon: 'power',
             event: 'controls.power.click'
         }));
 
@@ -64,7 +64,7 @@ export class MainToolbar extends Toolbar {
             title: 'Reload the page',
             size: 'md',
             theme: 'default',
-            icon: 'refresh',
+            icon: 'reload',
             event: 'controls.reload.click'
             //spinning: true
         }));
@@ -113,7 +113,7 @@ export class MainToolbar extends Toolbar {
             title: 'Edit the page',
             size: 'md',
             theme: 'warning',
-            icon: 'pencil',
+            icon: 'edit-page',
             event: 'controls.edit_page.click'
         }));
         // New page button
@@ -122,7 +122,7 @@ export class MainToolbar extends Toolbar {
             title: 'Create a new page',
             size: 'md',
             theme: 'success',
-            icon: 'plus',
+            icon: 'new-page',
             event: 'controls.new_page.click'
         }));
     }

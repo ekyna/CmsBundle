@@ -187,6 +187,7 @@ export class BaseManager {
             }
             $element.removeAttr(key).attr(key, attributes[key]);
         }
+        BaseManager.appendHelpers($element);
     }
 
     static sortChildren($element: JQuery, selector:string) {
@@ -259,6 +260,23 @@ export class BaseManager {
         } else if (data.hasOwnProperty('widgets')) {
             WidgetManager.parse(data.widgets);
         }
+    }
+
+    static appendHelpers($elements?: JQuery) {
+        if (($elements == undefined || 0 == $elements.length) && null != this.$contentDocument) {
+            $elements = this.$contentDocument.find('.cms-block, .cms-row, .cms-container');
+        }
+        if ($elements == undefined || 0 == $elements.length) {
+            return;
+        }
+        $elements
+            .filter('.cms-block, .cms-row, .cms-container')
+            .each(function (i: number, element: Element) {
+                let $element = $(element);
+                if ($element.find('i.cms-helper').length == 0) {
+                    $element.prepend('<i class="cms-helper"></i>');
+                }
+            });
     }
 }
 
@@ -996,7 +1014,7 @@ class ToolbarManager {
         toolbar.addControl('default', new Button({
             name: 'edit',
             title: 'Edit',
-            icon: 'pencil',
+            icon: 'content',
             disabled: !actions.edit,
             event: 'block.edit',
             data: {$block: $widget}
@@ -1014,7 +1032,7 @@ class ToolbarManager {
         toolbar.addControl('default', new Button({
             name: 'change-type',
             title: 'Change type',
-            icon: 'cog',
+            icon: 'change-type',
             disabled: !actions.change_type,
             event: 'block.change-type',
             data: {$block: $widget},
@@ -1043,7 +1061,7 @@ class ToolbarManager {
         toolbar.addControl('default', new Button({
             name: 'edit',
             title: 'Edit',
-            icon: 'pencil',
+            icon: 'content',
             disabled: !actions.edit,
             event: 'block.edit',
             data: {$block: $block}
@@ -1052,7 +1070,7 @@ class ToolbarManager {
         toolbar.addControl('default', new Button({
             name: 'layout',
             title: 'Layout',
-            icon: 'pencil',
+            icon: 'layout',
             event: 'block.layout',
             data: {$block: $block}
         }));
@@ -1070,7 +1088,7 @@ class ToolbarManager {
         toolbar.addControl('default', new Button({
             name: 'change-type',
             title: 'Change type',
-            icon: 'cog',
+            icon: 'change-type',
             disabled: !actions.change_type,
             event: 'block.change-type',
             data: {$block: $block},
@@ -1082,7 +1100,7 @@ class ToolbarManager {
             toolbar.addControl('vertical', new Button({
                 name: 'move-up',
                 title: 'Move up',
-                icon: 'arrow-up',
+                icon: 'move-up',
                 disabled: !actions.move_up,
                 event: 'block.move-up',
                 data: {$block: $block}
@@ -1091,7 +1109,7 @@ class ToolbarManager {
             toolbar.addControl('vertical', new Button({
                 name: 'move-down',
                 title: 'Move down',
-                icon: 'arrow-down',
+                icon: 'move-down',
                 disabled: !actions.move_down,
                 event: 'block.move-down',
                 data: {$block: $block}
@@ -1101,7 +1119,7 @@ class ToolbarManager {
             toolbar.addControl('horizontal', new Button({
                 name: 'move-left',
                 title: 'Move left',
-                icon: 'arrow-left',
+                icon: 'move-left',
                 disabled: !actions.move_left,
                 event: 'block.move-left',
                 data: {$block: $block}
@@ -1110,74 +1128,74 @@ class ToolbarManager {
             toolbar.addControl('horizontal', new Button({
                 name: 'move-right',
                 title: 'Move right',
-                icon: 'arrow-right',
+                icon: 'move-right',
                 disabled: !actions.move_right,
                 event: 'block.move-right',
                 data: {$block: $block}
             }));
 
             // Pull
-            toolbar.addControl('ordering', new Button({
+            /*toolbar.addControl('ordering', new Button({
                 name: 'pull',
                 title: 'Pull',
                 icon: 'arrow-left',
                 disabled: !actions.pull,
                 event: 'block.pull',
                 data: {$block: $block}
-            }));
+            }));*/
             // Push
-            toolbar.addControl('ordering', new Button({
+            /*toolbar.addControl('ordering', new Button({
                 name: 'push',
                 title: 'Push',
                 icon: 'arrow-right',
                 disabled: !actions.push,
                 event: 'block.push',
                 data: {$block: $block}
-            }));
+            }));*/
 
             // Offset left
-            toolbar.addControl('offset', new Button({
+            /*toolbar.addControl('offset', new Button({
                 name: 'offset-left',
                 title: 'Offset left',
                 icon: 'arrow-left',
                 disabled: !actions.offset_left,
                 event: 'block.offset-left',
                 data: {$block: $block}
-            }));
+            }));*/
             // Offset right
-            toolbar.addControl('offset', new Button({
+            /*toolbar.addControl('offset', new Button({
                 name: 'offset-right',
                 title: 'Offset right',
                 icon: 'arrow-right',
                 disabled: !actions.offset_right,
                 event: 'block.offset-right',
                 data: {$block: $block}
-            }));
+            }));*/
 
             // Compress
-            toolbar.addControl('resize', new Button({
+            /*toolbar.addControl('resize', new Button({
                 name: 'compress',
                 title: 'Compress size',
                 icon: 'compress',
                 disabled: !actions.compress,
                 event: 'block.compress',
                 data: {$block: $block}
-            }));
+            }));*/
             // Expand
-            toolbar.addControl('resize', new Button({
+            /*toolbar.addControl('resize', new Button({
                 name: 'expand',
                 title: 'Expand size',
                 icon: 'expand',
                 disabled: !actions.expand,
                 event: 'block.expand',
                 data: {$block: $block}
-            }));
+            }));*/
 
             // Remove
             toolbar.addControl('add', new Button({
                 name: 'remove',
                 title: 'Remove',
-                icon: 'remove',
+                icon: 'remove-block',
                 disabled: !actions.remove,
                 confirm: 'Êtes-vous sûr de vouloir supprimer ce bloc ?',
                 event: 'block.remove',
@@ -1195,7 +1213,7 @@ class ToolbarManager {
             toolbar.addControl('add', new Button({
                 name: 'add',
                 title: 'Create a new block after this one',
-                icon: 'plus',
+                icon: 'add-block',
                 disabled: !actions.add,
                 event: 'block.add',
                 data: {$block: $block},
@@ -1219,7 +1237,7 @@ class ToolbarManager {
         toolbar.addControl('default', new Button({
             name: 'layout',
             title: 'Layout',
-            icon: 'pencil',
+            icon: 'layout',
             event: 'row.layout',
             data: {$row: $row}
         }));
@@ -1238,7 +1256,7 @@ class ToolbarManager {
             toolbar.addControl('move', new Button({
                 name: 'move-up',
                 title: 'Move up',
-                icon: 'arrow-up',
+                icon: 'move-up',
                 disabled: $row.is(':first-child'),
                 event: 'row.move-up',
                 data: {$row: $row}
@@ -1247,7 +1265,7 @@ class ToolbarManager {
             toolbar.addControl('move', new Button({
                 name: 'move-down',
                 title: 'Move down',
-                icon: 'arrow-down',
+                icon: 'move-down',
                 disabled: $row.is(':last-child'),
                 event: 'row.move-down',
                 data: {$row: $row}
@@ -1256,7 +1274,7 @@ class ToolbarManager {
             toolbar.addControl('default', new Button({
                 name: 'remove',
                 title: 'Remove',
-                icon: 'remove',
+                icon: 'remove-row',
                 disabled: 1 >= $container.children('.cms-row').length,
                 confirm: 'Êtes-vous sûr de vouloir supprimer cette ligne ?',
                 event: 'row.remove',
@@ -1266,7 +1284,7 @@ class ToolbarManager {
             toolbar.addControl('default', new Button({
                 name: 'add',
                 title: 'Create a new row',
-                icon: 'plus',
+                icon: 'add-row',
                 event: 'row.add',
                 data: {$row: $row}
             }));
@@ -1287,14 +1305,14 @@ class ToolbarManager {
         toolbar.addControl('default', new Button({
             name: 'edit',
             title: 'Edit',
-            icon: 'pencil',
+            icon: 'content',
             event: 'container.edit',
             data: {$container: $container}
         }));
         toolbar.addControl('default', new Button({
             name: 'layout',
             title: 'Layout',
-            icon: 'pencil',
+            icon: 'layout',
             event: 'container.layout',
             data: {$container: $container}
         }));
@@ -1311,7 +1329,7 @@ class ToolbarManager {
         toolbar.addControl('default', new Button({
             name: 'change-type',
             title: 'Change type',
-            icon: 'cog',
+            icon: 'change-type',
             event: 'container.change-type',
             data: {$container: $container},
             choices: choices
@@ -1321,7 +1339,7 @@ class ToolbarManager {
             toolbar.addControl('move', new Button({
                 name: 'move-up',
                 title: 'Move up',
-                icon: 'arrow-up',
+                icon: 'move-up',
                 disabled: $container.is(':first-child'),
                 event: 'container.move-up',
                 data: {$container: $container}
@@ -1330,7 +1348,7 @@ class ToolbarManager {
             toolbar.addControl('move', new Button({
                 name: 'move-down',
                 title: 'Move down',
-                icon: 'arrow-down',
+                icon: 'move-down',
                 disabled: $container.is(':last-child'),
                 event: 'container.move-down',
                 data: {$container: $container}
@@ -1339,7 +1357,7 @@ class ToolbarManager {
             toolbar.addControl('add', new Button({
                 name: 'remove',
                 title: 'Remove',
-                icon: 'remove',
+                icon: 'remove-container',
                 disabled: 1 >= $content.children('.cms-container').length,
                 confirm: 'Êtes-vous sûr de vouloir supprimer ce conteneur ?',
                 event: 'container.remove',
@@ -1356,7 +1374,7 @@ class ToolbarManager {
             toolbar.addControl('add', new Button({
                 name: 'add',
                 title: 'Create a new container after this one',
-                icon: 'plus',
+                icon: 'add-container',
                 event: 'container.add',
                 data: {$container: $container},
                 choices: choices,
@@ -1413,13 +1431,13 @@ class ToolbarManager {
             name: 'submit',
             title: 'Ok',
             theme: 'primary',
-            icon: 'check',
+            icon: 'ok',
             event: 'layout.submit',
         }));
         toolbar.addControl('footer', new Button({
             name: 'cancel',
             title: 'Cancel',
-            icon: 'close',
+            icon: 'cancel',
             event: 'layout.cancel',
         }));
 
@@ -1737,12 +1755,13 @@ export class DocumentManager {
         }
 
         // Insert elements tabs
-        $document.find('.cms-block, .cms-row, .cms-container').each(function (i: number, element: Element) {
+        BaseManager.appendHelpers();
+        /*$document.find('.cms-block, .cms-row, .cms-container').each(function (i: number, element: Element) {
             let $element = $(element);
             if ($element.find('i.cms-helper').length == 0) {
                 $element.prepend('<i class="cms-helper"></i>');
             }
-        });
+        });*/
 
         $document.on('mousedown', this.documentMouseDownHandler);
         $document.on('mouseup', this.documentMouseUpHandler);

@@ -435,7 +435,7 @@ class Editor
                 'name'   => static::VIEWPORT_PHONE,
                 'width'  => 320,
                 'height' => 568,
-                'icon'   => 'mobile',
+                'icon'   => 'smartphone',
                 'title'  => 'Smartphone',
             ],
             [
@@ -460,7 +460,7 @@ class Editor
                 'title'  => 'Desktop'],
             [
                 'name'   => static::VIEWPORT_ADJUST,
-                'icon'   => 'arrows-alt',
+                'icon'   => 'fullscreen',
                 'title'  => 'Adjust to screen',
                 'active' => true,
             ],

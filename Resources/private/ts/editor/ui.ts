@@ -248,7 +248,7 @@ export class ButtonView extends ControlView<Button> {
 
         this.template = _.template(`
         <button type="button" class="btn btn-<%= theme %> btn-<%= size %>" title="<%= title %>">
-          <span class="fa fa-<%= icon %>"></span>
+          <span class="cei cei-<%= icon %>"></span>
         </button>
         `);
 
@@ -279,7 +279,7 @@ export class ButtonView extends ControlView<Button> {
             .prop('disabled', this.model.get('disabled'))
             .toggleClass('active', this.model.get('active'))
             .toggleClass('rotate', this.model.get('rotate'))
-            .find('span').toggleClass('fa-spin', this.model.get('spinning'));
+            .find('span').toggleClass('cei-spin', this.model.get('spinning'));
 
         Dispatcher.trigger('ui.control.render', this);
 
@@ -310,10 +310,10 @@ export class ButtonDropdownView extends ControlView<Button> {
         this.template = _.template(`
         <button type="button" class="btn btn-<%= theme %> btn-<%= size %> dropdown-toggle"
                 title="<%= title %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="fa fa-<%= icon %>"></span> <span class="caret"></span>
+          <span class="cei cei-<%= icon %>"></span> 
         </button>
         <ul class="dropdown-menu"></ul>
-        `);
+        `); // <span class="caret"></span>
 
         this.listenTo(this.model, 'change', this.render);
     }
@@ -352,7 +352,7 @@ export class ButtonDropdownView extends ControlView<Button> {
             .prop('disabled', this.model.get('disabled'))
             .toggleClass('active', this.model.get('active'))
             .toggleClass('rotate', this.model.get('rotate'))
-            .find('span').toggleClass('fa-spin', this.model.get('spinning'));
+            .find('span').toggleClass('cei-spin', this.model.get('spinning'));
 
         let $ul: JQuery = this.$('ul');
 
