@@ -16,6 +16,24 @@ ekyna_cms_editor_container_edit:
     options:
         expose: true
 
+ekyna_cms_editor_container_layout:
+    path: /{containerId}/layout
+    defaults: { _controller: "EkynaCmsBundle:Editor/Container:layout" }
+    methods: [POST]
+    requirements:
+        containerId: \d+
+    options:
+        expose: true
+
+ekyna_cms_editor_container_change_type:
+    path: /{containerId}/change-type
+    defaults: { _controller: "EkynaCmsBundle:Editor/Container:changeType" }
+    methods: [POST]
+    requirements:
+        containerId: \d+
+    options:
+        expose: true
+
 ekyna_cms_editor_container_remove:
     path: /{containerId}/remove
     defaults: { _controller: "EkynaCmsBundle:Editor/Container:remove" }

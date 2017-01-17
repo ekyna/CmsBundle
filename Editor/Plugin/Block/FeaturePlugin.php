@@ -122,7 +122,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             'editable' => false,
         ], $options);
 
-        $overrideAttributes = function (Attributes $attributes, $type) use ($options) {
+        $overrideAttributes = function (Attributes $attributes, $type, $position = 0) use ($options) {
             $attributes->addClass('feature-' . $type);
 
             if ($options['editable']) {
@@ -130,7 +130,8 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
                     ->setId($attributes->getId() . '-' . $type)
                     ->setData('actions', [
                         'change_type' => false, // Disable type change on widgets
-                    ]);
+                    ])
+                    ->setData('position', $position);
             }
         };
 
@@ -140,14 +141,14 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             ->createWidget($block, array_replace($options, [
                 'filter' => $this->config['image_filter'],
             ]));
-        $overrideAttributes($widget->getAttributes(), 'image');
+        $overrideAttributes($widget->getAttributes(), 'image', 0);
         $view->widgets[] = $widget;
 
         // Html widget view
         $widget = $this
             ->getHtmlPlugin()
             ->createWidget($block, $options);
-        $overrideAttributes($widget->getAttributes(), 'html');
+        $overrideAttributes($widget->getAttributes(), 'html', 1);
         $view->widgets[] = $widget;
 
         // Feature block view

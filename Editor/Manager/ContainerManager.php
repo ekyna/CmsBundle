@@ -98,6 +98,33 @@ class ContainerManager extends AbstractManager
     }
 
     /**
+     * Changes the container type.
+     *
+     * @param Model\ContainerInterface $container The container
+     * @param string                   $type      The container new type
+     * @param array                    $data      The container new data
+     */
+    public function changeType(Model\ContainerInterface $container, $type, array $data = [])
+    {
+        if ($type === $container->getType()) {
+            return;
+        }
+
+        // Plugin removal
+        $this->editor
+            ->getContainerPlugin($container->getType())
+            ->remove($container);
+
+        // Sets the new type
+        $container->setType($type);
+
+        // Plugin creation
+        $this->editor
+            ->getContainerPlugin($container->getType())
+            ->create($container, $data);
+    }
+
+    /**
      * Deletes the container.
      *
      * @param Model\ContainerInterface $container

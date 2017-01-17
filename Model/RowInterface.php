@@ -4,6 +4,7 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ekyna\Bundle\CmsBundle\Editor\Model\LayoutInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -12,7 +13,8 @@ use Ekyna\Component\Resource\Model as RM;
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
 interface RowInterface
-    extends RM\SortableInterface,
+    extends LayoutInterface,
+            RM\SortableInterface,
             RM\TimestampableInterface,
             RM\TaggedEntityInterface
 {

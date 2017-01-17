@@ -9,6 +9,14 @@ liip_imagine:
                 relative_resize: { widen: 1920 }
             post_processors:
                 jpegoptim: {}
+        cms_block_image:
+            quality: 70
+            cache: local_media
+            data_loader: local_media
+            filters:
+                relative_resize: { widen: 1140 }
+            post_processors:
+                jpegoptim: {}
         cms_block_feature:
             quality: 70
             cache: local_media

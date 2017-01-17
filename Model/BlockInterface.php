@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Ekyna\Bundle\CmsBundle\Editor\Model\DataInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model as Editor;
 use Ekyna\Bundle\CoreBundle\Model as Core;
 use Ekyna\Component\Resource\Model as RM;
 
@@ -14,7 +14,8 @@ use Ekyna\Component\Resource\Model as RM;
  * @method BlockTranslationInterface translate($locale = null, $create = false)
  */
 interface BlockInterface
-    extends DataInterface,
+    extends Editor\DataInterface,
+            Editor\LayoutInterface,
             RM\TranslatableInterface,
             RM\SortableInterface,
             RM\TimestampableInterface,

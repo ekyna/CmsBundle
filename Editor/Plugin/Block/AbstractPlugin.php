@@ -90,6 +90,7 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
                 ->setData([
                     'id'       => $block->getId(),
                     'type'     => $this->getName(),
+                    'position' => 0, // TODO
                     'actions'  => [
                         'edit'        => true,
                         'change_type' => true,

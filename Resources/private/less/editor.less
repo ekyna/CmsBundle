@@ -87,32 +87,32 @@ html {
 
     .editor-toolbar {
         position: absolute;
-        z-index: 2;
+        z-index: 3;
         padding: @editor-controls-margin;
         background-color: #ffffff;
         box-shadow: 0 0 10px rgba(0, 0, 0, .4);
         border-radius: @editor-toolbar-border-radius;
 
         -webkit-transition: top @editor-viewport-transition-speed,
-        right @editor-viewport-transition-speed,
-        bottom @editor-viewport-transition-speed,
-        left @editor-viewport-transition-speed;
+                        right @editor-viewport-transition-speed,
+                        bottom @editor-viewport-transition-speed,
+                        left @editor-viewport-transition-speed;
         -moz-transition: top @editor-viewport-transition-speed,
-        right @editor-viewport-transition-speed,
-        bottom @editor-viewport-transition-speed,
-        left @editor-viewport-transition-speed;;
+                        right @editor-viewport-transition-speed,
+                        bottom @editor-viewport-transition-speed,
+                        left @editor-viewport-transition-speed;;
         -o-transition: top @editor-viewport-transition-speed,
-        right @editor-viewport-transition-speed,
-        bottom @editor-viewport-transition-speed,
-        left @editor-viewport-transition-speed;;
+                        right @editor-viewport-transition-speed,
+                        bottom @editor-viewport-transition-speed,
+                        left @editor-viewport-transition-speed;;
         -ms-transition: top @editor-viewport-transition-speed,
-        right @editor-viewport-transition-speed,
-        bottom @editor-viewport-transition-speed,
-        left @editor-viewport-transition-speed;;
+                        right @editor-viewport-transition-speed,
+                        bottom @editor-viewport-transition-speed,
+                        left @editor-viewport-transition-speed;;
         transition: top @editor-viewport-transition-speed,
-        right @editor-viewport-transition-speed,
-        bottom @editor-viewport-transition-speed,
-        left @editor-viewport-transition-speed;;
+                    right @editor-viewport-transition-speed,
+                    bottom @editor-viewport-transition-speed,
+                    left @editor-viewport-transition-speed;;
 
         > .input-group {
             width: auto;
@@ -170,6 +170,19 @@ html {
                 }
             }
 
+            > .input-group-slider {
+                > label {
+                    line-height: 20px;
+                }
+                > input {
+                    float: right;
+                    max-width: 54px;
+                }
+                > div {
+                    clear: right;
+                    padding: 8px;
+                }
+            }
         }
 
         &.horizontal {
@@ -211,6 +224,21 @@ html {
             text-shadow: 0 1px 0 rgba(0, 0, 0, .6);
         }
 
+        &.layout-toolbar {
+            min-width: 200px;
+            &:before {
+                content: "Layout";
+                background-color: @document-layout-color;
+            }
+
+            .input-group {
+                width: 100%;
+
+                button {
+                    width: 100%;
+                }
+            }
+        }
         &.widget-toolbar:before {
             content: "Widget";
             background-color: @document-widget-color;

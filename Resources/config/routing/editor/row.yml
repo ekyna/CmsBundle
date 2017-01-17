@@ -7,6 +7,15 @@ ekyna_cms_editor_row_create_block:
     options:
         expose: true
 
+ekyna_cms_editor_row_layout:
+    path: /{rowId}/layout
+    defaults: { _controller: "EkynaCmsBundle:Editor/Row:layout" }
+    methods: [POST]
+    requirements:
+        rowId: \d+
+    options:
+        expose: true
+
 ekyna_cms_editor_row_remove:
     path: /{rowId}/remove
     defaults: { _controller: "EkynaCmsBundle:Editor/Row:remove" }

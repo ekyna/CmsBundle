@@ -58,6 +58,35 @@ class RowController extends BaseController
     }
 
     /**
+     * Updates the row layout.
+     *
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function layoutAction(Request $request)
+    {
+        $row = $this->findRowByRequest($request);
+
+        $data = $request->request->get('data', []);
+
+        try {
+            $this->getEditor()->getLayoutAdapter()->updateRowLayout($row, $data);
+        } catch (EditorExceptionInterface $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        $this->validate($row);
+        $this->persist($row);
+
+        $data = [
+            'rows' => [$this->getViewBuilder()->buildRow($row)]
+        ];
+
+        return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
+    }
+
+    /**
      * Remove the row.
      *
      * @param Request $request

@@ -2,10 +2,12 @@
 
 import * as Backbone from 'backbone';
 import * as _ from 'underscore';
-
 import Dispatcher from './dispatcher';
 import {OffsetInterface, Button, Select, Toolbar, ToolbarView} from './ui';
 
+/**
+ * ViewportButtonConfig
+ */
 export interface ViewportButtonConfig {
     width: number
     height: number
@@ -14,23 +16,33 @@ export interface ViewportButtonConfig {
     name: string
     active:boolean
 }
+
+/**
+ * LocaleChoiceConfig
+ */
 export interface LocaleChoiceConfig {
     name: number
     title: number
 }
 
+/**
+ * MainToolbarAttributes
+ */
 export interface MainToolbarAttributes {
     id: string
     classes: Array<string>
 }
 
+/**
+ * MainToolbarOptions
+ */
 export interface MainToolbarOptions {
     viewports: Array<ViewportButtonConfig>
     locales: Array<LocaleChoiceConfig>
 }
 
 /**
- * Controls model
+ * MainToolbar
  */
 export class MainToolbar extends Toolbar {
     initialize(attributes:MainToolbarAttributes, options:MainToolbarOptions):void {
@@ -64,7 +76,7 @@ export class MainToolbar extends Toolbar {
         _.forEach(options.viewports, (viewport:ViewportButtonConfig) => {
             this.addControl('viewport', new Button({
                 name: viewport.name,
-                title: viewport.title,
+                title: viewport.title + (viewport.width ? ' (' + viewport.width + 'x' + viewport.height + ')' : ''),
                 size: 'md',
                 icon: viewport.icon,
                 event: 'controls.viewport.click',
@@ -116,12 +128,15 @@ export class MainToolbar extends Toolbar {
     }
 }
 
+/**
+ * MainToolbarViewOptions
+ */
 interface MainToolbarViewOptions extends Backbone.ViewOptions<MainToolbar> {
     model: MainToolbar
 }
 
 /**
- * Controls view
+ * MainToolbarView
  */
 export class MainToolbarView extends ToolbarView<MainToolbar> {
     template:(data?:Object) => string;

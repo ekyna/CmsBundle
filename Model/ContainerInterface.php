@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Editor\Model\DataInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model as Editor;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -12,7 +12,8 @@ use Ekyna\Component\Resource\Model as RM;
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
 interface ContainerInterface
-    extends DataInterface,
+    extends Editor\DataInterface,
+            Editor\LayoutInterface,
             RM\SortableInterface,
             RM\TimestampableInterface,
             RM\TaggedEntityInterface

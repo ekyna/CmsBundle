@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Adapter;
 
+use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidArgumentException;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\RuntimeException;
 use Ekyna\Bundle\CmsBundle\Editor\View;
 use Ekyna\Bundle\CmsBundle\Model;
@@ -18,10 +19,6 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     const MD = 'md';
     const LG = 'lg';
 
-    const SIZE   = 'size';
-    const ORDER  = 'order';
-    const OFFSET = 'offset';
-
 
     /**
      * @inheritdoc
@@ -37,6 +34,8 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     public function buildContainer(Model\ContainerInterface $container, View\ContainerView $view)
     {
         $view->getInnerAttributes()->addClass('container');
+
+        $this->applyLayoutStyles($view->getAttributes(), $container->getLayout());
     }
 
     /**
@@ -45,6 +44,8 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     public function buildRow(Model\RowInterface $row, View\RowView $view)
     {
         $view->getAttributes()->addClass('row');
+
+        $this->applyLayoutStyles($view->getAttributes(), $row->getLayout());
     }
 
     /**
@@ -87,6 +88,8 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
             $classes[] = 'col-md-12';
         }
 
+        $this->applyLayoutStyles($attributes, $layout);
+
         // Editor data
         if ($this->editor->isEnabled()) {
             $attributes->setData([
@@ -103,6 +106,182 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
             ]);
         }
         $attributes->addClass($classes);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateContainerLayout(Model\ContainerInterface $container, array $data)
+    {
+        foreach (array_diff_key($data, [static::PADDING_TOP, static::PADDING_BOTTOM]) as $property) {
+            unset($data[$property]);
+        }
+
+        $this->validateLayoutStyles($data);
+
+        $container->setLayout($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateRowLayout(Model\RowInterface $row, array $data)
+    {
+        foreach (array_diff_key($data, [static::PADDING_TOP, static::PADDING_BOTTOM]) as $property) {
+            unset($data[$property]);
+        }
+
+        $this->validateLayoutStyles($data);
+
+        $row->setLayout($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateBlockLayout(Model\BlockInterface $block, array $data)
+    {
+        $expectedKeys = [
+            static::PADDING_TOP,
+            static::PADDING_BOTTOM,
+            static::XS,
+            static::SM,
+            static::MD,
+            static::LG
+        ];
+        foreach (array_diff(array_keys($data), $expectedKeys) as $property) {
+            unset($data[$property]);
+        }
+
+        $this->validateLayoutStyles($data);
+        $this->validateBlockLayout($data);
+
+        $data = $this->cleanUpBlockLayout($data);
+
+        $block->setLayout($data);
+    }
+
+    /**
+     * Validates the block layout.
+     *
+     * @param array $data
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function validateBlockLayout(array $data)
+    {
+        foreach (array_keys(static::getDevicesWidths()) as $device) {
+            // If layout set for this device
+            if (!isset($data[$device])) {
+                continue;
+            }
+
+            $size = isset($data[$device][static::SIZE]) ? $data[$device][static::SIZE] : 12;
+            $offset = isset($data[$device][static::OFFSET]) ? $data[$device][static::OFFSET] : 0;
+
+            // Validate size
+            if (1 > $size || $size > 12) {
+                throw new InvalidArgumentException('Invalid layout size');
+            }
+
+            // Validate offset
+            if (0 > $offset || $offset > 11) {
+                throw new InvalidArgumentException('Invalid layout offset');
+            }
+
+            // Validate sum
+            if (12 < ($size + $offset)) {
+                throw new InvalidArgumentException('Invalid block layout size/offset');
+            }
+        }
+    }
+
+    /**
+     * Cleans up the block layout.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function cleanUpBlockLayout(array $data)
+    {
+        $clean = [];
+
+        $hasPreviousSize = $hasPreviousOffset = false;
+        $previousSize = $previousOffset = null;
+
+        foreach (array_keys(static::getDevicesWidths()) as $device) {
+            // If layout is set for this device
+            if (!isset($data[$device])) {
+                continue;
+            }
+
+            $size = isset($data[$device][static::SIZE]) ? $data[$device][static::SIZE] : $previousSize;
+            $offset = isset($data[$device][static::OFFSET]) ? $data[$device][static::OFFSET] : $previousOffset;
+
+            $cleanDevice = [];
+
+            if (($hasPreviousSize && 12 === $size) || 12 > $size) {
+                $cleanDevice[static::SIZE] = $size;
+            }
+            if (($hasPreviousOffset && 0 === $offset) || 0 < $offset) {
+                $cleanDevice[static::OFFSET] = $offset;
+            }
+
+            if (12 > $size) {
+                $hasPreviousSize = true;
+            }
+            if (0 < $offset) {
+                $hasPreviousOffset = true;
+            }
+
+            $previousSize = $size;
+            $previousOffset = $offset;
+
+            if (!empty($cleanDevice)) {
+                $clean[$device] = $cleanDevice;
+            }
+        }
+
+        return $clean;
+    }
+
+    /**
+     * Validates the layout styles.
+     *
+     * @param array $layout
+     */
+    protected function validateLayoutStyles(array $layout)
+    {
+        if (isset($layout[static::PADDING_TOP])
+            && (0 > $layout[static::PADDING_TOP] || 100 < $layout[static::PADDING_TOP])
+        ) {
+            throw new InvalidArgumentException('Invalid layout padding top');
+        }
+
+        if (isset($layout[static::PADDING_BOTTOM])
+            && (0 > $layout[static::PADDING_BOTTOM] || 100 < $layout[static::PADDING_BOTTOM])
+        ) {
+            throw new InvalidArgumentException('Invalid layout padding bottom');
+        }
+    }
+
+    /**
+     * Adds the css styles regarding to the layout data.
+     *
+     * @param View\AttributesInterface $attributes
+     * @param array                    $layout
+     */
+    protected function applyLayoutStyles(View\AttributesInterface $attributes, array $layout)
+    {
+        foreach ([static::PADDING_TOP => '%spx', static::PADDING_BOTTOM => '%spx'] as $property => $template) {
+            if (isset($layout[$property]) && 0 < $layout[$property]) {
+                $attributes->addStyle(
+                    str_replace('_', '-', $property),
+                    sprintf($template, $layout[$property])
+                );
+            }
+        }
     }
 
     /**

@@ -79,6 +79,68 @@ class ContainerController extends BaseController
     }
 
     /**
+     * Updates the container layout.
+     *
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function layoutAction(Request $request)
+    {
+        $container = $this->findContainerByRequest($request);
+
+        $data = $request->request->get('data', []);
+
+        try {
+            $this->getEditor()->getLayoutAdapter()->updateContainerLayout($container, $data);
+        } catch (EditorExceptionInterface $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        $this->validate($container);
+        $this->persist($container);
+
+        $data = [
+            'containers' => [$this->getViewBuilder()->buildContainer($container)]
+        ];
+
+        return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
+    }
+
+    /**
+     * Changes the container type.
+     *
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function changeTypeAction(Request $request)
+    {
+        $container = $this->findContainerByRequest($request);
+
+        $type = $request->request->get('type', null);
+
+        if ($type != $container->getType()) {
+            try {
+                $this->getEditor()->getContainerManager()->changeType($container, $type);
+            } catch (EditorExceptionInterface $e) {
+                throw new BadRequestHttpException($e->getMessage());
+            }
+
+            $this->validate($container);
+            $this->persist($container);
+        }
+
+        $data = [
+            'containers'  => [
+                $this->getViewBuilder()->buildContainer($container),
+            ],
+        ];
+
+        return $this->buildResponse($data, self::SERIALIZE_CONTENT);
+    }
+
+    /**
      * Remove the container.
      *
      * @param Request $request

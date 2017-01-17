@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Bundle\CmsBundle\Editor\Model\DataTrait;
+use Ekyna\Bundle\CmsBundle\Editor\Model as Editor;
 use Ekyna\Component\Resource\Model as RM;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use Ekyna\Bundle\CoreBundle\Model as Core;
@@ -16,7 +16,8 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  */
 class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
 {
-    use DataTrait,
+    use Editor\DataTrait,
+        Editor\LayoutTrait,
         RM\SortableTrait,
         RM\TimestampableTrait;
 
@@ -40,19 +41,9 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     protected $name;
 
     /**
-     * @var integer
-     */
-    protected $size = 12;
-
-    /**
      * @var string
      */
     protected $type;
-
-    /**
-     * @var array
-     */
-    protected $layout = [];
 
     /**
      * @var array
@@ -61,7 +52,7 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
 
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -69,7 +60,7 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setRow(Cms\RowInterface $row = null)
     {
@@ -79,7 +70,7 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRow()
     {
@@ -87,7 +78,7 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setName($name)
     {
@@ -97,7 +88,7 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {
@@ -105,7 +96,7 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setType($type)
     {
@@ -115,31 +106,11 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * Sets the layout.
-     *
-     * @param array $layout
-     */
-    public function setLayout(array $layout)
-    {
-        $this->layout = $layout;
-    }
-
-    /**
-     * Returns the layout.
-     *
-     * @return array
-     */
-    public function getLayout()
-    {
-        return $this->layout;
     }
 
     /**
@@ -165,7 +136,7 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      * @TODO remove as handled by plugins
      */
     public function isIndexable()
@@ -174,7 +145,7 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      * @TODO remove as handled by plugins
      */
     public function getIndexableContents()
@@ -183,7 +154,7 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      * @TODO remove as handled by plugins
      */
     public function getInitDatas()
@@ -192,7 +163,7 @@ class Block extends RM\AbstractTranslatable implements Cms\BlockInterface
             'id'   => $this->id,
             'row'  => intval($this->row),
             'name' => intval($this->name),
-            'size' => intval($this->size),
+            //'size' => intval($this->size),
             'type' => $this->getType(),
         ];
     }

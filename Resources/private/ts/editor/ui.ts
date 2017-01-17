@@ -14,19 +14,22 @@ let bs = Bootstrap;
 let s2 = Select2;
 
 import Dispatcher from './dispatcher';
+import SliderUIParams = JQueryUI.SliderUIParams;
 
 
 export class Util {
-    static addEditorParameterToUrl(url:string):string {
-        let anchor:HTMLAnchorElement = <HTMLAnchorElement>document.createElement('a');
+    static addEditorParameterToUrl(url: string): string {
+        let anchor: HTMLAnchorElement = <HTMLAnchorElement>document.createElement('a');
         anchor.href = url;
 
         // Parse search query string
-        let params:Backbone.ObjectHash = {},
-            seg:any = anchor.search.replace('?','').split('&'),
-            len:number = seg.length, i:number = 0, s:any;
-        for (;i<len;i++) {
-            if (!seg[i]) { continue; }
+        let params: Backbone.ObjectHash = {},
+            seg: any = anchor.search.replace('?', '').split('&'),
+            len: number = seg.length, i: number = 0, s: any;
+        for (; i < len; i++) {
+            if (!seg[i]) {
+                continue;
+            }
             s = seg[i].split('=');
             params[s[0]] = s[1];
         }
@@ -60,26 +63,45 @@ export interface OffsetInterface {
 /**
  * ControlConfig
  */
+const CONTROL_DEFAULTS: ControlConfig = {
+    name: null,
+    title: null,
+    disabled: false
+};
+
 interface ControlConfig extends Backbone.ObjectHash {
     name: string
     title: string
     disabled?: boolean
 }
 
-const CONTROL_DEFAULTS:ControlConfig = {
-    name: null,
-    title: null,
-    disabled: false
-};
+export interface ControlInterface {
+    getName():string
+    getValue():any
+    setValue(value: string, trigger?:boolean):void
+}
 
 /**
  * Control
  */
-abstract class Control extends Backbone.Model {
-    abstract createView():ControlView<Control>
+abstract class Control extends Backbone.Model implements ControlInterface {
+    abstract createView(): ControlView<Control>
 
-    defaults():ControlConfig {
-        return CONTROL_DEFAULTS;
+    static buildDefaults = function<T>(defaults?:any):T {
+        return <T>_.extend(CONTROL_DEFAULTS, {
+            key: (function (x: number) {
+                let s = "";
+                while (s.length < x && x > 0) {
+                    let r = Math.random();
+                    s += (r < 0.1 ? Math.floor(r * 100) : String.fromCharCode(Math.floor(r * 26) + (r > 0.5 ? 97 : 65)));
+                }
+                return s;
+            }(8))
+        }, defaults);
+    };
+
+    defaults(): ControlConfig {
+        return Control.buildDefaults<ControlConfig>();
     }
 
     validate(attributes: any, options?: any): any {
@@ -93,14 +115,26 @@ abstract class Control extends Backbone.Model {
         }
     }
 
-    enable():Control {
+    enable(): Control {
         this.set('disabled', false);
         return this;
     }
 
-    disable():Control {
+    disable(): Control {
         this.set('disabled', true);
         return this;
+    }
+
+    getName() {
+        return this.get('name');
+    }
+
+    getValue() {
+        return this.get('value');
+    }
+
+    setValue(value: string, trigger:boolean = false):void {
+        this.set('value', value);
     }
 }
 
@@ -139,15 +173,15 @@ export interface ButtonConfig extends ControlConfig {
  * Button
  */
 export class Button extends Control {
-    createView():ControlView<Button> {
+    createView(): ControlView<Button> {
         if (0 < this.get('choices').length) {
             return new ButtonDropdownView({model: this});
         }
         return new ButtonView({model: this});
     }
 
-    defaults():ButtonConfig {
-        return _.extend(CONTROL_DEFAULTS, {
+    defaults(): ButtonConfig {
+        return Control.buildDefaults<ButtonConfig>({
             size: 'sm',
             theme: 'default',
             icon: null,
@@ -171,22 +205,22 @@ export class Button extends Control {
         }
     }
 
-    activate():Button {
+    activate(): Button {
         this.set('active', true);
         return this;
     }
 
-    deactivate():Button {
+    deactivate(): Button {
         this.set('active', false);
         return this;
     }
 
-    startSpinning():Button {
+    startSpinning(): Button {
         this.set('spinning', true);
         return this;
     }
 
-    stopSpinning():Button {
+    stopSpinning(): Button {
         this.set('spinning', false);
         return this;
     }
@@ -196,15 +230,15 @@ export class Button extends Control {
  * ButtonView
  */
 export class ButtonView extends ControlView<Button> {
-    template:(data:ButtonConfig) => string;
+    template: (data: ButtonConfig) => string;
 
-    events():Backbone.EventsHash {
+    events(): Backbone.EventsHash {
         return {
             'click': 'onClick'
         }
     }
 
-    constructor(options?:Backbone.ViewOptions<Button>) {
+    constructor(options?: Backbone.ViewOptions<Button>) {
         options.tagName = 'span';
         options.attributes = {
             'class': 'input-group-btn'
@@ -222,11 +256,13 @@ export class ButtonView extends ControlView<Button> {
         this.listenTo(this.model, 'change', this.render);
     }
 
-    onClick(e:JQueryEventObject):void {
+    onClick(e: JQueryEventObject): void {
         e.preventDefault();
 
-        let dispatch = () => { Dispatcher.trigger(this.model.get('event'), this.model);},
-            message:string = this.model.get('confirm');
+        let dispatch = () => {
+                Dispatcher.trigger(this.model.get('event'), this.model, e);
+            },
+            message: string = this.model.get('confirm');
         if (message && 0 < message.length) {
             if (confirm(message)) {
                 dispatch();
@@ -236,7 +272,7 @@ export class ButtonView extends ControlView<Button> {
         }
     }
 
-    render():ButtonView {
+    render(): ButtonView {
         this.$el.html(this.template(this.model.attributes));
 
         this.$('button')
@@ -255,15 +291,15 @@ export class ButtonView extends ControlView<Button> {
  * ButtonDropdownView
  */
 export class ButtonDropdownView extends ControlView<Button> {
-    template:(data:ButtonConfig) => string;
+    template: (data: ButtonConfig) => string;
 
-    events():Backbone.EventsHash {
+    events(): Backbone.EventsHash {
         return {
             'click li a': 'onClick'
         }
     }
 
-    constructor(options?:Backbone.ViewOptions<Button>) {
+    constructor(options?: Backbone.ViewOptions<Button>) {
         options.tagName = 'span';
         options.attributes = {
             'class': 'input-group-btn'
@@ -282,12 +318,12 @@ export class ButtonDropdownView extends ControlView<Button> {
         this.listenTo(this.model, 'change', this.render);
     }
 
-    onClick(e:JQueryEventObject):void {
+    onClick(e: JQueryEventObject): void {
         e.preventDefault();
 
         let $target = $(e.target).closest('a');
 
-        let choice:ButtonChoiceConfig = _.findWhere(
+        let choice: ButtonChoiceConfig = _.findWhere(
             (<Array<ButtonChoiceConfig>>this.model.get('choices')),
             {name: $target.data('choice')}
         );
@@ -295,8 +331,10 @@ export class ButtonDropdownView extends ControlView<Button> {
             throw 'Choice not found';
         }
 
-        let dispatch = () => { Dispatcher.trigger(this.model.get('event'), this.model, choice); },
-            message:string = choice.confirm;
+        let dispatch = () => {
+                Dispatcher.trigger(this.model.get('event'), this.model, choice);
+            },
+            message: string = choice.confirm;
         if (message && 0 < message.length) {
             if (confirm(message)) {
                 dispatch();
@@ -307,7 +345,7 @@ export class ButtonDropdownView extends ControlView<Button> {
 
     }
 
-    render():ButtonView {
+    render(): ButtonView {
         this.$el.html(this.template(this.model.attributes));
 
         this.$('button')
@@ -316,15 +354,125 @@ export class ButtonDropdownView extends ControlView<Button> {
             .toggleClass('rotate', this.model.get('rotate'))
             .find('span').toggleClass('fa-spin', this.model.get('spinning'));
 
-        let $ul:JQuery = this.$('ul');
+        let $ul: JQuery = this.$('ul');
 
-        this.model.get('choices').forEach(function(choice:ButtonChoiceConfig) {
+        this.model.get('choices').forEach(function (choice: ButtonChoiceConfig) {
             let $a = $('<a></a>')
                 .attr('href', 'javascript:void(0)')
                 .data('choice', choice.name)
                 .text(choice.title)
                 .appendTo($ul);
             $('<li></li>').append($a).appendTo($ul);
+        });
+
+        Dispatcher.trigger('ui.control.render', this);
+
+        return this;
+    }
+}
+
+
+/**
+ * SliderConfig
+ */
+interface SliderConfig extends ControlConfig {
+    value: string
+    event: string
+    min: number
+    max: number
+}
+
+export class Slider extends Control {
+    defaults(): SliderConfig {
+        return Control.buildDefaults<SliderConfig>({
+            value: 1,
+            min: 1,
+            max: 12,
+        });
+    }
+
+    initialize(attributes?: SliderConfig, options?: any): void {
+
+    }
+
+    createView(): SliderView {
+        return new SliderView({model: this});
+    }
+
+    validate(attributes: any, options?: any): any {
+        super.validate(attributes, options);
+
+        attributes = attributes || this.attributes;
+
+        if (0 == String(attributes.event).length) {
+            throw 'Slider.event is mandatory';
+        }
+    }
+
+    setValue(value: string, trigger:boolean = false) {
+        this.set('value', value);
+
+        if (trigger) {
+            Dispatcher.trigger(this.get('event'), this);
+        }
+    }
+}
+
+export class SliderView extends ControlView<Slider> {
+    template: (data: SliderConfig) => string;
+
+    events(): Backbone.EventsHash {
+        return {
+            'change input': 'onInputChange'
+        }
+    }
+
+    constructor(options?: Backbone.ViewOptions<Slider>) {
+        options.tagName = 'span';
+        options.attributes = {
+            'class': 'input-group-slider'
+        };
+
+        super(options);
+
+        this.template = _.template(`
+            <label for="<%= key %>-input"><%= title %></label>
+            <input id="<%= key %>-input" name="<%= name %>" value="<%= value %>" 
+                   type="number" min="<%= min %>" max="<%= max %>">
+            <div>
+              <div id="<%= key %>-slider" class="slider"></div>
+            </div>
+        `);
+
+        this.listenTo(this.model, 'change', this.onModelChange);
+    }
+
+    onModelChange(): void {
+        this.$('.slider').slider({value: this.model.getValue()});
+    }
+
+    onInputChange(e: JQueryEventObject): void {
+        e.preventDefault();
+
+        this.model.setValue(this.$('input').val(), true);
+    }
+
+    render(): SliderView {
+        this.$el.html(this.template(this.model.attributes));
+
+        let $input:JQuery = this.$('input');
+
+        this.$('.slider').slider({
+            value: this.model.get('value'),
+            min: this.model.get('min'),
+            max: this.model.get('max'),
+            step: 1,
+            slide: (event: Event, ui: SliderUIParams) => {
+                $input.val(ui.value);
+            },
+            stop: () => {
+                $input.trigger('change');
+            }
         });
 
         Dispatcher.trigger('ui.control.render', this);
@@ -354,21 +502,21 @@ interface SelectConfig extends ControlConfig {
 }
 
 export class Select extends Control {
-    defaults():SelectConfig {
-        return _.extend(CONTROL_DEFAULTS, {
+    defaults(): SelectConfig {
+        return Control.buildDefaults<SelectConfig>({
             width: null,
             value: null,
             choices: [],
         });
     }
 
-    initialize(attributes?: SelectConfig, options?: any):void {
+    initialize(attributes?: SelectConfig, options?: any): void {
         if (attributes.choices.length) {
             this.setChoices(attributes.choices);
         }
     }
 
-    createView():SelectView {
+    createView(): SelectView {
         return new SelectView({model: this});
     }
 
@@ -382,7 +530,9 @@ export class Select extends Control {
         }
     }
 
-    setChoices(choices:Array<SelectChoiceConfig>):Select {
+    setChoices(choices: Array<SelectChoiceConfig>): Select {
+        this.set('choices', choices);
+
         if (choices.length) {
             let activeChoice = (<SelectChoiceConfig>_.findWhere(choices, {active: true}));
             if (activeChoice) {
@@ -398,34 +548,20 @@ export class Select extends Control {
             }
         }
 
-        this.set('choices', choices);
-
         return this;
     }
 
-    getActiveChoice():SelectChoiceConfig {
+    getActiveChoice(): SelectChoiceConfig {
         return (<SelectChoiceConfig>_.findWhere(this.get('choices'), {active: true}));
     }
 
-    private setValue(value:string):Select {
-        if (value != this.getValue()) {
-            this.set('value', value);
-        }
-        return this;
-    }
-
-    getValue():string {
-        return this.get('value');
-    }
-
-    // TODO don't return bool
-    select(value:string):boolean {
-        if (value == this.get('value')) {
-            return false;
+    setValue(value: string, trigger: boolean = false):void {
+        if (value == this.getValue()) {
+            return;
         }
 
-        let choice:SelectChoiceConfig;
-        this.get('choices').forEach(function(c:SelectChoiceConfig) {
+        let choice: SelectChoiceConfig;
+        this.get('choices').forEach(function (c: SelectChoiceConfig) {
             if (c.value == value) {
                 c.active = true;
                 choice = c;
@@ -439,20 +575,26 @@ export class Select extends Control {
 
         this.set('value', value);
 
-        return true;
+        if (trigger) {
+            Dispatcher.trigger(this.get('event'), this);
+        }
+    }
+
+    select(value:string) {
+        this.setValue(value);
     }
 }
 
 export class SelectView extends ControlView<Select> {
-    template:(data:SelectConfig) => string;
+    template: (data: SelectConfig) => string;
 
-    events():Backbone.EventsHash {
+    events(): Backbone.EventsHash {
         return {
             'change select': 'onSelectChange'
         }
     }
 
-    constructor(options?:Backbone.ViewOptions<Select>) {
+    constructor(options?: Backbone.ViewOptions<Select>) {
         options.tagName = 'span';
         options.attributes = {
             'class': 'input-group-select'
@@ -465,15 +607,13 @@ export class SelectView extends ControlView<Select> {
         this.listenTo(this.model, 'change', this.render);
     }
 
-    onSelectChange(e:JQueryEventObject):void {
+    onSelectChange(e: JQueryEventObject): void {
         e.preventDefault();
 
-        this.model.select(this.$('select').val());
-
-        Dispatcher.trigger(this.model.get('event'), this.model);
+        this.model.setValue(this.$('select').val(), true);
     }
 
-    render():SelectView {
+    render(): SelectView {
         this.$el.html(this.template(this.model.attributes));
 
         let $select = this.$('select')
@@ -484,7 +624,7 @@ export class SelectView extends ControlView<Select> {
             $select.removeAttr('style').css({'width': width});
         }
 
-        this.model.get('choices').forEach(function(choice:SelectChoiceConfig) {
+        this.model.get('choices').forEach(function (choice: SelectChoiceConfig) {
             $('<option></option>')
                 .attr('value', choice.value)
                 .prop('selected', choice.active)
@@ -503,7 +643,7 @@ export class SelectView extends ControlView<Select> {
  * ControlGroup
  */
 export class ControlGroup extends Backbone.Model {
-    defaults():Backbone.ObjectHash {
+    defaults(): Backbone.ObjectHash {
         return {
             name: null,
             controls: new Backbone.Collection<Control>()
@@ -515,7 +655,7 @@ export class ControlGroup extends Backbone.Model {
      * @param control
      * @returns ControlGroup
      */
-    addControl(control:Control):ControlGroup {
+    addControl(control: Control): ControlGroup {
         this.get('controls').add(control);
 
         return this;
@@ -526,7 +666,7 @@ export class ControlGroup extends Backbone.Model {
      * @param name
      * @returns Control
      */
-    getControl(name:string):Control {
+    getControl(name: string): Control {
         return this.get('controls').findWhere({name: name});
     }
 }
@@ -535,9 +675,9 @@ export class ControlGroup extends Backbone.Model {
  * ControlGroupView
  */
 export class ControlGroupView extends Backbone.View<ControlGroup> {
-    private subViews:Array<ControlView<Control>>;
+    private subViews: Array<ControlView<Control>>;
 
-    constructor(options?:Backbone.ViewOptions<ControlGroup>) {
+    constructor(options?: Backbone.ViewOptions<ControlGroup>) {
         options.tagName = 'div';
         options.attributes = {
             'class': 'input-group'
@@ -550,14 +690,14 @@ export class ControlGroupView extends Backbone.View<ControlGroup> {
         this.listenTo(this.model, 'add remove', this.render);
     }
 
-    private clear():void {
-        this.subViews.forEach((view:ControlView<Control>) => view.remove());
+    private clear(): void {
+        this.subViews.forEach((view: ControlView<Control>) => view.remove());
     }
 
-    render():ControlGroupView {
+    render(): ControlGroupView {
         this.clear();
 
-        this.model.get('controls').each((control:Control) => {
+        this.model.get('controls').each((control: Control) => {
             let view = control.createView();
             this.$el.append(view.render().$el);
             this.subViews.push(view);
@@ -566,7 +706,7 @@ export class ControlGroupView extends Backbone.View<ControlGroup> {
         return this;
     }
 
-    remove():ControlGroupView {
+    remove(): ControlGroupView {
         this.clear();
 
         super.remove();
@@ -575,17 +715,30 @@ export class ControlGroupView extends Backbone.View<ControlGroup> {
     }
 }
 
+interface ToolbarData extends Backbone.ObjectHash {
+    id: string,
+    name: string,
+    classes: Array<string>,
+    origin: OffsetInterface
+    groups: Backbone.Collection<ControlGroup>
+}
+
 /**
  * Toolbar
  */
 export class Toolbar extends Backbone.Model {
-    defaults():Backbone.ObjectHash {
+    defaults(): ToolbarData {
         return {
             id: null,
+            name: null,
             classes: ['vertical'],
             origin: <OffsetInterface>{top: 0, left: 0},
             groups: new Backbone.Collection<ControlGroup>()
         }
+    }
+
+    getName():string {
+        return this.get('name');
     }
 
     /**
@@ -593,10 +746,10 @@ export class Toolbar extends Backbone.Model {
      * @param groupName
      * @returns boolean
      */
-    hasGroup(groupName:string) {
-        return -1 < this.get('groups').findIndex(function(group:ControlGroup) {
-            return group.get('name') === groupName;
-        });
+    hasGroup(groupName: string) {
+        return -1 < this.get('groups').findIndex(function (group: ControlGroup) {
+                return group.get('name') === groupName;
+            });
     }
 
     /**
@@ -604,7 +757,7 @@ export class Toolbar extends Backbone.Model {
      * @param group
      * @returns Toolbar
      */
-    addGroup(group:ControlGroup):Toolbar {
+    addGroup(group: ControlGroup): Toolbar {
         this.get('groups').add(group);
         return this;
     }
@@ -614,7 +767,7 @@ export class Toolbar extends Backbone.Model {
      * @param name
      * @returns ControlGroup
      */
-    getGroup(name:string):ControlGroup {
+    getGroup(name: string): ControlGroup {
         return this.get('groups').findWhere({name: name});
     }
 
@@ -624,7 +777,7 @@ export class Toolbar extends Backbone.Model {
      * @param control
      * @returns Toolbar
      */
-    addControl(groupName:string, control:Control):Toolbar {
+    addControl(groupName: string, control: Control): Toolbar {
         if (!this.hasGroup(groupName)) {
             this.addGroup(new ControlGroup({name: groupName}));
         }
@@ -639,7 +792,10 @@ export class Toolbar extends Backbone.Model {
      * @param controlName
      * @returns Control|null
      */
-    getControl(groupName:string, controlName:string):Control {
+    getControl(groupName: string, controlName: string): Control {
+        if (!this.hasGroup(groupName)) {
+            return null;
+        }
         return this.getGroup(groupName).getControl(controlName);
     }
 }
@@ -648,9 +804,9 @@ export class Toolbar extends Backbone.Model {
  * ToolbarView
  */
 export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
-    private subViews:Array<ControlGroupView>;
+    private subViews: Array<ControlGroupView>;
 
-    constructor(options?:Backbone.ViewOptions<T>) {
+    constructor(options?: Backbone.ViewOptions<T>) {
         options.tagName = 'div';
         options.attributes = {
             'class': 'editor-toolbar ' + options.model.get('classes').join(' ')
@@ -664,12 +820,12 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
         this.subViews = [];
     }
 
-    private clear():void {
-        this.subViews.forEach((view:ControlGroupView) => view.remove());
+    private clear(): void {
+        this.subViews.forEach((view: ControlGroupView) => view.remove());
     }
 
-    protected position(origin: OffsetInterface):void {
-        let position:any = {};
+    protected position(origin: OffsetInterface): void {
+        let position: any = {};
         if (origin.left > (window.innerWidth / 2)) {
             this.$el.addClass('right').removeClass('left');
             position.right = window.innerWidth - origin.left;
@@ -687,7 +843,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
         this.$el.removeAttr('style').css(position);
     }
 
-    applyOriginOffset(origin: OffsetInterface):ToolbarView<T> {
+    applyOriginOffset(origin: OffsetInterface): ToolbarView<T> {
         this.position({
             top: origin.top + this.model.get('origin').top,
             left: origin.left + this.model.get('origin').left,
@@ -696,10 +852,10 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
         return this;
     }
 
-    render():ToolbarView<T> {
+    render(): ToolbarView<T> {
         this.clear();
 
-        this.model.get('groups').each((group:ControlGroup) => {
+        this.model.get('groups').each((group: ControlGroup) => {
             let view = new ControlGroupView({
                 model: group
             });
@@ -712,14 +868,14 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
         return this.postRender();
     }
 
-    postRender():ToolbarView<T> {
+    postRender(): ToolbarView<T> {
         this.$('.dropdown-toggle').dropdown();
         this.$('select').select2({width: "resolve"});
 
         return this;
     }
 
-    remove():ToolbarView<T> {
+    remove(): ToolbarView<T> {
         this.clear();
 
         super.remove();

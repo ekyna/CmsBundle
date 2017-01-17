@@ -53,6 +53,35 @@ class BlockController extends BaseController
     }
 
     /**
+     * Updates the block layout.
+     *
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function layoutAction(Request $request)
+    {
+        $block = $this->findBlockByRequest($request);
+
+        $data = $request->request->get('data', []);
+
+        try {
+            $this->getEditor()->getLayoutAdapter()->updateBlockLayout($block, $data);
+        } catch (EditorExceptionInterface $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        $this->validate($block);
+        $this->persist($block);
+
+        $data = [
+            'blocks' => [$this->getViewBuilder()->buildBlock($block)]
+        ];
+
+        return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
+    }
+
+    /**
      * Changes the block type.
      *
      * @param Request $request
@@ -62,22 +91,23 @@ class BlockController extends BaseController
     public function changeTypeAction(Request $request)
     {
         $block = $this->findBlockByRequest($request);
-
-        $removed = [];
-        foreach ($this->getViewBuilder()->buildBlock($block)->widgets as $widget) {
-            $removed[] = $widget->getAttributes()->getId();
-        }
-
         $type = $request->request->get('type', null);
+        $removed = [];
 
-        try {
-            $this->getEditor()->getBlockManager()->changeType($block, $type);
-        } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+        if ($type != $block->getType()) {
+            foreach ($this->getViewBuilder()->buildBlock($block)->widgets as $widget) {
+                $removed[] = $widget->getAttributes()->getId();
+            }
+
+            try {
+                $this->getEditor()->getBlockManager()->changeType($block, $type);
+            } catch (EditorExceptionInterface $e) {
+                throw new BadRequestHttpException($e->getMessage());
+            }
+
+            $this->validate($block);
+            $this->persist($block);
         }
-
-        $this->validate($block);
-        $this->persist($block);
 
         $data = [
             'removed' => $removed,

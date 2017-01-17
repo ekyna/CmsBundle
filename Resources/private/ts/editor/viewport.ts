@@ -155,10 +155,10 @@ export class ViewportView extends Backbone.View<ViewportModel> {
                 right: 0
             };
 
-        if (size) {
-            let window_width: number = window.innerWidth,
-                window_height: number = window.innerHeight;
+        let window_width: number = window.innerWidth,
+            window_height: number = window.innerHeight;
 
+        if (size) {
             if (window_height - 50 >= size.height) {
                 origin.top = css.top = (window_height / 2 - size.height / 2) + 25;
                 css.bottom = (window_height / 2 - size.height / 2) - 25;
@@ -178,6 +178,11 @@ export class ViewportView extends Backbone.View<ViewportModel> {
                 css.marginLeft = 50;
                 css.marginRight = 50;
                 origin.left = css.left + css.marginLeft;
+            }
+        } else {
+            size = {
+                width: window_width,
+                height: window_height,
             }
         }
 

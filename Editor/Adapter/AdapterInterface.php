@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Adapter;
 
 use Ekyna\Bundle\CmsBundle\Editor\EditorAwareInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
 use Ekyna\Bundle\CmsBundle\Editor\View;
 use Ekyna\Bundle\CmsBundle\Model;
 
@@ -13,6 +14,13 @@ use Ekyna\Bundle\CmsBundle\Model;
  */
 interface AdapterInterface extends EditorAwareInterface
 {
+    const SIZE           = 'size';
+    const ORDER          = 'order';
+    const OFFSET         = 'offset';
+    const PADDING_TOP    = 'padding_top';
+    const PADDING_BOTTOM = 'padding_bottom';
+
+
     /**
      * Builds the content view.
      *
@@ -44,6 +52,36 @@ interface AdapterInterface extends EditorAwareInterface
      * @param View\BlockView       $view
      */
     public function buildBlock(Model\BlockInterface $block, View\BlockView $view);
+
+    /**
+     * Updates the container layout.
+     *
+     * @param Model\ContainerInterface $container
+     * @param array                    $data // TODO Or Request ?
+     *
+     * @throws EditorExceptionInterface
+     */
+    public function updateContainerLayout(Model\ContainerInterface $container, array $data);
+
+    /**
+     * Updates the row layout.
+     *
+     * @param Model\RowInterface $row
+     * @param array              $data // TODO Or Request ?
+     *
+     * @throws EditorExceptionInterface
+     */
+    public function updateRowLayout(Model\RowInterface $row, array $data);
+
+    /**
+     * Updates the block layout.
+     *
+     * @param Model\BlockInterface $block
+     * @param array                $data // TODO Or Request ?
+     *
+     * @throws EditorExceptionInterface
+     */
+    public function updateBlockLayout(Model\BlockInterface $block, array $data);
 
     /**
      * Expands the block.
