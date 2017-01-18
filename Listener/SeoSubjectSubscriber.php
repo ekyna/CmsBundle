@@ -57,7 +57,7 @@ class SeoSubjectSubscriber implements EventSubscriber
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getSubscribedEvents()
     {

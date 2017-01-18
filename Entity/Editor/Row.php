@@ -1,21 +1,19 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Entity;
+namespace Ekyna\Bundle\CmsBundle\Entity\Editor;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Editor\Model\LayoutTrait;
 use Ekyna\Component\Resource\Model as RM;
-use Ekyna\Bundle\CmsBundle\Model as Cms;
-use Ekyna\Bundle\CoreBundle\Model as Core;
+use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 
 /**
  * Class Row
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class Row implements Cms\RowInterface
+class Row implements EM\RowInterface
 {
-    use LayoutTrait,
+    use EM\LayoutTrait,
         RM\SortableTrait,
         RM\TimestampableTrait;
 
@@ -29,7 +27,7 @@ class Row implements Cms\RowInterface
     protected $id;
 
     /**
-     * @var Cms\ContainerInterface
+     * @var EM\ContainerInterface
      */
     protected $container;
 
@@ -39,7 +37,7 @@ class Row implements Cms\RowInterface
     protected $name;
 
     /**
-     * @var ArrayCollection|Cms\BlockInterface[]
+     * @var ArrayCollection|EM\BlockInterface[]
      */
     protected $blocks;
 
@@ -54,7 +52,7 @@ class Row implements Cms\RowInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -62,9 +60,9 @@ class Row implements Cms\RowInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function setContainer(Cms\ContainerInterface $container = null)
+    public function setContainer(EM\ContainerInterface $container = null)
     {
         $this->container = $container;
 
@@ -72,7 +70,7 @@ class Row implements Cms\RowInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getContainer()
     {
@@ -80,7 +78,7 @@ class Row implements Cms\RowInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setName($name)
     {
@@ -90,7 +88,7 @@ class Row implements Cms\RowInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {
@@ -98,7 +96,7 @@ class Row implements Cms\RowInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setBlocks(ArrayCollection $blocks)
     {
@@ -110,9 +108,9 @@ class Row implements Cms\RowInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function addBlock(Cms\BlockInterface $block)
+    public function addBlock(EM\BlockInterface $block)
     {
         $block->setRow($this);
         $this->blocks->add($block);
@@ -121,9 +119,9 @@ class Row implements Cms\RowInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function removeBlock(Cms\BlockInterface $block)
+    public function removeBlock(EM\BlockInterface $block)
     {
         $block->setRow(null);
         $this->blocks->removeElement($block);
@@ -132,11 +130,51 @@ class Row implements Cms\RowInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getBlocks()
     {
         return $this->blocks;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isFirst()
+    {
+        return 0 == $this->position;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isLast()
+    {
+        if (null !== $this->container && ($this->container->getRows()->count() - 1 > $this->position)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isAlone()
+    {
+        if (null === $this->container) {
+            return true;
+        }
+
+        return 1 >= $this->container->getRows()->count();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isNamed()
+    {
+        return 0 < strlen($this->name);
     }
 
     /**
@@ -152,7 +190,7 @@ class Row implements Cms\RowInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getEntityTagPrefix()
     {

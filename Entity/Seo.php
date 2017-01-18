@@ -71,7 +71,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -79,7 +79,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setTitle($title)
     {
@@ -89,7 +89,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getTitle()
     {
@@ -97,7 +97,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setDescription($description)
     {
@@ -107,7 +107,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getDescription()
     {
@@ -115,7 +115,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setChangefreq($changefreq)
     {
@@ -125,7 +125,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getChangefreq()
     {
@@ -133,7 +133,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setPriority($priority)
     {
@@ -143,7 +143,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getPriority()
     {
@@ -151,7 +151,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getFollow()
     {
@@ -159,7 +159,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setFollow($follow)
     {
@@ -169,7 +169,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getIndex()
     {
@@ -177,7 +177,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setIndex($index)
     {
@@ -187,7 +187,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getCanonical()
     {
@@ -195,7 +195,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setCanonical($canonical)
     {
@@ -205,7 +205,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public static function getChangefreqs()
     {
@@ -223,7 +223,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getEntityTagPrefix()
     {

@@ -7,7 +7,7 @@
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <mapped-superclass
-            name="Ekyna\Bundle\CmsBundle\Entity\Content"
+            name="Ekyna\Bundle\CmsBundle\Entity\Editor\Content"
             table="cms_content">
 
         <indexes>
@@ -31,7 +31,7 @@
             <gedmo:timestampable on="update"/>
         </field>
 
-        <one-to-many field="containers" target-entity="Ekyna\Bundle\CmsBundle\Model\ContainerInterface" mapped-by="content"
+        <one-to-many field="containers" target-entity="Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface" mapped-by="content"
                      orphan-removal="true">
             <cascade>
                 <cascade-all/>

@@ -1,8 +1,7 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Model;
+namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
-use Ekyna\Bundle\CmsBundle\Editor\Model as Editor;
 use Ekyna\Bundle\CoreBundle\Model as Core;
 use Ekyna\Component\Resource\Model as RM;
 
@@ -14,8 +13,8 @@ use Ekyna\Component\Resource\Model as RM;
  * @method BlockTranslationInterface translate($locale = null, $create = false)
  */
 interface BlockInterface
-    extends Editor\DataInterface,
-            Editor\LayoutInterface,
+    extends DataInterface,
+            LayoutInterface,
             RM\TranslatableInterface,
             RM\SortableInterface,
             RM\TimestampableInterface,
@@ -84,26 +83,30 @@ interface BlockInterface
     public function getLayout();
 
     /**
-     * Returns the init datas for JS editor.
+     * Returns whether or not the block is the first of the row.
      *
-     * @return array
-     * @TODO remove as handled by plugins
+     * @return boolean
      */
-    public function getInitDatas();
+    public function isFirst();
 
     /**
-     * Returns whether the exhibitor should be indexed or not by elasticsearch.
+     * Returns whether or not the block is the last of the row.
      *
-     * @return bool
-     * @TODO remove as handled by plugins
+     * @return boolean
      */
-    public function isIndexable();
+    public function isLast();
 
     /**
-     * Returns the indexable contents indexed by locales.
+     * Returns whether or not the block is the only row's child.
      *
-     * @return array
-     * @TODO remove as handled by plugins
+     * @return boolean
      */
-    public function getIndexableContents();
+    public function isAlone();
+
+    /**
+     * Returns whether or not the block is named.
+     *
+     * @return boolean
+     */
+    public function isNamed();
 }

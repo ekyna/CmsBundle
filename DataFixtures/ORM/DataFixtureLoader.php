@@ -13,7 +13,7 @@ use Nelmio\Alice\Fixtures;
 abstract class DataFixtureLoader extends BaseLoader
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function getProcessors()
     {

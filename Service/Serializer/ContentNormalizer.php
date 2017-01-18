@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Service\Serializer;
 
-use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface;
 use Ekyna\Component\Resource\Serializer\AbstractTranslatableNormalizer;
 
 /**
@@ -19,7 +19,7 @@ class ContentNormalizer extends AbstractTranslatableNormalizer
     {
         $data = parent::normalize($content, $format, $context);
 
-        /** @var Model\ContentInterface $content */
+        /** @var ContentInterface $content */
 
         $groups = isset($context['groups']) ? (array)$context['groups'] : [];
 
@@ -46,7 +46,7 @@ class ContentNormalizer extends AbstractTranslatableNormalizer
      */
     public function supportsNormalization($data, $format = null)
     {
-        return $data instanceof Model\ContentInterface;
+        return $data instanceof ContentInterface;
     }
 
     /**
@@ -54,6 +54,6 @@ class ContentNormalizer extends AbstractTranslatableNormalizer
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return class_exists($type) && is_subclass_of($type, Model\ContentInterface::class);
+        return class_exists($type) && is_subclass_of($type, ContentInterface::class);
     }
 }

@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry;
-use Ekyna\Bundle\CmsBundle\Model\ContainerInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -32,7 +32,7 @@ class ContainerValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function validate($container, Constraint $constraint)
     {

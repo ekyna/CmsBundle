@@ -1,18 +1,17 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Entity;
+namespace Ekyna\Bundle\CmsBundle\Entity\Editor;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Component\Resource\Model as RM;
-use Ekyna\Bundle\CmsBundle\Model as Cms;
-use Ekyna\Bundle\CoreBundle\Model as Core;
 
 /**
  * Class Content
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class Content implements Cms\ContentInterface
+class Content implements EM\ContentInterface
 {
     use RM\TimestampableTrait,
         RM\TaggedEntityTrait;
@@ -28,7 +27,7 @@ class Content implements Cms\ContentInterface
     protected $name;
 
     /**
-     * @var ArrayCollection|Cms\ContainerInterface[]
+     * @var ArrayCollection|EM\ContainerInterface[]
      */
     protected $containers;
 
@@ -42,7 +41,7 @@ class Content implements Cms\ContentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -68,7 +67,7 @@ class Content implements Cms\ContentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setContainers(ArrayCollection $containers)
     {
@@ -80,9 +79,9 @@ class Content implements Cms\ContentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function addContainer(Cms\ContainerInterface $container)
+    public function addContainer(EM\ContainerInterface $container)
     {
         $container->setContent($this);
         $this->containers->add($container);
@@ -91,9 +90,9 @@ class Content implements Cms\ContentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function removeContainer(Cms\ContainerInterface $container)
+    public function removeContainer(EM\ContainerInterface $container)
     {
         $container->setContent(null);
         $this->containers->removeElement($container);
@@ -102,7 +101,7 @@ class Content implements Cms\ContentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getContainers()
     {
@@ -110,29 +109,15 @@ class Content implements Cms\ContentInterface
     }
 
     /**
-     * {@inheritdoc}
-     * @TODO remove as handled by plugins
+     * @inheritdoc
      */
-    public function getIndexableContents()
+    public function isNamed()
     {
-        $contents = [];
-
-        /* TODO foreach ($this->blocks as $block) {
-            if ($block->isIndexable()) {
-                foreach ($block->getIndexableContents() as $locale => $content) {
-                    if (!array_key_exists($locale, $contents)) {
-                        $contents[$locale] = array('content' => '');
-                    }
-                    $contents[$locale]['content'] .= $content;
-                }
-            }
-        }*/
-
-        return $contents;
+        return 0 < strlen($this->name);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getEntityTagPrefix()
     {

@@ -5,9 +5,10 @@ namespace Ekyna\Bundle\CmsBundle\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter;
 use Ekyna\Bundle\CmsBundle\Editor\Repository\RepositoryInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
-use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Model as CM;
 use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -327,9 +328,9 @@ class Editor
     /**
      * Creates a default content for the given subject.
      *
-     * @param string|Model\ContentSubjectInterface $subjectOrName
+     * @param string|CM\ContentSubjectInterface $subjectOrName
      *
-     * @return Model\ContentInterface
+     * @return EM\ContentInterface
      */
     public function createDefaultContent($subjectOrName)
     {
@@ -339,13 +340,13 @@ class Editor
     /**
      * Creates a default container.
      *
-     * @param string                 $type
-     * @param array                  $data
-     * @param Model\ContentInterface $content
+     * @param string              $type
+     * @param array               $data
+     * @param EM\ContentInterface $content
      *
-     * @return Model\ContainerInterface
+     * @return EM\ContainerInterface
      */
-    public function createDefaultContainer($type = null, array $data = [], Model\ContentInterface $content = null)
+    public function createDefaultContainer($type = null, array $data = [], EM\ContentInterface $content = null)
     {
         return $this->getContainerManager()->create($content, $type, $data);
     }
@@ -353,12 +354,12 @@ class Editor
     /**
      * Creates a default row.
      *
-     * @param array                    $data
-     * @param Model\ContainerInterface $container
+     * @param array                 $data
+     * @param EM\ContainerInterface $container
      *
-     * @return Model\RowInterface
+     * @return EM\RowInterface
      */
-    public function createDefaultRow(array $data = [], Model\ContainerInterface $container = null)
+    public function createDefaultRow(array $data = [], EM\ContainerInterface $container = null)
     {
         return $this->getRowManager()->create($container, $data);
     }
@@ -366,13 +367,13 @@ class Editor
     /**
      * Creates a default block.
      *
-     * @param string             $type
-     * @param array              $data
-     * @param Model\RowInterface $row
+     * @param string          $type
+     * @param array           $data
+     * @param EM\RowInterface $row
      *
-     * @return Model\BlockInterface
+     * @return EM\BlockInterface
      */
-    public function createDefaultBlock($type = null, array $data = [], Model\RowInterface $row = null)
+    public function createDefaultBlock($type = null, array $data = [], EM\RowInterface $row = null)
     {
         return $this->getBlockManager()->create($row, $type, $data);
     }

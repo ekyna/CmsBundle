@@ -3,6 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle;
 
 use Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler as Pass;
+use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
+use Ekyna\Bundle\CmsBundle\Model as CM;
 use Ekyna\Bundle\CoreBundle\AbstractBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -14,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class EkynaCmsBundle extends AbstractBundle
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function build(ContainerBuilder $container)
     {
@@ -26,19 +28,19 @@ class EkynaCmsBundle extends AbstractBundle
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function getModelInterfaces()
     {
         return [
-            'Ekyna\Bundle\CmsBundle\Model\SeoInterface'  => 'ekyna_cms.seo.class',
-            'Ekyna\Bundle\CmsBundle\Model\PageInterface' => 'ekyna_cms.page.class',
-            'Ekyna\Bundle\CmsBundle\Model\MenuInterface' => 'ekyna_cms.menu.class',
+            CM\SeoInterface::class  => 'ekyna_cms.seo.class',
+            CM\PageInterface::class => 'ekyna_cms.page.class',
+            CM\MenuInterface::class => 'ekyna_cms.menu.class',
 
-            'Ekyna\Bundle\CmsBundle\Model\BlockInterface'     => 'ekyna_cms.block.class',
-            'Ekyna\Bundle\CmsBundle\Model\ContainerInterface' => 'ekyna_cms.container.class',
-            'Ekyna\Bundle\CmsBundle\Model\ContentInterface'   => 'ekyna_cms.content.class',
-            'Ekyna\Bundle\CmsBundle\Model\RowInterface'       => 'ekyna_cms.row.class',
+            EM\BlockInterface::class     => 'ekyna_cms.block.class',
+            EM\ContainerInterface::class => 'ekyna_cms.container.class',
+            EM\ContentInterface::class   => 'ekyna_cms.content.class',
+            EM\RowInterface::class       => 'ekyna_cms.row.class',
         ];
     }
 }

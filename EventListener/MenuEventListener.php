@@ -111,7 +111,7 @@ class MenuEventListener implements EventSubscriberInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getSubscribedEvents()
     {

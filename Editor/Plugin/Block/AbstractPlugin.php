@@ -5,7 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\AbstractPlugin as BasePlugin;
 use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Editor\View\WidgetView;
-use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
 
 /**
@@ -74,9 +74,8 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
     /**
      * @inheritdoc
      */
-    public function createWidget(BlockInterface $block, array $options)
+    public function createWidget(BlockInterface $block, array $options, $position = 0)
     {
-        // TODO option resolver ?
         $options = array_replace([
             'editable' => false,
         ], $options);
@@ -90,10 +89,9 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
                 ->setData([
                     'id'       => $block->getId(),
                     'type'     => $this->getName(),
-                    'position' => 0, // TODO
+                    'position' => $position,
                     'actions'  => [
-                        'edit'        => true,
-                        'change_type' => true,
+                        'edit' => true,
                     ],
                 ]);
         }

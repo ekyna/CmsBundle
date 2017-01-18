@@ -4,7 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Container;
 
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginInterface as BaseInterface;
 use Ekyna\Bundle\CmsBundle\Editor\View\ContainerView;
-use Ekyna\Bundle\CmsBundle\Model\ContainerInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 

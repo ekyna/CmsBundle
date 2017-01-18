@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints;
 class CookiesSettingsSchema extends AbstractSchema
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function buildSettings(SettingsBuilder $builder)
     {
@@ -33,7 +33,7 @@ class CookiesSettingsSchema extends AbstractSchema
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -67,7 +67,7 @@ class CookiesSettingsSchema extends AbstractSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getLabel()
     {
@@ -75,7 +75,7 @@ class CookiesSettingsSchema extends AbstractSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getShowTemplate()
     {
@@ -83,7 +83,7 @@ class CookiesSettingsSchema extends AbstractSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getFormTemplate()
     {
@@ -91,7 +91,7 @@ class CookiesSettingsSchema extends AbstractSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getName()
     {

@@ -1,10 +1,9 @@
 <?php
 
 
-namespace Ekyna\Bundle\CmsBundle\Model;
+namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Editor\Model\LayoutInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -83,4 +82,32 @@ interface RowInterface
      * @return ArrayCollection|BlockInterface[]
      */
     public function getBlocks();
+
+    /**
+     * Returns whether or not the row is the first of the container.
+     *
+     * @return boolean
+     */
+    public function isFirst();
+
+    /**
+     * Returns whether or not the row is the last of the container.
+     *
+     * @return boolean
+     */
+    public function isLast();
+
+    /**
+     * Returns whether or not the row is the only container's child.
+     *
+     * @return boolean
+     */
+    public function isAlone();
+
+    /**
+     * Returns whether or not the row is named.
+     *
+     * @return boolean
+     */
+    public function isNamed();
 }

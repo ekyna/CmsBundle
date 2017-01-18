@@ -75,7 +75,7 @@ class BlockController extends BaseController
         $this->persist($block);
 
         $data = [
-            'blocks' => [$this->getViewBuilder()->buildBlock($block)]
+            'blocks' => [$this->getViewBuilder()->buildBlock($block)],
         ];
 
         return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
@@ -160,7 +160,34 @@ class BlockController extends BaseController
      */
     public function moveUpAction(Request $request)
     {
-        throw new \Exception('Not yet implemented'); // TODO
+        $block = $this->findBlockByRequest($request);
+        $row = $block->getRow();
+
+        $removedId = $this->getViewBuilder()->buildBlock($block)->getAttributes()->getId();
+
+        try {
+            $sibling = $this->getEditor()->getBlockManager()->moveUp($block);
+        } catch (EditorExceptionInterface $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        $this->validate($row);
+        $this->validate($sibling);
+        $this->persist($row);
+        $this->persist($sibling);
+
+        $createdId = $this->getViewBuilder()->buildBlock($block)->getAttributes()->getId();
+
+        $data = [
+            'removed' => [$removedId],
+            'created' => $createdId,
+            'rows'    => [
+                $this->getViewBuilder()->buildRow($row),
+                $this->getViewBuilder()->buildRow($sibling),
+            ],
+        ];
+
+        return $this->buildResponse($data, self::SERIALIZE_FULL);
     }
 
     /**
@@ -172,7 +199,34 @@ class BlockController extends BaseController
      */
     public function moveDownAction(Request $request)
     {
-        throw new \Exception('Not yet implemented'); // TODO
+        $block = $this->findBlockByRequest($request);
+        $row = $block->getRow();
+
+        $removedId = $this->getViewBuilder()->buildBlock($block)->getAttributes()->getId();
+
+        try {
+            $sibling = $this->getEditor()->getBlockManager()->moveDown($block);
+        } catch (EditorExceptionInterface $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        $this->validate($row);
+        $this->validate($sibling);
+        $this->persist($row);
+        $this->persist($sibling);
+
+        $createdId = $this->getViewBuilder()->buildBlock($block)->getAttributes()->getId();
+
+        $data = [
+            'removed' => [$removedId],
+            'created' => $createdId,
+            'rows'    => [
+                $this->getViewBuilder()->buildRow($row),
+                $this->getViewBuilder()->buildRow($sibling),
+            ],
+        ];
+
+        return $this->buildResponse($data, self::SERIALIZE_FULL);
     }
 
     /**
@@ -230,122 +284,6 @@ class BlockController extends BaseController
         $data = ['blocks' => [
             $this->getViewBuilder()->buildBlock($block),
             $this->getViewBuilder()->buildBlock($sibling),
-        ]];
-
-        return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
-    }
-
-    /**
-     * Pulls the block.
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function pullAction(Request $request)
-    {
-        throw new \Exception('Not yet implemented'); // TODO
-    }
-
-    /**
-     * Pushes the block.
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function pushAction(Request $request)
-    {
-        throw new \Exception('Not yet implemented'); // TODO
-    }
-
-    /**
-     * Offsets the block to the left.
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function offsetLeftAction(Request $request)
-    {
-        $block = $this->findBlockByRequest($request);
-
-        $this->getEditor()->getLayoutAdapter()->offsetLeftBlock($block);
-
-        $this->validate($block);
-        $this->persist($block);
-
-        $data = ['blocks' => [
-            $this->getViewBuilder()->buildBlock($block),
-        ]];
-
-        return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
-    }
-
-    /**
-     * Offsets the block to the right.
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function offsetRightAction(Request $request)
-    {
-        $block = $this->findBlockByRequest($request);
-
-        $this->getEditor()->getLayoutAdapter()->offsetRightBlock($block);
-
-        $this->validate($block);
-        $this->persist($block);
-
-        $data = ['blocks' => [
-            $this->getViewBuilder()->buildBlock($block),
-        ]];
-
-        return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
-    }
-
-    /**
-     * Compresses the block.
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function compressAction(Request $request)
-    {
-        $block = $this->findBlockByRequest($request);
-
-        $this->getEditor()->getLayoutAdapter()->compressBlock($block);
-
-        $this->validate($block);
-        $this->persist($block);
-
-        $data = ['blocks' => [
-            $this->getViewBuilder()->buildBlock($block),
-        ]];
-
-        return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
-    }
-
-    /**
-     * Expands the block.
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function expandAction(Request $request)
-    {
-        $block = $this->findBlockByRequest($request);
-
-        $this->getEditor()->getLayoutAdapter()->expandBlock($block);
-
-        $this->validate($block);
-        $this->persist($block);
-
-        $data = ['blocks' => [
-            $this->getViewBuilder()->buildBlock($block),
         ]];
 
         return $this->buildResponse($data, self::SERIALIZE_LAYOUT);

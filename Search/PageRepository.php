@@ -19,7 +19,7 @@ class PageRepository extends ResourceRepository implements LocaleProviderAwareIn
 
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function search($expression, $limit = 10)
     {
@@ -66,7 +66,7 @@ class PageRepository extends ResourceRepository implements LocaleProviderAwareIn
 
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {

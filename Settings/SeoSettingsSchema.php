@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints;
 class SeoSettingsSchema extends AbstractSchema
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function buildSettings(SettingsBuilder $builder)
     {
@@ -33,7 +33,7 @@ class SeoSettingsSchema extends AbstractSchema
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -61,7 +61,7 @@ class SeoSettingsSchema extends AbstractSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getLabel()
     {
@@ -69,7 +69,7 @@ class SeoSettingsSchema extends AbstractSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getShowTemplate()
     {
@@ -77,7 +77,7 @@ class SeoSettingsSchema extends AbstractSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getFormTemplate()
     {

@@ -4,7 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\View;
 
 use Ekyna\Bundle\CmsBundle\Editor\EditorAwareInterface;
 use Ekyna\Bundle\CmsBundle\Editor\EditorAwareTrait;
-use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Editor\Model;
 
 /**
  * Class ViewBuilder
@@ -63,6 +63,8 @@ class ViewBuilder implements EditorAwareInterface
         $innerAttributes = $view->getInnerAttributes()->addClass('cms-inner-container');
 
         if ($this->editor->isEnabled()) {
+            $content = $container->getContent();
+
             // Container
             $attributes
                 ->setId('cms-container-' . $container->getId())
@@ -71,7 +73,13 @@ class ViewBuilder implements EditorAwareInterface
                     'position' => $container->getPosition(),
                     'type'     => $container->getType(),
                     'actions'  => [
-                        // TODO
+                        'add'         => null !== $content,
+                        'edit'        => true,
+                        'layout'      => true,
+                        'change_type' => !$container->isNamed(),
+                        'move_up'     => !$container->isFirst(),
+                        'move_down'   => !$container->isLast(),
+                        'remove'      => !$container->isAlone(),
                     ],
                 ]);
 
@@ -108,13 +116,21 @@ class ViewBuilder implements EditorAwareInterface
         $attributes = $view->getAttributes()->addClass('cms-row');
 
         if ($this->editor->isEnabled()) {
+            $container = $row->getContainer();
+
             $attributes
                 ->setId('cms-row-' . $row->getId())
                 ->setData([
                     'id'       => $row->getId(),
                     'position' => $row->getPosition(),
                     'actions'  => [
-                        // TODO
+                        'add'       => null !== $container,
+                        //'edit'         => true,
+                        'layout'    => true,
+                        //'change_type'  => !$row->isNamed(),
+                        'move_up'   => !$row->isFirst(),
+                        'move_down' => !$row->isLast(),
+                        'remove'    => !$row->isAlone(),
                     ],
                 ]);
         }
@@ -144,7 +160,8 @@ class ViewBuilder implements EditorAwareInterface
         $attributes = $view->getAttributes()->addClass('cms-block');
 
         if ($editable) {
-            // Column
+            $row = $block->getRow();
+
             $attributes
                 ->setId('cms-block-' . $block->getId())
                 ->setData([
@@ -152,20 +169,14 @@ class ViewBuilder implements EditorAwareInterface
                     'type'     => $block->getType(),
                     'position' => $block->getPosition(),
                     'actions'  => [
-                        'edit'         => true,
-                        'change_type'  => true,
-                        'move_left'    => 0 < $block->getPosition(),
-                        'move_right'   => true, // TODO is not last
-                        'move_up'      => false, // TODO
-                        'move_down'    => false, // TODO
-                        'offset_left'  => true,
-                        'offset_right' => true,
-                        'push'         => true,
-                        'pull'         => true,
-                        'expand'       => true,
-                        'compress'     => true,
-                        'add'          => true,
-                        'remove'       => true,
+                        'add'         => null !== $row,
+                        'layout'      => true,
+                        'change_type' => !$block->isNamed(),
+                        'move_left'   => !$block->isFirst(),
+                        'move_right'  => !$block->isLast(),
+                        'move_up'     => !$block->isAlone() && !$row->isFirst(),
+                        'move_down'   => !$block->isAlone() && !$row->isLast(),
+                        'remove'      => !$block->isAlone(),
                     ],
                 ]);
         }
@@ -179,23 +190,15 @@ class ViewBuilder implements EditorAwareInterface
         $this->editor
             ->getBlockPlugin($block->getType())
             ->render($block, $view, [
-                'editable' => $this->editor->isEnabled(),
+                'editable' => $editable,
             ]);
 
         // Set widgets positions
-        $p = 0;
+        /*$p = 0;
         foreach ($view->widgets as $widgetView) {
             $widgetView->getAttributes()->setData('position', $p);
             $p++;
-        }
-
-        // Prevent type change on a named block
-        if (0 < strlen($block->getName())) {
-            $attributes->setData('actions', ['change_type' => false]);
-            foreach ($view->widgets as $widgetView){
-                $widgetView->getAttributes()->setData('actions', ['change_type' => false]);
-            }
-        }
+        }*/
 
         return $view;
     }

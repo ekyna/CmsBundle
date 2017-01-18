@@ -16,7 +16,7 @@ class Block extends Constraint
     public $tooSmallBlock       = 'ekyna_cms.block.too_small_block';
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     /*public function validatedBy()
     {
@@ -24,7 +24,7 @@ class Block extends Constraint
     }*/
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTargets()
     {

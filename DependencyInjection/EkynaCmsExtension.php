@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class EkynaCmsExtension extends AbstractExtension
 {
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function load(array $configs, ContainerBuilder $container)
     {

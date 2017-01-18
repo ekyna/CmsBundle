@@ -17,7 +17,7 @@ class Content extends Constraint
 //    public $block_too_small = 'ekyna_cms.content.block_too_small';
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTargets()
     {

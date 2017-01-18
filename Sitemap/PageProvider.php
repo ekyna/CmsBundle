@@ -38,7 +38,7 @@ class PageProvider extends AbstractProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getLastUpdateDate()
     {
@@ -52,7 +52,7 @@ class PageProvider extends AbstractProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUrls()
     {
@@ -88,7 +88,7 @@ class PageProvider extends AbstractProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getSitemap()
     {
@@ -96,7 +96,7 @@ class PageProvider extends AbstractProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {

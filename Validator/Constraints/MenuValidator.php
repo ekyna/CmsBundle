@@ -29,7 +29,7 @@ class MenuValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function validate($menu, Constraint $constraint)
     {

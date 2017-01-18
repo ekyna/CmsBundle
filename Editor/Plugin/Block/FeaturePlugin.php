@@ -4,10 +4,10 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistryAwareInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistryAwareTrait;
+use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Editor\View\Attributes;
 use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\FeatureBlockType;
-use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -122,16 +122,11 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             'editable' => false,
         ], $options);
 
-        $overrideAttributes = function (Attributes $attributes, $type, $position = 0) use ($options) {
+        $overrideAttributes = function (Attributes $attributes, $type) use ($options) {
             $attributes->addClass('feature-' . $type);
 
             if ($options['editable']) {
-                $attributes
-                    ->setId($attributes->getId() . '-' . $type)
-                    ->setData('actions', [
-                        'change_type' => false, // Disable type change on widgets
-                    ])
-                    ->setData('position', $position);
+                $attributes->setId($attributes->getId() . '-' . $type);
             }
         };
 
@@ -140,15 +135,15 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             ->getImagePlugin()
             ->createWidget($block, array_replace($options, [
                 'filter' => $this->config['image_filter'],
-            ]));
-        $overrideAttributes($widget->getAttributes(), 'image', 0);
+            ]), 0);
+        $overrideAttributes($widget->getAttributes(), 'image');
         $view->widgets[] = $widget;
 
         // Html widget view
         $widget = $this
             ->getHtmlPlugin()
-            ->createWidget($block, $options);
-        $overrideAttributes($widget->getAttributes(), 'html', 1);
+            ->createWidget($block, $options, 1);
+        $overrideAttributes($widget->getAttributes(), 'html');
         $view->widgets[] = $widget;
 
         // Feature block view

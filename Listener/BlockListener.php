@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Listener;
 
-use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 
 /**
@@ -57,10 +57,10 @@ class BlockListener
      */
     private function invalidateBlockContent(BlockInterface $block)
     {
-        if (null !== $container = $block->getContainer()) {
+        /* TODO if (null !== $container = $block->getContainer()) {
             if (null !== $content = $container->getContent()) {
                 $this->tagManager->invalidateTags($content->getEntityTag());
             }
-        }
+        }*/
     }
 }

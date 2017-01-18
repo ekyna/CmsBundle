@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
-use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Editor\Model;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -103,11 +103,19 @@ class BlockManager extends AbstractManager
      * @param Model\BlockInterface $block The block
      * @param string               $type  The block new type
      * @param array                $data  The block new data
+     *
+     * @throws InvalidOperationException
      */
     public function changeType(Model\BlockInterface $block, $type, array $data = [])
     {
         if ($type === $block->getType()) {
             return;
+        }
+
+        if ($block->isNamed()) {
+            throw new InvalidOperationException(
+                "The type of this block can't be changed."
+            );
         }
 
         // Plugin removal
@@ -134,19 +142,16 @@ class BlockManager extends AbstractManager
      */
     public function delete(Model\BlockInterface $block)
     {
-        // Check if the block is not the only row block (a row must have at least one block).
-        $row = $block->getRow();
-        if (null === $row) {
+        // Ensure not named / alone
+        if ($block->isAlone() || $block->isNamed()) {
             throw new InvalidOperationException(
-                "This block does not belong to a row and therefore can't be removed."
+                "The block can't be removed because it is named or the parent row does not have enough children."
             );
         }
 
-        // Ensure one block remains
-        $blocks = $block->getRow()->getBlocks();
-        if (1 >= $blocks->count()) {
+        if (null === $row = $block->getRow()) {
             throw new InvalidOperationException(
-                "The block can't be removed because the parent row does not have enough children."
+                "This block does not belong to a row and therefore can't be removed."
             );
         }
 
@@ -156,12 +161,12 @@ class BlockManager extends AbstractManager
             ->remove($block);
 
         // Remove from row
-        $blocks->removeElement($block);
+        $row->removeBlock($block);
 
         // Fix row's blocks positions
         $this->editor
             ->getRowManager()
-            ->fixBlockPositions($row);
+            ->fixBlocksPositions($row);
 
         return $block;
     }
@@ -170,20 +175,70 @@ class BlockManager extends AbstractManager
      * Moves the block up.
      *
      * @param Model\BlockInterface $block
+     *
+     * @return Model\RowInterface The sibling row where the block has been moved into.
+     * @throws InvalidOperationException
      */
     public function moveUp(Model\BlockInterface $block)
     {
-        throw new \Exception('Not yet implemented'); // TODO
+        $row = $block->getRow();
+        if (null === $row || $row->isFirst()) {
+            throw new InvalidOperationException(
+                "This block can't be moved to the top."
+            );
+        }
+
+        $sibling = $this->editor->getRepository()->findSiblingRow($row, false);
+        if (null === $sibling) {
+            throw new InvalidOperationException(
+                "The block can't be moved to the top as no sibling row has been found."
+            );
+        }
+
+        $row->removeBlock($block);
+        $sibling->addBlock($block);
+
+        $this->editor
+            ->getRowManager()
+            ->fixBlocksPositions($row)
+            ->fixBlocksPositions($sibling);
+
+        return $sibling;
     }
 
     /**
      * Moves the block down.
      *
      * @param Model\BlockInterface $block
+     *
+     * @return Model\RowInterface The sibling row where the block has been moved into.
+     * @throws InvalidOperationException
      */
     public function moveDown(Model\BlockInterface $block)
     {
-        throw new \Exception('Not yet implemented'); // TODO
+        $row = $block->getRow();
+        if (null === $row || $row->isLast()) {
+            throw new InvalidOperationException(
+                "This block can't be moved to the top."
+            );
+        }
+
+        $sibling = $this->editor->getRepository()->findSiblingRow($row, true);
+        if (null === $sibling) {
+            throw new InvalidOperationException(
+                "The block can't be moved to the bottom as no sibling row has been found."
+            );
+        }
+
+        $row->removeBlock($block);
+        $sibling->addBlock($block);
+
+        $this->editor
+            ->getRowManager()
+            ->fixBlocksPositions($row)
+            ->fixBlocksPositions($sibling);
+
+        return $sibling;
     }
 
     /**
@@ -191,15 +246,15 @@ class BlockManager extends AbstractManager
      *
      * @param Model\BlockInterface $block
      *
-     * @return Model\BlockInterface the sibling block that has been swapped.
+     * @return Model\BlockInterface The sibling block that has been swapped.
      * @throws InvalidOperationException
      */
     public function moveLeft(Model\BlockInterface $block)
     {
-        $sibling = $this->findPreviousSibling($block);
+        $sibling = $this->editor->getRepository()->findSiblingBlock($block, false);
         if (null === $sibling) {
             throw new InvalidOperationException(
-                "The block can't be moved to the left as no sibling block has been found."
+                "The block can't be moved to the right as no sibling block has been found."
             );
         }
 
@@ -216,12 +271,12 @@ class BlockManager extends AbstractManager
      *
      * @param Model\BlockInterface $block
      *
-     * @return Model\BlockInterface the sibling block that has been swapped.
+     * @return Model\BlockInterface The sibling block that has been swapped.
      * @throws InvalidOperationException
      */
     public function moveRight(Model\BlockInterface $block)
     {
-        $sibling = $this->findNextSibling($block);
+        $sibling = $this->editor->getRepository()->findSiblingBlock($block, true);
         if (null === $sibling) {
             throw new InvalidOperationException(
                 "The block can't be moved to the right as no sibling block has been found."
@@ -234,51 +289,5 @@ class BlockManager extends AbstractManager
         $this->sortChildrenByPosition($block->getRow(), 'blocks');
 
         return $sibling;
-    }
-
-    /**
-     * The block's previous sibling.
-     *
-     * @param Model\BlockInterface $block
-     *
-     * @return Model\BlockInterface|null
-     * @throws InvalidOperationException
-     */
-    private function findPreviousSibling(Model\BlockInterface $block)
-    {
-        if (null === $row = $block->getRow()) {
-            throw new InvalidOperationException('The block does not have a parent row.');
-        }
-
-        $blocks = $row->getBlocks();
-
-        $sibling = $blocks->filter(function (Model\BlockInterface $b) use ($block) {
-            return $b->getPosition() < $block->getPosition();
-        })->last();
-
-        return $sibling ? $sibling : null;
-    }
-
-    /**
-     * Finds the block's next sibling.
-     *
-     * @param Model\BlockInterface $block
-     *
-     * @return Model\BlockInterface|null
-     * @throws InvalidOperationException
-     */
-    private function findNextSibling(Model\BlockInterface $block)
-    {
-        if (null === $row = $block->getRow()) {
-            throw new InvalidOperationException('The block does not have a parent row.');
-        }
-
-        $blocks = $row->getBlocks();
-
-        $sibling = $blocks->filter(function (Model\BlockInterface $b) use ($block) {
-            return $b->getPosition() > $block->getPosition();
-        })->first();
-
-        return $sibling ? $sibling : null;
     }
 }

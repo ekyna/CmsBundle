@@ -17,7 +17,7 @@ class ContentRepository extends ResourceRepository
      *
      * @param int $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface|null
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface|null
      */
     public function findOneByName($name)
     {
@@ -42,7 +42,7 @@ class ContentRepository extends ResourceRepository
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface|null
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface|null
      */
     public function findOneById($id)
     {
@@ -67,7 +67,7 @@ class ContentRepository extends ResourceRepository
      *
      * @param ContentSubjectInterface $subject
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface|null
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface|null
      */
     public function findBySubject(ContentSubjectInterface $subject)
     {

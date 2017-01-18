@@ -23,7 +23,7 @@ class CmsInstaller extends AbstractInstaller implements OrderedInstallerInterfac
     use ContainerAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function install(Command $command, InputInterface $input, OutputInterface $output)
     {
@@ -39,7 +39,7 @@ class CmsInstaller extends AbstractInstaller implements OrderedInstallerInterfac
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getOrder()
     {

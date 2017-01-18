@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
-use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Editor\Model;
 
 /**
  * Class RowManager
@@ -27,7 +27,8 @@ class RowManager extends AbstractManager
         if (!(
             $containerOrName instanceof Model\ContainerInterface ||
             (is_string($containerOrName) && 0 < strlen($containerOrName))
-        )) {
+        )
+        ) {
             throw new InvalidOperationException("Excepted instance of ContainerInterface or string.");
         }
 
@@ -59,26 +60,25 @@ class RowManager extends AbstractManager
      */
     public function delete(Model\RowInterface $row)
     {
+        // Ensure not named / alone
+        if ($row->isAlone() || $row->isNamed()) {
+            throw new InvalidOperationException(
+                "The row can't be removed because it is named or the parent container does not have enough children."
+            );
+        }
+
         // Check if the row is not the only container row (a container must have at least one row).
-        $container = $row->getContainer();
-        if (null === $container) {
+        if (null === $container = $row->getContainer()) {
             throw new InvalidOperationException(
                 "The row does not belong to a container and therefore can't be removed."
             );
         }
 
-        $rows = $row->getContainer()->getRows();
-        if (1 >= $rows->count()) {
-            throw new InvalidOperationException(
-                "The row can't be removed because the parent container does not have enough children."
-            );
-        }
-
-        $rows->removeElement($row);
+        $container->removeRow($row);
 
         $this->editor
             ->getContainerManager()
-            ->fixRowPositions($container);
+            ->fixRowsPositions($container);
 
         return $row;
     }
@@ -93,10 +93,10 @@ class RowManager extends AbstractManager
      */
     public function moveUp(Model\RowInterface $row)
     {
-        $sibling = $this->findPreviousSibling($row);
+        $sibling = $this->editor->getRepository()->findSiblingRow($row, false);
         if (null === $sibling) {
             throw new InvalidOperationException(
-                "The row can't be moved up as no previous sibling has been found."
+                "The row can't be moved up as no sibling row has been found."
             );
         }
 
@@ -118,10 +118,10 @@ class RowManager extends AbstractManager
      */
     public function moveDown(Model\RowInterface $row)
     {
-        $sibling = $this->findNextSibling($row);
+        $sibling = $this->editor->getRepository()->findSiblingRow($row, true);
         if (null === $sibling) {
             throw new InvalidOperationException(
-                "The row can't be moved down as no next sibling has been found."
+                "The row can't be moved down as no sibling row has been found."
             );
         }
 
@@ -134,60 +134,13 @@ class RowManager extends AbstractManager
     }
 
     /**
-     * Fix the blocks sizes.
+     * Fix the blocks positions.
      *
      * @param Model\RowInterface $row
      *
      * @return RowManager
      */
-//    public function fixBlockSizes(Model\RowInterface $row)
-//    {
-//        /** @var Model\BlockInterface[] $blocks */
-//        $blocks = $row->getBlocks();
-//
-//        $total = 0;
-//        foreach ($blocks as $block) {
-//            $total += $block->getSize();
-//        }
-//
-//        $diff = 12 - $total;
-//        if (0 == $diff) {
-//            return $this;
-//        }
-//
-//        if (0 < $diff) { // too small
-//            $avg = ceil(12 / $blocks->count());
-//            $mod = 1;
-//        } else { // too large
-//            $avg = floor(12 / $blocks->count());
-//            $mod = -1;
-//        }
-//
-//        while (0 != $diff) {
-//            foreach ($blocks as $block) {
-//                if ($avg != $block->getSize()) {
-//                    $block->setSize($block->getSize() + $mod);
-//                    $diff -= $mod;
-//
-//                    if (0 == $diff) {
-//                        break 2;
-//                    }
-//                }
-//            }
-//            reset($blocks);
-//        }
-//
-//        return $this;
-//    }
-
-    /**
-     * Fix the block positions.
-     *
-     * @param Model\RowInterface $row
-     *
-     * @return RowManager
-     */
-    public function fixBlockPositions(Model\RowInterface $row)
+    public function fixBlocksPositions(Model\RowInterface $row)
     {
         $this->sortChildrenByPosition($row, 'blocks');
 
@@ -201,61 +154,5 @@ class RowManager extends AbstractManager
         }
 
         return $this;
-    }
-
-    /**
-     * The row's previous sibling.
-     *
-     * @param Model\RowInterface $row
-     *
-     * @return Model\RowInterface|null
-     * @throws InvalidOperationException
-     */
-    private function findPreviousSibling(Model\RowInterface $row)
-    {
-        if (null === $container = $row->getContainer()) {
-            throw new InvalidOperationException('The row does not have a parent container.');
-        }
-
-        // Return null if this is the first row
-        if (0 == $row->getPosition()) {
-            return null;
-        }
-
-        $rows = $container->getRows();
-
-        $sibling = $rows->filter(function (Model\RowInterface $b) use ($row) {
-            return $b->getPosition() == $row->getPosition() -1;
-        })->first();
-
-        return $sibling ? $sibling : null;
-    }
-
-    /**
-     * Finds the row's next sibling.
-     *
-     * @param Model\RowInterface $row
-     *
-     * @return Model\RowInterface|null
-     * @throws InvalidOperationException
-     */
-    private function findNextSibling(Model\RowInterface $row)
-    {
-        if (null === $container = $row->getContainer()) {
-            throw new InvalidOperationException('The row does not have a parent container.');
-        }
-
-        $rows = $container->getRows();
-
-        // Return null if this is the last row
-        if ($rows->count() -1 == $row->getPosition()) {
-            return null;
-        }
-
-        $sibling = $rows->filter(function (Model\RowInterface $b) use ($row) {
-            return $b->getPosition() == $row->getPosition() + 1;
-        })->first();
-
-        return $sibling ? $sibling : null;
     }
 }

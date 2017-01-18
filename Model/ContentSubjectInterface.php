@@ -1,6 +1,7 @@
 <?php
 
 namespace Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface;
 
 /**
  * Interface ContentSubjectInterface

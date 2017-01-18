@@ -16,7 +16,7 @@ class BlockRepository extends TranslatableResourceRepository
      *
      * @param string $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\BlockInterface|null
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface|null
      */
     public function findOneByName($name)
     {
@@ -37,7 +37,7 @@ class BlockRepository extends TranslatableResourceRepository
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\BlockInterface|null
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface|null
      */
     public function findOneById($id)
     {

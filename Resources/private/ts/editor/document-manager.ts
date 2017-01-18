@@ -21,22 +21,35 @@ let Promise = es6Promise.Promise;
 
 const DEFAULT_WIDGET_ACTIONS = {
     edit: false,
-    change_type: false,
 };
 
 const DEFAULT_BLOCK_ACTIONS = {
-    edit: false,
+    layout: false,
     change_type: false,
     move_left: false,
     move_right: false,
     move_up: false,
     move_down: false,
-    pull: false,
-    push: false,
-    offset_left: false,
-    offset_right: false,
-    compress: false,
-    expand: false,
+    add: false,
+    remove: false
+};
+
+const DEFAULT_ROW_ACTIONS = {
+    //edit: false,
+    layout: false,
+    //change_type: false,
+    move_up: false,
+    move_down: false,
+    add: false,
+    remove: false
+};
+
+const DEFAULT_CONTAINER_ACTIONS = {
+    //edit: false,
+    layout: false,
+    //change_type: false,
+    move_up: false,
+    move_down: false,
     add: false,
     remove: false
 };
@@ -87,8 +100,8 @@ export interface LayoutDataInterface {
 export interface AdapterInterface {
     initialize(): void
     onResize(width: number, toolbar: ToolbarView<Toolbar>): void
-    setData(property:string, value: string): void
-    apply(data:LayoutDataInterface): void
+    setData(property: string, value: string): void
+    apply(data: LayoutDataInterface): void
 }
 
 interface ResponseData {
@@ -190,7 +203,7 @@ export class BaseManager {
         BaseManager.appendHelpers($element);
     }
 
-    static sortChildren($element: JQuery, selector:string) {
+    static sortChildren($element: JQuery, selector: string) {
         let $children: JQuery = $element.find(selector);
         $children.detach().get().sort(function (a, b) {
             let aPos = $(a).data('cms').position,
@@ -239,7 +252,7 @@ export class BaseManager {
             Dispatcher.trigger('base_manager.response_parsed', event);
         });
         xhr.fail(function () {
-            throw 'Editor request failed.';
+            console.log('Editor request failed.');
         });
         xhr.always(function () {
             Dispatcher.trigger('editor.unset_busy');
@@ -540,7 +553,7 @@ export class BlockManager {
     }
 
     static moveDown($block: JQuery) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_move_left');
+        BlockManager.request($block, 'ekyna_cms_editor_block_move_down');
     }
 
     static moveLeft($block: JQuery) {
@@ -549,30 +562,6 @@ export class BlockManager {
 
     static moveRight($block: JQuery) {
         BlockManager.request($block, 'ekyna_cms_editor_block_move_right');
-    }
-
-    static pull($block: JQuery) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_pull');
-    }
-
-    static push($block: JQuery) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_push');
-    }
-
-    static offsetLeft($block: JQuery) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_offset_left');
-    }
-
-    static offsetRight($block: JQuery) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_offset_right');
-    }
-
-    static expand($block: JQuery) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_expand');
-    }
-
-    static compress($block: JQuery) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_compress');
     }
 }
 
@@ -644,7 +633,7 @@ class LayoutManager {
             adapter.onResize(deviceWidth, toolbarView);
         });
 
-        this.backup = _.clone(this.data);
+        this.backup = JSON.parse(JSON.stringify(this.data));
 
         Dispatcher.on('viewport.resize', LayoutManager.onResizeHandler);
     }
@@ -734,7 +723,6 @@ class LayoutManager {
 /**
  * Layout events
  */
-
 Dispatcher.on('toolbar.remove', (e: ToolbarEvent) => {
     if (e.toolbar.getName() == 'layout' && LayoutManager.hasChanges()) {
         if (confirm('Souhaitez-vous appliquer les changements ?')) {
@@ -776,24 +764,6 @@ Dispatcher.on('block.move-left',
 Dispatcher.on('block.move-right',
     (button: Button) => BlockManager.moveRight(button.get('data').$block)
 );
-Dispatcher.on('block.pull',
-    (button: Button) => BlockManager.pull(button.get('data').$block)
-);
-Dispatcher.on('block.push',
-    (button: Button) => BlockManager.push(button.get('data').$block)
-);
-Dispatcher.on('block.offset-left',
-    (button: Button) => BlockManager.offsetLeft(button.get('data').$block)
-);
-Dispatcher.on('block.offset-right',
-    (button: Button) => BlockManager.offsetRight(button.get('data').$block)
-);
-Dispatcher.on('block.compress',
-    (button: Button) => BlockManager.compress(button.get('data').$block)
-);
-Dispatcher.on('block.expand',
-    (button: Button) => BlockManager.expand(button.get('data').$block)
-);
 Dispatcher.on('block.remove',
     (button: Button) => BlockManager.remove(button.get('data').$block)
 );
@@ -805,6 +775,9 @@ Dispatcher.on('block.add',
 /**
  * Row events
  */
+Dispatcher.on('row.layout',
+    (button: Button, e: JQueryEventObject) => LayoutManager.setUp(button.get('data').$row, e)
+);
 Dispatcher.on('row.move-up',
     (button: Button) => RowManager.moveUp(button.get('data').$row)
 );
@@ -816,9 +789,6 @@ Dispatcher.on('row.remove',
 );
 Dispatcher.on('row.add',
     (button: Button) => RowManager.add(button.get('data').$row)
-);
-Dispatcher.on('row.layout',
-    (button: Button, e: JQueryEventObject) => LayoutManager.setUp(button.get('data').$row, e)
 );
 
 /**
@@ -1003,12 +973,11 @@ class ToolbarManager {
                 name: 'widget',
                 classes: ['vertical', 'widget-toolbar'],
                 origin: e.origin
-            });
-
-        let actions = _.extend(
-            DEFAULT_WIDGET_ACTIONS,
-            $widget.data('cms').actions
-        );
+            }),
+            actions = _.extend(
+                DEFAULT_WIDGET_ACTIONS,
+                $widget.data('cms').actions
+            );
 
         // Edit button
         toolbar.addControl('default', new Button({
@@ -1018,25 +987,6 @@ class ToolbarManager {
             disabled: !actions.edit,
             event: 'block.edit',
             data: {$block: $widget}
-        }));
-        // Change type button
-        let choices: Array<ButtonChoiceConfig> = [];
-        PluginManager.getBlockPluginsConfig().forEach(function (config: PluginConfig) {
-            choices.push({
-                name: config.name,
-                title: config.title,
-                confirm: 'Êtes-vous sûr de vouloir changer le type de ce bloc ? (Le contenu actuel sera définitivement perdu).',
-                data: {type: config.name}
-            });
-        });
-        toolbar.addControl('default', new Button({
-            name: 'change-type',
-            title: 'Change type',
-            icon: 'change-type',
-            disabled: !actions.change_type,
-            event: 'block.change-type',
-            data: {$block: $widget},
-            choices: choices
         }));
 
         ToolbarManager.createToolbar(toolbar);
@@ -1049,28 +999,18 @@ class ToolbarManager {
                 name: 'block',
                 classes: ['vertical', 'block-toolbar'],
                 origin: e.origin
-            });
+            }),
+            actions = _.extend(
+                DEFAULT_BLOCK_ACTIONS,
+                $block.data('cms').actions
+            );
 
-        let actions = _.extend(
-            DEFAULT_BLOCK_ACTIONS,
-            $block.data('cms').actions,
-            $block.length ? $block.data('cms').actions : {}
-        );
-
-        // Edit button
-        toolbar.addControl('default', new Button({
-            name: 'edit',
-            title: 'Edit',
-            icon: 'content',
-            disabled: !actions.edit,
-            event: 'block.edit',
-            data: {$block: $block}
-        }));
         // Layout
         toolbar.addControl('default', new Button({
             name: 'layout',
             title: 'Layout',
             icon: 'layout',
+            disabled: !actions.layout,
             event: 'block.layout',
             data: {$block: $block}
         }));
@@ -1089,7 +1029,7 @@ class ToolbarManager {
             name: 'change-type',
             title: 'Change type',
             icon: 'change-type',
-            disabled: !actions.change_type,
+            disabled: !actions.change_type && 1 < choices.length,
             event: 'block.change-type',
             data: {$block: $block},
             choices: choices
@@ -1134,63 +1074,6 @@ class ToolbarManager {
                 data: {$block: $block}
             }));
 
-            // Pull
-            /*toolbar.addControl('ordering', new Button({
-                name: 'pull',
-                title: 'Pull',
-                icon: 'arrow-left',
-                disabled: !actions.pull,
-                event: 'block.pull',
-                data: {$block: $block}
-            }));*/
-            // Push
-            /*toolbar.addControl('ordering', new Button({
-                name: 'push',
-                title: 'Push',
-                icon: 'arrow-right',
-                disabled: !actions.push,
-                event: 'block.push',
-                data: {$block: $block}
-            }));*/
-
-            // Offset left
-            /*toolbar.addControl('offset', new Button({
-                name: 'offset-left',
-                title: 'Offset left',
-                icon: 'arrow-left',
-                disabled: !actions.offset_left,
-                event: 'block.offset-left',
-                data: {$block: $block}
-            }));*/
-            // Offset right
-            /*toolbar.addControl('offset', new Button({
-                name: 'offset-right',
-                title: 'Offset right',
-                icon: 'arrow-right',
-                disabled: !actions.offset_right,
-                event: 'block.offset-right',
-                data: {$block: $block}
-            }));*/
-
-            // Compress
-            /*toolbar.addControl('resize', new Button({
-                name: 'compress',
-                title: 'Compress size',
-                icon: 'compress',
-                disabled: !actions.compress,
-                event: 'block.compress',
-                data: {$block: $block}
-            }));*/
-            // Expand
-            /*toolbar.addControl('resize', new Button({
-                name: 'expand',
-                title: 'Expand size',
-                icon: 'expand',
-                disabled: !actions.expand,
-                event: 'block.expand',
-                data: {$block: $block}
-            }));*/
-
             // Remove
             toolbar.addControl('add', new Button({
                 name: 'remove',
@@ -1231,13 +1114,18 @@ class ToolbarManager {
                 name: 'row',
                 classes: ['vertical', 'row-toolbar'],
                 origin: e.origin
-            });
+            }),
+            actions = _.extend(
+                DEFAULT_ROW_ACTIONS,
+                $row.data('cms').actions
+            );
 
         // Layout
         toolbar.addControl('default', new Button({
             name: 'layout',
             title: 'Layout',
             icon: 'layout',
+            disabled: !actions.layout,
             event: 'row.layout',
             data: {$row: $row}
         }));
@@ -1247,7 +1135,7 @@ class ToolbarManager {
          name: 'edit',
          title: 'Edit',
          icon: 'pencil',
-         disabled: true,
+         disabled: !actions.edit,
          event: 'row.edit',
          data: {$row: $row}
          }));*/
@@ -1257,7 +1145,7 @@ class ToolbarManager {
                 name: 'move-up',
                 title: 'Move up',
                 icon: 'move-up',
-                disabled: $row.is(':first-child'),
+                disabled: !actions.move_up,
                 event: 'row.move-up',
                 data: {$row: $row}
             }));
@@ -1266,7 +1154,7 @@ class ToolbarManager {
                 name: 'move-down',
                 title: 'Move down',
                 icon: 'move-down',
-                disabled: $row.is(':last-child'),
+                disabled: !actions.move_down,
                 event: 'row.move-down',
                 data: {$row: $row}
             }));
@@ -1275,7 +1163,7 @@ class ToolbarManager {
                 name: 'remove',
                 title: 'Remove',
                 icon: 'remove-row',
-                disabled: 1 >= $container.children('.cms-row').length,
+                disabled: !actions.remove,
                 confirm: 'Êtes-vous sûr de vouloir supprimer cette ligne ?',
                 event: 'row.remove',
                 data: {$row: $row}
@@ -1285,6 +1173,7 @@ class ToolbarManager {
                 name: 'add',
                 title: 'Create a new row',
                 icon: 'add-row',
+                disabled: !actions.add,
                 event: 'row.add',
                 data: {$row: $row}
             }));
@@ -1300,12 +1189,17 @@ class ToolbarManager {
                 name: 'container',
                 classes: ['vertical', 'container-toolbar'],
                 origin: e.origin
-            });
+            }),
+            actions = _.extend(
+                DEFAULT_CONTAINER_ACTIONS,
+                $container.data('cms').actions
+            );
 
         toolbar.addControl('default', new Button({
             name: 'edit',
             title: 'Edit',
             icon: 'content',
+            disabled: !actions.edit,
             event: 'container.edit',
             data: {$container: $container}
         }));
@@ -1313,6 +1207,7 @@ class ToolbarManager {
             name: 'layout',
             title: 'Layout',
             icon: 'layout',
+            disabled: !actions.layout,
             event: 'container.layout',
             data: {$container: $container}
         }));
@@ -1330,6 +1225,7 @@ class ToolbarManager {
             name: 'change-type',
             title: 'Change type',
             icon: 'change-type',
+            disabled: !actions.change_type && 1 < choices.length,
             event: 'container.change-type',
             data: {$container: $container},
             choices: choices
@@ -1340,7 +1236,7 @@ class ToolbarManager {
                 name: 'move-up',
                 title: 'Move up',
                 icon: 'move-up',
-                disabled: $container.is(':first-child'),
+                disabled: !actions.move_up,
                 event: 'container.move-up',
                 data: {$container: $container}
             }));
@@ -1349,7 +1245,7 @@ class ToolbarManager {
                 name: 'move-down',
                 title: 'Move down',
                 icon: 'move-down',
-                disabled: $container.is(':last-child'),
+                disabled: !actions.move_down,
                 event: 'container.move-down',
                 data: {$container: $container}
             }));
@@ -1358,7 +1254,7 @@ class ToolbarManager {
                 name: 'remove',
                 title: 'Remove',
                 icon: 'remove-container',
-                disabled: 1 >= $content.children('.cms-container').length,
+                disabled: !actions.remove,
                 confirm: 'Êtes-vous sûr de vouloir supprimer ce conteneur ?',
                 event: 'container.remove',
                 data: {$container: $container}
@@ -1375,6 +1271,7 @@ class ToolbarManager {
                 name: 'add',
                 title: 'Create a new container after this one',
                 icon: 'add-container',
+                disabled: !actions.add,
                 event: 'container.add',
                 data: {$container: $container},
                 choices: choices,
@@ -1405,8 +1302,8 @@ class ToolbarManager {
                 name: 'offset',
                 title: 'Offset',
                 event: 'layout.change',
-                min: 1,
-                max: 12
+                min: 0,
+                max: 11
             }));
         }
 
@@ -1757,11 +1654,11 @@ export class DocumentManager {
         // Insert elements tabs
         BaseManager.appendHelpers();
         /*$document.find('.cms-block, .cms-row, .cms-container').each(function (i: number, element: Element) {
-            let $element = $(element);
-            if ($element.find('i.cms-helper').length == 0) {
-                $element.prepend('<i class="cms-helper"></i>');
-            }
-        });*/
+         let $element = $(element);
+         if ($element.find('i.cms-helper').length == 0) {
+         $element.prepend('<i class="cms-helper"></i>');
+         }
+         });*/
 
         $document.on('mousedown', this.documentMouseDownHandler);
         $document.on('mouseup', this.documentMouseUpHandler);

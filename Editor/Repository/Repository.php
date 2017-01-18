@@ -2,8 +2,11 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Repository;
 
-use Ekyna\Bundle\CmsBundle\Entity as R;
+use Doctrine\Common\Collections\Collection;
+use Ekyna\Bundle\CmsBundle\Entity as ER;
+use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
+use Ekyna\Component\Resource\Model\SortableInterface;
 
 /**
  * Class Repository
@@ -13,22 +16,22 @@ use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 class Repository implements RepositoryInterface
 {
     /**
-     * @var R\ContentRepository
+     * @var ER\ContentRepository
      */
     private $contentRepository;
 
     /**
-     * @var R\ContainerRepository
+     * @var ER\ContainerRepository
      */
     private $containerRepository;
 
     /**
-     * @var R\RowRepository
+     * @var ER\RowRepository
      */
     private $rowRepository;
 
     /**
-     * @var R\BlockRepository
+     * @var ER\BlockRepository
      */
     private $blockRepository;
 
@@ -36,16 +39,16 @@ class Repository implements RepositoryInterface
     /**
      * Constructor.
      *
-     * @param R\ContentRepository $contentRepository
-     * @param R\ContainerRepository $containerRepository
-     * @param R\RowRepository $rowRepository
-     * @param R\BlockRepository $blockRepository
+     * @param ER\ContentRepository   $contentRepository
+     * @param ER\ContainerRepository $containerRepository
+     * @param ER\RowRepository       $rowRepository
+     * @param ER\BlockRepository     $blockRepository
      */
     public function __construct(
-        R\ContentRepository $contentRepository,
-        R\ContainerRepository $containerRepository,
-        R\RowRepository $rowRepository,
-        R\BlockRepository $blockRepository
+        ER\ContentRepository $contentRepository,
+        ER\ContainerRepository $containerRepository,
+        ER\RowRepository $rowRepository,
+        ER\BlockRepository $blockRepository
     ) {
         $this->contentRepository = $contentRepository;
         $this->containerRepository = $containerRepository;
@@ -150,11 +153,82 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * Loads and returns the subject's content.
+     * Returns the sibling of the given container.
      *
-     * @param ContentSubjectInterface $subject
+     * @param EM\ContainerInterface $container
+     * @param bool            $next Whether to look for the next or the previous
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface|null
+     * @return EM\ContainerInterface|null
+     */
+    public function findSiblingContainer(EM\ContainerInterface $container, $next = false)
+    {
+        if (null === $content = $container->getContent()) {
+            return null;
+        }
+
+        return $this->findSibling($content->getContainers(), $container, $next);
+    }
+
+    /**
+     * Returns the sibling of the given row.
+     *
+     * @param EM\RowInterface $row
+     * @param bool            $next Whether to look for the next or the previous
+     *
+     * @return EM\RowInterface|null
+     */
+    public function findSiblingRow(EM\RowInterface $row, $next = false)
+    {
+        if (null === $container = $row->getContainer()) {
+            return null;
+        }
+
+        return $this->findSibling($container->getRows(), $row, $next);
+    }
+
+    /**
+     * Returns the sibling of the given block.
+     *
+     * @param EM\BlockInterface $block
+     * @param bool            $next Whether to look for the next or the previous
+     *
+     * @return EM\BlockInterface|null
+     */
+    public function findSiblingBlock(EM\BlockInterface $block, $next = false)
+    {
+        if (null === $row = $block->getRow()) {
+            return null;
+        }
+
+        return $this->findSibling($row->getBlocks(), $block, $next);
+    }
+
+    /**
+     * Finds the previous element based on position.
+     *
+     * @param Collection        $elements
+     * @param SortableInterface $current
+     * @param bool              $next Whether to look for the next or the previous
+     *
+     * @return mixed
+     */
+    private function findSibling(Collection $elements, SortableInterface $current, $next = false)
+    {
+        if ($next) {
+            $sibling = $elements->filter(function (SortableInterface $s) use ($current) {
+                return $s->getPosition() > $current->getPosition();
+            })->first();
+        } else {
+            $sibling = $elements->filter(function (SortableInterface $s) use ($current) {
+                return $s->getPosition() < $current->getPosition();
+            })->last();
+        }
+
+        return $sibling ?: null;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function loadSubjectContent(ContentSubjectInterface $subject)
     {

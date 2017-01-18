@@ -17,7 +17,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getConfigTreeBuilder()
     {
@@ -279,12 +279,12 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('block')
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Block')->end()
+                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Editor\Block')->end()
                                 ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\BlockRepository')->end()
                                 ->arrayNode('translation')
                                     ->addDefaultsIfNotSet()
                                     ->children()
-                                        ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\BlockTranslation')->end()
+                                        ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Editor\BlockTranslation')->end()
                                         ->arrayNode('fields')
                                             ->prototype('scalar')->end()
                                             ->defaultValue(['data'])
@@ -296,21 +296,21 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('container')
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Container')->end()
+                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Editor\Container')->end()
                                 ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\ContainerRepository')->end()
                             ->end()
                         ->end()
                         ->arrayNode('content')
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Content')->end()
+                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Editor\Content')->end()
                                 ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\ContentRepository')->end()
                             ->end()
                         ->end()
                         ->arrayNode('row')
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Row')->end()
+                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Editor\Row')->end()
                                 ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\RowRepository')->end()
                             ->end()
                         ->end()

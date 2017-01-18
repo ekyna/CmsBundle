@@ -2,8 +2,8 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
+use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\ImageBlockType;
-use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
 use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,7 +53,7 @@ class ImagePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function create(BlockInterface $block, array $data = [])
     {
@@ -68,7 +68,7 @@ class ImagePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function update(BlockInterface $block, Request $request)
     {
@@ -97,7 +97,7 @@ class ImagePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function remove(BlockInterface $block)
     {
@@ -105,7 +105,7 @@ class ImagePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function validate(BlockInterface $block, ExecutionContextInterface $context)
     {
@@ -127,9 +127,9 @@ class ImagePlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function createWidget(BlockInterface $block, array $options)
+    public function createWidget(BlockInterface $block, array $options, $position = 0)
     {
-        $view = parent::createWidget($block, $options);
+        $view = parent::createWidget($block, $options, $position);
 
         $options = array_replace($this->config, $options);
 
@@ -153,7 +153,7 @@ class ImagePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTitle()
     {
@@ -161,7 +161,7 @@ class ImagePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getName()
     {
@@ -169,7 +169,7 @@ class ImagePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getJavascriptFilePath()
     {

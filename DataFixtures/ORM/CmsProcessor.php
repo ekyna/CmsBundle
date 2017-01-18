@@ -50,7 +50,7 @@ class CmsProcessor implements ProcessorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function preProcess($object)
     {
@@ -63,7 +63,7 @@ class CmsProcessor implements ProcessorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function postProcess($object)
     {

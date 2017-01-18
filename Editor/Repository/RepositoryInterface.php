@@ -2,7 +2,8 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Repository;
 
-use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
+use Ekyna\Bundle\CmsBundle\Model as CM;
 
 /**
  * Interface RepositoryInterface
@@ -14,28 +15,28 @@ interface RepositoryInterface
     /**
      * Creates a new content.
      *
-     * @return Model\ContentInterface
+     * @return EM\ContentInterface
      */
     public function createContent();
 
     /**
      * Creates a new container.
      *
-     * @return Model\ContainerInterface
+     * @return EM\ContainerInterface
      */
     public function createContainer();
 
     /**
      * Creates a new row.
      *
-     * @return Model\RowInterface
+     * @return EM\RowInterface
      */
     public function createRow();
 
     /**
      * Creates a new block.
      *
-     * @return Model\BlockInterface
+     * @return EM\BlockInterface
      */
     public function createBlock();
 
@@ -44,7 +45,7 @@ interface RepositoryInterface
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface
+     * @return EM\ContentInterface
      */
     public function findContentById($id);
 
@@ -53,7 +54,7 @@ interface RepositoryInterface
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContainerInterface|null
+     * @return EM\ContainerInterface|null
      */
     public function findContainerById($id);
 
@@ -62,7 +63,7 @@ interface RepositoryInterface
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\RowInterface|null
+     * @return EM\RowInterface|null
      */
     public function findRowById($id);
 
@@ -71,7 +72,7 @@ interface RepositoryInterface
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\BlockInterface|null
+     * @return EM\BlockInterface|null
      */
     public function findBlockById($id);
 
@@ -80,7 +81,7 @@ interface RepositoryInterface
      *
      * @param int $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface
+     * @return EM\ContentInterface
      */
     public function findContentByName($name);
 
@@ -89,7 +90,7 @@ interface RepositoryInterface
      *
      * @param int $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContainerInterface|null
+     * @return EM\ContainerInterface|null
      */
     public function findContainerByName($name);
 
@@ -98,7 +99,7 @@ interface RepositoryInterface
      *
      * @param int $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\RowInterface|null
+     * @return EM\RowInterface|null
      */
     public function findRowByName($name);
 
@@ -107,16 +108,46 @@ interface RepositoryInterface
      *
      * @param int $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\BlockInterface|null
+     * @return EM\BlockInterface|null
      */
     public function findBlockByName($name);
 
     /**
+     * Returns the sibling of the given container.
+     *
+     * @param EM\ContainerInterface $container
+     * @param bool            $next Whether to look for the next or the previous
+     *
+     * @return EM\ContainerInterface|null
+     */
+    public function findSiblingContainer(EM\ContainerInterface $container, $next = false);
+
+    /**
+     * Returns the sibling of the given row.
+     *
+     * @param EM\RowInterface $row
+     * @param bool            $next Whether to look for the next or the previous
+     *
+     * @return EM\RowInterface|null
+     */
+    public function findSiblingRow(EM\RowInterface $row, $next = false);
+
+    /**
+     * Returns the sibling of the given block.
+     *
+     * @param EM\BlockInterface $block
+     * @param bool            $next Whether to look for the next or the previous
+     *
+     * @return EM\BlockInterface|null
+     */
+    public function findSiblingBlock(EM\BlockInterface $block, $next = false);
+
+    /**
      * Loads and returns the subject's content.
      *
-     * @param Model\ContentSubjectInterface $subject
+     * @param CM\ContentSubjectInterface $subject
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface|null
+     * @return EM\ContentInterface|null
      */
-    public function loadSubjectContent(Model\ContentSubjectInterface $subject);
+    public function loadSubjectContent(CM\ContentSubjectInterface $subject);
 }

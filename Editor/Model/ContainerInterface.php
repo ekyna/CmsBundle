@@ -1,9 +1,8 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Model;
+namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Editor\Model as Editor;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -12,8 +11,8 @@ use Ekyna\Component\Resource\Model as RM;
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
 interface ContainerInterface
-    extends Editor\DataInterface,
-            Editor\LayoutInterface,
+    extends DataInterface,
+            LayoutInterface,
             RM\SortableInterface,
             RM\TimestampableInterface,
             RM\TaggedEntityInterface
@@ -22,6 +21,7 @@ interface ContainerInterface
      * Sets the content.
      *
      * @param ContentInterface $content
+     *
      * @return ContainerInterface|$this
      */
     public function setContent(ContentInterface $content = null);
@@ -37,6 +37,7 @@ interface ContainerInterface
      * Sets the name.
      *
      * @param string $name
+     *
      * @return ContainerInterface|$this
      */
     public function setName($name);
@@ -99,10 +100,30 @@ interface ContainerInterface
     public function getRows();
 
     /**
-     * Returns the indexable contents indexed by locale.
+     * Returns whether or not the container is the first of the content.
      *
-     * @return array
-     * @TODO remove as handled by plugins
+     * @return boolean
      */
-    public function getIndexableContents();
+    public function isFirst();
+
+    /**
+     * Returns whether or not the container is the last of the content.
+     *
+     * @return boolean
+     */
+    public function isLast();
+
+    /**
+     * Returns whether or not the container is the only content's child.
+     *
+     * @return boolean
+     */
+    public function isAlone();
+
+    /**
+     * Returns whether or not the container is named.
+     *
+     * @return boolean
+     */
+    public function isNamed();
 }

@@ -66,10 +66,6 @@ html {
     padding-top: 50px;
     background-color: #aaaaaa !important;
 
-    .btn {
-        padding: 3px 3px 0 3px;
-    }
-
     #cms-editor-busy {
         position: absolute;
         z-index: 9999;
@@ -117,6 +113,19 @@ html {
                     right @editor-viewport-transition-speed,
                     bottom @editor-viewport-transition-speed,
                     left @editor-viewport-transition-speed;;
+
+        .btn {
+            padding: 3px 3px 0 3px;
+        }
+
+        .cei {
+            font-size: 24px;
+        }
+
+        .cei-spin {
+            -webkit-animation: cei-spin 2s infinite linear;
+            animation: cei-spin 2s infinite linear;
+        }
 
         > .input-group {
             width: auto;
@@ -358,15 +367,6 @@ html {
             height: 100%;
         }
     }
-}
-
-.cei {
-    font-size: 24px;
-}
-
-.cei-spin {
-    -webkit-animation: cei-spin 2s infinite linear;
-    animation: cei-spin 2s infinite linear;
 }
 
 @-webkit-keyframes cei-spin {

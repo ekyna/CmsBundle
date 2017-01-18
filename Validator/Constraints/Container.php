@@ -14,7 +14,7 @@ class Container extends Constraint
     public $contentOrNameButNotBoth = 'ekyna_cms.container.content_or_name_but_not_both';
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTargets()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Model;
+namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Component\Resource\Model AS RM;
@@ -62,10 +62,9 @@ interface ContentInterface extends RM\TimestampableInterface, RM\TaggedEntityInt
     public function getContainers();
 
     /**
-     * Returns the indexable contents indexed by locale.
+     * Returns whether or not the content is named.
      *
-     * @return array
-     * @TODO remove as handled by plugins
+     * @return boolean
      */
-    public function getIndexableContents();
+    public function isNamed();
 }

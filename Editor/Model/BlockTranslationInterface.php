@@ -1,8 +1,7 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Model;
+namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
-use Ekyna\Bundle\CmsBundle\Editor\Model\DataInterface;
 use Ekyna\Component\Resource\Model\TranslationInterface;
 
 /**

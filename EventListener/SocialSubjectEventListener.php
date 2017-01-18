@@ -110,7 +110,7 @@ class SocialSubjectEventListener implements EventSubscriberInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getSubscribedEvents()
     {

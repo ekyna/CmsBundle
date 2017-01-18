@@ -129,7 +129,7 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
     public function removeChild(MenuInterface $menu);
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getChildren();
 
@@ -143,7 +143,7 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
     public function setName($name);
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName();
 

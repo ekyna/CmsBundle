@@ -4,7 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Container;
 
 use Ekyna\Bundle\CmsBundle\Editor\View\ContainerView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\BackgroundContainerType;
-use Ekyna\Bundle\CmsBundle\Model\ContainerInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,7 +50,7 @@ class BackgroundPlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     /*public function create(ContainerInterface $container, array $data = [])
     {
@@ -58,7 +58,7 @@ class BackgroundPlugin extends AbstractPlugin
     }*/
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function update(ContainerInterface $container, Request $request)
     {
@@ -86,7 +86,7 @@ class BackgroundPlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function validate(ContainerInterface $container, ExecutionContextInterface $context)
     {
@@ -94,7 +94,7 @@ class BackgroundPlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function render(ContainerInterface $container, ContainerView $view, $editable = false)
     {
@@ -135,7 +135,7 @@ class BackgroundPlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTitle()
     {
@@ -143,7 +143,7 @@ class BackgroundPlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {
@@ -151,7 +151,7 @@ class BackgroundPlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getJavascriptFilePath()
     {

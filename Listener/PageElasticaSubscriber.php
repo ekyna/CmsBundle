@@ -134,7 +134,7 @@ class PageElasticaSubscriber implements EventSubscriber
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getSubscribedEvents()
     {

@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 //use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface;
 
 /**
  * Class ContentSubjectTrait

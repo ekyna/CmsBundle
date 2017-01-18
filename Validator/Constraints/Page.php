@@ -18,7 +18,7 @@ class Page extends Constraint
     public $invalidController     = 'ekyna_cms.page.invalid_controller';
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTargets()
     {

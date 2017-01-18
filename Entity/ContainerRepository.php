@@ -16,7 +16,7 @@ class ContainerRepository extends ResourceRepository
      *
      * @param int $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContainerInterface|null
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface|null
      */
     public function findOneByName($name)
     {
@@ -40,7 +40,7 @@ class ContainerRepository extends ResourceRepository
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContainerInterface|null
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface|null
      */
     public function findOneById($id)
     {

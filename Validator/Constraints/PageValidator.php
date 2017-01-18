@@ -46,7 +46,7 @@ class PageValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function validate($page, Constraint $constraint)
     {

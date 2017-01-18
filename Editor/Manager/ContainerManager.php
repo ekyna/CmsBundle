@@ -3,8 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
-use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry;
-use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Editor\Model;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -103,11 +102,19 @@ class ContainerManager extends AbstractManager
      * @param Model\ContainerInterface $container The container
      * @param string                   $type      The container new type
      * @param array                    $data      The container new data
+     *
+     * @throws InvalidOperationException
      */
     public function changeType(Model\ContainerInterface $container, $type, array $data = [])
     {
         if ($type === $container->getType()) {
             return;
+        }
+
+        if ($container->isNamed()) {
+            throw new InvalidOperationException(
+                "The type of this container can't be changed."
+            );
         }
 
         // Plugin removal
@@ -134,18 +141,17 @@ class ContainerManager extends AbstractManager
      */
     public function delete(Model\ContainerInterface $container)
     {
-        // Check if the container is not the only content container (a content must have at least one container).
-        $content = $container->getContent();
-        if (null === $content) {
+        // Ensure not named / alone
+        if ($container->isAlone() || $container->isNamed()) {
             throw new InvalidOperationException(
-                "The container does not belong to a content and therefore can't be removed."
+                "The container can't be removed because it is named or the parent content does not have enough children."
             );
         }
 
-        $containers = $container->getContent()->getContainers();
-        if (1 >= $containers->count()) {
+        // Check if the container is not the only content container (a content must have at least one container).
+        if (null === $content = $container->getContent()) {
             throw new InvalidOperationException(
-                "The container can't be removed because the parent content does not have enough children."
+                "The container does not belong to a content and therefore can't be removed."
             );
         }
 
@@ -154,11 +160,11 @@ class ContainerManager extends AbstractManager
             ->getContainerPlugin($container->getType())
             ->remove($container);
 
-        $containers->removeElement($container);
+        $content->removeContainer($container);
 
         $this->editor
             ->getContentManager()
-            ->fixContainerPositions($content);
+            ->fixContainersPositions($content);
 
         return $container;
     }
@@ -173,10 +179,10 @@ class ContainerManager extends AbstractManager
      */
     public function moveUp(Model\ContainerInterface $container)
     {
-        $sibling = $this->findPreviousSibling($container);
+        $sibling = $this->editor->getRepository()->findSiblingContainer($container, false);
         if (null === $sibling) {
             throw new InvalidOperationException(
-                "The container can't be moved up as no previous sibling has been found."
+                "The container can't be moved up as no sibling container has been found."
             );
         }
 
@@ -198,10 +204,10 @@ class ContainerManager extends AbstractManager
      */
     public function moveDown(Model\ContainerInterface $container)
     {
-        $sibling = $this->findNextSibling($container);
+        $sibling = $this->editor->getRepository()->findSiblingContainer($container, true);
         if (null === $sibling) {
             throw new InvalidOperationException(
-                "The container can't be moved down as no next sibling has been found."
+                "The container can't be moved down as no sibling container has been found."
             );
         }
 
@@ -214,13 +220,13 @@ class ContainerManager extends AbstractManager
     }
 
     /**
-     * Fix the row positions.
+     * Fix the rows positions.
      *
      * @param Model\ContainerInterface $container
      *
      * @return ContainerManager
      */
-    public function fixRowPositions(Model\ContainerInterface $container)
+    public function fixRowsPositions(Model\ContainerInterface $container)
     {
         $this->sortChildrenByPosition($container, 'rows');
 
@@ -233,61 +239,5 @@ class ContainerManager extends AbstractManager
         }
 
         return $this;
-    }
-
-    /**
-     * The container's previous sibling.
-     *
-     * @param Model\ContainerInterface $container
-     *
-     * @return Model\ContainerInterface|null
-     * @throws InvalidOperationException
-     */
-    private function findPreviousSibling(Model\ContainerInterface $container)
-    {
-        if (null === $content = $container->getContent()) {
-            throw new InvalidOperationException('The container does not have a parent content.');
-        }
-
-        // Return null if this is the first container
-        if (0 == $container->getPosition()) {
-            return null;
-        }
-
-        $containers = $content->getContainers();
-
-        $sibling = $containers->filter(function (Model\ContainerInterface $b) use ($container) {
-            return $b->getPosition() == $container->getPosition() - 1;
-        })->first();
-
-        return $sibling ? $sibling : null;
-    }
-
-    /**
-     * Finds the container's next sibling.
-     *
-     * @param Model\ContainerInterface $container
-     *
-     * @return Model\ContainerInterface|null
-     * @throws InvalidOperationException
-     */
-    private function findNextSibling(Model\ContainerInterface $container)
-    {
-        if (null === $content = $container->getContent()) {
-            throw new InvalidOperationException('The container does not have a parent content.');
-        }
-
-        $containers = $content->getContainers();
-
-        // Return null if this is the last container
-        if ($containers->count() - 1 == $container->getPosition()) {
-            return null;
-        }
-
-        $sibling = $containers->filter(function (Model\ContainerInterface $b) use ($container) {
-            return $b->getPosition() == $container->getPosition() + 1;
-        })->first();
-
-        return $sibling ? $sibling : null;
     }
 }

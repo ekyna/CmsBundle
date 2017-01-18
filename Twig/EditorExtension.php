@@ -5,9 +5,10 @@ namespace Ekyna\Bundle\CmsBundle\Twig;
 use Doctrine\ORM\EntityManagerInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Exception;
+use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Bundle\CmsBundle\Editor\View;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
-use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Model as CM;
 use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 
 /**
@@ -73,7 +74,7 @@ class EditorExtension extends \Twig_Extension
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFunctions()
     {
@@ -87,7 +88,7 @@ class EditorExtension extends \Twig_Extension
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function initRuntime(\Twig_Environment $twig)
     {
@@ -132,7 +133,7 @@ class EditorExtension extends \Twig_Extension
     /**
      * Renders the content.
      *
-     * @param Model\ContentSubjectInterface|Model\ContentInterface|View\ContentView|null $content
+     * @param CM\ContentSubjectInterface|EM\ContentInterface|View\ContentView|null $content
      *
      * @return string
      * @throws Exception\InvalidArgumentException
@@ -156,7 +157,7 @@ class EditorExtension extends \Twig_Extension
             } else {
                 throw new \RuntimeException('Undefined content.');
             }
-        } elseif ($content instanceof Model\ContentSubjectInterface) {
+        } elseif ($content instanceof CM\ContentSubjectInterface) {
             if (null === $element = $repository->loadSubjectContent($content)) {
                 $element = $this->editor->createDefaultContent($content);
                 $this->persist($content);
@@ -169,7 +170,7 @@ class EditorExtension extends \Twig_Extension
             $content = $element;
         }
 
-        if ($content instanceof Model\ContentInterface) {
+        if ($content instanceof EM\ContentInterface) {
             $this->tagManager->addTags($content->getEntityTag());
 
             $content = $this->editor->getViewBuilder()->buildContent($content);
@@ -177,8 +178,8 @@ class EditorExtension extends \Twig_Extension
 
         if (!$content instanceof View\ContentView) {
             throw new Exception\InvalidArgumentException(
-                'Expected string or instance of ' . Model\ContentSubjectInterface::class . ', ' .
-                Model\ContentInterface::class . ' or ' . View\ContentView::class
+                'Expected string or instance of ' . CM\ContentSubjectInterface::class . ', ' .
+                EM\ContentInterface::class . ' or ' . View\ContentView::class
             );
         }
 
@@ -191,9 +192,9 @@ class EditorExtension extends \Twig_Extension
     /**
      * Renders the container.
      *
-     * @param string|Model\ContainerInterface|View\ContainerView $container
-     * @param string                                             $type
-     * @param array                                              $data
+     * @param string|EM\ContainerInterface|View\ContainerView $container
+     * @param string                                          $type
+     * @param array                                           $data
      *
      * @return string
      * @throws Exception\InvalidArgumentException
@@ -207,7 +208,7 @@ class EditorExtension extends \Twig_Extension
             $container = $element;
         }
 
-        if ($container instanceof Model\ContainerInterface) {
+        if ($container instanceof EM\ContainerInterface) {
             $this->tagManager->addTags($container->getEntityTag());
 
             $container = $this->editor->getViewBuilder()->buildContainer($container);
@@ -216,7 +217,7 @@ class EditorExtension extends \Twig_Extension
         if (!$container instanceof View\ContainerView) {
             throw new Exception\InvalidArgumentException(
                 'Expected string or instance of ' .
-                Model\ContainerInterface::class . ' or ' .
+                EM\ContainerInterface::class . ' or ' .
                 View\ContainerView::class
             );
         }
@@ -230,8 +231,8 @@ class EditorExtension extends \Twig_Extension
     /**
      * Renders the row.
      *
-     * @param Model\RowInterface|View\RowView $row
-     * @param array                           $data
+     * @param EM\RowInterface|View\RowView $row
+     * @param array                        $data
      *
      * @return string
      * @throws Exception\InvalidArgumentException
@@ -245,7 +246,7 @@ class EditorExtension extends \Twig_Extension
             $row = $element;
         }
 
-        if ($row instanceof Model\RowInterface) {
+        if ($row instanceof EM\RowInterface) {
             $this->tagManager->addTags($row->getEntityTag());
 
             $row = $this->editor->getViewBuilder()->buildRow($row);
@@ -254,7 +255,7 @@ class EditorExtension extends \Twig_Extension
         if (!$row instanceof View\RowView) {
             throw new Exception\InvalidArgumentException(
                 'Expected string or instance of ' .
-                Model\RowInterface::class . ' or ' .
+                EM\RowInterface::class . ' or ' .
                 View\RowView::class
             );
         }
@@ -268,9 +269,9 @@ class EditorExtension extends \Twig_Extension
     /**
      * Renders the block.
      *
-     * @param Model\BlockInterface|View\BlockView $block
-     * @param string                              $type
-     * @param array                               $data
+     * @param EM\BlockInterface|View\BlockView $block
+     * @param string                           $type
+     * @param array                            $data
      *
      * @return string
      * @throws Exception\InvalidArgumentException
@@ -284,7 +285,7 @@ class EditorExtension extends \Twig_Extension
             $block = $element;
         }
 
-        if ($block instanceof Model\BlockInterface) {
+        if ($block instanceof EM\BlockInterface) {
             $this->tagManager->addTags($block->getEntityTag());
 
             $block = $this->editor->getViewBuilder()->buildBlock($block);
@@ -293,7 +294,7 @@ class EditorExtension extends \Twig_Extension
         if (!$block instanceof View\BlockView) {
             throw new Exception\InvalidArgumentException(
                 'Expected string or instance of ' .
-                Model\BlockInterface::class . ' or ' .
+                EM\BlockInterface::class . ' or ' .
                 View\BlockView::class
             );
         }
@@ -305,7 +306,7 @@ class EditorExtension extends \Twig_Extension
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {

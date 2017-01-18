@@ -16,7 +16,7 @@ class RowRepository extends ResourceRepository
      *
      * @param int $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\RowInterface|null
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface|null
      */
     public function findOneByName($name)
     {
@@ -39,7 +39,7 @@ class RowRepository extends ResourceRepository
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\RowInterface|null
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface|null
      */
     public function findOneById($id)
     {

@@ -3,7 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
-use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface;
+use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 
 /**
  * Class ContentManager
@@ -15,15 +16,15 @@ class ContentManager extends AbstractManager
     /**
      * Creates a new content.
      *
-     * @param Model\ContentSubjectInterface|string $subjectOrName
+     * @param ContentSubjectInterface|string $subjectOrName
      *
-     * @return Model\ContentInterface
+     * @return ContentInterface
      * @throws InvalidOperationException
      */
     public function create($subjectOrName)
     {
         // Check if container or name is defined
-        if (!$subjectOrName instanceof Model\ContentSubjectInterface
+        if (!$subjectOrName instanceof ContentSubjectInterface
             || (is_string($subjectOrName) && 0 == strlen($subjectOrName))
         ) {
             throw new InvalidOperationException("Excepted instance of ContentSubjectInterface or string.");
@@ -36,7 +37,7 @@ class ContentManager extends AbstractManager
         $this->editor->getContainerManager()->create($content);
 
         // Add to container if available
-        if ($subjectOrName instanceof Model\ContentSubjectInterface) {
+        if ($subjectOrName instanceof ContentSubjectInterface) {
             $subjectOrName->setContent($content);
         } else {
             $content->setName($subjectOrName);
@@ -46,13 +47,13 @@ class ContentManager extends AbstractManager
     }
 
     /**
-     * Fix the container positions.
+     * Fix the containers positions.
      *
-     * @param Model\ContentInterface $content
+     * @param ContentInterface $content
      *
      * @return ContentManager
      */
-    public function fixContainerPositions(Model\ContentInterface $content)
+    public function fixContainersPositions(ContentInterface $content)
     {
         $this->sortChildrenByPosition($content, 'containers');
 

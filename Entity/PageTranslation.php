@@ -39,7 +39,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
 
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -47,7 +47,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setTitle($title)
     {
@@ -56,7 +56,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTitle()
     {
@@ -64,7 +64,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setBreadcrumb($breadcrumb)
     {
@@ -73,7 +73,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getBreadcrumb()
     {
@@ -81,7 +81,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setHtml($html)
     {
@@ -90,7 +90,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getHtml()
     {
@@ -98,7 +98,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setPath($path)
     {
@@ -107,7 +107,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPath()
     {

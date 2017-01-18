@@ -96,7 +96,7 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFunctions()
     {
@@ -301,7 +301,7 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {

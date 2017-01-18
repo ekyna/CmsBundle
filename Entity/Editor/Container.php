@@ -1,22 +1,20 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Entity;
+namespace Ekyna\Bundle\CmsBundle\Entity\Editor;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\CmsBundle\Editor\Model as Editor;
+use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Component\Resource\Model as RM;
-use Ekyna\Bundle\CmsBundle\Model as Cms;
-use Ekyna\Bundle\CoreBundle\Model as Core;
 
 /**
  * Class Container
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class Container implements Cms\ContainerInterface
+class Container implements EM\ContainerInterface
 {
-    use Editor\DataTrait,
-        Editor\LayoutTrait,
+    use EM\DataTrait,
+        EM\LayoutTrait,
         RM\SortableTrait,
         RM\TimestampableTrait;
 
@@ -30,7 +28,7 @@ class Container implements Cms\ContainerInterface
     protected $id;
 
     /**
-     * @var Cms\ContentInterface
+     * @var EM\ContentInterface
      */
     protected $content;
 
@@ -45,12 +43,7 @@ class Container implements Cms\ContainerInterface
     protected $type;
 
     /**
-     * @var array
-     */
-    protected $data;
-
-    /**
-     * @var ArrayCollection|Cms\RowInterface[]
+     * @var ArrayCollection|EM\RowInterface[]
      */
     protected $rows;
 
@@ -65,7 +58,7 @@ class Container implements Cms\ContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -75,7 +68,7 @@ class Container implements Cms\ContainerInterface
     /**
      * @inheritDoc
      */
-    public function setContent(Cms\ContentInterface $content = null)
+    public function setContent(EM\ContentInterface $content = null)
     {
         $this->content = $content;
 
@@ -109,7 +102,7 @@ class Container implements Cms\ContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setType($type)
     {
@@ -119,7 +112,7 @@ class Container implements Cms\ContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getType()
     {
@@ -127,7 +120,7 @@ class Container implements Cms\ContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setRows(ArrayCollection $rows)
     {
@@ -139,9 +132,9 @@ class Container implements Cms\ContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function addRow(Cms\RowInterface $row)
+    public function addRow(EM\RowInterface $row)
     {
         $row->setContainer($this);
         $this->rows->add($row);
@@ -150,9 +143,9 @@ class Container implements Cms\ContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function removeRow(Cms\RowInterface $row)
+    public function removeRow(EM\RowInterface $row)
     {
         $row->setContainer(null);
         $this->rows->removeElement($row);
@@ -161,7 +154,7 @@ class Container implements Cms\ContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRows()
     {
@@ -169,25 +162,43 @@ class Container implements Cms\ContainerInterface
     }
 
     /**
-     * {@inheritdoc}
-     * @TODO remove as handled by plugins
+     * @inheritdoc
      */
-    public function getIndexableContents()
+    public function isFirst()
     {
-        $contents = [];
+        return 0 == $this->position;
+    }
 
-        /* TODO foreach ($this->blocks as $block) {
-            if ($block->isIndexable()) {
-                foreach ($block->getIndexableContents() as $locale => $content) {
-                    if (!array_key_exists($locale, $contents)) {
-                        $contents[$locale] = array('content' => '');
-                    }
-                    $contents[$locale]['content'] .= $content;
-                }
-            }
-        }*/
+    /**
+     * @inheritdoc
+     */
+    public function isLast()
+    {
+        if (null !== $this->content && ($this->content->getContainers()->count() - 1 > $this->position)) {
+            return false;
+        }
 
-        return $contents;
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isAlone()
+    {
+        if (null === $this->content) {
+            return true;
+        }
+
+        return 1 >= $this->content->getContainers()->count();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isNamed()
+    {
+        return 0 < strlen($this->name);
     }
 
     /**

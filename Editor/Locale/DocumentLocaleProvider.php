@@ -44,7 +44,7 @@ class DocumentLocaleProvider implements LocaleProviderInterface, EventSubscriber
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getSubscribedEvents()
     {
@@ -63,7 +63,7 @@ class DocumentLocaleProvider implements LocaleProviderInterface, EventSubscriber
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCurrentLocale()
     {
@@ -74,7 +74,7 @@ class DocumentLocaleProvider implements LocaleProviderInterface, EventSubscriber
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFallbackLocale()
     {
@@ -82,7 +82,7 @@ class DocumentLocaleProvider implements LocaleProviderInterface, EventSubscriber
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAvailableLocales()
     {

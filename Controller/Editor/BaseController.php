@@ -174,7 +174,7 @@ class BaseController extends Controller
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface
      */
     protected function findContent($id)
     {
@@ -188,7 +188,7 @@ class BaseController extends Controller
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContainerInterface
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface
      */
     protected function findContainer($id)
     {
@@ -200,7 +200,7 @@ class BaseController extends Controller
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\RowInterface
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface
      */
     protected function findRow($id)
     {
@@ -212,7 +212,7 @@ class BaseController extends Controller
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\BlockInterface
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface
      */
     protected function findBlock($id)
     {
@@ -224,7 +224,7 @@ class BaseController extends Controller
      *
      * @param Request $request
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\BlockInterface
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface
      */
     protected function findBlockByRequest(Request $request)
     {
@@ -236,7 +236,7 @@ class BaseController extends Controller
      *
      * @param Request $request
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\RowInterface
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface
      */
     protected function findRowByRequest(Request $request)
     {
@@ -248,7 +248,7 @@ class BaseController extends Controller
      *
      * @param Request $request
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContainerInterface
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface
      */
     protected function findContainerByRequest(Request $request)
     {
@@ -260,7 +260,7 @@ class BaseController extends Controller
      *
      * @param Request $request
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\ContentInterface
+     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface
      */
     protected function findContentByRequest(Request $request)
     {

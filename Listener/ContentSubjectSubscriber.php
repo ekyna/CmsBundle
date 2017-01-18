@@ -13,7 +13,7 @@ use Doctrine\ORM\Events;
  */
 class ContentSubjectSubscriber implements EventSubscriber
 {
-    const CONTENT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\ContentInterface';
+    const CONTENT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface';
     const SUBJECT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface';
 
     /**
@@ -61,7 +61,7 @@ class ContentSubjectSubscriber implements EventSubscriber
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getSubscribedEvents()
     {

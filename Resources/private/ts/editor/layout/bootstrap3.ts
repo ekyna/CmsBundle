@@ -2,7 +2,6 @@
 ///<reference path="../../../../../../../../../typings/globals/backbone-global/index.d.ts"/>
 
 import 'jquery';
-import * as _ from 'underscore';
 import {AdapterInterface, LayoutDataInterface} from '../document-manager';
 import {Toolbar, ControlInterface, ToolbarView} from "../ui";
 
@@ -33,7 +32,7 @@ export class Bootstrap3Adapter implements AdapterInterface {
             return;
         }
 
-        let map: Array<Device> = _.clone(Bootstrap3Adapter.devicesMap).reverse(),
+        let map: Array<Device> = JSON.parse(JSON.stringify(Bootstrap3Adapter.devicesMap)).reverse(),
             classes = this.$element.attr('class').split(' '),
             bsData:any, previousBsData:any, key, device:Device, matches;
 
@@ -65,7 +64,7 @@ export class Bootstrap3Adapter implements AdapterInterface {
 
             this.data[device.name] = bsData;
 
-            previousBsData = _.clone(bsData);
+            previousBsData = JSON.parse(JSON.stringify(bsData));
         }
     }
 

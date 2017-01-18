@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
-use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -30,7 +30,7 @@ class TinymcePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function create(BlockInterface $block, array $data = [])
     {
@@ -44,7 +44,7 @@ class TinymcePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function update(BlockInterface $block, Request $request)
     {
@@ -65,7 +65,7 @@ class TinymcePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function remove(BlockInterface $block)
     {
@@ -75,7 +75,7 @@ class TinymcePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function validate(BlockInterface $block, ExecutionContextInterface $context)
     {
@@ -93,9 +93,9 @@ class TinymcePlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function createWidget(BlockInterface $block, array $options)
+    public function createWidget(BlockInterface $block, array $options, $position = 0)
     {
-        $view = parent::createWidget($block, $options);
+        $view = parent::createWidget($block, $options, $position);
 
         $translationData = $block->translate($this->localeProvider->getCurrentLocale())->getData();
         if (array_key_exists('content', $translationData)) {
@@ -109,7 +109,7 @@ class TinymcePlugin extends AbstractPlugin
 
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTitle()
     {
@@ -117,7 +117,7 @@ class TinymcePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {
@@ -125,7 +125,7 @@ class TinymcePlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getJavascriptFilePath()
     {

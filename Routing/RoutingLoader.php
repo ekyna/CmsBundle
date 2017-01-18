@@ -34,7 +34,7 @@ class RoutingLoader extends Loader
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function load($resource, $type = null)
     {
@@ -94,7 +94,7 @@ class RoutingLoader extends Loader
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function supports($resource, $type = null)
     {

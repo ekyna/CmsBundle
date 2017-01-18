@@ -5,7 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Adapter;
 use Ekyna\Bundle\CmsBundle\Editor\EditorAwareInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
 use Ekyna\Bundle\CmsBundle\Editor\View;
-use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Editor\Model;
 
 /**
  * Interface AdapterInterface

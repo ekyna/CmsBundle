@@ -29,7 +29,7 @@ class MenuTranslation extends AbstractTranslation implements MenuTranslationInte
 
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -37,7 +37,7 @@ class MenuTranslation extends AbstractTranslation implements MenuTranslationInte
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setTitle($title)
     {
@@ -46,7 +46,7 @@ class MenuTranslation extends AbstractTranslation implements MenuTranslationInte
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTitle()
     {
@@ -54,7 +54,7 @@ class MenuTranslation extends AbstractTranslation implements MenuTranslationInte
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPath()
     {
@@ -62,7 +62,7 @@ class MenuTranslation extends AbstractTranslation implements MenuTranslationInte
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setPath($path)
     {

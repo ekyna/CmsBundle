@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class EditorPluginPass implements CompilerPassInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function process(ContainerBuilder $container)
     {
@@ -35,14 +35,5 @@ class EditorPluginPass implements CompilerPassInterface
         foreach ($taggedServices as $id => $tagAttributes) {
             $registry->addMethodCall('addContainerPlugin', [new Reference($id)]);
         }
-
-        /*$mapping = [
-            'Ekyna\Bundle\CmsBundle\Entity\Block'            => 'Ekyna\Bundle\CmsBundle\Entity\BlockTranslation',
-            'Ekyna\Bundle\CmsBundle\Entity\BlockTranslation' => 'Ekyna\Bundle\CmsBundle\Entity\Block',
-        ];
-        if ($container->hasParameter('ekyna_resource.translation_mapping')) {
-            $mapping = array_merge($container->getParameter('ekyna_resource.translation_mapping'), $mapping);
-        }
-        $container->setParameter('ekyna_resource.translation_mapping', $mapping);*/
     }
 }

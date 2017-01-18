@@ -14,7 +14,7 @@ class Menu extends Constraint
     public $invalid_routing = 'ekyna_cms.menu.invalid_routing';
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTargets()
     {
@@ -22,7 +22,7 @@ class Menu extends Constraint
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     /*public function validatedBy()
     {

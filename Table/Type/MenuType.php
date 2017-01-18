@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class MenuType extends ResourceTableType
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function buildTable(TableBuilderInterface $builder, array $options)
     {
@@ -74,7 +74,7 @@ class MenuType extends ResourceTableType
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -87,7 +87,7 @@ class MenuType extends ResourceTableType
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {

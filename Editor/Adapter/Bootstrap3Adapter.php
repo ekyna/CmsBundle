@@ -5,7 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Adapter;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidArgumentException;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\RuntimeException;
 use Ekyna\Bundle\CmsBundle\Editor\View;
-use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Editor\Model;
 
 /**
  * Class Bootstrap3Adapter
@@ -90,21 +90,6 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
 
         $this->applyLayoutStyles($attributes, $layout);
 
-        // Editor data
-        if ($this->editor->isEnabled()) {
-            $attributes->setData([
-                'actions' => [ // TODO
-                    'offset_left'  => true,
-                    'offset_right' => true,
-                    'push'         => true,
-                    'pull'         => true,
-                    'expand'       => true,
-                    'compress'     => true,
-                    'add'          => true,
-                    'remove'       => true,
-                ],
-            ]);
-        }
         $attributes->addClass($classes);
     }
 
@@ -147,7 +132,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
             static::XS,
             static::SM,
             static::MD,
-            static::LG
+            static::LG,
         ];
         foreach (array_diff(array_keys($data), $expectedKeys) as $property) {
             unset($data[$property]);

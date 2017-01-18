@@ -5,7 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginInterface as BaseInterface;
 use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Editor\View\WidgetView;
-use Ekyna\Bundle\CmsBundle\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -63,10 +63,11 @@ interface PluginInterface extends BaseInterface
      *
      * @param BlockInterface $block
      * @param array          $options
+     * @param int            $position
      *
      * @return WidgetView
      */
-    public function createWidget(BlockInterface $block, array $options);
+    public function createWidget(BlockInterface $block, array $options, $position = 0);
 
     /**
      * Returns whether the block is supported.

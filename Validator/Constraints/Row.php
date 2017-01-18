@@ -20,7 +20,7 @@ class Row extends Constraint
     public $tooLargeRow               = 'ekyna_cms.row.too_large_row';
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTargets()
     {

@@ -16,17 +16,17 @@ class RowManagerTest extends TestCase
 {
     public function test_it_compresses_a_too_large_layout()
     {
-        $row = new Entity\Row();
+        $row = new Entity\Editor\Row();
 
-        $block1 = new Entity\Block();
+        $block1 = new Entity\Editor\Block();
         $block1->setSize(6)->setPosition(0);
         $row->addBlock($block1);
 
-        $block2 = new Entity\Block();
+        $block2 = new Entity\Editor\Block();
         $block2->setSize(4)->setPosition(0);
         $row->addBlock($block2);
 
-        $block3 = new Entity\Block();
+        $block3 = new Entity\Editor\Block();
         $block3->setSize(4)->setPosition(0);
         $row->addBlock($block3);
 
@@ -49,17 +49,17 @@ class RowManagerTest extends TestCase
 
     public function test_it_expands_a_too_small_layout()
     {
-        $row = new Entity\Row();
+        $row = new Entity\Editor\Row();
 
-        $block1 = new Entity\Block();
+        $block1 = new Entity\Editor\Block();
         $block1->setSize(4)->setPosition(0);
         $row->addBlock($block1);
 
-        $block2 = new Entity\Block();
+        $block2 = new Entity\Editor\Block();
         $block2->setSize(2)->setPosition(0);
         $row->addBlock($block2);
 
-        $block3 = new Entity\Block();
+        $block3 = new Entity\Editor\Block();
         $block3->setSize(2)->setPosition(0);
         $row->addBlock($block3);
 

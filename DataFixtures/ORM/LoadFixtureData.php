@@ -14,7 +14,7 @@ use Nelmio\Alice\Fixtures;
 class LoadFixtureData extends Loader implements OrderedFixtureInterface
 {
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     protected function getFixtures()
     {
@@ -24,7 +24,7 @@ class LoadFixtureData extends Loader implements OrderedFixtureInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getOrder()
     {

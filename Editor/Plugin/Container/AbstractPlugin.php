@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Container;
 
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\AbstractPlugin as BasePlugin;
-use Ekyna\Bundle\CmsBundle\Model\ContainerInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Ekyna\Bundle\CoreBundle\Modal\Modal;
 
 /**
@@ -17,7 +17,7 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
 
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function create(ContainerInterface $container, array $data = [])
     {
@@ -25,7 +25,7 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function remove(ContainerInterface $container)
     {
@@ -33,7 +33,7 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function supports(ContainerInterface $container)
     {

@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
-use Ekyna\Bundle\CmsBundle\Model\RowInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;

@@ -259,7 +259,7 @@
 
     <!-- Editor -->
 
-    <class name="Ekyna\Bundle\CmsBundle\Entity\Content">
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Editor\Content">
         <!--<constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Content" />-->
         <!--<property name="version">
             <constraint name="NotNull" />
@@ -272,7 +272,7 @@
         </property>
     </class>
 
-    <class name="Ekyna\Bundle\CmsBundle\Entity\Container">
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Editor\Container">
         <property name="rows">
             <constraint name="Count">
                 <option name="min">1</option>
@@ -285,7 +285,7 @@
         <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Container"/>
     </class>
 
-    <class name="Ekyna\Bundle\CmsBundle\Entity\Row">
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Editor\Row">
         <property name="blocks">
             <constraint name="Count">
                 <option name="min">1</option>
@@ -295,7 +295,7 @@
         <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Row"/>
     </class>
 
-    <class name="Ekyna\Bundle\CmsBundle\Entity\Block">
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Editor\Block">
         <property name="position">
             <constraint name="Range">
                 <option name="min">0</option>

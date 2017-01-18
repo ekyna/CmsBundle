@@ -297,7 +297,7 @@ class PageEventListener implements EventSubscriberInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getSubscribedEvents()
     {

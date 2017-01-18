@@ -47,7 +47,7 @@ class MenuType extends ResourceFormType
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
