@@ -86,8 +86,10 @@ export class Bootstrap3Adapter implements AdapterInterface {
             throw 'Failed to resolve the device';
         }
 
-        let bsData = this.data[this.device],
-            control:ControlInterface;
+        let control:ControlInterface,
+            bsData = this.data.hasOwnProperty(this.device)
+                ? this.data[this.device]
+                : {size: 12, offset: 0};
 
         // Size
         if (control = toolbar.model.getControl('default', 'size')) {

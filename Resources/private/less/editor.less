@@ -51,7 +51,7 @@
     }
 }
 
-html {
+html, body {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -59,11 +59,6 @@ html {
 }
 
 #cms-editor {
-    min-width: 100%;
-    min-height: 100%;
-    position: relative;
-    margin: 0;
-    padding-top: 50px;
     background-color: #aaaaaa !important;
 
     #cms-editor-busy {
@@ -115,7 +110,7 @@ html {
                     left @editor-viewport-transition-speed;;
 
         .btn {
-            padding: 3px 3px 0 3px;
+            padding: 4px 3px 1px 3px;
         }
 
         .cei {
@@ -336,7 +331,6 @@ html {
     }
 
     #editor-control-bar {
-        position: fixed;
         z-index: 10;
         top: 0;
         left: 0;
@@ -346,25 +340,39 @@ html {
     }
 
     #editor-viewport {
-        position: absolute;
-        z-index: 1;
+        position: fixed;
         top: 50px;
         bottom: 0;
         left: 0;
         right: 0;
-        box-shadow: 0 0 10px rgba(0, 0, 0, .4);
-        overflow: hidden;
-        background-color: #ffffff;
+        overflow: auto;
+        text-align: center;
+    }
 
-        -webkit-transition: all @editor-viewport-transition-speed;
-        -moz-transition: all @editor-viewport-transition-speed;
-        -o-transition: all @editor-viewport-transition-speed;
-        -ms-transition: all @editor-viewport-transition-speed;
-        transition: all @editor-viewport-transition-speed;
+    #editor-viewport-wrapper {
+        position: relative;
+        overflow: visible;
+        display: inline-block;
+        vertical-align: middle;
+        margin: 25px;
+
+        background-color: #ffffff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .4);
+
+        -webkit-transition: width @editor-viewport-transition-speed, height @editor-viewport-transition-speed;
+        -moz-transition: width @editor-viewport-transition-speed, height @editor-viewport-transition-speed;
+        -o-transition: width @editor-viewport-transition-speed, height @editor-viewport-transition-speed;
+        -ms-transition: width @editor-viewport-transition-speed, height @editor-viewport-transition-speed;
+        transition: width @editor-viewport-transition-speed, height @editor-viewport-transition-speed;
 
         iframe {
             width: 100%;
             height: 100%;
+        }
+
+        &.auto {
+            overflow: hidden;
+            margin: 0 auto;
         }
     }
 }

@@ -88,7 +88,6 @@ class Editor {
         // Init event handlers
         this.initHandlers();
 
-
         // Init viewport iframe
         this.viewport.initIFrame(config.path);
     }

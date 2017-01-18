@@ -29,7 +29,6 @@ export interface ResizeEventData {
 export class ViewportModel extends Backbone.Model {
     defaults(): Backbone.ObjectHash {
         return {
-            url: null,
             size: null
         }
     }
@@ -49,7 +48,7 @@ export class ViewportView extends Backbone.View<ViewportModel> {
     constructor(options?: Backbone.ViewOptions<ViewportModel>) {
         options.tagName = 'div';
         options.attributes = {
-            id: 'editor-viewport'
+            id: 'editor-viewport-wrapper'
         };
 
         super(options);
@@ -63,6 +62,7 @@ export class ViewportView extends Backbone.View<ViewportModel> {
 
     initialize(options?: Backbone.ViewOptions<ViewportModel>) {
         _.bindAll(this, 'resize', 'reload');
+
         this.model.bind('change:size', this.resize);
         $(window).resize(this.resize);
     }
@@ -100,6 +100,8 @@ export class ViewportView extends Backbone.View<ViewportModel> {
      */
     render(): ViewportView {
         this.$el.html(this.template());
+
+        this.resize();
 
         return this;
     }
@@ -146,47 +148,25 @@ export class ViewportView extends Backbone.View<ViewportModel> {
      * Resizes the viewport.
      */
     private resize(): void {
-        let size: SizeInterface = this.model.get('size'),
-            origin: OffsetInterface = {top: 50, left: 0},
-            css: any = {
-                top: 50,
-                bottom: 0,
-                left: 0,
-                right: 0
-            };
+        let $viewport = $('#editor-viewport'),
+            width: number = $viewport.width(),
+            height: number = $viewport.height(),
+            size: SizeInterface = this.model.get('size'),
+            origin: OffsetInterface = {top: 50, left: 0};
 
-        let window_width: number = window.innerWidth,
-            window_height: number = window.innerHeight;
+        this.$el.removeAttr('style');
 
         if (size) {
-            if (window_height - 50 >= size.height) {
-                origin.top = css.top = (window_height / 2 - size.height / 2) + 25;
-                css.bottom = (window_height / 2 - size.height / 2) - 25;
+            this.$el.removeClass('auto').css(size);
+            if (size.width > width - 25) {
+                origin.left = 25;
             } else {
-                css.top = 50;
-                css.height = size.height;
-                css.marginTop = 50;
-                css.marginBottom = 50;
-                origin.top = css.top + css.marginTop;
+                origin.left = (width / 2) - (size.width / 2);
             }
-            if (window_width >= size.width) {
-                origin.left = css.left = window_width / 2 - size.width / 2;
-                css.right = window_width / 2 - size.width / 2;
-            } else {
-                css.left = 0;
-                css.width = size.width;
-                css.marginLeft = 50;
-                css.marginRight = 50;
-                origin.left = css.left + css.marginLeft;
-            }
+            origin.top = 75; // Top bar height (50) + viewport margin (25)
         } else {
-            size = {
-                width: window_width,
-                height: window_height,
-            }
+            this.$el.addClass('auto').css({width: width, height: height});
         }
-
-        this.$el.removeAttr('style').css(css);
 
         Dispatcher.trigger('viewport.resize', <ResizeEventData>{
             origin: origin,

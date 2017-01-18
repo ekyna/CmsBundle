@@ -39,8 +39,8 @@ export class CommonAdapter implements AdapterInterface {
 
     apply(data:LayoutDataInterface):void {
         this.$element.css({
-            paddingTop: (data['padding_top'] ? data['padding_top'] + 'px' : null),
-            paddingBottom: (data['padding_bottom'] ? data['padding_bottom'] + 'px' : null),
+            paddingTop: (data['padding_top'] ? data['padding_top'] + 'px' : '0px'),
+            paddingBottom: (data['padding_bottom'] ? data['padding_bottom'] + 'px' : '0px'),
         });
     }
 }
