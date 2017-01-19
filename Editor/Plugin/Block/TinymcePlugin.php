@@ -46,7 +46,7 @@ class TinymcePlugin extends AbstractPlugin
     /**
      * @inheritdoc
      */
-    public function update(BlockInterface $block, Request $request)
+    public function update(BlockInterface $block, Request $request, array $options = [])
     {
         if (!$request->isMethod('POST')) {
             throw new InvalidOperationException('Tinymce block plugin only supports POST request.');

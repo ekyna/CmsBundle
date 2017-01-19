@@ -240,16 +240,8 @@ export class BaseManager {
                     this.$contentDocument.find('#' + id).remove();
                 });
             }
-
             // Parse elements
             BaseManager.parse(data);
-
-            // Dispatch response parsed
-            let event: SelectionEvent = new SelectionEvent();
-            if (data.hasOwnProperty('created')) {
-                event.$element = BaseManager.findElementById(data.created);
-            }
-            Dispatcher.trigger('base_manager.response_parsed', event);
         });
         xhr.fail(function () {
             console.log('Editor request failed.');
@@ -273,6 +265,13 @@ export class BaseManager {
         } else if (data.hasOwnProperty('widgets')) {
             WidgetManager.parse(data.widgets);
         }
+
+        // Dispatch response parsed
+        let event: SelectionEvent = new SelectionEvent();
+        if (data.hasOwnProperty('created')) {
+            event.$element = BaseManager.findElementById(data.created);
+        }
+        Dispatcher.trigger('base_manager.response_parsed', event);
     }
 
     static appendHelpers($elements?: JQuery) {
@@ -290,6 +289,11 @@ export class BaseManager {
                     $element.prepend('<i class="cms-helper"></i>');
                 }
             });
+    }
+
+    static tweakAnchorsAndForms()
+    {
+
     }
 }
 
@@ -1404,10 +1408,13 @@ export class DocumentManager {
                 // TODO where event is triggered : e.$element = BaseManager.findElementById(selectionId);
                 e.$element = BaseManager.findElementById(this.selectionId);
             }
+
             this.deselect()
                 .then(() => {
                     this.select(e);
                 });
+
+            this.tweakAnchorsAndForms();
         });
 
         // TODO why here ???
@@ -1440,6 +1447,20 @@ export class DocumentManager {
         BaseManager.setContentWindow(win);
         BaseManager.setContentDocument($doc);
 
+        this.tweakAnchorsAndForms();
+
+        if (this.enabled) {
+            this.enableEdition();
+        }
+
+        Dispatcher.trigger('document_manager.document_data', BaseManager.getDocumentData());
+
+        return this;
+    }
+
+    private tweakAnchorsAndForms() {
+        let $doc: JQuery = BaseManager.getContentDocument();
+
         // Intercept anchors click
         $doc.find('a[href]').off('click').on('click', (e: Event) => {
             e.preventDefault();
@@ -1463,7 +1484,7 @@ export class DocumentManager {
             anchor.href = action;
 
             if (anchor.hostname !== this.config.hostname) {
-                $form.on('submit', function (e) {
+                $form.off('submit').on('submit', function (e) {
                     console.log('Attempt to navigate out of the website has been blocked.');
 
                     e.preventDefault();
@@ -1473,14 +1494,6 @@ export class DocumentManager {
                 $form.attr('action', Util.addEditorParameterToUrl(action))
             }
         });
-
-        if (this.enabled) {
-            this.enableEdition();
-        }
-
-        Dispatcher.trigger('document_manager.document_data', BaseManager.getDocumentData());
-
-        return this;
     }
 
     private onViewportUnload(e: BeforeUnloadEvent): DocumentManager {
@@ -1651,14 +1664,8 @@ export class DocumentManager {
             $document.find('head').append(stylesheet);
         }
 
-        // Insert elements tabs
+        // Insert elements helpers
         BaseManager.appendHelpers();
-        /*$document.find('.cms-block, .cms-row, .cms-container').each(function (i: number, element: Element) {
-         let $element = $(element);
-         if ($element.find('i.cms-helper').length == 0) {
-         $element.prepend('<i class="cms-helper"></i>');
-         }
-         });*/
 
         $document.on('mousedown', this.documentMouseDownHandler);
         $document.on('mouseup', this.documentMouseUpHandler);

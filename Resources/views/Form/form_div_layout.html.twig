@@ -22,6 +22,25 @@
 {% endblock ekyna_cms_seo_widget %}
 
 
+{% block ekyna_cms_block_image_widget %}
+{% spaceless %}
+    {{ form_errors(form) }}
+    <div class="row">
+        <div class="col-md-4">
+            {{ form_row(form.media_id) }}
+        </div>
+        <div class="col-md-8">
+            {% if form.style is defined %}
+                {{ form_row(form.style, {'label_col': 4, 'widget_col': 8}) }}
+            {% endif %}
+            {{ form_row(form.url, {'label_col': 4, 'widget_col': 8}) }}
+        </div>
+    </div>
+    {{ form_rest(form) }}
+{% endspaceless %}
+{% endblock ekyna_cms_block_image_widget %}
+
+
 {% block ekyna_cms_container_background_widget %}
 {% spaceless %}
     {{ form_errors(form) }}

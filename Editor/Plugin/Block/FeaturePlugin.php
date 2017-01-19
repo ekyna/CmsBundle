@@ -55,13 +55,13 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
     /**
      * @inheritdoc
      */
-    public function update(BlockInterface $block, Request $request)
+    public function update(BlockInterface $block, Request $request, array $options = [])
     {
         $type = $request->get('widgetType');
 
         // Fallback to sub widgets if required
         if ($type === ImagePlugin::NAME) {
-            return $this->getImagePlugin()->update($block, $request);
+            return $this->getImagePlugin()->update($block, $request, ['style_choices' => null]);
         } elseif ($type === TinymcePlugin::NAME) {
             return $this->getHtmlPlugin()->update($block, $request);
         }
@@ -69,8 +69,8 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
         // Feature update modal
         $form = $this->formFactory->create(FeatureBlockType::class, $block->getData(), [
             'action'            => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
-                'blockId'    => $block->getId(),
-                'widgetType' => $request->get('widgetType', $block->getType()),
+                'blockId'         => $block->getId(),
+                'widgetType'      => $request->get('widgetType', $block->getType()),
                 '_content_locale' => $this->localeProvider->getCurrentLocale(),
             ]),
             'method'            => 'post',

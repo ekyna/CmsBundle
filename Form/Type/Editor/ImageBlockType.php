@@ -9,8 +9,11 @@ use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Exception\TransformationFailedException;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Url;
 
 /**
  * Class ImageBlockType
@@ -27,24 +30,42 @@ class ImageBlockType extends AbstractType
         /** @var MediaRepository $repository */
         $repository = $options['repository'];
 
-        $builder->add('media_id', MediaChoiceType::class, [
-            'label' => 'ekyna_core.field.image',
-            'types' => [MediaTypes::IMAGE],
-        ]);
+        $builder
+            ->add('media_id', MediaChoiceType::class, [
+                'label' => 'ekyna_core.field.image',
+                'types' => [MediaTypes::IMAGE],
+            ])
+            ->add('url', UrlType::class, [
+                'label'       => 'ekyna_core.field.url',
+                'required'    => false,
+                'constraints' => [
+                    new Url()
+                ]
+            ]);
+
+        if (is_array($options['style_choices']) && !empty($options['style_choices'])) {
+            $builder->add('style', ChoiceType::class, [
+                'label'       => 'ekyna_core.field.style',
+                'choices'     => array_flip($options['style_choices']),
+                'placeholder' => 'ekyna_core.value.none',
+                'required'    => false,
+            ]);
+        }
 
         $builder->addModelTransformer(new CallbackTransformer(
             // Transform
-            function(array $data) use ($repository) {
+            function (array $data) use ($repository) {
                 if (!array_key_exists('media_id', $data)) {
                     $data['media_id'] = null;
                 }
                 if (0 < $mediaId = intval($data['media_id'])) {
                     $data['media_id'] = $repository->find($mediaId);
                 }
+
                 return $data;
             },
             // Reverse transform
-            function(array $data) {
+            function (array $data) {
                 if (null !== $media = $data['media_id']) {
                     if ($media instanceof MediaInterface) {
                         $data['media_id'] = $media->getId();
@@ -52,6 +73,7 @@ class ImageBlockType extends AbstractType
                         throw new TransformationFailedException('Failed to reverse transform image block data.');
                     }
                 }
+
                 return $data;
             }
         ));
@@ -64,6 +86,16 @@ class ImageBlockType extends AbstractType
     {
         $resolver
             ->setRequired('repository')
-            ->setAllowedTypes('repository', MediaRepository::class);
+            ->setDefault('style_choices', null)
+            ->setAllowedTypes('repository', MediaRepository::class)
+            ->setAllowedTypes('style_choices', ['null', 'array']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBlockPrefix()
+    {
+        return 'ekyna_cms_block_image';
     }
 }

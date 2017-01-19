@@ -29,10 +29,11 @@ interface PluginInterface extends BaseInterface
      *
      * @param BlockInterface $block
      * @param Request        $request
+     * @param array          $options
      *
      * @return \Symfony\Component\HttpFoundation\Response|null
      */
-    public function update(BlockInterface $block, Request $request);
+    public function update(BlockInterface $block, Request $request, array $options = []);
 
     /**
      * Removes a block.

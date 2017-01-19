@@ -45,7 +45,8 @@ class ImagePlugin extends AbstractPlugin
         parent::__construct(array_replace([
             'default_path' => '/bundles/ekynacms/img/default-image.gif',
             'default_alt'  => 'Default image',
-            'filter'       => 'media_front', // TODO config
+            'filter'       => 'cms_block_image', // TODO config
+            'styles'       => static::getDefaultStyleChoices(),
         ], $config));
 
         $this->mediaRepository = $mediaRepository;
@@ -70,25 +71,30 @@ class ImagePlugin extends AbstractPlugin
     /**
      * @inheritdoc
      */
-    public function update(BlockInterface $block, Request $request)
+    public function update(BlockInterface $block, Request $request, array $options = [])
     {
-        $form = $this->formFactory->create(ImageBlockType::class, $block->getData(), [
-            'repository' => $this->mediaRepository,
-            'action'     => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
+        $options = array_replace([
+            'repository'    => $this->mediaRepository,
+            'action'        => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
                 'blockId'         => $block->getId(),
                 'widgetType'      => $request->get('widgetType', $block->getType()),
                 '_content_locale' => $this->localeProvider->getCurrentLocale(),
             ]),
-            'method'     => 'post',
-            'attr'       => [
+            'method'        => 'post',
+            'attr'          => [
                 'class' => 'form-horizontal',
             ],
-        ]);
+            'style_choices' => $this->config['styles'],
+        ], $options);
+
+        $form = $this->formFactory->create(ImageBlockType::class, $block->getData(), $options);
 
         if ($request->getMethod() == 'POST' && $form->handleRequest($request) && $form->isValid()) {
             $data = $form->getData();
 
             $block->setData('media_id', $data['media_id']);
+            $block->setData('style', $data['style']);
+            $block->setData('url', $data['url']);
 
             return null;
         }
@@ -135,9 +141,10 @@ class ImagePlugin extends AbstractPlugin
 
         $path = $options['default_path'];
         $alt = $options['default_alt'];
+        $class = '';
 
         $data = $block->getData();
-        if (array_key_exists('media_id', $data) && 0 < $mediaId = intval($data['media_id'])) {
+        if (isset($data['media_id']) && 0 < $mediaId = intval($data['media_id'])) {
             /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $media */
             if (null !== $media = $this->mediaRepository->find($mediaId)) {
                 // TODO use MediaPlayer / MediaGenerator
@@ -146,8 +153,26 @@ class ImagePlugin extends AbstractPlugin
             }
         }
 
-        /** @noinspection HtmlUnknownTarget */
-        $view->content = sprintf('<img src="%s" alt="%s" class="img-responsive" />', $path, $alt);
+        // Style
+        if (isset($data['style']) && isset($this->config['styles'][$data['style']])) {
+            $class = $data['style'];
+        }
+
+        // Link
+        if (isset($data['url']) && 0 < strlen($data['url'])) {
+            /** @noinspection HtmlUnknownTarget */
+            /** @noinspection HtmlUnknownAttribute */
+            $view->content = sprintf(
+                '<a href="%s"%s style="display: inline-block"><img src="%s" alt="%s" class="img-responsive"></a>',
+                $data['url'], 0 < strlen($class) ? ' class="' . $class . '"' : '', $path, $alt
+            );
+        } else {
+            /** @noinspection HtmlUnknownTarget */
+            $view->content = sprintf(
+                '<img src="%s" alt="%s" class="img-responsive %s">',
+                $path, $alt, $class
+            );
+        }
 
         return $view;
     }
@@ -174,5 +199,19 @@ class ImagePlugin extends AbstractPlugin
     public function getJavascriptFilePath()
     {
         return 'ekyna-cms/editor/plugin/block/image';
+    }
+
+    /**
+     * Returns the default choices.
+     *
+     * @return array
+     */
+    static public function getDefaultStyleChoices()
+    {
+        return [
+            'img-rounded'   => 'Rounded',
+            'img-circle'    => 'Circle',
+            'img-thumbnail' => 'Thumbnail',
+        ];
     }
 }
