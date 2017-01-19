@@ -99,8 +99,8 @@ class Editor {
 
         this.busy = true;
 
-        /*(<Button>this.mainToolbar.model.getControl('default', 'reload'))
-            .activate().startSpinning();*/
+        (<Button>this.mainToolbar.model.getControl('default', 'reload'))
+            .activate().startSpinning();
 
         this.$busy.show();
     }
@@ -110,8 +110,8 @@ class Editor {
             return;
         }
 
-        /*(<Button>this.mainToolbar.model.getControl('default', 'reload'))
-            .deactivate().stopSpinning();*/
+        (<Button>this.mainToolbar.model.getControl('default', 'reload'))
+            .deactivate().stopSpinning();
 
         this.$busy.hide();
 

@@ -95,32 +95,19 @@ html, body {
         -moz-transition: top @editor-viewport-transition-speed,
                         right @editor-viewport-transition-speed,
                         bottom @editor-viewport-transition-speed,
-                        left @editor-viewport-transition-speed;;
+                        left @editor-viewport-transition-speed;
         -o-transition: top @editor-viewport-transition-speed,
                         right @editor-viewport-transition-speed,
                         bottom @editor-viewport-transition-speed,
-                        left @editor-viewport-transition-speed;;
+                        left @editor-viewport-transition-speed;
         -ms-transition: top @editor-viewport-transition-speed,
                         right @editor-viewport-transition-speed,
                         bottom @editor-viewport-transition-speed,
-                        left @editor-viewport-transition-speed;;
+                        left @editor-viewport-transition-speed;
         transition: top @editor-viewport-transition-speed,
                     right @editor-viewport-transition-speed,
                     bottom @editor-viewport-transition-speed,
-                    left @editor-viewport-transition-speed;;
-
-        .btn {
-            padding: 4px 3px 1px 3px;
-        }
-
-        .cei {
-            font-size: 24px;
-        }
-
-        .cei-spin {
-            -webkit-animation: cei-spin 2s infinite linear;
-            animation: cei-spin 2s infinite linear;
-        }
+                    left @editor-viewport-transition-speed;
 
         > .input-group {
             width: auto;
@@ -310,23 +297,35 @@ html, body {
             text-align: right;
         }
 
-        .btn {
-            min-width: 43px;
+        .cei {
+            display: inline-block;
+            font-size: 24px;
+
+            &.cei-spin {
+                -webkit-animation: cei-spin 2s infinite linear;
+                animation: cei-spin 2s infinite linear;
+            }
         }
 
-        .btn > span {
-            -webkit-transition: -webkit-transform @editor-button-rotate-speed;
-            -moz-transition: -moz-transform @editor-button-rotate-speed;
-            -o-transition: -o-transform @editor-button-rotate-speed;
-            -ms-transition: -ms-transform @editor-button-rotate-speed;
-            transition: transform @editor-button-rotate-speed;
-        }
-        .btn.rotate > span {
-            -webkit-transform: rotate(270deg);
-            -moz-transform: rotate(270deg);
-            -o-transform: rotate(270deg);
-            -ms-transform: rotate(270deg);
-            transform: rotate(270deg);
+        .btn {
+            min-width: 43px;
+            padding: 4px 3px 1px 3px;
+
+            > span {
+                -webkit-transition: -webkit-transform @editor-button-rotate-speed;
+                -moz-transition: -moz-transform @editor-button-rotate-speed;
+                -o-transition: -o-transform @editor-button-rotate-speed;
+                -ms-transition: -ms-transform @editor-button-rotate-speed;
+                transition: transform @editor-button-rotate-speed;
+            }
+
+            &.rotate > span {
+                -webkit-transform: rotate(270deg);
+                -moz-transform: rotate(270deg);
+                -o-transform: rotate(270deg);
+                -ms-transform: rotate(270deg);
+                transform: rotate(270deg);
+            }
         }
     }
 

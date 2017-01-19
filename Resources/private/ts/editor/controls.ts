@@ -65,8 +65,8 @@ export class MainToolbar extends Toolbar {
             size: 'md',
             theme: 'default',
             icon: 'reload',
-            event: 'controls.reload.click'
-            //spinning: true
+            event: 'controls.reload.click',
+            spinning: true
         }));
 
         // Viewport selector

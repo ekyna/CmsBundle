@@ -157,7 +157,7 @@ class TinymcePlugin extends BasePlugin {
     }
 
     preventDocumentSelection ($target:JQuery):boolean {
-        return 0 < $target.closest('#tinymce-plugin-editor, .mce-container').length;
+        return 0 < $target.closest('#tinymce-plugin-editor, .mce-container, .mce-widget, .mce-reset, .mce-tooltip').length;
     }
 
     private initialize():Promise<any> {
