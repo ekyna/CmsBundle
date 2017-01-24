@@ -52,7 +52,7 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
         return $qb
             ->getQuery()
             ->useQueryCache(true)
-            ->useResultCache(true, 3600, Menu::getEntityTagPrefix() . '[name=' . $name . ']')
+            // TODO ->useResultCache(true, 3600, Menu::getEntityTagPrefix() . '[name=' . $name . ']')
             ->setMaxResults(1)
             ->setParameters($parameters)
             ->getOneOrNullResult();

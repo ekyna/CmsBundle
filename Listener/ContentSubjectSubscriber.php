@@ -5,6 +5,8 @@ namespace Ekyna\Bundle\CmsBundle\Listener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface;
+use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 
 /**
  * Class ContentSubjectSubscriber
@@ -13,9 +15,6 @@ use Doctrine\ORM\Events;
  */
 class ContentSubjectSubscriber implements EventSubscriber
 {
-    const CONTENT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface';
-    const SUBJECT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface';
-
     /**
      * @param LoadClassMetadataEventArgs $eventArgs
      */
@@ -30,7 +29,7 @@ class ContentSubjectSubscriber implements EventSubscriber
         }
 
         // Check if class implements the subject interface
-        if (!in_array(self::SUBJECT_INTERFACE, class_implements($metadata->getName()))) {
+        if (!in_array(ContentSubjectInterface::class, class_implements($metadata->getName()))) {
             return;
         }
 
@@ -39,21 +38,16 @@ class ContentSubjectSubscriber implements EventSubscriber
             return;
         }
 
-        $namingStrategy = $eventArgs
-            ->getEntityManager()
-            ->getConfiguration()
-            ->getNamingStrategy();
-
         $metadata->mapOneToOne([
             'fieldName'     => 'content',
-            'targetEntity'  => self::CONTENT_INTERFACE,
-            'cascade'       => ['all'],
+            'targetEntity'  => ContentInterface::class,
+            'cascade'       => ['persist', 'detach', 'remove'],
             'orphanRemoval' => true,
-            'joinColumn'    => [
+            'joinColumns'   => [
                 [
-                    'name'                 => $namingStrategy->joinKeyColumnName($metadata->getName()),
-                    'referencedColumnName' => $namingStrategy->referenceColumnName(),
-                    'onDelete'             => 'CASCADE',
+                    'name'                 => 'content_id',
+                    'referencedColumnName' => 'id',
+                    'onDelete'             => 'RESTRICT',
                     'nullable'             => true,
                 ],
             ],

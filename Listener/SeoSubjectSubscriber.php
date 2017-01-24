@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Listener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
+use Ekyna\Bundle\CmsBundle\Model;
 
 /**
  * Class SeoSubjectSubscriber
@@ -13,9 +14,6 @@ use Doctrine\ORM\Events;
  */
 class SeoSubjectSubscriber implements EventSubscriber
 {
-    const SEO_INTERFACE     = 'Ekyna\Bundle\CmsBundle\Model\SeoInterface';
-    const SUBJECT_INTERFACE = 'Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface';
-
     /**
      * @param LoadClassMetadataEventArgs $eventArgs
      */
@@ -30,7 +28,7 @@ class SeoSubjectSubscriber implements EventSubscriber
         }
 
         // Check if class implements the subject interface
-        if (!in_array(self::SUBJECT_INTERFACE, class_implements($metadata->getName()))) {
+        if (!in_array(Model\SeoSubjectInterface::class, class_implements($metadata->getName()))) {
             return;
         }
 
@@ -41,9 +39,8 @@ class SeoSubjectSubscriber implements EventSubscriber
 
         $metadata->mapOneToOne([
             'fieldName'     => 'seo',
-            'targetEntity'  => self::SEO_INTERFACE,
-            'cascade'       => ['all'],
-//            'fetch' => ClassMetadataInfo::FETCH_EAGER,
+            'targetEntity'  => Model\SeoInterface::class,
+            'cascade'       => ['persist', 'detach', 'remove'],
             'orphanRemoval' => true,
             'joinColumns'   => [
                 [

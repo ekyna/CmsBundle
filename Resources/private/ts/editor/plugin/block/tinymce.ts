@@ -78,13 +78,17 @@ interface TinyMceStatic extends TinyMceObservable {
     remove: (selector?:any) => void
 }
 
+Dispatcher.on('viewport_iframe.unload', function() {
+    TinymcePlugin.clear();
+});
+
 class TinymcePlugin extends BasePlugin {
     private static initPromise:Promise<TinyMceStatic>;
     private static config:TinymceConfig;
     private static externalPlugins:any;
     private static tinymce:TinyMceStatic;
 
-    private static clear() {
+    public static clear() {
         TinymcePlugin.initPromise = null;
         TinymcePlugin.config = null;
         TinymcePlugin.externalPlugins = null;
@@ -105,10 +109,11 @@ class TinymcePlugin extends BasePlugin {
     }
 
     save():Promise<any> {
-        return this
-            .initialize()
-            .then(() => {
-                if (this.isUpdated()) {
+        if (this.isUpdated()) {
+            return this
+                .initialize()
+                .then(() => {
+
                     Dispatcher.trigger('editor.set_busy');
                     //console.log('Tinymce block plugin : save.');
                     let editor = TinymcePlugin.tinymce.get('tinymce-plugin-editor');
@@ -128,13 +133,11 @@ class TinymcePlugin extends BasePlugin {
                             this.$element.html(content);
                             this.updated = false;
                             Dispatcher.trigger('editor.unset_busy');
-
-                            return super.save();
                         });
-                }
+                });
+        }
 
-                return Promise.resolve();
-            });
+        return Promise.resolve();
     }
 
     destroy():Promise<any> {
@@ -146,11 +149,11 @@ class TinymcePlugin extends BasePlugin {
                 if (editor) {
                     editor.remove();
                 }
+
                 let $wrapper = this.$element.find('#tinymce-plugin-editor');
                 if ($wrapper.length) {
                     $wrapper.children().first().unwrap();
                 }
-                TinymcePlugin.clear();
 
                 return super.destroy();
             });
