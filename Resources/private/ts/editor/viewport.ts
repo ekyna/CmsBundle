@@ -148,9 +148,9 @@ export class ViewportView extends Backbone.View<ViewportModel> {
      * Resizes the viewport.
      */
     private resize(): void {
-        let $viewport = $('#editor-viewport'),
-            width: number = $viewport.width(),
-            height: number = $viewport.height(),
+        let viewport:HTMLElement = <HTMLElement>window.document.querySelector('#editor-viewport'),
+            width: number = viewport.offsetWidth,
+            height: number = viewport.offsetHeight,
             size: SizeInterface = this.model.get('size'),
             origin: OffsetInterface = {top: 50, left: 0};
 
@@ -165,7 +165,7 @@ export class ViewportView extends Backbone.View<ViewportModel> {
             }
             origin.top = 75; // Top bar height (50) + viewport margin (25)
         } else {
-            this.$el.addClass('auto').css({width: width, height: height});
+            this.$el.addClass('auto'); //.css({width: width, height: height});
         }
 
         Dispatcher.trigger('viewport.resize', <ResizeEventData>{

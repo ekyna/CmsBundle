@@ -141,7 +141,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
         $this->validateLayoutStyles($data);
         $this->validateBlockLayout($data);
 
-        $data = $this->cleanUpBlockLayout($data);
+        $data = $this->cleanUpBlockLayout($block, $data);
 
         $block->setLayout($data);
     }
@@ -184,20 +184,41 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     /**
      * Cleans up the block layout.
      *
-     * @param array $data
+     * @param Model\BlockInterface $block
+     * @param array                $data
      *
      * @return array
      */
-    protected function cleanUpBlockLayout(array $data)
+    protected function cleanUpBlockLayout(Model\BlockInterface $block, array $data)
     {
         $clean = [];
 
         $hasPreviousSize = $hasPreviousOffset = false;
         $previousSize = $previousOffset = null;
 
-        foreach (array_keys(static::getDevicesWidths()) as $device) {
+        /** @var Model\BlockInterface[] $blocks */
+        $blocks = [];
+        if (null !== $row = $block->getRow()) {
+            $blocks = $row->getBlocks()->filter(function(Model\BlockInterface $b) use ($block) {
+                return $b != $block;
+            });
+        }
+
+        $devices = array_reverse(array_keys(static::getDevicesWidths()));
+
+        foreach ($devices as $device) {
+            // Do we need to clear the previous block layout (which size is lower than 12)
+            $clear = false;
+            foreach ($blocks as $b) {
+                $d = $b->getLayout();
+                if (isset($d[$device][static::SIZE]) && 12 > $d[$device][static::SIZE]) {
+                    $clear = true;
+                    break;
+                }
+            }
+
             // If layout is set for this device
-            if (!isset($data[$device])) {
+            if (!$clear && !isset($data[$device])) {
                 continue;
             }
 
@@ -206,17 +227,17 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
 
             $cleanDevice = [];
 
-            if (($hasPreviousSize && 12 === $size) || 12 > $size) {
+            if ($clear || ($hasPreviousSize && $previousSize != $size)) {
                 $cleanDevice[static::SIZE] = $size;
             }
-            if (($hasPreviousOffset && 0 === $offset) || 0 < $offset) {
+            if ($hasPreviousOffset && $previousOffset != $offset) {
                 $cleanDevice[static::OFFSET] = $offset;
             }
 
-            if (12 > $size) {
+            if (!$hasPreviousSize && 12 > $size) {
                 $hasPreviousSize = true;
             }
-            if (0 < $offset) {
+            if (!$hasPreviousOffset && 0 < $offset) {
                 $hasPreviousOffset = true;
             }
 
