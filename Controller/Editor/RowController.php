@@ -97,6 +97,7 @@ class RowController extends BaseController
     public function removeAction(Request $request)
     {
         $row = $this->findRowByRequest($request);
+        $container = $row->getContainer();
 
         try {
             $this->getEditor()->getRowManager()->delete($row);
@@ -106,7 +107,6 @@ class RowController extends BaseController
 
         // Stores id for front removal
         $removedId = $this->getViewBuilder()->buildRow($row)->getAttributes()->getId();
-        $container = $row->getContainer();
 
         $this->validate($container);
         $this->persist($container);

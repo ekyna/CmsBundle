@@ -129,6 +129,7 @@ class BlockController extends BaseController
     public function removeAction(Request $request)
     {
         $block = $this->findBlockByRequest($request);
+        $row = $block->getRow();
 
         try {
             $this->getEditor()->getBlockManager()->delete($block);
@@ -138,7 +139,6 @@ class BlockController extends BaseController
 
         // Stores id for front removal
         $removedId = $this->getViewBuilder()->buildBlock($block)->getAttributes()->getId();
-        $row = $block->getRow();
 
         $this->validate($row);
         $this->persist($row);

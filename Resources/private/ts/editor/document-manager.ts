@@ -226,7 +226,6 @@ export class BaseManager {
         settings = _.extend({}, settings, {
             method: 'POST'
         });
-
         if (!settings.data) {
             settings.data = {};
         }
@@ -234,12 +233,6 @@ export class BaseManager {
 
         let xhr = $.ajax(settings);
         xhr.done((data: ResponseData) => {
-            // Remove elements by id
-            if (data.hasOwnProperty('removed')) {
-                data.removed.forEach((id: string) => {
-                    this.$contentDocument.find('#' + id).remove();
-                });
-            }
             // Parse elements
             BaseManager.parse(data);
         });
@@ -254,6 +247,13 @@ export class BaseManager {
     }
 
     static parse(data: ResponseData) {
+        // Remove elements by id
+        if (data.hasOwnProperty('removed')) {
+            data.removed.forEach((id: string) => {
+                BaseManager.findElementById(id).remove();
+            });
+        }
+
         if (data.hasOwnProperty('content')) {
             ContentManager.parse(data.content);
         } else if (data.hasOwnProperty('containers')) {

@@ -150,6 +150,7 @@ class ContainerController extends BaseController
     public function removeAction(Request $request)
     {
         $container = $this->findContainerByRequest($request);
+        $content = $container->getContent();
 
         try {
             $this->getEditor()->getContainerManager()->delete($container);
@@ -159,7 +160,6 @@ class ContainerController extends BaseController
 
         // Stores id for front removal
         $removedId = $this->getViewBuilder()->buildContainer($container)->getAttributes()->getId();
-        $content = $container->getContent();
 
         $this->validate($content);
         $this->persist($content);
