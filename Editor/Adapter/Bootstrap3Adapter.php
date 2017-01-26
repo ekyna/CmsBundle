@@ -227,10 +227,10 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
 
             $cleanDevice = [];
 
-            if ($clear || ($hasPreviousSize && $previousSize != $size)) {
+            if ($clear || ($hasPreviousSize && $previousSize != $size) || (!$hasPreviousSize && 12 > $size)) {
                 $cleanDevice[static::SIZE] = $size;
             }
-            if ($hasPreviousOffset && $previousOffset != $offset) {
+            if (($hasPreviousOffset && $previousOffset != $offset) || (!$hasPreviousSize && 0 < $offset)) {
                 $cleanDevice[static::OFFSET] = $offset;
             }
 
