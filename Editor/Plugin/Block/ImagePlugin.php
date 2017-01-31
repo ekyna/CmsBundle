@@ -119,14 +119,14 @@ class ImagePlugin extends AbstractPlugin
      */
     public function validate(BlockInterface $block, ExecutionContextInterface $context)
     {
-        $data = $block->getData();
+        /* TODO $data = $block->getData();
 
         if (!array_key_exists('media_id', $data)) {
             $context->addViolation(self::INVALID_DATA);
         }
         if (!array_key_exists('hover_id', $data)) {
             $context->addViolation(self::INVALID_DATA);
-        }
+        }*/
 
         /*foreach ($block->getTranslations() as $blockTranslation) {
             $translationData = $blockTranslation->getData();
