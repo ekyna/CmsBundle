@@ -5,7 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\ImageBlockType;
 use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
-use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Ekyna\Bundle\MediaBundle\Service\Renderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -25,9 +25,9 @@ class ImagePlugin extends AbstractPlugin
     private $mediaRepository;
 
     /**
-     * @var CacheManager
+     * @var Renderer
      */
-    private $cacheManager;
+    private $mediaRenderer;
 
 
     /**
@@ -35,22 +35,22 @@ class ImagePlugin extends AbstractPlugin
      *
      * @param array           $config
      * @param MediaRepository $mediaRepository
-     * @param CacheManager    $cacheManager
+     * @param Renderer        $mediaRenderer
      */
     public function __construct(
         array $config,
         MediaRepository $mediaRepository,
-        CacheManager $cacheManager
+        Renderer $mediaRenderer
     ) {
         parent::__construct(array_replace([
             'default_path' => '/bundles/ekynacms/img/default-image.gif',
             'default_alt'  => 'Default image',
-            'filter'       => 'cms_block_image', // TODO config
+            'filter'       => 'cms_block_image',
             'styles'       => static::getDefaultStyleChoices(),
         ], $config));
 
         $this->mediaRepository = $mediaRepository;
-        $this->cacheManager = $cacheManager;
+        $this->mediaRenderer = $mediaRenderer;
     }
 
     /**
@@ -64,6 +64,7 @@ class ImagePlugin extends AbstractPlugin
         //$defaultData = array_key_exists('default_data', $this->config) ? $this->config['default_data'] : array();
 
         $block->setData('media_id', null);
+        $block->setData('hover_id', null);
 
         //$block->translate($this->localeProvider->getCurrentLocale(), true)->setData([]);
     }
@@ -90,11 +91,14 @@ class ImagePlugin extends AbstractPlugin
         $form = $this->formFactory->create(ImageBlockType::class, $block->getData(), $options);
 
         if ($request->getMethod() == 'POST' && $form->handleRequest($request) && $form->isValid()) {
-            $data = $form->getData();
+            $block->setData($form->getData());
+
+            /*$data = $form->getData();
 
             $block->setData('media_id', $data['media_id']);
+            $block->setData('media_id', $data['media_id']);
             $block->setData('style', $data['style']);
-            $block->setData('url', $data['url']);
+            $block->setData('url', $data['url']);*/
 
             return null;
         }
@@ -120,6 +124,9 @@ class ImagePlugin extends AbstractPlugin
         if (!array_key_exists('media_id', $data)) {
             $context->addViolation(self::INVALID_DATA);
         }
+        if (!array_key_exists('hover_id', $data)) {
+            $context->addViolation(self::INVALID_DATA);
+        }
 
         /*foreach ($block->getTranslations() as $blockTranslation) {
             $translationData = $blockTranslation->getData();
@@ -139,40 +146,59 @@ class ImagePlugin extends AbstractPlugin
 
         $options = array_replace($this->config, $options);
 
-        $path = $options['default_path'];
-        $alt = $options['default_alt'];
-        $class = '';
-
         $data = $block->getData();
+        $content = null;
+
+        // Default content
+        if (!$content) {
+            $content = '<img ' .
+                'src="' . $options['default_path'] . '" ' .
+                'alt="' . $options['default_alt'] . '" ' .
+                'class="img-responsive">';
+        }
+
+        // Image
         if (isset($data['media_id']) && 0 < $mediaId = intval($data['media_id'])) {
             /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $media */
             if (null !== $media = $this->mediaRepository->find($mediaId)) {
-                // TODO use MediaPlayer / MediaGenerator
-                $path = $this->cacheManager->getBrowserPath($media->getPath(), $options['filter']);
-                $alt = $media->getTitle();
+                $content = $this->mediaRenderer->renderMedia($media, [
+                    'filter' => $options['filter'],
+                    'attr'   => [
+                        'class' => 'img-responsive',
+                    ],
+                ]);
+            }
+        }
+
+        // Hover image
+        if (isset($data['hover_id']) && 0 < $hoverId = intval($data['hover_id'])) {
+            /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $hover */
+            if (null !== $hover = $this->mediaRepository->find($hoverId)) {
+                $content .= $this->mediaRenderer->renderMedia($hover, [
+                    'filter' => $options['filter'],
+                    'attr'   => [
+                        'class' => 'img-responsive img-hover',
+                    ],
+                ]);
             }
         }
 
         // Style
+        $class = '';
         if (isset($data['style']) && isset($this->config['styles'][$data['style']])) {
-            $class = $data['style'];
+            $class = ' class="' . $data['style'] . '"';
         }
 
-        // Link
-        if (isset($data['url']) && 0 < strlen($data['url'])) {
-            /** @noinspection HtmlUnknownTarget */
-            /** @noinspection HtmlUnknownAttribute */
-            $view->content = sprintf(
-                '<a href="%s"%s style="display: inline-block"><img src="%s" alt="%s" class="img-responsive"></a>',
-                $data['url'], 0 < strlen($class) ? ' class="' . $class . '"' : '', $path, $alt
-            );
+        // Wrapper
+        if (isset($data['url']) && 0 < strlen($url = $data['url'])) {
+            $wrapStart = '<a href="' . $url . '"' . $class . '>';
+            $wrapEnd = '</a>';
         } else {
-            /** @noinspection HtmlUnknownTarget */
-            $view->content = sprintf(
-                '<img src="%s" alt="%s" class="img-responsive %s">',
-                $path, $alt, $class
-            );
+            $wrapStart = '<span' . $class . '>';
+            $wrapEnd = '</span>';
         }
+
+        $view->content = $wrapStart . $content . $wrapEnd;
 
         return $view;
     }

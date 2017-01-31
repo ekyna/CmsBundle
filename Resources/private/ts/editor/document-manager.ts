@@ -24,6 +24,7 @@ const DEFAULT_WIDGET_ACTIONS = {
 };
 
 const DEFAULT_BLOCK_ACTIONS = {
+    edit: false,
     layout: false,
     change_type: false,
     move_left: false,
@@ -1008,6 +1009,18 @@ class ToolbarManager {
                 DEFAULT_BLOCK_ACTIONS,
                 $block.data('cms').actions
             );
+
+        // Edit button
+        if (actions.edit) {
+            toolbar.addControl('default', new Button({
+                name: 'edit',
+                title: 'Edit',
+                icon: 'content',
+                //disabled: false,
+                event: 'block.edit',
+                data: {$block: $block}
+            }));
+        }
 
         // Layout
         toolbar.addControl('default', new Button({

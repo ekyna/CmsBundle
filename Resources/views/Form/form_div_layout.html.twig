@@ -25,17 +25,38 @@
 {% block ekyna_cms_block_image_widget %}
 {% spaceless %}
     {{ form_errors(form) }}
+    {% if form.hover_id is defined %}
     <div class="row">
-        <div class="col-md-4">
-            {{ form_row(form.media_id) }}
+        <div class="col-md-6">
+            {{ form_row(form.url, {'label_col': 4, 'widget_col': 8}) }}
         </div>
-        <div class="col-md-8">
+        <div class="col-md-6">
             {% if form.style is defined %}
                 {{ form_row(form.style, {'label_col': 4, 'widget_col': 8}) }}
             {% endif %}
-            {{ form_row(form.url, {'label_col': 4, 'widget_col': 8}) }}
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_row(form.media_id, {'label_col': 4, 'widget_col': 8}) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.hover_id, {'label_col': 4, 'widget_col': 8}) }}
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-md-4">
+            {{ form_row(form.media_id, {'label_col': 6, 'widget_col': 6}) }}
+        </div>
+        <div class="col-md-8">
+            {% if form.style is defined %}
+                {{ form_row(form.style, {'label_col': 3, 'widget_col': 9}) }}
+            {% endif %}
+            {{ form_row(form.url, {'label_col': 3, 'widget_col': 9}) }}
+        </div>
+    </div>
+    {% endif %}
     {{ form_rest(form) }}
 {% endspaceless %}
 {% endblock ekyna_cms_block_image_widget %}

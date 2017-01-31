@@ -170,6 +170,7 @@ class ViewBuilder implements EditorAwareInterface
                     'position' => $block->getPosition(),
                     'actions'  => [
                         'add'         => null !== $row,
+                        'edit'        => false,
                         'layout'      => true,
                         'change_type' => !$block->isNamed(),
                         'move_left'   => !$block->isFirst(),

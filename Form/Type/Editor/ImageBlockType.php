@@ -6,6 +6,7 @@ use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
 use Ekyna\Bundle\MediaBundle\Form\Type\MediaChoiceType;
 use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
 use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
+use Ekyna\Bundle\MediaBundle\Validator\Constraints\MediaTypes as AssertTypes;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -30,18 +31,33 @@ class ImageBlockType extends AbstractType
         /** @var MediaRepository $repository */
         $repository = $options['repository'];
 
+        $mediaTypes = [MediaTypes::IMAGE, MediaTypes::SVG];
+
         $builder
             ->add('media_id', MediaChoiceType::class, [
-                'label' => 'ekyna_core.field.image',
-                'types' => [MediaTypes::IMAGE],
+                'label'       => 'ekyna_core.field.image',
+                'types'       => [MediaTypes::IMAGE, MediaTypes::SVG],
+                'constraints' => new AssertTypes([
+                    'types' => $mediaTypes,
+                ]),
             ])
             ->add('url', UrlType::class, [
                 'label'       => 'ekyna_core.field.url',
                 'required'    => false,
                 'constraints' => [
-                    new Url()
-                ]
+                    new Url(),
+                ],
             ]);
+
+        if ($options['with_hover']) {
+            $builder->add('hover_id', MediaChoiceType::class, [
+                'label'       => 'ekyna_cms.block.plugin.image.hover',
+                'types'       => [MediaTypes::IMAGE, MediaTypes::SVG],
+                'constraints' => new AssertTypes([
+                    'types' => $mediaTypes,
+                ]),
+            ]);
+        }
 
         if (is_array($options['style_choices']) && !empty($options['style_choices'])) {
             $builder->add('style', ChoiceType::class, [
@@ -55,22 +71,26 @@ class ImageBlockType extends AbstractType
         $builder->addModelTransformer(new CallbackTransformer(
             // Transform
             function (array $data) use ($repository) {
-                if (!array_key_exists('media_id', $data)) {
-                    $data['media_id'] = null;
-                }
-                if (0 < $mediaId = intval($data['media_id'])) {
-                    $data['media_id'] = $repository->find($mediaId);
+                foreach (['media_id', 'hover_id'] as $field) {
+                    if (!array_key_exists($field, $data)) {
+                        $data[$field] = null;
+                    }
+                    if (0 < $mediaId = intval($data[$field])) {
+                        $data[$field] = $repository->find($mediaId);
+                    }
                 }
 
                 return $data;
             },
             // Reverse transform
             function (array $data) {
-                if (null !== $media = $data['media_id']) {
-                    if ($media instanceof MediaInterface) {
-                        $data['media_id'] = $media->getId();
-                    } else {
-                        throw new TransformationFailedException('Failed to reverse transform image block data.');
+                foreach (['media_id', 'hover_id'] as $field) {
+                    if (null !== $media = $data[$field]) {
+                        if ($media instanceof MediaInterface) {
+                            $data[$field] = $media->getId();
+                        } else {
+                            throw new TransformationFailedException('Failed to reverse transform image block data.');
+                        }
                     }
                 }
 
@@ -87,8 +107,10 @@ class ImageBlockType extends AbstractType
         $resolver
             ->setRequired('repository')
             ->setDefault('style_choices', null)
+            ->setDefault('with_hover', false)
             ->setAllowedTypes('repository', MediaRepository::class)
-            ->setAllowedTypes('style_choices', ['null', 'array']);
+            ->setAllowedTypes('style_choices', ['null', 'array'])
+            ->setAllowedTypes('with_hover', 'bool');
     }
 
     /**

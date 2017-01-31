@@ -61,7 +61,10 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
 
         // Fallback to sub widgets if required
         if ($type === ImagePlugin::NAME) {
-            return $this->getImagePlugin()->update($block, $request, ['style_choices' => null]);
+            return $this->getImagePlugin()->update($block, $request, [
+                'style_choices' => null,
+                'with_hover'    => true,
+            ]);
         } elseif ($type === TinymcePlugin::NAME) {
             return $this->getHtmlPlugin()->update($block, $request);
         }
@@ -150,6 +153,9 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
         $data = $block->getData();
         $attributes = $view->getAttributes();
         $attributes->addClass('cms-feature');
+
+        // Set editable
+        $attributes->setData(['actions' => ['edit' => true]]);
 
         // Style
         if (isset($data['style']) && isset($this->config['styles'][$data['style']])) {

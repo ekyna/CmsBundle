@@ -125,8 +125,10 @@ class BackgroundPlugin extends AbstractPlugin
 
         // Background image
         if (array_key_exists('media_id', $data) && 0 < $mediaId = intval($data['media_id'])) {
+
             /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $media */
             if (null !== $media = $this->mediaRepository->find($mediaId)) {
+                // TODO use media generator
                 $path = $this->cacheManager->getBrowserPath($media->getPath(), $this->config['filter']);
 
                 $attributes->addStyle('background-image', 'url(' . $path . ')');
