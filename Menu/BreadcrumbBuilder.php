@@ -2,17 +2,16 @@
 
 namespace Ekyna\Bundle\CmsBundle\Menu;
 
-use Doctrine\ORM\Query\Expr;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CoreBundle\Cache\TagManager;
-use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
+use Ekyna\Component\Resource\Locale\LocaleProviderInterface;
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class BreadcrumbBuilder
  * @package Ekyna\Bundle\CmsBundle\Menu
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class BreadcrumbBuilder
 {
@@ -57,17 +56,17 @@ class BreadcrumbBuilder
      * @param TagManager              $tagManager
      */
     public function __construct(
-        FactoryInterface        $factory,
-        RouterInterface         $router,
-        PageHelper              $pageHelper,
+        FactoryInterface $factory,
+        RouterInterface $router,
+        PageHelper $pageHelper,
         LocaleProviderInterface $localeProvider,
-        TagManager              $tagManager
+        TagManager $tagManager
     ) {
-        $this->factory         = $factory;
-        $this->router          = $router;
-        $this->pageHelper      = $pageHelper;
-        $this->localeProvider  = $localeProvider;
-        $this->tagManager      = $tagManager;
+        $this->factory = $factory;
+        $this->router = $router;
+        $this->pageHelper = $pageHelper;
+        $this->localeProvider = $localeProvider;
+        $this->tagManager = $tagManager;
     }
 
     /**
@@ -76,11 +75,11 @@ class BreadcrumbBuilder
      * @param string $name
      * @param string $label
      * @param string $route
-     * @param array $parameters
+     * @param array  $parameters
      *
      * @throws \RuntimeException
      */
-    public function breadcrumbAppend($name, $label, $route = null, array $parameters = array())
+    public function breadcrumbAppend($name, $label, $route = null, array $parameters = [])
     {
         if (null === $this->breadcrumb) {
             $this->createBreadcrumb();
@@ -88,9 +87,8 @@ class BreadcrumbBuilder
 
         $this
             ->breadcrumb
-            ->addChild($name, array('route' => $route, 'routeParameters' => $parameters))
-            ->setLabel($label)
-        ;
+            ->addChild($name, ['route' => $route, 'routeParameters' => $parameters])
+            ->setLabel($label);
     }
 
     /**
@@ -118,7 +116,10 @@ class BreadcrumbBuilder
                 }
                 if (null !== $route) {
                     $cmsOptions = $route->getOption('_cms');
-                    if (null !== $cmsOptions && array_key_exists('parent', $cmsOptions) && 0 < strlen($cmsOptions['parent'])) {
+                    if (null !== $cmsOptions
+                        && array_key_exists('parent', $cmsOptions)
+                        && 0 < strlen($cmsOptions['parent'])
+                    ) {
                         $currentPage = $this->pageHelper->findByRoute($cmsOptions['parent']);
                     }
                 }
@@ -132,14 +133,13 @@ class BreadcrumbBuilder
                 // Fill the menu
                 foreach ($pages as $page) {
                     if ($page['dynamicPath']) {
-                        $params = array('uri' => null);
+                        $params = ['uri' => null];
                     } else {
-                        $params = array('route' => $page['route']);
+                        $params = ['route' => $page['route']];
                     }
                     $this->breadcrumb
-                        ->addChild('page-'.$page['id'], $params)
-                        ->setLabel($page['breadcrumb'])
-                    ;
+                        ->addChild('page-' . $page['id'], $params)
+                        ->setLabel($page['breadcrumb']);
                     $this->tagManager->addTags(sprintf('%s[id:%s]', $repository->getCachePrefix(), $page['id']));
                 }
             }
@@ -157,11 +157,11 @@ class BreadcrumbBuilder
             if (null === $home = $this->pageHelper->getHomePage()) {
                 throw new \RuntimeException('Home page not found.');
             }
-            $this->breadcrumb = $this->factory->createItem('root', array(
-                'childrenAttributes' => array(
-                    'class' => 'breadcrumb hidden-xs'
-                )
-            ));
+            $this->breadcrumb = $this->factory->createItem('root', [
+                'childrenAttributes' => [
+                    'class' => 'breadcrumb hidden-xs',
+                ],
+            ]);
             $this->tagManager->addTags($home->getEntityTag());
         }
     }

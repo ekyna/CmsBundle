@@ -5,7 +5,7 @@ namespace Ekyna\Bundle\CmsBundle;
 use Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler as Pass;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Bundle\CmsBundle\Model as CM;
-use Ekyna\Bundle\CoreBundle\AbstractBundle;
+use Ekyna\Bundle\ResourceBundle\AbstractBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**

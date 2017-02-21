@@ -6,7 +6,7 @@ use Ekyna\Bundle\CmsBundle\Editor\Plugin\AbstractPlugin as BasePlugin;
 use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Editor\View\WidgetView;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
-use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
+use Ekyna\Component\Resource\Locale\LocaleProviderInterface;
 
 /**
  * Class AbstractPlugin

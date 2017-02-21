@@ -2,8 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Search;
 
-use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderAwareInterface;
-use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderAwareTrait;
+use Ekyna\Component\Resource\Locale;
 use Ekyna\Component\Resource\Search\Elastica\ResourceRepository;
 use Ekyna\Bundle\CmsBundle\Search\Wide\ProviderInterface;
 use Ekyna\Bundle\CmsBundle\Search\Wide\Result;
@@ -13,9 +12,9 @@ use Ekyna\Bundle\CmsBundle\Search\Wide\Result;
  * @package Ekyna\Bundle\CmsBundle\Search
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class PageRepository extends ResourceRepository implements LocaleProviderAwareInterface, ProviderInterface
+class PageRepository extends ResourceRepository implements Locale\LocaleProviderAwareInterface, ProviderInterface
 {
-    use LocaleProviderAwareTrait;
+    use Locale\LocaleProviderAwareTrait;
 
 
     /**

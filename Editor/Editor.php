@@ -9,7 +9,7 @@ use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Model as CM;
-use Ekyna\Bundle\CoreBundle\Locale\LocaleProviderInterface;
+use Ekyna\Component\Resource\Locale\LocaleProviderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**

@@ -289,7 +289,7 @@
             <argument type="service" id="event_dispatcher"/>
             <argument type="service" id="knp_menu.factory"/>
             <argument type="service" id="ekyna_cms.menu.repository"/>
-            <argument type="service" id="ekyna_core.locale_provider.request"/>
+            <argument type="service" id="ekyna_resource.locale.request_provider"/>
             <tag name="knp_menu.provider"/>
         </service>
         <service id="ekyna_cms.menu.breadcrumb_builder"
@@ -297,7 +297,7 @@
             <argument type="service" id="knp_menu.factory"/>
             <argument type="service" id="router"/>
             <argument type="service" id="ekyna_cms.helper.page"/>
-            <argument type="service" id="ekyna_core.locale_provider.request"/>
+            <argument type="service" id="ekyna_resource.locale.request_provider"/>
             <argument type="service" id="ekyna_core.cache.tag_manager"/>
         </service>
         <service id="ekyna_cms.breadcrumb"
