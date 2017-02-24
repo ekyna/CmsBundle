@@ -74,7 +74,9 @@ class BackgroundPlugin extends AbstractPlugin
             ],
         ]);
 
-        if ($request->getMethod() == 'POST' && $form->handleRequest($request) && $form->isValid()) {
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
             $container->setData($data);

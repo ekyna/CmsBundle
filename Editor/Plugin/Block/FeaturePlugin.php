@@ -84,7 +84,9 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             'animation_choices' => $this->config['animations'],
         ]);
 
-        if ($request->getMethod() == 'POST' && $form->handleRequest($request) && $form->isValid()) {
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
             $block->setData('style', $data['style']);

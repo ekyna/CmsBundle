@@ -90,7 +90,9 @@ class ImagePlugin extends AbstractPlugin
 
         $form = $this->formFactory->create(ImageBlockType::class, $block->getData(), $options);
 
-        if ($request->getMethod() == 'POST' && $form->handleRequest($request) && $form->isValid()) {
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $block->setData($form->getData());
 
             /*$data = $form->getData();
