@@ -1,0 +1,53 @@
+.cms-image {
+    position: relative;
+
+    > a,
+    > div {
+        display: block;
+
+        img, svg {
+            display: inline-block;
+        }
+
+        &.img-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+        &.img-hover {
+            img, svg {
+                opacity: 0;
+
+                -webkit-transition: opacity .2s;
+                -moz-transition: opacity .2s;
+                -ms-transition: opacity .2s;
+                -o-transition: opacity .2s;
+                transition: opacity .2s;
+            }
+        }
+    }
+
+    &:hover {
+        .img-hover {
+            img, svg {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+svg {
+    &.white {
+        path, polyline, polygon, rect, circle, ellipse, line, text, use, g {
+            fill: #ffffff;
+        }
+    }
+
+    &.black {
+        path, polyline, polygon, rect, circle, ellipse, line, text, use, g {
+            fill: #000000;
+        }
+    }
+}

@@ -253,7 +253,7 @@
                  public="false">
             <argument>%ekyna_cms.editor.block_plugin.image.config%</argument>
             <argument type="service" id="ekyna_media.media.repository"/>
-            <argument type="service" id="ekyna_media.renderer"/>
+            <argument type="service" id="ekyna_media.generator"/>
             <tag name="ekyna_cms.editor.block_plugin"/>
         </service>
         <service id="ekyna_cms.editor.block_plugin.feature"
@@ -279,7 +279,7 @@
                  public="false">
             <argument>%ekyna_cms.editor.container_plugin.background.config%</argument>
             <argument type="service" id="ekyna_media.media.repository"/>
-            <argument type="service" id="liip_imagine.cache.manager"/>
+            <argument type="service" id="ekyna_media.generator"/>
             <tag name="ekyna_cms.editor.container_plugin"/>
         </service>
 

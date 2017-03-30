@@ -85,9 +85,16 @@ ekyna_cms:
         label:
             singular: Bloc
             plural: Blocs
-        plugin:
-            image:
-                hover: Image survol
+        field:
+            animation: Animation
+            theme: Thème
+            style: Style
+            duration: Durée (ms)
+            offset: Offset (px)
+            once: Un seule fois
+            hover: Image survol
+            align: Alignement
+            max_width: Larg. max. (px/%)
     field:
         main_menu: Menu principal
         footer_menu: Menu pied de page

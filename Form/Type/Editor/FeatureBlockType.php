@@ -2,16 +2,11 @@
 
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
-use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
-use Ekyna\Bundle\MediaBundle\Form\Type\MediaChoiceType;
-use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
-use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
-use Symfony\Component\Form\Exception\TransformationFailedException;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class FeatureBlockType
@@ -26,17 +21,18 @@ class FeatureBlockType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('style', ChoiceType::class, [
-                'label'       => 'ekyna_core.field.style',
-                'choices'     => array_flip($options['style_choices']),
-                'placeholder' => 'ekyna_core.value.none',
-                'required'    => false,
+            ->add('animation', AnimationType::class, [
+                'animations'  => $options['animations'],
             ])
-            ->add('animation', ChoiceType::class, [
-                'label'       => 'ekyna_core.field.animation',
-                'choices'     => array_flip($options['animation_choices']),
-                'placeholder' => 'ekyna_core.value.none',
+            ->add('html_max_width', Type\TextType::class, [
+                'label'       => 'ekyna_cms.block.field.max_width',
                 'required'    => false,
+                'constraints' => [
+                    new Assert\Regex([
+                        'pattern' => '/^\d+(px|em|%)$/'
+                        // TODO message translation
+                    ]),
+                ],
             ]);
     }
 
@@ -46,9 +42,15 @@ class FeatureBlockType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setRequired('style_choices')
-            ->setRequired('animation_choices')
-            ->setAllowedTypes('style_choices', 'array')
-            ->setAllowedTypes('animation_choices', 'array');
+            ->setRequired('animations')
+            ->setAllowedTypes('animations', 'array');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBlockPrefix()
+    {
+        return 'ekyna_cms_block_feature';
     }
 }

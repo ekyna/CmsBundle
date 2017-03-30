@@ -2,46 +2,11 @@
     .feature-image {
         position: relative;
         margin: 0 auto 20px auto;
-        max-width: 150px;
-
-        img, svg {
-            &.img-hover {
-                position: absolute;
-                top: 0;
-                left: 0;
-                opacity: 0;
-
-                -webkit-transition: opacity .2s;
-                -moz-transition: opacity .2s;
-                -ms-transition: opacity .2s;
-                -o-transition: opacity .2s;
-                transition: opacity .2s;
-            }
-        }
-
-        &:hover {
-            img, svg {
-                &.img-hover {
-                    opacity: 1;
-                }
-            }
-        }
     }
 
     .feature-html {
         margin: auto;
-        max-width: 150px;
         text-align:center;
-    }
-
-    &.rounded {
-        .feature-image {
-            img {
-                -webkit-border-radius: 50%;
-                -moz-border-radius: 50%;
-                border-radius: 50%;
-            }
-        }
     }
 }
 

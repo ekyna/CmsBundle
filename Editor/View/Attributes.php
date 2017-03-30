@@ -127,7 +127,7 @@ class Attributes implements AttributesInterface
      */
     public function setExtra($key, $value)
     {
-        if (!(is_string($key) && is_string($value))) {
+        if (!(is_string($key) && is_scalar($value))) {
             throw new InvalidArgumentException('Expected extra key and value as strings.');
         }
 

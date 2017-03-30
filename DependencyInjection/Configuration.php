@@ -6,6 +6,7 @@ use Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\FeaturePlugin;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\ImagePlugin;
+use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -220,10 +221,20 @@ class Configuration implements ConfigurationInterface
                                                     ->defaultValue('Default image')
                                                 ->end()
                                                 ->scalarNode('filter')->defaultValue('cms_block_image')->end()
+                                                ->arrayNode('themes')
+                                                    ->useAttributeAsKey('name')
+                                                    ->prototype('scalar')->end()
+                                                    ->defaultValue(PropertyDefaults::getDefaultThemeChoices())
+                                                ->end()
                                                 ->arrayNode('styles')
                                                     ->useAttributeAsKey('name')
                                                     ->prototype('scalar')->end()
-                                                    ->defaultValue(ImagePlugin::getDefaultStyleChoices())
+                                                    ->defaultValue(PropertyDefaults::getDefaultStyleChoices())
+                                                ->end()
+                                                ->arrayNode('animations')
+                                                    ->useAttributeAsKey('name')
+                                                    ->prototype('scalar')->end()
+                                                    ->defaultValue(PropertyDefaults::getDefaultAnimationChoices())
                                                 ->end()
                                             ->end()
                                         ->end()
@@ -231,15 +242,10 @@ class Configuration implements ConfigurationInterface
                                             ->addDefaultsIfNotSet()
                                             ->children()
                                                 ->scalarNode('image_filter')->defaultValue('cms_block_feature')->end()
-                                                ->arrayNode('styles')
-                                                    ->useAttributeAsKey('name')
-                                                    ->prototype('scalar')->end()
-                                                    ->defaultValue(FeaturePlugin::getDefaultStyleChoices())
-                                                ->end()
                                                 ->arrayNode('animations')
                                                     ->useAttributeAsKey('name')
                                                     ->prototype('scalar')->end()
-                                                    ->defaultValue(FeaturePlugin::getDefaultAnimationChoices())
+                                                    ->defaultValue(PropertyDefaults::getDefaultAnimationChoices())
                                                 ->end()
                                             ->end()
                                         ->end()

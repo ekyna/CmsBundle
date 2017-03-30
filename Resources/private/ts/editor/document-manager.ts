@@ -194,6 +194,12 @@ export class BaseManager {
     }
 
     static setElementAttributes($element: JQuery, attributes: ElementAttributes): void {
+        let dom = $element.get(0),
+            currentAttributes = dom.attributes,
+            i = currentAttributes.length;
+        while( i-- ) {
+            dom.removeAttributeNode(currentAttributes[i]);
+        }
         for (let key in attributes) {
             if (key == 'data') {
                 $element.removeAttr('data-cms').data('cms', attributes[key]);
@@ -1475,7 +1481,7 @@ export class DocumentManager {
         let $doc: JQuery = BaseManager.getContentDocument();
 
         // Intercept anchors click
-        $doc.find('a[href]').off('click').on('click', (e: Event) => {
+        $doc.off('click', 'a[href]').on('click', 'a[href]', (e: Event) => {
             e.preventDefault();
             e.stopPropagation();
 
@@ -1483,9 +1489,11 @@ export class DocumentManager {
 
             if (anchor.hostname !== this.config.hostname) {
                 console.log('Attempt to navigate out of the website has been blocked.');
-            } else {
+            } else if(!this.enabled) {
                 Dispatcher.trigger('document_manager.navigate', anchor.href);
             }
+
+            return false;
         });
 
         // Fix forms actions or intercept submit

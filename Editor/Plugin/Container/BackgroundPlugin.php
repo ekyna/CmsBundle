@@ -6,6 +6,7 @@ use Ekyna\Bundle\CmsBundle\Editor\View\ContainerView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\BackgroundContainerType;
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
+use Ekyna\Bundle\MediaBundle\Service\Generator;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -23,9 +24,9 @@ class BackgroundPlugin extends AbstractPlugin
     private $mediaRepository;
 
     /**
-     * @var CacheManager
+     * @var Generator
      */
-    private $cacheManager;
+    private $generator;
 
 
     /**
@@ -33,12 +34,12 @@ class BackgroundPlugin extends AbstractPlugin
      *
      * @param array           $config
      * @param MediaRepository $mediaRepository
-     * @param CacheManager    $cacheManager
+     * @param Generator       $generator
      */
     public function __construct(
         array $config,
         MediaRepository $mediaRepository,
-        CacheManager $cacheManager
+        Generator $generator
     ) {
         parent::__construct(array_replace([
             'filter'        => 'cms_container_background',
@@ -46,7 +47,7 @@ class BackgroundPlugin extends AbstractPlugin
         ], $config));
 
         $this->mediaRepository = $mediaRepository;
-        $this->cacheManager = $cacheManager;
+        $this->generator = $generator;
     }
 
     /**
@@ -130,8 +131,7 @@ class BackgroundPlugin extends AbstractPlugin
 
             /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $media */
             if (null !== $media = $this->mediaRepository->find($mediaId)) {
-                // TODO use media generator
-                $path = $this->cacheManager->getBrowserPath($media->getPath(), $this->config['filter']);
+                $path = $this->generator->generateFrontUrl($media, $this->config['filter']);
 
                 $attributes->addStyle('background-image', 'url(' . $path . ')');
             }

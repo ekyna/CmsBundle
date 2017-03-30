@@ -5,7 +5,8 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistryAwareInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistryAwareTrait;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
-use Ekyna\Bundle\CmsBundle\Editor\View\Attributes;
+use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
+use Ekyna\Bundle\CmsBundle\Editor\View\AttributesInterface;
 use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\FeatureBlockType;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,8 +34,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
     ) {
         parent::__construct(array_replace([
             'image_filter' => 'cms_block_feature',
-            'styles'       => static::getDefaultStyleChoices(),
-            'animations'   => static::getDefaultAnimationChoices(),
+            'animations'   => PropertyDefaults::getDefaultAnimationChoices(),
         ], $config));
     }
 
@@ -45,11 +45,18 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
     {
         parent::create($block, $data);
 
-        $this->getImagePlugin()->create($block, $data);
+        $this->getImagePlugin()->create($block, array_merge($data, [
+            'max_width' => '150px',
+        ]));
         $this->getHtmlPlugin()->create($block, $data);
 
-        $block->setData('style', null);
-        $block->setData('animation', null);
+        $block->setData('animation', [
+            'name'     => null,
+            'offset'   => 120,
+            'duration' => 400,
+            'once'     => false,
+        ]);
+        $block->setData('html_max_width', '150px');
     }
 
     /**
@@ -61,27 +68,23 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
 
         // Fallback to sub widgets if required
         if ($type === ImagePlugin::NAME) {
-            return $this->getImagePlugin()->update($block, $request, [
-                'style_choices' => null,
-                'with_hover'    => true,
-            ]);
+            return $this->getImagePlugin()->update($block, $request);
         } elseif ($type === TinymcePlugin::NAME) {
             return $this->getHtmlPlugin()->update($block, $request);
         }
 
         // Feature update modal
         $form = $this->formFactory->create(FeatureBlockType::class, $block->getData(), [
-            'action'            => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
+            'action'     => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
                 'blockId'         => $block->getId(),
                 'widgetType'      => $request->get('widgetType', $block->getType()),
                 '_content_locale' => $this->localeProvider->getCurrentLocale(),
             ]),
-            'method'            => 'post',
-            'attr'              => [
+            'method'     => 'post',
+            'attr'       => [
                 'class' => 'form-horizontal',
             ],
-            'style_choices'     => $this->config['styles'],
-            'animation_choices' => $this->config['animations'],
+            'animations' => $this->config['animations'],
         ]);
 
         $form->handleRequest($request);
@@ -89,8 +92,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            $block->setData('style', $data['style']);
-            $block->setData('animation', $data['animation']);
+            $block->setData($data);
 
             return null;
         }
@@ -114,6 +116,8 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
      */
     public function validate(BlockInterface $block, ExecutionContextInterface $context)
     {
+        // TODO removed undefined data indexes
+
         $this->getImagePlugin()->validate($block, $context);
         $this->getHtmlPlugin()->validate($block, $context);
     }
@@ -127,7 +131,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             'editable' => false,
         ], $options);
 
-        $overrideAttributes = function (Attributes $attributes, $type) use ($options) {
+        $overrideAttributes = function (AttributesInterface $attributes, $type) use ($options) {
             $attributes->addClass('feature-' . $type);
 
             if ($options['editable']) {
@@ -135,11 +139,19 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             }
         };
 
+        $data = $block->getData();
+
+        $animData = false;
+        if (isset($data['animation'])) {
+            $animData = $data['animation'];
+        }
+
         // Image widget view
         $widget = $this
             ->getImagePlugin()
             ->createWidget($block, array_replace($options, [
-                'filter' => $this->config['image_filter'],
+                'filter'    => $this->config['image_filter'],
+                'animation' => !$animData,
             ]), 0);
         $overrideAttributes($widget->getAttributes(), 'image');
         $view->widgets[] = $widget;
@@ -149,24 +161,26 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             ->getHtmlPlugin()
             ->createWidget($block, $options, 1);
         $overrideAttributes($widget->getAttributes(), 'html');
+        if (isset($data['html_max_width'])) {
+            $widget->getAttributes()->addStyle('max-width', $data['html_max_width']);
+        }
         $view->widgets[] = $widget;
 
         // Feature block view
-        $data = $block->getData();
         $attributes = $view->getAttributes();
         $attributes->addClass('cms-feature');
 
         // Set editable
         $attributes->setData(['actions' => ['edit' => true]]);
 
-        // Style
-        if (isset($data['style']) && isset($this->config['styles'][$data['style']])) {
-            $attributes->addClass($data['style']);
-        }
-
         // Animation
-        if (isset($data['animation']) && isset($this->config['animations'][$data['animation']])) {
-            $attributes->setExtra('data-aos', $data['animation']);
+        if ($animData && isset($animData['name']) && isset($this->config['animations'][$animData['name']])) {
+            $attributes->setExtra('data-aos', $animData['name']);
+            foreach (['duration', 'offset', 'once'] as $prop) {
+                if (isset($animData[$prop]) && $animData[$prop]) {
+                    $attributes->setExtra('data-aos-' . $prop, $animData[$prop]);
+                }
+            }
         }
     }
 
@@ -212,59 +226,5 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
     protected function getHtmlPlugin()
     {
         return $this->getBlockPlugin(TinymcePlugin::NAME);
-    }
-
-    /**
-     * Returns the default choices.
-     *
-     * @return array
-     */
-    static public function getDefaultStyleChoices()
-    {
-        return [
-            'rounded' => 'Rounded',
-        ];
-    }
-
-    /**
-     * Returns the default choices.
-     *
-     * @return array
-     */
-    static public function getDefaultAnimationChoices()
-    {
-        return [
-            // Fade
-            'fade'            => 'Fade',
-            'fade-up'         => 'Fade up',
-            'fade-down'       => 'Fade down',
-            'fade-left'       => 'Fade left',
-            'fade-right'      => 'Fade right',
-            'fade-up-right'   => 'Fade up right',
-            'fade-up-left'    => 'Fade up left',
-            'fade-down-right' => 'Fade down right',
-            'fade-down-left'  => 'Fade down left',
-            // Flip
-            'flip-up'         => 'Flip up',
-            'flip-down'       => 'Flip down',
-            'flip-left'       => 'Flip left',
-            'flip-right'      => 'Flip right',
-            // Slide
-            'slide-up'        => 'Slide up',
-            'slide-down'      => 'Slide down',
-            'slide-left'      => 'Slide left',
-            'slide-right'     => 'Slide right',
-            // Zoom
-            'zoom-in'         => 'Zoom in',
-            'zoom-in-up'      => 'Zoom in up',
-            'zoom-in-down'    => 'Zoom in down',
-            'zoom-in-left'    => 'Zoom in left',
-            'zoom-in-right'   => 'Zoom in right',
-            'zoom-out'        => 'Zoom out',
-            'zoom-out-up'     => 'Zoom out up',
-            'zoom-out-down'   => 'Zoom out down',
-            'zoom-out-left'   => 'Zoom out left',
-            'zoom-out-right'  => 'Zoom out right',
-        ];
     }
 }
