@@ -141,9 +141,24 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
 
         $data = $block->getData();
 
-        $animData = false;
-        if (isset($data['animation'])) {
-            $animData = $data['animation'];
+        // Feature block view
+        $attributes = $view->getAttributes();
+        $attributes->addClass('cms-feature');
+
+        // Set editable
+        $attributes->setData(['actions' => ['edit' => true]]);
+
+        // Animation
+        $hasAnim = false;
+        $animData = $data['animation'];
+        if (isset($animData['name']) && isset($this->config['animations'][$animData['name']])) {
+            $hasAnim = true;
+            $attributes->setExtra('data-aos', $animData['name']);
+            foreach (['duration', 'offset', 'once'] as $prop) {
+                if (isset($animData[$prop]) && $animData[$prop]) {
+                    $attributes->setExtra('data-aos-' . $prop, $animData[$prop]);
+                }
+            }
         }
 
         // Image widget view
@@ -151,7 +166,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             ->getImagePlugin()
             ->createWidget($block, array_replace($options, [
                 'filter'    => $this->config['image_filter'],
-                'animation' => !$animData,
+                'animation' => !$hasAnim,
             ]), 0);
         $overrideAttributes($widget->getAttributes(), 'image');
         $view->widgets[] = $widget;
@@ -165,23 +180,6 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             $widget->getAttributes()->addStyle('max-width', $data['html_max_width']);
         }
         $view->widgets[] = $widget;
-
-        // Feature block view
-        $attributes = $view->getAttributes();
-        $attributes->addClass('cms-feature');
-
-        // Set editable
-        $attributes->setData(['actions' => ['edit' => true]]);
-
-        // Animation
-        if ($animData && isset($animData['name']) && isset($this->config['animations'][$animData['name']])) {
-            $attributes->setExtra('data-aos', $animData['name']);
-            foreach (['duration', 'offset', 'once'] as $prop) {
-                if (isset($animData[$prop]) && $animData[$prop]) {
-                    $attributes->setExtra('data-aos-' . $prop, $animData[$prop]);
-                }
-            }
-        }
     }
 
     /**
