@@ -34,6 +34,10 @@ class BackgroundContainerType extends AbstractType
                 'label' => 'ekyna_core.field.image',
                 'types' => [MediaTypes::IMAGE],
             ])
+            ->add('video_id', MediaChoiceType::class, [
+                'label' => 'ekyna_core.field.video',
+                'types' => [MediaTypes::VIDEO],
+            ])
             ->add('color', ColorPickerType::class, [
                 'label' => 'ekyna_core.field.color',
             ])
@@ -53,6 +57,14 @@ class BackgroundContainerType extends AbstractType
                 if (0 < $mediaId = intval($data['media_id'])) {
                     $data['media_id'] = $repository->find($mediaId);
                 }
+
+                if (!array_key_exists('video_id', $data)) {
+                    $data['video_id'] = null;
+                }
+                if (0 < $videoId = intval($data['video_id'])) {
+                    $data['video_id'] = $repository->find($videoId);
+                }
+
                 return $data;
             },
             // Reverse transform
@@ -64,6 +76,15 @@ class BackgroundContainerType extends AbstractType
                         throw new TransformationFailedException('Failed to reverse transform image block data.');
                     }
                 }
+
+                if (null !== $video = $data['video_id']) {
+                    if ($video instanceof MediaInterface) {
+                        $data['video_id'] = $video->getId();
+                    } else {
+                        throw new TransformationFailedException('Failed to reverse transform video block data.');
+                    }
+                }
+
                 return $data;
             }
         ));

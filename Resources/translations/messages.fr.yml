@@ -92,9 +92,14 @@ ekyna_cms:
             duration: Durée (ms)
             offset: Offset (px)
             once: Un seule fois
-            hover: Image survol
+            hover: Survol
             align: Alignement
             max_width: Larg. max. (px/%)
+            poster: Poster
+            muted: Sans son
+            autoplay: Autoplay
+            loop: Boucle
+            player: Lecteur
     field:
         main_menu: Menu principal
         footer_menu: Menu pied de page

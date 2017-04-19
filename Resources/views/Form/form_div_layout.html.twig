@@ -93,14 +93,39 @@
 {% endblock ekyna_cms_animation_widget %}
 
 
-{% block ekyna_cms_container_background_widget %}
+{% block ekyna_cms_block_video_widget %}
 {% spaceless %}
     {{ form_errors(form) }}
     <div class="row">
         <div class="col-md-4">
-            {{ form_row(form.media_id) }}
+            {{ form_row(form.poster.media, {'label_col': 4, 'widget_col': 8}) }}
         </div>
-        <div class="col-md-8">
+        <div class="col-md-4">
+            {{ form_row(form.video.media, {'label_col': 4, 'widget_col': 8}) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(form.video.autoplay) }}
+            {{ form_row(form.video.loop) }}
+            {{ form_row(form.video.muted) }}
+            {{ form_row(form.video.player) }}
+        </div>
+    </div>
+    {{ form_rest(form) }}
+{% endspaceless %}
+{% endblock ekyna_cms_block_video_widget %}
+
+
+{% block ekyna_cms_container_background_widget %}
+{% spaceless %}
+    {{ form_errors(form) }}
+    <div class="row">
+        <div class="col-md-3">
+            {{ form_row(form.media_id, {'label_col': 6, 'widget_col': 6}) }}
+        </div>
+        <div class="col-md-3">
+            {{ form_row(form.video_id, {'label_col': 6, 'widget_col': 6}) }}
+        </div>
+        <div class="col-md-6">
             {{ form_row(form.color, {'label_col': 6, 'widget_col': 6}) }}
             {{ form_row(form.padding_top, {'label_col': 6, 'widget_col': 6}) }}
             {{ form_row(form.padding_bottom, {'label_col': 6, 'widget_col': 6}) }}

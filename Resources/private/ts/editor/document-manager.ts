@@ -83,6 +83,7 @@ interface ContainerData {
     attributes: ElementAttributes
     inner_attributes: ElementAttributes
     content: string
+    innerContent: string
     rows: Array<RowData>
 }
 interface ContentData {
@@ -297,11 +298,6 @@ export class BaseManager {
                 }
             });
     }
-
-    static tweakAnchorsAndForms()
-    {
-
-    }
 }
 
 export class ContentManager {
@@ -358,18 +354,23 @@ export class ContainerManager {
             // Parse content
             let content: string = container.hasOwnProperty('content') ? container.content : null;
             if (content && 0 < content.length) {
-                $container.html(container.content);
-            } else {
-                // Inner container
-                let $innerContainer: JQuery;
-                if (container.hasOwnProperty('inner_attributes')) {
-                    $innerContainer = BaseManager.findOrCreateElement(container.inner_attributes['id'], $container);
-                    BaseManager.setElementAttributes($innerContainer, container.inner_attributes);
-                } else {
-                    $innerContainer = $container.find('> .cms-inner-container');
-                }
+                $container.html(content);
+            }
 
-                // Parse children
+            // Inner container
+            let $innerContainer: JQuery;
+            if (container.hasOwnProperty('inner_attributes')) {
+                $innerContainer = BaseManager.findOrCreateElement(container.inner_attributes['id'], $container);
+                BaseManager.setElementAttributes($innerContainer, container.inner_attributes);
+            } else {
+                $innerContainer = $container.find('> .cms-inner-container');
+            }
+
+            let innerContent: string = container.hasOwnProperty('innerContent') ? container.innerContent : null;
+            if (innerContent && 0 < innerContent.length) {
+                $container.html(innerContent);
+            } else {
+                // Parse children (if no inner content)
                 if (container.hasOwnProperty('rows')) {
                     RowManager.parse(container.rows, $innerContainer);
                 }
@@ -1336,14 +1337,14 @@ class ToolbarManager {
             title: 'Padding top',
             event: 'layout.change',
             min: 0,
-            max: 100
+            max: 300
         }));
         toolbar.addControl('default', new Slider({
             name: 'padding_bottom',
             title: 'Padding bottom',
             event: 'layout.change',
             min: 0,
-            max: 100
+            max: 300
         }));
 
         // Submit / Cancel

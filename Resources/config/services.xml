@@ -256,6 +256,15 @@
             <argument type="service" id="ekyna_media.generator"/>
             <tag name="ekyna_cms.editor.block_plugin"/>
         </service>
+        <service id="ekyna_cms.editor.block_plugin.video"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\VideoPlugin"
+                 parent="ekyna_cms.editor.block_plugin.abstract"
+                 public="false">
+            <argument>%ekyna_cms.editor.block_plugin.video.config%</argument>
+            <argument type="service" id="ekyna_media.media.repository"/>
+            <argument type="service" id="ekyna_media.renderer"/>
+            <tag name="ekyna_cms.editor.block_plugin"/>
+        </service>
         <service id="ekyna_cms.editor.block_plugin.feature"
                  class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\FeaturePlugin"
                  parent="ekyna_cms.editor.block_plugin.abstract"
@@ -279,7 +288,7 @@
                  public="false">
             <argument>%ekyna_cms.editor.container_plugin.background.config%</argument>
             <argument type="service" id="ekyna_media.media.repository"/>
-            <argument type="service" id="ekyna_media.generator"/>
+            <argument type="service" id="ekyna_media.renderer"/>
             <tag name="ekyna_cms.editor.container_plugin"/>
         </service>
 

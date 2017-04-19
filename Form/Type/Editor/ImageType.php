@@ -34,8 +34,8 @@ class ImageType extends AbstractType
 
         $builder
             ->add('media', MediaChoiceType::class, [
-                'label'       => 'ekyna_core.field.image',
-                'types'       => [MediaTypes::IMAGE, MediaTypes::SVG],
+                'label'       => $options['media_label'],
+                'types'       => $mediaTypes,
                 'constraints' => new AssertTypes([
                     'types' => $mediaTypes,
                 ]),
@@ -114,9 +114,11 @@ class ImageType extends AbstractType
     {
         $resolver
             ->setRequired('repository')
+            ->setDefault('media_label', 'ekyna_core.field.image')
             ->setDefault('themes', [])
             ->setDefault('styles', [])
             ->setDefault('animations', [])
+            ->setAllowedTypes('media_label', ['bool', 'string'])
             ->setAllowedTypes('repository', MediaRepository::class)
             ->setAllowedTypes('themes', 'array')
             ->setAllowedTypes('styles', 'array')

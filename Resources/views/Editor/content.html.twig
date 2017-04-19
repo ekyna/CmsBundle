@@ -23,9 +23,10 @@
 {% spaceless %}
     {% set attr = container.attributes %}
     <div{{ block('attributes') }}>
+        {{ container.content|raw }}
         {% set attr = container.innerAttributes %}
         <div{{ block('attributes') }}>
-            {{ container.content|raw }}
+            {{ container.innerContent|raw }}
             {% for row in container.rows %}
                 {{ cms_row(row) }}
             {% endfor %}

@@ -40,7 +40,9 @@ class ImageBlockType extends AbstractType
             ->add('image', ImageType::class, $imagesOptions);
 
         if ($options['with_hover']) {
-            $builder->add('hover', ImageType::class, $imagesOptions);
+            $builder->add('hover', ImageType::class, array_replace($imagesOptions, [
+                'media_label' => 'ekyna_cms.block.field.hover'
+            ]));
         }
     }
 

@@ -94,7 +94,7 @@ class ViewBuilder implements EditorAwareInterface
         $this->editor->getContainerPlugin($container->getType())->render($container, $view);
 
         // Don't build rows if the plugin did generate a content
-        if (0 == strlen($view->content)) {
+        if (0 == strlen($view->innerContent)) {
             foreach ($container->getRows() as $row) {
                 $view->rows[] = $this->buildRow($row);
             }

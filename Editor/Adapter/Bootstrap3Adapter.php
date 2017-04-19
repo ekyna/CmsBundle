@@ -193,6 +193,14 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     {
         $clean = [];
 
+        // TODO responsive padding
+        if (isset($data[static::PADDING_TOP])) {
+            $clean[static::PADDING_TOP] = $data[static::PADDING_TOP];
+        }
+        if (isset($data[static::PADDING_BOTTOM])) {
+            $clean[static::PADDING_BOTTOM] = $data[static::PADDING_BOTTOM];
+        }
+
         $hasPreviousSize = $hasPreviousOffset = false;
         $previousSize = $previousOffset = null;
 
@@ -200,7 +208,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
         $blocks = [];
         if (null !== $row = $block->getRow()) {
             $blocks = $row->getBlocks()->filter(function(Model\BlockInterface $b) use ($block) {
-                return $b != $block;
+                return $b !== $block;
             });
         }
 

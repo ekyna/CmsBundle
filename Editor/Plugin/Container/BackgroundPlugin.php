@@ -6,8 +6,7 @@ use Ekyna\Bundle\CmsBundle\Editor\View\ContainerView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\BackgroundContainerType;
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
-use Ekyna\Bundle\MediaBundle\Service\Generator;
-use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Ekyna\Bundle\MediaBundle\Service\Renderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -24,9 +23,9 @@ class BackgroundPlugin extends AbstractPlugin
     private $mediaRepository;
 
     /**
-     * @var Generator
+     * @var Renderer
      */
-    private $generator;
+    private $mediaRenderer;
 
 
     /**
@@ -34,20 +33,22 @@ class BackgroundPlugin extends AbstractPlugin
      *
      * @param array           $config
      * @param MediaRepository $mediaRepository
-     * @param Generator       $generator
+     * @param Renderer       $renderer
      */
     public function __construct(
         array $config,
         MediaRepository $mediaRepository,
-        Generator $generator
+        Renderer $renderer
     ) {
         parent::__construct(array_replace([
-            'filter'        => 'cms_container_background',
-            'default_color' => '',
+            'filter'                 => 'cms_container_background',
+            'default_color'          => '',
+            'default_padding_top'    => 0,
+            'default_padding_bottom' => 0,
         ], $config));
 
         $this->mediaRepository = $mediaRepository;
-        $this->generator = $generator;
+        $this->mediaRenderer = $renderer;
     }
 
     /**
@@ -103,6 +104,7 @@ class BackgroundPlugin extends AbstractPlugin
     {
         $data = $container->getData();
         $attributes = $view->getAttributes();
+        $attributes->addClass('cms-background');
 
         // Background color
         $bgColor = array_key_exists('color', $data) ? $data['color'] : $this->config['default_color'];
@@ -128,14 +130,39 @@ class BackgroundPlugin extends AbstractPlugin
 
         // Background image
         if (array_key_exists('media_id', $data) && 0 < $mediaId = intval($data['media_id'])) {
-
             /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $media */
             if (null !== $media = $this->mediaRepository->find($mediaId)) {
-                $path = $this->generator->generateFrontUrl($media, $this->config['filter']);
+                $path = $this
+                    ->mediaRenderer
+                    ->getGenerator()
+                    ->generateFrontUrl($media, $this->config['filter']);
 
                 $attributes->addStyle('background-image', 'url(' . $path . ')');
             }
         }
+
+        // Background video
+        if (array_key_exists('video_id', $data) && 0 < $videoId = intval($data['video_id'])) {
+            /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $video */
+            if (null !== $video = $this->mediaRepository->find($videoId)) {
+                $attributes->addClass('cms-background-video');
+
+                $view->content = $this->mediaRenderer->renderVideo($video, [
+                    'responsive'   => false,
+                    'autoplay'     => true,
+                    'loop'         => true,
+                    'muted'        => true,
+                    'player'       => false,
+                    'alt_message'  => null,
+                ]);
+
+                /*$view->content = '<video playsinline autoplay muted loop>'; // poster=""
+                $view->content .= '<source src="' . $path . '" type="' . $mimeType . '">';
+                $view->content .= '</video>';*/
+            }
+        }
+
+
     }
 
     /**

@@ -29,6 +29,11 @@ class ContainerView
      */
     public $content = '';
 
+    /**
+     * @var string
+     */
+    public $innerContent = '';
+
 
     /**
      * Constructor.
