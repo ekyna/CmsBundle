@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form;
 
 use Craue\FormFlowBundle\Form\FormFlow;
@@ -15,7 +17,7 @@ class CreateSlideFlow extends FormFlow
     /**
      * @inheritDoc
      */
-    protected function loadStepsConfig()
+    protected function loadStepsConfig(): array
     {
         return [
             [

@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Ekyna\Bundle\CmsBundle\SlideShow\TypeRegistryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -10,13 +12,23 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * @package Ekyna\Bundle\CmsBundle\Controller
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class SlideShowController extends Controller
+class SlideShowController
 {
-    public function typesAction()
+    private TypeRegistryInterface $registry;
+
+    public function __construct(TypeRegistryInterface $registry)
+    {
+        $this->registry = $registry;
+    }
+
+    /**
+     * Slide show types.
+     */
+    public function types(): JsonResponse
     {
         $config = [];
 
-        $types = $this->get('ekyna_cms.slide_show.registry')->all();
+        $types = $this->registry->all();
 
         foreach ($types as $type) {
             $config[$type->getName()] = $type->getJsPath();

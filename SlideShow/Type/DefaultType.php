@@ -1,13 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\SlideShow\Type;
 
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
+use DOMDocument;
+use DOMElement;
 use Ekyna\Bundle\CmsBundle\Entity\Slide;
 use Ekyna\Bundle\CmsBundle\Form\Type\Slide\DefaultTranslationType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+
+use function Symfony\Component\Translation\t;
 
 /**
  * Class DefaultType
@@ -16,37 +22,31 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class DefaultType extends AbstractType
 {
-    /**
-     * @inheritDoc
-     */
-    public function buildForm(FormInterface $form)
+    public function buildForm(FormInterface $form): void
     {
         parent::buildForm($form);
 
         $form
             ->add('button_url', TextType::class, [
-                'label' => 'ekyna_cms.slide.type.default.button_url',
+                'label'         => t('slide.type.default.button_url', [], 'EkynaCms'),
                 'property_path' => 'data[button_url]',
                 'constraints'   => [
                     new Assert\NotBlank(),
                 ],
             ])
             ->add('translations', TranslationsFormsType::class, [
-                'form_type' => DefaultTranslationType::class,
-                'label'     => false,
-                'attr'      => [
+                'form_type'   => DefaultTranslationType::class,
+                'label'       => false,
+                'attr'        => [
                     'widget_col' => 12,
                 ],
-                'constraints'   => [
+                'constraints' => [
                     new Assert\Count(['min' => 1]),
                 ],
             ]);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function render(Slide $slide, \DOMElement $element, \DOMDocument $dom)
+    public function render(Slide $slide, DOMElement $element, DOMDocument $dom): void
     {
         parent::render($slide, $element, $dom);
 
@@ -85,10 +85,7 @@ class DefaultType extends AbstractType
         $inner->appendChild($button);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function buildExample(Slide $slide)
+    public function buildExample(Slide $slide): void
     {
         // TODO background color/image
 
@@ -106,11 +103,7 @@ class DefaultType extends AbstractType
             ]);
     }
 
-
-    /**
-     * @inheritDoc
-     */
-    protected function getConfigDefaults()
+    protected function getConfigDefaults(): array
     {
         return [
             'background_filter' => 'cms_container_background',

@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity\Editor;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Component\Resource\Model as RM;
 
@@ -24,6 +25,11 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
         getEntityTag as traitGetEntityTag;
     }
 
+    protected ?int             $id   = null;
+    protected ?EM\RowInterface $row  = null;
+    protected ?string          $name = null;
+    protected ?string          $type = null;
+
 
     /**
      * Clones the block.
@@ -37,28 +43,7 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
     }
 
     /**
-     * @var integer
-     */
-    protected $id;
-
-    /**
-     * @var EM\RowInterface
-     */
-    protected $row;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $type;
-
-
-    /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getId(): ?int
     {
@@ -66,9 +51,9 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setRow(EM\RowInterface $row = null)
+    public function setRow(EM\RowInterface $row = null): EM\BlockInterface
     {
         $this->row = $row;
 
@@ -76,17 +61,17 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getRow()
+    public function getRow(): ?EM\RowInterface
     {
         return $this->row;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setName($name)
+    public function setName(string $name = null): EM\BlockInterface
     {
         $this->name = $name;
 
@@ -94,17 +79,17 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setType($type)
+    public function setType(string $type): EM\BlockInterface
     {
         $this->type = $type;
 
@@ -112,27 +97,27 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isFirst()
+    public function isFirst(): bool
     {
         return 0 == $this->position;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isLast()
+    public function isLast(): bool
     {
-        if (null !== $this->row && ($this->row->getBlocks()->count() - 1 > $this->position)) {
+        if ($this->row && ($this->row->getBlocks()->count() - 1 > $this->position)) {
             return false;
         }
 
@@ -140,9 +125,9 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isAlone()
+    public function isAlone(): bool
     {
         if (null === $this->row) {
             return true;
@@ -152,19 +137,19 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isNamed()
+    public function isNamed(): bool
     {
-        return 0 < strlen($this->name);
+        return !empty($this->name);
     }
 
     /**
      * @inheritDoc
      */
-    public function getEntityTag()
+    public function getEntityTag(): string
     {
-        if (0 == strlen($this->name) && null !== $this->row) {
+        if (empty($this->name) && null !== $this->row) {
             return $this->row->getEntityTag();
         }
 
@@ -176,7 +161,7 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
      *
      * @return string
      */
-    public static function getEntityTagPrefix()
+    public static function getEntityTagPrefix(): string
     {
         return 'ekyna_cms.block';
     }

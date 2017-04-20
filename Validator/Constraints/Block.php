@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
@@ -11,13 +13,12 @@ use Symfony\Component\Validator\Constraint;
  */
 class Block extends Constraint
 {
-    public $row_or_name_but_not_both = 'ekyna_cms.block.row_or_name_but_not_both';
-
-    public $invalid_position         = 'ekyna_cms.block.invalid_position';
+    public string $rowOrNameButNotBoth = 'ekyna_cms.block.row_or_name_but_not_both';
+    public string $invalidPosition     = 'ekyna_cms.block.invalid_position';
 
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTargets()
     {

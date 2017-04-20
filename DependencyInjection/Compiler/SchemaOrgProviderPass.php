@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -13,20 +15,17 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class SchemaOrgProviderPass implements CompilerPassInterface
 {
+    private const PROVIDER_TAG = 'ekyna_cms.schema_org_provider';
+
     /**
      * @inheritDoc
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasDefinition('ekyna_cms.schema_org.provider_registry')) {
-            return;
-        }
-
         $registry = $container->getDefinition('ekyna_cms.schema_org.provider_registry');
 
-        $taggedServices = $container->findTaggedServiceIds('ekyna_cms.schema_org_provider');
-        foreach ($taggedServices as $id => $tagAttributes) {
-            $registry->addMethodCall('registerProvider', [new Reference($id)]);
+        foreach ($container->findTaggedServiceIds(self::PROVIDER_TAG, true) as $serviceId => $tags) {
+            $registry->addMethodCall('registerProvider', [new Reference($serviceId)]);
         }
     }
 }

@@ -174,7 +174,7 @@
         <property name="icon">
             <constraint name="Choice">
                 <option name="callback">
-                    <value>Ekyna\Bundle\CoreBundle\Model\FAIcons</value>
+                    <value>Ekyna\Bundle\UiBundle\Model\FAIcons</value>
                     <value>getConstants</value>
                 </option>
             </constraint>
@@ -199,7 +199,10 @@
     <class name="Ekyna\Bundle\CmsBundle\Entity\Seo">
         <property name="changefreq">
             <constraint name="Choice">
-                <option name="callback">getChangefreqs</option>
+                <option name="callback">
+                    <value>Ekyna\Bundle\CmsBundle\Model\ChangeFrequencies</value>
+                    <value>getConstants</value>
+                </option>
                 <option name="groups">
                     <value>Default</value>
                     <value>Generator</value>
@@ -216,36 +219,6 @@
             <constraint name="Range">
                 <option name="min">0</option>
                 <option name="max">1</option>
-                <option name="groups">
-                    <value>Default</value>
-                    <value>Generator</value>
-                </option>
-            </constraint>
-        </property>
-        <property name="follow">
-            <constraint name="NotNull">
-                <option name="groups">
-                    <value>Default</value>
-                    <value>Generator</value>
-                </option>
-            </constraint>
-            <constraint name="Type">
-                <option name="type">bool</option>
-                <option name="groups">
-                    <value>Default</value>
-                    <value>Generator</value>
-                </option>
-            </constraint>
-        </property>
-        <property name="index">
-            <constraint name="NotNull">
-                <option name="groups">
-                    <value>Default</value>
-                    <value>Generator</value>
-                </option>
-            </constraint>
-            <constraint name="Type">
-                <option name="type">bool</option>
                 <option name="groups">
                     <value>Default</value>
                     <value>Generator</value>
@@ -483,7 +456,7 @@
         <property name="icon">
             <constraint name="Choice">
                 <option name="callback">
-                    <value>Ekyna\Bundle\CoreBundle\Model\FAIcons</value>
+                    <value>Ekyna\Bundle\UiBundle\Model\FAIcons</value>
                     <value>getConstants</value>
                 </option>
             </constraint>

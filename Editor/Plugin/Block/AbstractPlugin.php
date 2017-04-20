@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\AbstractPlugin as BasePlugin;
 use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Editor\View\WidgetView;
-use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Component\Resource\Locale\LocaleProviderInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -17,12 +19,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 abstract class AbstractPlugin extends BasePlugin implements PluginInterface
 {
-    const INVALID_DATA = 'ekyna_cms.block.invalid_data';
+    public const INVALID_DATA = 'ekyna_cms.block.invalid_data';
 
-    /**
-     * @var LocaleProviderInterface
-     */
-    protected $localeProvider;
+    protected LocaleProviderInterface $localeProvider;
 
 
     /**
@@ -30,34 +29,24 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
      *
      * @param LocaleProviderInterface $localeProvider
      */
-    public function setLocaleProvider(LocaleProviderInterface $localeProvider)
+    public function setLocaleProvider(LocaleProviderInterface $localeProvider): void
     {
         $this->localeProvider = $localeProvider;
     }
 
     /**
-     * Returns the plugin config.
-     *
-     * @return array
+     * @inheritDoc
      */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function create(BlockInterface $block, array $data = [])
+    public function create(BlockInterface $block, array $data = []): void
     {
         $block->setCurrentLocale($this->localeProvider->getCurrentLocale());
         $block->setFallbackLocale($this->localeProvider->getFallbackLocale());
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function remove(BlockInterface $block)
+    public function remove(BlockInterface $block): void
     {
         $block->unsetData();
         foreach ($block->getTranslations() as $blockTranslation) {
@@ -66,26 +55,29 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function validate(BlockInterface $block, ExecutionContextInterface $context)
+    public function validate(BlockInterface $block, ExecutionContextInterface $context): void
     {
-
     }
 
     /**
      * @inheritDoc
      */
-    public function render(BlockInterface $block, BlockView $view, AdapterInterface $adapter, array $options)
+    public function render(BlockInterface $block, BlockView $view, AdapterInterface $adapter, array $options): void
     {
         $view->widgets[] = $this->createWidget($block, $adapter, $options);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0)
-    {
+    public function createWidget(
+        BlockInterface $block,
+        AdapterInterface $adapter,
+        array $options,
+        int $position = 0
+    ): WidgetView {
         $options = array_replace([
             'editable' => false,
         ], $options);
@@ -110,9 +102,9 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function supports(BlockInterface $block)
+    public function supports(BlockInterface $block): bool
     {
         return $block->getType() === $this->getName();
     }
@@ -120,7 +112,7 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
-    public function getJavascriptFilePath()
+    public function getJavascriptFilePath(): string
     {
         return 'ekyna-cms/editor/plugin/block/default';
     }

@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use function Symfony\Component\Translation\t;
 
 /**
  * Class TemplateBlockType
@@ -14,42 +18,31 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class TemplateBlockType extends AbstractType
 {
-    /**
-     * @inheritDoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->get('data')
             ->add('content', ChoiceType::class, [
-                'label'   => 'ekyna_core.field.content',
-                'choices' => $options['templates'],
-                'select2' => false,
+                'label'                     => t('field.content', [], 'EkynaUi'),
+                'choices'                   => $options['templates'],
+                'choice_translation_domain' => false,
+                'select2'                   => false,
             ]);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setRequired('templates')
             ->setAllowedTypes('templates', 'array');
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'ekyna_cms_block_template';
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return BaseBlockType::class;
     }

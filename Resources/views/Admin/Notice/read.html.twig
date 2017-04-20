@@ -1,0 +1,67 @@
+{% extends '@EkynaAdmin/Entity/Crud/read.html.twig' %}
+
+{% block actions %}{% endblock %}
+
+
+{% block main_tabs -%}
+    <li class="active">
+        <a href="#notice-general" id="toggle-general" data-toggle="tab">
+            {{- 'field.general'|trans({}, 'EkynaUi') -}}
+        </a>
+    </li>
+{%- endblock main_tabs %}
+
+
+{% block main_contents -%}
+    <div class="tab-pane active" id="notice-general">
+        {{ show_row(notice.name, 'text', {
+            'label': 'field.name',
+            'trans_domain': 'EkynaUi'
+        }) }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ show_row(notice.theme|cms_theme, 'text', {
+                    'label': 'field.theme',
+                    'trans_domain': 'EkynaUi',
+                    'label_col': 4
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ show_row(notice.icon|ui_fa_icon ~ ' (' ~ notice.icon ~ ')', 'text', {
+                    'label': 'field.icon',
+                    'trans_domain': 'EkynaUi',
+                    'label_col': 4
+                }) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                {{ show_row(notice.startAt, 'datetime', {
+                    'label': 'field.start_date',
+                    'trans_domain': 'EkynaUi',
+                    'label_col': 4
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ show_row(notice.endAt, 'datetime', {
+                    'label': 'field.end_date',
+                    'trans_domain': 'EkynaUi',
+                    'label_col': 4
+                }) }}
+            </div>
+        </div>
+        {{ show_row(notice.translations, 'translations', {
+            'fields': {
+                'content': {
+                    'label': 'field.content',
+                    'trans_domain': 'EkynaUi',
+                    'type': 'tinymce',
+                    'options': {
+                        'route': 'admin_ekyna_cms_notice_tinymce',
+                        'route_params': {'noticeId': notice.id, 'field': 'content'},
+                    }
+                }
+            }
+        }) }}
+    </div>
+{%- endblock main_contents -%}

@@ -1,9 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Install\Generator;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
+use Ekyna\Bundle\CmsBundle\Factory\MenuFactoryInterface;
+use Ekyna\Bundle\CmsBundle\Manager\MenuManagerInterface;
+use Ekyna\Bundle\CmsBundle\Repository\MenuRepositoryInterface;
+use Exception;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use function sprintf;
 
 /**
  * Class MenuGenerator
@@ -12,67 +21,50 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class MenuGenerator
 {
-    /**
-     * @var \Ekyna\Component\Resource\Operator\ResourceOperatorInterface
-     */
-    private $operator;
+    private MenuManagerInterface    $menuManager;
+    private MenuRepositoryInterface $menuRepository;
+    private MenuFactoryInterface    $menuFactory;
+    private EntityManagerInterface  $entityManager;
+    private array                   $config;
+    private array                   $locales;
 
-    /**
-     * @var \Ekyna\Bundle\CmsBundle\Repository\MenuRepository
-     */
-    private $repository;
-
-    /**
-     * @var array
-     */
-    private $config;
-
-    /**
-     * @var array
-     */
-    private $locales;
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
-
-
-    /**
-     * Constructor.
-     *
-     * @param ContainerInterface $container
-     * @param OutputInterface    $output
-     */
-    public function __construct(ContainerInterface $container, OutputInterface $output)
-    {
-        $this->output = $output;
-
-        $this->operator = $container->get('ekyna_cms.menu.operator');
-        $this->repository = $container->get('ekyna_cms.menu.repository');
-        $this->config = $container->getParameter('ekyna_cms.menu.config');
-        $this->locales = $container->getParameter('locales');
+    public function __construct(
+        MenuManagerInterface $manager,
+        MenuRepositoryInterface $repository,
+        MenuFactoryInterface $factory,
+        EntityManagerInterface  $entityManager,
+        array $config,
+        array $locales
+    ) {
+        $this->menuManager = $manager;
+        $this->menuRepository = $repository;
+        $this->menuFactory = $factory;
+        $this->entityManager = $entityManager;
+        $this->config = $config;
+        $this->locales = $locales;
     }
 
     /**
      * Generates the menus based on configuration.
+     *
+     * @param OutputInterface $output
      */
-    public function generateMenus()
+    public function generate(OutputInterface $output)
     {
         foreach ($this->config['roots'] as $name => $config) {
-            $this->output->write(sprintf(
+            $output->write(sprintf(
                 '- <comment>%s</comment> %s ',
                 $name,
                 str_pad('.', 44 - mb_strlen($name), '.', STR_PAD_LEFT)
             ));
 
-            if (null !== $menu = $this->repository->findOneByName($name)) {
-                $this->output->writeln('already exists.');
+            if (null !== $this->menuRepository->findOneByName($name)) {
+                $output->writeln('already exists.');
+
                 continue;
             }
 
-            /** @var \Ekyna\Bundle\CmsBundle\Entity\Menu $menu */
-            $menu = $this->repository->createNew();
+            $menu = $this->menuFactory->create();
             $menu
                 ->setName($name)
                 ->setDescription($config['description'])
@@ -84,9 +76,50 @@ class MenuGenerator
                     ->setTitle($config['title']);
             }
 
-            $this->operator->persist($menu);
+            $this->menuManager->save($menu);
 
-            $this->output->writeln('created.');
+            $output->writeln('created.');
         }
+
+        $this->menuManager->clear();
+    }
+
+    /**
+     * Removes all menus.
+     *
+     * @param OutputInterface $output
+     *
+     * @noinspection PhpDocMissingThrowsInspection
+     */
+    public function truncate(OutputInterface $output): void
+    {
+        $output->writeln('Removing menus ...');
+
+        $count = 0;
+        $menus = $this->menuRepository->findAll();
+        foreach ($menus as $menu) {
+            $this->menuManager->remove($menu);
+            $count++;
+        }
+        $this->menuManager->flush();
+        $this->menuManager->clear();
+
+        $metadata = $this->entityManager->getClassMetadata($this->menuRepository->getClassName());
+        $connection = $this->entityManager->getConnection();
+        $dbPlatform = $connection->getDatabasePlatform();
+        $connection->beginTransaction();
+
+        try {
+            $connection->executeQuery('SET FOREIGN_KEY_CHECKS=0');
+            $q = $dbPlatform->getTruncateTableSQL($metadata->getTableName());
+            $connection->executeQuery($q);
+            $connection->executeQuery('SET FOREIGN_KEY_CHECKS=1');
+            $connection->commit();
+        } catch (Exception $e) {
+            $output->writeln('<error>Failed to remove menus.</error>');
+            $connection->rollBack();
+        }
+
+        $output->writeln(sprintf('<info>%s</info> menus removed.', $count));
     }
 }

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Locale;
 
 use Ekyna\Component\Resource\Locale\LocaleProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -15,20 +17,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class DocumentLocaleProvider implements LocaleProviderInterface, EventSubscriberInterface
 {
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var string
-     */
-    private $defaultLocale;
-
-    /**
-     * @var array
-     */
-    private $availableLocales;
+    private array    $availableLocales;
+    private string   $defaultLocale;
+    private ?Request $request = null;
 
 
     /**
@@ -37,55 +28,56 @@ class DocumentLocaleProvider implements LocaleProviderInterface, EventSubscriber
      * @param string $defaultLocale
      * @param array  $availableLocales
      */
-    public function __construct($defaultLocale, array $availableLocales)
+    public function __construct(array $availableLocales, string $defaultLocale)
     {
-        $this->defaultLocale = $defaultLocale;
         $this->availableLocales = $availableLocales;
+        $this->defaultLocale = $defaultLocale;
     }
 
     /**
-     * @inheritdoc
+     * @param RequestEvent $event
      */
-    public static function getSubscribedEvents()
-    {
-        return [
-            // IMPORTANT to keep priority 34.
-            KernelEvents::REQUEST => [['onKernelRequest', 34]],
-        ];
-    }
-
-    /**
-     * @param GetResponseEvent $event
-     */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $this->request = $event->getRequest();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getCurrentLocale()
+    public function getCurrentLocale(): string
     {
         if (null === $this->request) {
             return $this->getFallbackLocale();
         }
+
         return $this->request->get('_document_locale', $this->request->getLocale());
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getFallbackLocale()
+    public function getFallbackLocale(): string
     {
         return $this->defaultLocale;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getAvailableLocales()
+    public function getAvailableLocales(): array
     {
         return $this->availableLocales;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            // IMPORTANT to keep priority 34.
+            KernelEvents::REQUEST => [['onKernelRequest', 34]],
+        ];
     }
 }

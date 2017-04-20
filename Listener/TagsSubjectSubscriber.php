@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Listener;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
-use Doctrine\ORM\Events;
 use Ekyna\Bundle\CmsBundle\Model;
 
 /**
@@ -12,14 +12,10 @@ use Ekyna\Bundle\CmsBundle\Model;
  * @package Ekyna\Bundle\CmsBundle\Listener
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class TagsSubjectSubscriber implements EventSubscriber
+class TagsSubjectSubscriber
 {
-    /**
-     * @param LoadClassMetadataEventArgs $eventArgs
-     */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs): void
     {
-        /** @var \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata */
         $metadata = $eventArgs->getClassMetadata();
 
         // Prevent doctrine:generate:entities bug
@@ -44,15 +40,5 @@ class TagsSubjectSubscriber implements EventSubscriber
                 'name' => $metadata->getTableName() . '_tags',
             ],
         ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::loadClassMetadata,
-        ];
     }
 }

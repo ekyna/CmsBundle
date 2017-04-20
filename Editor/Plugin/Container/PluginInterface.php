@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Container;
 
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginInterface as BaseInterface;
 use Ekyna\Bundle\CmsBundle\Editor\View\ContainerView;
-use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
@@ -21,7 +24,7 @@ interface PluginInterface extends BaseInterface
      * @param ContainerInterface $container
      * @param array              $data
      */
-    public function create(ContainerInterface $container, array $data = []);
+    public function create(ContainerInterface $container, array $data = []): void;
 
     /**
      * Updates a container.
@@ -29,16 +32,16 @@ interface PluginInterface extends BaseInterface
      * @param ContainerInterface $container
      * @param Request            $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response|null
+     * @return Response|null
      */
-    public function update(ContainerInterface $container, Request $request);
+    public function update(ContainerInterface $container, Request $request): ?Response;
 
     /**
      * Removes a container.
      *
      * @param ContainerInterface $container
      */
-    public function remove(ContainerInterface $container);
+    public function remove(ContainerInterface $container): void;
 
     /**
      * Validates the container (data).
@@ -46,7 +49,7 @@ interface PluginInterface extends BaseInterface
      * @param ContainerInterface        $container
      * @param ExecutionContextInterface $context
      */
-    public function validate(ContainerInterface $container, ExecutionContextInterface $context);
+    public function validate(ContainerInterface $container, ExecutionContextInterface $context): void;
 
     /**
      * Returns the container content.
@@ -54,17 +57,15 @@ interface PluginInterface extends BaseInterface
      * @param ContainerInterface $container
      * @param ContainerView      $view
      * @param bool               $editable
-     *
-     * @return string
      */
-    public function render(ContainerInterface $container, ContainerView $view, $editable = false);
+    public function render(ContainerInterface $container, ContainerView $view, bool $editable = false): void;
 
     /**
      * Returns whether the container is supported.
      *
      * @param ContainerInterface $container
      *
-     * @return boolean
+     * @return bool
      */
-    public function supports(ContainerInterface $container);
+    public function supports(ContainerInterface $container): bool;
 }

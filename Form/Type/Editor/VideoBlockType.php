@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
@@ -8,6 +10,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 
+use function Symfony\Component\Translation\t;
+
 /**
  * Class VideoBlockType
  * @package Ekyna\Bundle\CmsBundle\Form\Type\Editor
@@ -15,10 +19,7 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class VideoBlockType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // Video form
         $video = $builder
@@ -27,28 +28,28 @@ class VideoBlockType extends AbstractType
                 'compound' => true,
             ])
             ->add('autoplay', Type\CheckboxType::class, [
-                'label'    => 'ekyna_cms.block.field.autoplay',
+                'label'    => t('block.field.autoplay', [], 'EkynaCms'),
                 'required' => false,
             ])
             ->add('loop', Type\CheckboxType::class, [
-                'label'    => 'ekyna_cms.block.field.loop',
+                'label'    => t('block.field.loop', [], 'EkynaCms'),
                 'required' => false,
             ])
             ->add('muted', Type\CheckboxType::class, [
-                'label'    => 'ekyna_cms.block.field.muted',
+                'label'    => t('block.field.muted', [], 'EkynaCms'),
                 'required' => false,
             ])
             ->add('player', Type\CheckboxType::class, [
-                'label'    => 'ekyna_cms.block.field.player',
+                'label'    => t('block.field.player', [], 'EkynaCms'),
                 'required' => false,
             ])
             ->add('ratio', Type\ChoiceType::class, [
-                'label'    => 'ekyna_core.field.format',
+                'label'    => t('field.format', [], 'EkynaUi'),
                 'choices'  => AspectRatio::getChoices(),
                 'required' => true,
             ])
             ->add('height', Type\TextType::class, [
-                'label'    => 'ekyna_core.field.height',
+                'label'    => t('field.height', [], 'EkynaUi'),
                 'required' => false,
             ]);
 
@@ -69,19 +70,13 @@ class VideoBlockType extends AbstractType
             ]);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getParent()
-    {
-        return BaseBlockType::class;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'ekyna_cms_block_video';
+    }
+
+    public function getParent(): ?string
+    {
+        return BaseBlockType::class;
     }
 }

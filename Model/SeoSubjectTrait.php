@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 /**
@@ -9,17 +11,14 @@ namespace Ekyna\Bundle\CmsBundle\Model;
  */
 trait SeoSubjectTrait
 {
-    /**
-     * @var SeoInterface
-     */
-    protected $seo;
+    protected ?SeoInterface $seo = null;
 
     /**
      * Returns the seo.
      *
-     * @return SeoInterface
+     * @return SeoInterface|null
      */
-    public function getSeo()
+    public function getSeo(): ?SeoInterface
     {
         return $this->seo;
     }
@@ -27,11 +26,11 @@ trait SeoSubjectTrait
     /**
      * Sets the seo.
      *
-     * @param SeoInterface $seo
+     * @param SeoInterface|null $seo
      *
-     * @return SeoSubjectTrait|$this
+     * @return SeoSubjectInterface|$this
      */
-    public function setSeo(SeoInterface $seo = null)
+    public function setSeo(SeoInterface $seo = null): SeoSubjectInterface
     {
         $this->seo = $seo;
 

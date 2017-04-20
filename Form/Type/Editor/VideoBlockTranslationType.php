@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
 use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+
+use function Symfony\Component\Translation\t;
 
 /**
  * Class VideoBlockTranslationType
@@ -13,10 +17,7 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class VideoBlockTranslationType extends AbstractType
 {
-    /**
-     * @inheritDoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // Data form
         $data = $builder
@@ -25,30 +26,24 @@ class VideoBlockTranslationType extends AbstractType
                 'compound' => true,
             ])
             ->add('poster', MediaChoiceType::class, [
-                'label' => 'ekyna_core.field.image',
+                'label' => t('field.image', [], 'EkynaUi'),
                 'types' => [MediaTypes::IMAGE],
             ])
             ->add('video', MediaChoiceType::class, [
-                'label' => 'ekyna_core.field.video',
+                'label' => t('field.video', [], 'EkynaUi'),
                 'types' => [MediaTypes::VIDEO],
             ]);
 
         $builder->add($data);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getParent()
-    {
-        return BaseBlockTranslationType::class;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'ekyna_cms_block_video_translation';
+    }
+
+    public function getParent(): ?string
+    {
+        return BaseBlockTranslationType::class;
     }
 }

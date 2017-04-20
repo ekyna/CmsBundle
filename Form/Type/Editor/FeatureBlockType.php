@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
 use Symfony\Component\Form\AbstractType;
@@ -8,6 +10,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
+use function Symfony\Component\Translation\t;
+
 /**
  * Class FeatureBlockType
  * @package Ekyna\Bundle\CmsBundle\Form\Type\Editor
@@ -15,18 +19,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class FeatureBlockType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->get('data')
             ->add('animation', AnimationType::class, [
-                'animations'  => $options['animations'],
+                'animations' => $options['animations'],
             ])
             ->add('html_max_width', Type\TextType::class, [
-                'label'       => 'ekyna_cms.block.field.max_width',
+                'label'       => t('block.field.max_width', [], 'EkynaCms'),
                 'required'    => false,
                 'constraints' => [
                     new Assert\Regex([
@@ -36,7 +37,7 @@ class FeatureBlockType extends AbstractType
                 ],
             ])
             ->add('html_margin_top', Type\TextType::class, [
-                'label'       => 'ekyna_cms.block.field.margin_top',
+                'label'       => t('block.field.margin_top', [], 'EkynaCms'),
                 'required'    => false,
                 'constraints' => [
                     new Assert\Regex([
@@ -47,28 +48,19 @@ class FeatureBlockType extends AbstractType
             ]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setRequired('animations')
             ->setAllowedTypes('animations', 'array');
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'ekyna_cms_block_feature';
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return BaseBlockType::class;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
@@ -11,11 +13,11 @@ use Symfony\Component\Validator\Constraint;
  */
 class TabsTranslation extends Constraint
 {
-    public $label_and_url_but_not_both = 'ekyna_cms.block.tab.label_and_url_but_not_both';
+    public $labelAndUrlButNotBoth = 'ekyna_cms.block.tab.label_and_url_but_not_both';
 
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTargets()
     {

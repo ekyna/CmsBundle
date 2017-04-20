@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Ekyna\Component\Resource\Model\TranslationInterface;
@@ -14,55 +16,55 @@ interface SeoTranslationInterface extends TranslationInterface
     /**
      * Sets the title.
      *
-     * @param string $title
+     * @param string|null $title
      *
      * @return SeoTranslationInterface|$this
      */
-    public function setTitle($title);
+    public function setTitle(string $title = null): SeoTranslationInterface;
 
     /**
      * Returns the title.
      *
-     * @return string
+     * @return string|null
      */
-    public function getTitle();
+    public function getTitle(): ?string;
 
     /**
      * Sets the description.
      *
-     * @param string $description
+     * @param string|null $description
      *
      * @return SeoTranslationInterface|$this
      */
-    public function setDescription($description);
+    public function setDescription(string $description = null): SeoTranslationInterface;
 
     /**
      * Returns the description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDescription();
+    public function getDescription(): ?string;
 
     /**
      * Sets the keywords.
      *
-     * @param mixed $keywords
+     * @param string|null $keywords
      *
      * @return SeoTranslationInterface|$this
      */
-    public function setKeywords($keywords);
+    public function setKeywords(string $keywords = null): SeoTranslationInterface;
 
     /**
      * Returns the keywords.
      *
-     * @return mixed
+     * @return string|null
      */
-    public function getKeywords();
+    public function getKeywords(): ?string;
 
     /**
      * Returns whether or not the seo translation should be considered as empty.
      *
      * @return bool
      */
-    public function isEmpty();
+    public function isEmpty(): bool;
 }

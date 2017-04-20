@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\DependencyInjection;
 
+use Ekyna\Bundle\CmsBundle\Controller\CmsController;
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
@@ -17,15 +20,12 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * @inheritdoc
-     */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('ekyna_cms');
+        $builder = new TreeBuilder('ekyna_cms');
+        $root = $builder->getRootNode();
 
-        $rootNode
+        $root
             ->children()
                 ->scalarNode('home_route')
                     ->isRequired()
@@ -39,24 +39,21 @@ class Configuration implements ConfigurationInterface
             ->end()
         ;
 
-        $this->addSeoSection($rootNode);
-        $this->addPageSection($rootNode);
-        $this->addMenuSection($rootNode);
-        $this->addEditorSection($rootNode);
-        $this->addSlideShowSection($rootNode);
-        $this->addNoticeSection($rootNode);
-        $this->addSchemaOrgSection($rootNode);
-        $this->addPoolsSection($rootNode);
+        $this->addSeoSection($root);
+        $this->addPageSection($root);
+        $this->addMenuSection($root);
+        $this->addEditorSection($root);
+        $this->addSlideShowSection($root);
+        $this->addNoticeSection($root);
+        $this->addSchemaOrgSection($root);
 
-        return $treeBuilder;
+        return $builder;
     }
 
     /**
      * Adds `seo` section.
-     *
-     * @param ArrayNodeDefinition $node
      */
-    private function addSeoSection(ArrayNodeDefinition $node)
+    private function addSeoSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -73,12 +70,9 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Adds `page` section.
-     *
-     * @param ArrayNodeDefinition $node
      */
-    private function addPageSection(ArrayNodeDefinition $node)
+    private function addPageSection(ArrayNodeDefinition $node): void
     {
-        /** @noinspection PhpUndefinedMethodInspection */
         $node
             ->children()
                 ->arrayNode('page')
@@ -87,11 +81,11 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('controllers')
                             ->defaultValue(['default' => [
                                 'title'    => 'Par défaut',
-                                'value'    => 'EkynaCmsBundle:Cms:default',
+                                'value'    => CmsController::class . '::page',
                                 'advanced' => true,
                             ]])
                             ->useAttributeAsKey('name')
-                            ->prototype('array')
+                            ->arrayPrototype()
                                 ->children()
                                     ->scalarNode('title')->isRequired()->cannotBeEmpty()->end()
                                     ->scalarNode('value')->isRequired()->cannotBeEmpty()->end()
@@ -103,14 +97,14 @@ class Configuration implements ConfigurationInterface
                             ->canBeDisabled()
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('controller')->defaultValue('EkynaCmsBundle:Cms:default')->end()
+                                ->scalarNode('controller')->defaultValue(CmsController::class . '::page')->end()
                             ->end()
                         ->end()
                         ->arrayNode('wide_search')
                             ->canBeDisabled()
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('controller')->defaultValue('EkynaCmsBundle:Cms:search')->end()
+                                ->scalarNode('controller')->defaultValue(CmsController::class . '::search')->end()
                             ->end()
                         ->end()
                     ->end()
@@ -120,12 +114,9 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Adds `menu` section.
-     *
-     * @param ArrayNodeDefinition $node
      */
-    private function addMenuSection(ArrayNodeDefinition $node)
+    private function addMenuSection(ArrayNodeDefinition $node): void
     {
-        /** @noinspection PhpUndefinedMethodInspection */
         $node
             ->children()
                 ->arrayNode('menu')
@@ -137,7 +128,7 @@ class Configuration implements ConfigurationInterface
                                 'description' => 'Barre de navigation principale',
                             ]])
                             ->useAttributeAsKey('name')
-                            ->prototype('array')
+                            ->arrayPrototype()
                                 ->children()
                                     ->scalarNode('title')->isRequired()->cannotBeEmpty()->end()
                                     ->scalarNode('description')->end()
@@ -151,12 +142,9 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Adds `slide show` section.
-     *
-     * @param ArrayNodeDefinition $node
      */
-    private function addSlideShowSection(ArrayNodeDefinition $node)
+    private function addSlideShowSection(ArrayNodeDefinition $node): void
     {
-        /** @noinspection PhpUndefinedMethodInspection */
         $node
             ->children()
                 ->arrayNode('slide_show')
@@ -175,11 +163,12 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('types')
                             ->defaultValue([])
                             ->useAttributeAsKey('name')
-                            ->prototype('array')
+                            ->arrayPrototype()
                                 ->children()
                                     ->scalarNode('class')->isRequired()->cannotBeEmpty()->end()
                                     ->scalarNode('js_path')->isRequired()->cannotBeEmpty()->end()
                                     ->scalarNode('label')->isRequired()->cannotBeEmpty()->end()
+                                    ->scalarNode('domain')->defaultNull()->end()
                                     ->variableNode('config')->end()
                                 ->end()
                             ->end()
@@ -191,10 +180,8 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Adds `notice` section.
-     *
-     * @param ArrayNodeDefinition $node
      */
-    private function addNoticeSection(ArrayNodeDefinition $node)
+    private function addNoticeSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -211,10 +198,8 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Adds `schema.org` section.
-     *
-     * @param ArrayNodeDefinition $node
      */
-    private function addSchemaOrgSection(ArrayNodeDefinition $node)
+    private function addSchemaOrgSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -233,12 +218,10 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Adds `editor` section.
-     *
-     * @param ArrayNodeDefinition $node
      */
-    private function addEditorSection(ArrayNodeDefinition $node)
+    private function addEditorSection(ArrayNodeDefinition $node): void
     {
-        /** @noinspection PhpUndefinedMethodInspection */
+        // TODO Split (chain analysis is too long...)
         $node
             ->children()
                 ->arrayNode('editor')
@@ -250,7 +233,7 @@ class Configuration implements ConfigurationInterface
                             ->defaultValue(Editor::getDefaultViewportsConfig())
                             ->requiresAtLeastOneElement()
                             ->useAttributeAsKey('name')
-                            ->prototype('array')
+                            ->arrayPrototype()
                                 ->children()
                                     ->integerNode('width')->isRequired()->min(0)->defaultValue(0)->end()
                                     ->integerNode('height')->isRequired()->min(0)->defaultValue(0)->end()
@@ -281,16 +264,24 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('plugins')
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->arrayNode('block')
+                                ->arrayNode('default')
                                     ->addDefaultsIfNotSet()
                                     ->children()
-                                        ->scalarNode('default')
+                                        ->scalarNode('block')
                                             ->defaultValue('ekyna_block_tinymce')
+                                        ->end()
+                                        ->scalarNode('container')
+                                            ->defaultValue('ekyna_container_background')
                                         ->end()
                                         ->integerNode('min_size')
                                             ->min(1)->max(12)
                                             ->defaultValue(2)
                                         ->end()
+                                    ->end()
+                                ->end()
+                                ->arrayNode('block')
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
                                         ->arrayNode('tinymce')
                                             ->addDefaultsIfNotSet()
                                             ->children()
@@ -375,7 +366,6 @@ class Configuration implements ConfigurationInterface
                                 ->arrayNode('container')
                                     ->addDefaultsIfNotSet()
                                     ->children()
-                                        ->scalarNode('default')->defaultValue('ekyna_container_background')->end()
                                         ->arrayNode('background')
                                             ->addDefaultsIfNotSet()
                                             ->children()
@@ -387,227 +377,6 @@ class Configuration implements ConfigurationInterface
                                                     ->defaultValue(PropertyDefaults::getDefaultThemeChoices())
                                                 ->end()
                                             ->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ;
-    }
-
-    /**
-     * Adds `pools` section.
-     *
-     * @param ArrayNodeDefinition $node
-     */
-    private function addPoolsSection(ArrayNodeDefinition $node)
-    {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $node
-            ->children()
-                ->arrayNode('pools')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('block')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Editor\Block')->end()
-                                ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Repository\BlockRepository')->end()
-                                ->arrayNode('translation')
-                                    ->addDefaultsIfNotSet()
-                                    ->children()
-                                        ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Editor\BlockTranslation')->end()
-                                        ->arrayNode('fields')
-                                            ->prototype('scalar')->end()
-                                            ->defaultValue(['data'])
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('container')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Editor\Container')->end()
-                                ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Repository\ContainerRepository')->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('content')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Editor\Content')->end()
-                                ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Repository\ContentRepository')->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('row')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Editor\Row')->end()
-                                ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Repository\RowRepository')->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('seo')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Seo')->end()
-                                ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Repository\SeoRepository')->end()
-                                ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\SeoType')->end()
-                                ->arrayNode('translation')
-                                    ->addDefaultsIfNotSet()
-                                    ->children()
-                                        ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\SeoTranslation')->end()
-                                        ->arrayNode('fields')
-                                            ->prototype('scalar')->end()
-                                            ->defaultValue(['title', 'description', 'keywords'])
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('tag')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->variableNode('templates')->defaultValue([
-                                    '_form.html' => '@EkynaCms/Admin/Tag/_form.html',
-                                    'show.html'  => '@EkynaCms/Admin/Tag/show.html',
-                                ])->end()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Tag')->end()
-                                ->scalarNode('repository')->end()
-                                ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\TagType')->end()
-                                ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\TagType')->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('page')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->variableNode('templates')->defaultValue([
-                                    '_form.html'     => '@EkynaCms/Admin/Page/_form.html',
-                                    'list.html'      => '@EkynaCms/Admin/Page/list.html',
-                                    'new.html'       => '@EkynaCms/Admin/Page/new.html',
-                                    'new_child.html' => '@EkynaCms/Admin/Page/new_child.html',
-                                    'show.html'      => '@EkynaCms/Admin/Page/show.html',
-                                    'edit.html'      => '@EkynaCms/Admin/Page/edit.html',
-                                    'remove.html'    => '@EkynaCms/Admin/Page/remove.html',
-                                ])->end()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Page')->end()
-                                ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\PageController')->end()
-                                ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Repository\PageRepository')->end()
-                                ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\PageType')->end()
-                                ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\PageType')->end()
-                                ->scalarNode('parent')->end()
-                                ->scalarNode('event')->end()
-                                ->arrayNode('translation')
-                                    ->addDefaultsIfNotSet()
-                                    ->children()
-                                        ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\PageTranslation')->end()
-                                        ->arrayNode('fields')
-                                            ->prototype('scalar')->end()
-                                            ->defaultValue(['title', 'breadcrumb', 'html', 'path'])
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('menu')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->variableNode('templates')->defaultValue([
-                                    '_form.html'     => '@EkynaCms/Admin/Menu/_form.html',
-                                    'list.html'      => '@EkynaCms/Admin/Menu/list.html',
-                                    'new.html'       => '@EkynaCms/Admin/Menu/new.html',
-                                    'new_child.html' => '@EkynaCms/Admin/Menu/new_child.html',
-                                    'show.html'      => '@EkynaCms/Admin/Menu/show.html',
-                                    'edit.html'      => '@EkynaCms/Admin/Menu/edit.html',
-                                    'remove.html'    => '@EkynaCms/Admin/Menu/remove.html',
-                                ])->end()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Menu')->end()
-                                ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\MenuController')->end()
-                                ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Repository\MenuRepository')->end()
-                                ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\MenuType')->end()
-                                ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\MenuType')->end()
-                                ->scalarNode('parent')->end()
-                                ->scalarNode('event')->end()
-                                ->arrayNode('translation')
-                                    ->addDefaultsIfNotSet()
-                                    ->children()
-                                        ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\MenuTranslation')->end()
-                                        ->arrayNode('fields')
-                                            ->prototype('scalar')->end()
-                                            ->defaultValue(['title', 'path'])
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('notice')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->variableNode('templates')->defaultValue([
-                                    '_form.html' => '@EkynaCms/Admin/Notice/_form.html',
-                                    'show.html'  => '@EkynaCms/Admin/Notice/show.html',
-                                ])->end()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Notice')->end()
-                                ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\NoticeController')->end()
-                                ->scalarNode('repository')->defaultValue('Ekyna\Bundle\CmsBundle\Repository\NoticeRepository')->end()
-                                ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\NoticeType')->end()
-                                ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\NoticeType')->end()
-                                ->scalarNode('parent')->end()
-                                ->scalarNode('event')->end()
-                                ->arrayNode('translation')
-                                    ->addDefaultsIfNotSet()
-                                    ->children()
-                                        ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\NoticeTranslation')->end()
-                                        ->arrayNode('fields')
-                                            ->prototype('scalar')->end()
-                                            ->defaultValue(['content'])
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('slide_show')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->variableNode('templates')->defaultValue([
-                                    '_form.html' => '@EkynaCms/Admin/SlideShow/_form.html',
-                                    'show.html'  => '@EkynaCms/Admin/SlideShow/show.html',
-                                ])->end()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\SlideShow')->end()
-                                ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\SlideShowController')->end()
-                                ->scalarNode('repository')->end()
-                                ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\SlideShowType')->end()
-                                ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\SlideShowType')->end()
-                                ->scalarNode('parent')->end()
-                                ->scalarNode('event')->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('slide')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->variableNode('templates')->defaultValue([
-                                    '_form.html'  => '@EkynaCms/Admin/Slide/_form.html',
-                                    'show.html'   => '@EkynaCms/Admin/Slide/show.html',
-                                    'new.html'    => '@EkynaCms/Admin/Slide/new.html',
-                                    'edit.html'   => '@EkynaCms/Admin/Slide/edit.html',
-                                    'remove.html' => '@EkynaCms/Admin/Slide/remove.html',
-                                ])->end()
-                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Slide')->end()
-                                ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\SlideController')->end()
-                                ->scalarNode('repository')->end()
-                                ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\SlideType')->end()
-                                ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\SlideType')->end()
-                                ->scalarNode('parent')->defaultValue('ekyna_cms.slide_show')->end()
-                                ->scalarNode('event')->end()
-                                ->arrayNode('translation')
-                                    ->addDefaultsIfNotSet()
-                                    ->children()
-                                        ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\SlideTranslation')->end()
-                                        ->arrayNode('fields')
-                                            ->prototype('scalar')->end()
-                                            ->defaultValue(['data'])
                                         ->end()
                                     ->end()
                                 ->end()

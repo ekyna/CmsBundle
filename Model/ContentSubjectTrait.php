@@ -1,30 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-//use Ekyna\Bundle\CmsBundle\Entity\TinymceBlock;
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface;
 
 /**
  * Class ContentSubjectTrait
  * @package Ekyna\Bundle\CmsBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 trait ContentSubjectTrait
 {
-    /**
-     * @var ContentInterface
-     */
-    protected $content;
+    protected ?ContentInterface $content = null;
 
     /**
      * Sets the content.
      *
-     * @param ContentInterface $content
+     * @param ContentInterface|null $content
      *
      * @return ContentSubjectInterface|$this
      */
-    public function setContent(ContentInterface $content = null)
+    public function setContent(ContentInterface $content = null): ContentSubjectInterface
     {
         $this->content = $content;
 
@@ -36,39 +34,8 @@ trait ContentSubjectTrait
      *
      * @return ContentInterface|null
      */
-    public function getContent()
+    public function getContent(): ?ContentInterface
     {
         return $this->content;
-    }
-
-    /**
-     * Returns the content summary.
-     *
-     * @param int $maxLength
-     * @return string
-     */
-    public function getContentSummary($maxLength = 128)
-    {
-        /*if (null !== $content = $this->getContent()) {
-            $length = 0;
-            $blockContents = [];
-            foreach ($content->getBlocks() as $block) {
-                if ($block instanceof TinymceBlock) {
-                    $temp = strip_tags($block->getHtml());
-                    $tempLength = strlen($temp);
-                    if ($length + $tempLength >= $maxLength) {
-                        $temp = substr($temp, 0, $maxLength - ($length + $tempLength));
-                        $blockContents[] = $temp;
-                        break;
-                    } else {
-                        $blockContents[] = $temp;
-                    }
-                }
-            }
-            if (!empty($blockContents)) {
-                return implode('<br>', $blockContents);
-            }
-        }*/
-        return '';
     }
 }

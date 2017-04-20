@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Ekyna\Component\Resource\Model\TranslationInterface;
@@ -14,11 +16,11 @@ interface MenuTranslationInterface extends TranslationInterface
     /**
      * Sets the title.
      *
-     * @param string $title
+     * @param string|null $title
      *
      * @return MenuTranslationInterface|$this
      */
-    public function setTitle(string $title): MenuTranslationInterface;
+    public function setTitle(string $title = null): MenuTranslationInterface;
 
     /**
      * Returns the title.

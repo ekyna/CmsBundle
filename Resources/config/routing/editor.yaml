@@ -1,0 +1,29 @@
+admin_ekyna_cms_editor_index:
+    path: ""
+    controller: ekyna_cms.controller.editor:index
+    methods: [GET]
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_pages_list:
+    path: /pages-list
+    controller: ekyna_cms.controller.editor:pagesList
+    methods: [GET]
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_content:
+    resource: editor/content.yaml
+    prefix: /content
+
+admin_ekyna_cms_editor_container:
+    resource: editor/container.yaml
+    prefix: /container
+
+admin_ekyna_cms_editor_row:
+    resource: editor/row.yaml
+    prefix: /row
+
+admin_ekyna_cms_editor_block:
+    resource: editor/block.yaml
+    prefix: /block

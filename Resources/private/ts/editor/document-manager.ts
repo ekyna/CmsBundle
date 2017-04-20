@@ -1,4 +1,4 @@
-/// <reference path="../../../../../../../typings/index.d.ts" />
+/// <reference path="../../../../../../../../assets/typings/index.d.ts" />
 
 import * as $ from 'jquery';
 import 'jquery-ui/widgets/slider';
@@ -81,9 +81,9 @@ interface RowData {
 }
 interface ContainerData {
     attributes: ElementAttributes
-    inner_attributes: ElementAttributes
+    innerAttributes: ElementAttributes
     content: string
-    inner_content: string
+    innerContent: string
     rows: Array<RowData>
 }
 interface ContentData {
@@ -370,18 +370,18 @@ export class ContainerManager {
                 $container.html(content).append($innerContainer);
             }
 
-            if (container.hasOwnProperty('inner_attributes')) {
+            if (container.hasOwnProperty('innerAttributes')) {
                 $innerContainer.each(function(index: number, element: Element) {
-                    if ($(element).attr('id') !== container.inner_attributes['id']) {
+                    if ($(element).attr('id') !== container.innerAttributes['id']) {
                         $(element).remove();
                     }
                 });
 
-                $innerContainer = BaseManager.findOrCreateElement(container.inner_attributes['id'], $container);
-                BaseManager.setElementAttributes($innerContainer, container.inner_attributes);
+                $innerContainer = BaseManager.findOrCreateElement(container.innerAttributes['id'], $container);
+                BaseManager.setElementAttributes($innerContainer, container.innerAttributes);
             }
 
-            let innerContent: string = container.hasOwnProperty('inner_content') ? container.inner_content : null;
+            let innerContent: string = container.hasOwnProperty('innerContent') ? container.innerContent : null;
             if (innerContent && 0 < innerContent.length) {
                 $innerContainer.html(innerContent);
             } else {
@@ -425,11 +425,11 @@ export class ContainerManager {
     }
 
     static changeType($container: JQuery, type: string) {
-        ContainerManager.request($container, 'ekyna_cms_editor_container_change_type', null, {data: {type: type}});
+        ContainerManager.request($container, 'admin_ekyna_cms_editor_container_change_type', null, {data: {type: type}});
     }
 
     static remove($container: JQuery) {
-        ContainerManager.request($container, 'ekyna_cms_editor_container_remove');
+        ContainerManager.request($container, 'admin_ekyna_cms_editor_container_remove');
     }
 
     static add($container: JQuery, type: string) {
@@ -437,15 +437,15 @@ export class ContainerManager {
         if (1 != $content.length) {
             throw 'Container content not found.';
         }
-        ContentManager.request($content, 'ekyna_cms_editor_content_create_container', null, {data: {type: type}});
+        ContentManager.request($content, 'admin_ekyna_cms_editor_content_create_container', null, {data: {type: type}});
     }
 
     static moveUp($container: JQuery) {
-        ContainerManager.request($container, 'ekyna_cms_editor_container_move_up');
+        ContainerManager.request($container, 'admin_ekyna_cms_editor_container_move_up');
     }
 
     static moveDown($container: JQuery) {
-        ContainerManager.request($container, 'ekyna_cms_editor_container_move_down');
+        ContainerManager.request($container, 'admin_ekyna_cms_editor_container_move_down');
     }
 }
 
@@ -493,7 +493,7 @@ export class RowManager {
     }
 
     static remove($row: JQuery) {
-        RowManager.request($row, 'ekyna_cms_editor_row_remove');
+        RowManager.request($row, 'admin_ekyna_cms_editor_row_remove');
     }
 
     static add($row: JQuery) {
@@ -501,15 +501,15 @@ export class RowManager {
         if (1 != $container.length) {
             throw 'Row container not found.';
         }
-        ContainerManager.request($container, 'ekyna_cms_editor_container_create_row');
+        ContainerManager.request($container, 'admin_ekyna_cms_editor_container_create_row');
     }
 
     static moveUp($row: JQuery) {
-        RowManager.request($row, 'ekyna_cms_editor_row_move_up');
+        RowManager.request($row, 'admin_ekyna_cms_editor_row_move_up');
     }
 
     static moveDown($row: JQuery) {
-        RowManager.request($row, 'ekyna_cms_editor_row_move_down');
+        RowManager.request($row, 'admin_ekyna_cms_editor_row_move_down');
     }
 }
 
@@ -562,11 +562,11 @@ export class BlockManager {
     }
 
     static changeType($block: JQuery, type: string) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_change_type', null, {data: {type: type}});
+        BlockManager.request($block, 'admin_ekyna_cms_editor_block_change_type', null, {data: {type: type}});
     }
 
     static remove($block: JQuery) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_remove');
+        BlockManager.request($block, 'admin_ekyna_cms_editor_block_remove');
     }
 
     static add($block: JQuery, type: string) {
@@ -574,23 +574,23 @@ export class BlockManager {
         if (1 != $row.length) {
             throw 'Block row not found.';
         }
-        RowManager.request($row, 'ekyna_cms_editor_row_create_block', null, {data: {type: type}});
+        RowManager.request($row, 'admin_ekyna_cms_editor_row_create_block', null, {data: {type: type}});
     }
 
     static moveUp($block: JQuery) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_move_up');
+        BlockManager.request($block, 'admin_ekyna_cms_editor_block_move_up');
     }
 
     static moveDown($block: JQuery) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_move_down');
+        BlockManager.request($block, 'admin_ekyna_cms_editor_block_move_down');
     }
 
     static moveLeft($block: JQuery) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_move_left');
+        BlockManager.request($block, 'admin_ekyna_cms_editor_block_move_left');
     }
 
     static moveRight($block: JQuery) {
-        BlockManager.request($block, 'ekyna_cms_editor_block_move_right');
+        BlockManager.request($block, 'admin_ekyna_cms_editor_block_move_right');
     }
 }
 
@@ -711,7 +711,7 @@ class LayoutManager {
             };
         for (let key in typeMap) {
             if (this.$element.hasClass(key)) {
-                route = 'ekyna_cms_editor_' + typeMap[key] + '_layout';
+                route = 'admin_ekyna_cms_editor_' + typeMap[key] + '_layout';
                 parameters[typeMap[key] + 'Id'] = this.$element.data('cms').id;
                 break;
             }

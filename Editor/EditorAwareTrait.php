@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor;
 
 /**
@@ -9,10 +11,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor;
  */
 trait EditorAwareTrait
 {
-    /**
-     * @var Editor
-     */
-    protected $editor;
+    protected Editor $editor;
 
 
     /**
@@ -20,7 +19,7 @@ trait EditorAwareTrait
      *
      * @param Editor $editor
      */
-    public function setEditor(Editor $editor)
+    public function setEditor(Editor $editor): void
     {
         $this->editor = $editor;
     }

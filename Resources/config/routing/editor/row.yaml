@@ -1,0 +1,44 @@
+admin_ekyna_cms_editor_row_create_block:
+    path: /{rowId}/create-block
+    controller: 'ekyna_cms.controller.editor.row:createBlock'
+    methods: [POST]
+    requirements:
+        rowId: \d+
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_row_layout:
+    path: /{rowId}/layout
+    controller: 'ekyna_cms.controller.editor.row:layout'
+    methods: [POST]
+    requirements:
+        rowId: \d+
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_row_remove:
+    path: /{rowId}/remove
+    controller: 'ekyna_cms.controller.editor.row:remove'
+    methods: [POST]
+    requirements:
+        rowId: \d+
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_row_move_up:
+    path: /{rowId}/move-up
+    controller: 'ekyna_cms.controller.editor.row:moveUp'
+    methods: [POST]
+    requirements:
+        rowId: \d+
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_row_move_down:
+    path: /{rowId}/move-down
+    controller: 'ekyna_cms.controller.editor.row:moveDown'
+    methods: [POST]
+    requirements:
+        rowId: \d+
+    options:
+        expose: true

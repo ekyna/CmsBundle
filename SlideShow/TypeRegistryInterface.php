@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\SlideShow;
 
 use Ekyna\Bundle\CmsBundle\SlideShow\Type\TypeInterface;
@@ -16,9 +18,9 @@ interface TypeRegistryInterface
      *
      * @param TypeInterface $type
      *
-     * @return $this
+     * @return TypeRegistryInterface
      */
-    public function register(TypeInterface $type);
+    public function register(TypeInterface $type): TypeRegistryInterface;
 
     /**
      * Returns the slide type by its name.
@@ -27,12 +29,12 @@ interface TypeRegistryInterface
      *
      * @return TypeInterface
      */
-    public function get($name);
+    public function get(string $name): TypeInterface;
 
     /**
      * Returns the register types.
      *
      * @return TypeInterface[]
      */
-    public function all();
+    public function all(): array;
 }

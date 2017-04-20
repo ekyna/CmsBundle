@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
@@ -12,7 +14,7 @@ use Symfony\Component\Validator\Constraint;
 class Slide extends Constraint
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTargets()
     {

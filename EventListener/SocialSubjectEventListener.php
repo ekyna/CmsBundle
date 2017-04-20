@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\EventListener;
 
-use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\CmsBundle\Service\Helper\PageHelper;
 use Ekyna\Bundle\SocialButtonsBundle\Event\SubjectEvent;
 use Ekyna\Bundle\SocialButtonsBundle\Event\SubjectEvents;
 use Ekyna\Bundle\SocialButtonsBundle\Model\Subject;
@@ -18,15 +20,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class SocialSubjectEventListener implements EventSubscriberInterface
 {
-    /**
-     * @var PageHelper
-     */
-    private $pageHelper;
-
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
+    private PageHelper            $pageHelper;
+    private UrlGeneratorInterface $urlGenerator;
 
 
     /**
@@ -37,7 +32,7 @@ class SocialSubjectEventListener implements EventSubscriberInterface
      */
     public function __construct(PageHelper $pageHelper, UrlGeneratorInterface $urlGenerator)
     {
-        $this->pageHelper   = $pageHelper;
+        $this->pageHelper = $pageHelper;
         $this->urlGenerator = $urlGenerator;
     }
 
@@ -50,14 +45,20 @@ class SocialSubjectEventListener implements EventSubscriberInterface
     {
         $params = $event->getParameters();
 
-        if (array_key_exists('type', $params)) {
-            if ($params['type'] == 'page') {
-                $event->setSubject($this->createPageSubject());
-                $event->stopPropagation();
-            } elseif ($params['type'] == 'global') {
-                $event->setSubject($this->createGlobalSubject());
-                $event->stopPropagation();
-            }
+        if (!array_key_exists('type', $params)) {
+            return;
+        }
+
+        if ($params['type'] === 'page') {
+            $event->setSubject($this->createPageSubject());
+            $event->stopPropagation();
+
+            return;
+        }
+
+        if ($params['type'] === 'global') {
+            $event->setSubject($this->createGlobalSubject());
+            $event->stopPropagation();
         }
     }
 
@@ -100,22 +101,21 @@ class SocialSubjectEventListener implements EventSubscriberInterface
     {
         try {
             $url = $this->urlGenerator->generate($page->getRoute(), [], UrlGeneratorInterface::ABSOLUTE_URL);
-
-            $subject        = new Subject();
-            $subject->title = $page->getSeo()->getTitle();
-            $subject->url   = $url;
-
-            return $subject;
         } catch (ExceptionInterface $e) {
+            return null;
         }
 
-        return null;
+        $subject = new Subject();
+        $subject->title = $page->getSeo()->getTitle();
+        $subject->url = $url;
+
+        return $subject;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             SubjectEvents::RESOLVE => ['onResolveSubject', 0],

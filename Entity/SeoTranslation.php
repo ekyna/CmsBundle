@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Component\Resource\Model\AbstractTranslation;
 use Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface;
+use Ekyna\Component\Resource\Model\AbstractTranslation;
 
 /**
  * Class SeoTranslation
@@ -12,20 +14,9 @@ use Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface;
  */
 class SeoTranslation extends AbstractTranslation implements SeoTranslationInterface
 {
-    /**
-     * @var string
-     */
-    protected $title;
-
-    /**
-     * @var string
-     */
-    protected $description;
-
-    /**
-     * @var string
-     */
-    protected $keywords;
+    protected ?string $title       = null;
+    protected ?string $description = null;
+    protected ?string $keywords    = null;
 
 
     /**
@@ -39,43 +30,45 @@ class SeoTranslation extends AbstractTranslation implements SeoTranslationInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setTitle($title)
+    public function setTitle(string $title = null): SeoTranslationInterface
     {
         $this->title = $title;
+
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setDescription($description)
+    public function setDescription(string $description = null): SeoTranslationInterface
     {
         $this->description = $description;
+
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setKeywords($keywords)
+    public function setKeywords(string $keywords = null): SeoTranslationInterface
     {
         $this->keywords = $keywords;
 
@@ -83,18 +76,18 @@ class SeoTranslation extends AbstractTranslation implements SeoTranslationInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getKeywords()
+    public function getKeywords(): ?string
     {
         return $this->keywords;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
-        return 0 == strlen($this->title);
+        return empty($this->title);
     }
 }

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -20,43 +21,43 @@ interface RowInterface
     /**
      * Set container
      *
-     * @param ContainerInterface $container
+     * @param ContainerInterface|null $container
      *
      * @return RowInterface|$this
      */
-    public function setContainer(ContainerInterface $container = null);
+    public function setContainer(ContainerInterface $container = null): RowInterface;
 
     /**
      * Get container
      *
-     * @return ContainerInterface
+     * @return ContainerInterface|null
      */
-    public function getContainer();
+    public function getContainer(): ?ContainerInterface;
 
     /**
      * Sets the name
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return RowInterface|$this
      */
-    public function setName($name);
+    public function setName(string $name = null): RowInterface;
 
     /**
      * Returns the name
      *
-     * @return string
+     * @return string|null
      */
-    public function getName();
+    public function getName(): ?string;
 
     /**
      * Set blocks
      *
-     * @param ArrayCollection|BlockInterface[] $blocks
+     * @param Collection|BlockInterface[] $blocks
      *
      * @return RowInterface|$this
      */
-    public function setBlocks(ArrayCollection $blocks);
+    public function setBlocks(Collection $blocks): RowInterface;
 
     /**
      * Add block
@@ -65,7 +66,7 @@ interface RowInterface
      *
      * @return RowInterface|$this
      */
-    public function addBlock(BlockInterface $block);
+    public function addBlock(BlockInterface $block): RowInterface;
 
     /**
      * Remove block
@@ -74,40 +75,40 @@ interface RowInterface
      *
      * @return RowInterface|$this
      */
-    public function removeBlock(BlockInterface $block);
+    public function removeBlock(BlockInterface $block): RowInterface;
 
     /**
      * Get blocks
      *
-     * @return ArrayCollection|BlockInterface[]
+     * @return Collection|BlockInterface[]
      */
-    public function getBlocks();
+    public function getBlocks(): Collection;
 
     /**
      * Returns whether or not the row is the first of the container.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isFirst();
+    public function isFirst(): bool;
 
     /**
      * Returns whether or not the row is the last of the container.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isLast();
+    public function isLast(): bool;
 
     /**
      * Returns whether or not the row is the only container's child.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isAlone();
+    public function isAlone(): bool;
 
     /**
      * Returns whether or not the row is named.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isNamed();
+    public function isNamed(): bool;
 }

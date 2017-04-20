@@ -1,14 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\SlideShow\Type;
 
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
+use DOMDocument;
+use DOMElement;
 use Ekyna\Bundle\CmsBundle\Entity\Slide;
 use Ekyna\Bundle\CmsBundle\Form\Type\Slide\HeroTranslationType;
 use Ekyna\Bundle\CmsBundle\Form\Type\Slide\ImageType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+
+use function Symfony\Component\Translation\t;
 
 /**
  * Class HeroType
@@ -17,10 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class HeroType extends AbstractType
 {
-    /**
-     * @inheritDoc
-     */
-    public function buildForm(FormInterface $form)
+    public function buildForm(FormInterface $form): void
     {
         parent::buildForm($form);
 
@@ -32,7 +35,7 @@ class HeroType extends AbstractType
                 ],
             ])
             ->add('button_url', TextType::class, [
-                'label'         => 'ekyna_cms.slide.type.default.button_url',
+                'label'         => t('slide.type.default.button_url', [], 'EkynaCms'),
                 'property_path' => 'data[button_url]',
                 'required'      => false,
             ])
@@ -48,10 +51,7 @@ class HeroType extends AbstractType
             ]);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function render(Slide $slide, \DOMElement $element, \DOMDocument $dom)
+    public function render(Slide $slide, DOMElement $element, DOMDocument $dom): void
     {
         parent::render($slide, $element, $dom);
 
@@ -102,7 +102,6 @@ class HeroType extends AbstractType
             /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $media */
             if (null !== $media = $this->mediaRepository->find($mediaId)) {
                 $path = $this->mediaGenerator->generateFrontUrl($media, $this->config['image_filter']);
-
             }
         }
         if (null === $path && isset($data['image'])) {
@@ -111,10 +110,7 @@ class HeroType extends AbstractType
         $right->setAttribute('style', "background-image: url('$path')");
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function buildExample(Slide $slide)
+    public function buildExample(Slide $slide): void
     {
         $slide
             ->setName('Default example')
@@ -132,10 +128,7 @@ class HeroType extends AbstractType
             ]);
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getConfigDefaults()
+    protected function getConfigDefaults(): array
     {
         return [
             'image_filter'      => 'cms_slideshow_hero',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Tests\Editor\Adapter;
 
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter;
@@ -13,25 +15,21 @@ use PHPUnit\Framework\TestCase;
  */
 class Bootstrap3AdapterTest extends TestCase
 {
-    /**
-     * @var Bootstrap3Adapter
-     */
-    private $adapter;
+    private ?Bootstrap3Adapter $adapter = null;
 
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->adapter = new Bootstrap3Adapter();
-
         // TODO inject editor mock (?)
     }
 
     /**
      * @inheritDoc
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->adapter = null;
     }
@@ -42,16 +40,16 @@ class Bootstrap3AdapterTest extends TestCase
      *
      * @dataProvider imageFiltersMapData
      */
-    public function testGetImageResponsiveMap($layout, $expected)
+    public function testGetImageResponsiveMap(array $layout, array $expected)
     {
         $block = $this->mockBlock($layout);
 
         $result = $this->adapter->getImageResponsiveMap($block);
 
-        $this->assertEquals($expected, $result);
+        static::assertEquals($expected, $result);
     }
 
-    public function imageFiltersMapData()
+    public function imageFiltersMapData(): array
     {
         // real-size: w
         // max-width: px
@@ -99,10 +97,10 @@ class Bootstrap3AdapterTest extends TestCase
 
         $this->adapter->updateBlockLayout($block, $data);
 
-        $this->assertEquals($expected, $block->getLayout());
+        self::assertEquals($expected, $block->getLayout());
     }
 
-    public function updateBlockData()
+    public function updateBlockData(): array
     {
         return [
             [
@@ -153,7 +151,7 @@ class Bootstrap3AdapterTest extends TestCase
      *
      * @return Block
      */
-    private function mockBlock(array $layout = [])
+    private function mockBlock(array $layout = []): Block
     {
         $block = new Block();
 

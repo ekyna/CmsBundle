@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
@@ -11,12 +13,12 @@ use Symfony\Component\Validator\Constraint;
  */
 class Tabs extends Constraint
 {
-    public $media_must_be_null = 'ekyna_cms.block.tab.media_must_be_null';
-    public $locales_miss_match = 'ekyna_cms.block.tab.locales_miss_match';
+    public string $mediaMustBeNull  = 'ekyna_cms.block.tab.media_must_be_null';
+    public string $localesMissMatch = 'ekyna_cms.block.tab.locales_miss_match';
 
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTargets()
     {

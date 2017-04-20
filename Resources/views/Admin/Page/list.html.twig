@@ -1,7 +1,3 @@
-{% extends '@EkynaAdmin/Entity/Default/list.html.twig' %}
+{% extends '@EkynaAdmin/Entity/Crud/list.html.twig' %}
 
 {% block actions %}{% endblock %}
-
-{% block main %}
-{{ ekyna_table_render(pages, {'class': 'table-nested'}) }}
-{% endblock %}

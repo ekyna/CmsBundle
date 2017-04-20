@@ -1,46 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
 use Doctrine\ORM\EntityRepository;
-use Ekyna\Bundle\AdminBundle\Form\Type\ResourceFormType;
+use Doctrine\ORM\QueryBuilder;
+use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\ResourceBundle\Form\Type\AbstractResourceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+
+use function Symfony\Component\Translation\t;
 
 /**
  * Class PageType
  * @package Ekyna\Bundle\CmsBundle\Form\Type
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class PageType extends ResourceFormType
+class PageType extends AbstractResourceType
 {
-    /**
-     * @var array
-     */
-    protected $config;
+    protected array $config;
 
-
-    /**
-     * Constructor.
-     *
-     * @param string $class
-     * @param array  $config
-     */
-    public function __construct($class, array $config)
+    public function __construct(array $config)
     {
-        parent::__construct($class);
-
         $this->config = $config;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('seo', SeoType::class)
@@ -53,28 +44,28 @@ class PageType extends ResourceFormType
                 ],
             ]);
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+            /** @var PageInterface $page */
             $page = $event->getData();
             $form = $event->getForm();
 
             if ($page->isStatic()) {
                 $form
                     ->add('name', Type\TextType::class, [
-                        'label'        => 'ekyna_core.field.name',
+                        'label'        => t('field.name', [], 'EkynaUi'),
                         'admin_helper' => 'CMS_PAGE_NAME',
                         'disabled'     => true,
                     ])
                     ->add('parent', EntityType::class, [
-                        'label'        => 'ekyna_core.field.parent',
+                        'label'        => t('field.parent', [], 'EkynaUi'),
                         'admin_helper' => 'CMS_PAGE_PARENT',
                         'class'        => $this->dataClass,
                         'choice_label' => 'name',
-                        'placeholder'  => 'ekyna_cms.page.value.root',
+                        'placeholder'  => t('page.value.root', [], 'EkynaCms'),
                         'disabled'     => true,
                     ])
                     ->add('enabled', Type\CheckboxType::class, [
-                        'label'    => 'ekyna_core.field.enabled',
+                        'label'    => t('field.enabled', [], 'EkynaUi'),
                         'required' => false,
                         'disabled' => true,
                         'attr'     => [
@@ -84,17 +75,17 @@ class PageType extends ResourceFormType
             } else {
                 $form
                     ->add('name', Type\TextType::class, [
-                        'label'        => 'ekyna_core.field.name',
+                        'label'        => t('field.name', [], 'EkynaUi'),
                         'admin_helper' => 'CMS_PAGE_PATH',
                         'required'     => true,
                     ])
                     ->add('parent', EntityType::class, [
-                        'label'         => 'ekyna_core.field.parent',
+                        'label'         => t('field.parent', [], 'EkynaUi'),
                         'admin_helper'  => 'CMS_PAGE_PARENT',
                         'class'         => $this->dataClass,
                         //'property_path' => 'name',
                         'required'      => true,
-                        'query_builder' => function (EntityRepository $er) use ($page) {
+                        'query_builder' => function (EntityRepository $er) use ($page): QueryBuilder {
                             $qb = $er
                                 ->createQueryBuilder('p')
                                 ->where('p.locked = :locked')
@@ -110,7 +101,7 @@ class PageType extends ResourceFormType
                         },
                     ])
                     ->add('enabled', Type\CheckboxType::class, [
-                        'label'        => 'ekyna_core.field.enabled',
+                        'label'        => t('field.enabled', [], 'EkynaUi'),
                         'admin_helper' => 'CMS_PAGE_ENABLE',
                         'required'     => false,
                         'attr'         => [
@@ -124,7 +115,7 @@ class PageType extends ResourceFormType
                 }
 
                 $form->add('controller', Type\ChoiceType::class, [
-                    'label'        => 'ekyna_cms.page.field.controller',
+                    'label'        => t('field.name', [], 'EkynaCms'),
                     'admin_helper' => 'CMS_PAGE_CONTROLLER',
                     'choices'      => $controllers,
                     'required'     => true,

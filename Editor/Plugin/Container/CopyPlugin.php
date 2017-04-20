@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Container;
 
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Ekyna\Bundle\CmsBundle\Editor\View\ContainerView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\CopyContainerType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class CopyPlugin
@@ -18,11 +20,11 @@ class CopyPlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function update(ContainerInterface $container, Request $request)
+    public function update(ContainerInterface $container, Request $request): ?Response
     {
         $form = $this->formFactory->create(CopyContainerType::class, $container, [
             'action'     => $this->urlGenerator->generate(
-                'ekyna_cms_editor_container_edit',
+                'admin_ekyna_cms_editor_container_edit',
                 ['containerId' => $container->getId()]
             ),
             'method'     => 'post',
@@ -37,21 +39,21 @@ class CopyPlugin extends AbstractPlugin
             return null;
         }
 
-        return $this->createModal('Modifier le conteneur.', $form->createView()); // TODO trans
+        return $this->createModalResponse('Modifier le conteneur.', $form->createView()); // TODO trans
     }
 
     /**
      * @inheritDoc
      */
-    public function remove(ContainerInterface $container)
+    public function remove(ContainerInterface $container): void
     {
-        $container->setCopy(null);
+        $container->setCopy();
     }
 
     /**
      * @inheritDoc
      */
-    public function render(ContainerInterface $container, ContainerView $view, $editable = false)
+    public function render(ContainerInterface $container, ContainerView $view, $editable = false): void
     {
         if (is_null($container->getCopy())) {
             $view->innerContent = '<p>Please select a container to copy.</p>';
@@ -61,7 +63,7 @@ class CopyPlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return 'Copy';
     }
@@ -69,7 +71,7 @@ class CopyPlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return 'ekyna_container_copy';
     }

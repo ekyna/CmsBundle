@@ -1,35 +1,73 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
+use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\CmsBundle\Repository\PageRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Locales;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Twig\Environment;
 
 /**
  * Class EditorController
  * @package Ekyna\Bundle\CmsBundle\Controller\Editor
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class EditorController extends BaseController
+class EditorController
 {
+    private Editor                  $editor;
+    private Environment             $twig;
+    private UrlGeneratorInterface   $urlGenerator;
+    private PageRepositoryInterface $pageRepository;
+    private string                  $homeRoute;
+
+
+    /**
+     * Constructor.
+     *
+     * @param Editor                  $editor
+     * @param Environment             $twig
+     * @param UrlGeneratorInterface   $urlGenerator
+     * @param PageRepositoryInterface $pageRepository
+     * @param string                  $homeRoute
+     */
+    public function __construct(
+        Editor $editor,
+        Environment $twig,
+        UrlGeneratorInterface $urlGenerator,
+        PageRepositoryInterface $pageRepository,
+        string $homeRoute
+    ) {
+        $this->editor = $editor;
+        $this->twig = $twig;
+        $this->urlGenerator = $urlGenerator;
+        $this->pageRepository = $pageRepository;
+        $this->homeRoute = $homeRoute;
+    }
+
     /**
      * Renders the CMS Editor.
      *
      * @param Request $request
      *
      * @return Response
+     * @noinspection PhpDocMissingThrowsInspection
      */
-    public function indexAction(Request $request): Response
+    public function index(Request $request): Response
     {
-        return $this->render(
-            '@EkynaCms/Editor/index.html.twig',
-            [
-                'config' => $this->buildConfig($request),
-            ]
-        );
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $content = $this->twig->render('@EkynaCms/Editor/index.html.twig', [
+            'config' => $this->buildConfig($request),
+        ]);
+
+        $response = new Response($content);
+
+        return $response->setPrivate();
     }
 
     /**
@@ -41,9 +79,7 @@ class EditorController extends BaseController
      */
     private function buildConfig(Request $request): array
     {
-        $editor = $this->getEditor();
-
-        $config = $editor->getConfig();
+        $config = $this->editor->getConfig();
         unset($config['layout']);
 
         $locales = [];
@@ -51,7 +87,7 @@ class EditorController extends BaseController
             $locales[] = [
                 'name'  => $locale,
                 'value' => $locale,
-                'title' => ucfirst(Intl::getLocaleBundle()->getLocaleName($locale)),
+                'title' => ucfirst(Locales::getName($locale)),
             ];
         }
         $config['locales'] = $locales;
@@ -60,9 +96,9 @@ class EditorController extends BaseController
         if (!empty($path = $request->query->get('path'))) {
             $config['path'] = $path;
         } else {
-            $config['path'] = $this->generateUrl($this->getParameter('ekyna_cms.home_route'));
+            $config['path'] = $this->urlGenerator->generate($this->homeRoute);
         }
-        $config['plugins'] = $editor->getPluginsConfig();
+        $config['plugins'] = $this->editor->getPluginsConfig();
 
         return $config;
     }
@@ -74,11 +110,9 @@ class EditorController extends BaseController
      *
      * @return Response
      */
-    public function pagesListAction(Request $request): Response
+    public function pagesList(Request $request): Response
     {
-        $repository = $this->get('ekyna_cms.page.repository');
-
-        $lastModifiedAt = $repository->getLastUpdatedAt();
+        $lastModifiedAt = $this->pageRepository->getLastUpdatedAt();
 
         $response = new Response();
         $response->headers->set('Content-Type', 'application/json');
@@ -93,7 +127,7 @@ class EditorController extends BaseController
 
         /** @var PageInterface[] $pages */
         $pages = $this
-            ->get('ekyna_cms.page.repository')
+            ->pageRepository
             ->findBy(['dynamicPath' => false], ['left' => 'ASC']);
 
         foreach ($pages as $page) {
@@ -111,7 +145,7 @@ class EditorController extends BaseController
      *
      * @return array
      */
-    private function pageToArray(PageInterface $page, $locale)
+    private function pageToArray(PageInterface $page, string $locale): array
     {
         $tabs = '';
         for ($l = 0; $l < $page->getLevel(); $l++) {
@@ -123,7 +157,7 @@ class EditorController extends BaseController
             'title' => $tabs . $page->translate($locale)->getTitle(),
             'data'  => [
                 'locked' => $page->isLocked(),
-                'path'   => $this->generateUrl(
+                'path'   => $this->urlGenerator->generate(
                     $page->getRoute(),
                     ['_locale' => $locale],
                     UrlGeneratorInterface::ABSOLUTE_URL

@@ -1,29 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Doctrine\ORM\Query\Expr;
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
-use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
-use Ekyna\Component\Resource\Doctrine\ORM\Util\LocaleAwareRepositoryTrait;
+use Ekyna\Component\Resource\Doctrine\ORM\Repository\LocaleAwareRepositoryTrait;
+use Ekyna\Component\Resource\Doctrine\ORM\Repository\ResourceRepository;
+use Ekyna\Component\Resource\Locale\LocaleProviderAwareInterface;
 
 /**
  * Class ContentRepository
  * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class ContentRepository extends ResourceRepository
+class ContentRepository extends ResourceRepository implements LocaleProviderAwareInterface
 {
     use LocaleAwareRepositoryTrait;
 
     /**
-     * Finds the content by id.
+     * Finds the content by its name.
      *
-     * @param int $name
+     * @param string $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface|null
+     * @return ContentInterface|null
      */
-    public function findOneByName($name)
+    public function findOneByName(string $name): ?ContentInterface
     {
         $qb = $this->getQueryBuilder();
 
@@ -42,13 +46,13 @@ class ContentRepository extends ResourceRepository
     }
 
     /**
-     * Finds the content by id.
+     * Finds the content by its id.
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface|null
+     * @return ContentInterface|null
      */
-    public function findOneById($id)
+    public function findOneById(int $id): ?ContentInterface
     {
         $qb = $this->getQueryBuilder();
 
@@ -71,13 +75,15 @@ class ContentRepository extends ResourceRepository
      *
      * @param ContentSubjectInterface $subject
      *
-     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface|null
+     * @return ContentInterface|null
      */
-    public function findBySubject(ContentSubjectInterface $subject)
+    public function findBySubject(ContentSubjectInterface $subject): ?ContentInterface
     {
-        $content = $subject->getContent();
+        if (!$content = $subject->getContent()) {
+            return null;
+        }
 
-        if (null !== $content && property_exists($content, '__isInitialized__') && !$content->{'__isInitialized__'}) {
+        if (property_exists($content, '__isInitialized__') && !$content->{'__isInitialized__'}) {
             $qb = $this->getQueryBuilder();
             $qb
                 ->leftJoin('c.containers', 'container')
@@ -97,9 +103,9 @@ class ContentRepository extends ResourceRepository
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    protected function getAlias()
+    protected function getAlias(): string
     {
         return 'c';
     }

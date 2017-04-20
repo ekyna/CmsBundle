@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor;
 
 /**
@@ -13,8 +15,6 @@ interface EditorAwareInterface
      * Sets the editor.
      *
      * @param Editor $editor
-     *
-     * @return mixed
      */
-    public function setEditor(Editor $editor);
+    public function setEditor(Editor $editor): void;
 }

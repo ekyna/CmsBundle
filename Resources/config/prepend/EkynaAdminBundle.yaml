@@ -1,0 +1,21 @@
+ekyna_admin:
+    navbar:
+        buttons:
+            cms_editor:
+                title: editor.title
+                domain: EkynaCms
+                route: admin_ekyna_cms_editor_index
+                icon: pencil
+                target: _blank
+                position: 99
+            cms_front:
+                title: navbar.go_to_front
+                domain: EkynaAdmin
+                route: '%ekyna_cms.home_route%'
+                icon: sitemap
+                target: _blank
+                position: 100
+    show:
+        templates:
+            - '@EkynaCms/Show/show_div_layout.html.twig'
+

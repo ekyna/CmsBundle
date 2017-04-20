@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
 use Ekyna\Component\Resource\Model\SortableInterface;
 use Ekyna\Component\Resource\Model\SortableTrait;
 use Ekyna\Component\Resource\Model\TranslatableInterface;
@@ -14,17 +17,14 @@ use Ekyna\Component\Resource\Model\TranslatableTrait;
  * @author  Etienne Dauvergne <contact@ekyna.com>
  *
  * @method TabTranslation translate($locale = null, $create = false)
- * @method ArrayCollection|TabTranslation[] getTranslations()
+ * @method Collection|TabTranslation[] getTranslations()
  */
 class Tab implements TranslatableInterface, SortableInterface
 {
     use TranslatableTrait;
     use SortableTrait;
 
-    /**
-     * @var string
-     */
-    private $anchor;
+    private ?string $anchor = null;
 
 
     /**
@@ -38,9 +38,9 @@ class Tab implements TranslatableInterface, SortableInterface
     /**
      * Returns the anchor.
      *
-     * @return string
+     * @return string|null
      */
-    public function getAnchor()
+    public function getAnchor(): ?string
     {
         return $this->anchor;
     }
@@ -48,11 +48,11 @@ class Tab implements TranslatableInterface, SortableInterface
     /**
      * Sets the anchor.
      *
-     * @param string $anchor
+     * @param string|null $anchor
      *
      * @return Tab
      */
-    public function setAnchor(string $anchor = null)
+    public function setAnchor(string $anchor = null): Tab
     {
         $this->anchor = $anchor;
 
@@ -60,33 +60,33 @@ class Tab implements TranslatableInterface, SortableInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->translate()->getTitle();
     }
 
     /**
-     * @return \Ekyna\Bundle\MediaBundle\Model\MediaInterface
+     * @return MediaInterface|null
      */
-    public function getMedia()
+    public function getMedia(): ?MediaInterface
     {
         return $this->translate()->getMedia();
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getButtonLabel()
+    public function getButtonLabel(): ?string
     {
         return $this->translate()->getButtonLabel();
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getButtonUrl()
+    public function getButtonUrl(): ?string
     {
         return $this->translate()->getButtonUrl();
     }

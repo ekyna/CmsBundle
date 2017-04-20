@@ -1,1 +1,1 @@
-require(["require","ekyna-core","ekyna-cms","ekyna-media"],function(a,b,c,d){b.init(),c.init(),d.init()});
+require(["require","ekyna-ui","ekyna-cms","ekyna-media"],function(a,b,c,d){b.init(),c.init(),d.init()});

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity\Editor;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Component\Resource\Model as RM;
 
@@ -23,40 +26,13 @@ class Container implements EM\ContainerInterface
     }
 
 
-    /**
-     * @var integer
-     */
-    protected $id;
-
-    /**
-     * @var EM\ContentInterface
-     */
-    protected $content;
-
-    /**
-     * @var EM\ContainerInterface
-     */
-    protected $copy;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $title;
-
-    /**
-     * @var string
-     */
-    protected $type;
-
-    /**
-     * @var ArrayCollection|EM\RowInterface[]
-     */
-    protected $rows;
+    protected ?int                   $id      = null;
+    protected ?EM\ContentInterface   $content = null;
+    protected ?EM\ContainerInterface $copy    = null;
+    protected ?string                $name    = null;
+    protected ?string                $title   = null;
+    protected ?string                $type    = null;
+    protected Collection             $rows;
 
 
     /**
@@ -84,7 +60,7 @@ class Container implements EM\ContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getId(): ?int
     {
@@ -94,7 +70,7 @@ class Container implements EM\ContainerInterface
     /**
      * @inheritDoc
      */
-    public function setContent(EM\ContentInterface $content = null)
+    public function setContent(EM\ContentInterface $content = null): EM\ContainerInterface
     {
         $this->content = $content;
 
@@ -104,7 +80,7 @@ class Container implements EM\ContainerInterface
     /**
      * @inheritDoc
      */
-    public function getContent()
+    public function getContent(): ?EM\ContentInterface
     {
         return $this->content;
     }
@@ -112,7 +88,7 @@ class Container implements EM\ContainerInterface
     /**
      * @inheritDoc
      */
-    public function setCopy(EM\ContainerInterface $copy = null)
+    public function setCopy(EM\ContainerInterface $copy = null): EM\ContainerInterface
     {
         $this->copy = $copy;
 
@@ -122,7 +98,7 @@ class Container implements EM\ContainerInterface
     /**
      * @inheritDoc
      */
-    public function getCopy()
+    public function getCopy(): ?EM\ContainerInterface
     {
         return $this->copy;
     }
@@ -130,7 +106,7 @@ class Container implements EM\ContainerInterface
     /**
      * @inheritDoc
      */
-    public function setName($name)
+    public function setName(string $name = null): EM\ContainerInterface
     {
         $this->name = $name;
 
@@ -140,7 +116,7 @@ class Container implements EM\ContainerInterface
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -148,7 +124,7 @@ class Container implements EM\ContainerInterface
     /**
      * @inheritDoc
      */
-    public function setTitle($title)
+    public function setTitle(string $title = null): EM\ContainerInterface
     {
         $this->title = $title;
 
@@ -158,15 +134,15 @@ class Container implements EM\ContainerInterface
     /**
      * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setType($type)
+    public function setType(string $type): EM\ContainerInterface
     {
         $this->type = $type;
 
@@ -174,17 +150,17 @@ class Container implements EM\ContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setRows(ArrayCollection $rows)
+    public function setRows(ArrayCollection $rows): EM\ContainerInterface
     {
         foreach ($rows as $row) {
             $this->addRow($row);
@@ -194,9 +170,9 @@ class Container implements EM\ContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function addRow(EM\RowInterface $row)
+    public function addRow(EM\RowInterface $row): EM\ContainerInterface
     {
         $row->setContainer($this);
         $this->rows->add($row);
@@ -205,38 +181,38 @@ class Container implements EM\ContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function removeRow(EM\RowInterface $row)
+    public function removeRow(EM\RowInterface $row): EM\ContainerInterface
     {
-        $row->setContainer(null);
+        $row->setContainer();
         $this->rows->removeElement($row);
 
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getRows()
+    public function getRows(): Collection
     {
         return $this->rows;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isFirst()
+    public function isFirst(): bool
     {
         return 0 == $this->position;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isLast()
+    public function isLast(): bool
     {
-        if (null !== $this->content && ($this->content->getContainers()->count() - 1 > $this->position)) {
+        if ($this->content && ($this->content->getContainers()->count() - 1 > $this->position)) {
             return false;
         }
 
@@ -244,9 +220,9 @@ class Container implements EM\ContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isAlone()
+    public function isAlone(): bool
     {
         if (null === $this->content) {
             return true;
@@ -256,27 +232,27 @@ class Container implements EM\ContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isNamed()
+    public function isNamed(): bool
     {
-        return 0 < strlen($this->name);
+        return !empty($this->name);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isTitled()
+    public function isTitled(): bool
     {
-        return 0 < strlen($this->title);
+        return !empty($this->title);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getEntityTag()
+    public function getEntityTag(): string
     {
-        if (0 == strlen($this->name) && null !== $this->content) {
+        if (empty($this->name) && null !== $this->content) {
             return $this->content->getEntityTag();
         }
 
@@ -288,7 +264,7 @@ class Container implements EM\ContainerInterface
      *
      * @return string
      */
-    public static function getEntityTagPrefix()
+    public static function getEntityTagPrefix(): string
     {
         return 'ekyna_cms.container';
     }

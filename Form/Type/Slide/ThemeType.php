@@ -1,17 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Slide;
 
-use Ekyna\Bundle\CmsBundle\Entity\Slide;
-use Ekyna\Bundle\CmsBundle\Entity\SlideShow;
-use Ekyna\Bundle\CmsBundle\SlideShow\TypeRegistryInterface;
-use Ekyna\Bundle\CoreBundle\Form\Util\FormUtil;
-use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepositoryInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use function Symfony\Component\Translation\t;
 
 /**
  * Class ThemeType
@@ -20,38 +17,24 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ThemeType extends AbstractType
 {
-    /**
-     * @var array
-     */
-    private $choices;
+    private array $choices;
 
-
-    /**
-     * Constructor.
-     *
-     * @param array $choices
-     */
     public function __construct(array $choices)
     {
         $this->choices = $choices;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'label'   => 'ekyna_core.field.theme',
-            'choices' => array_flip($this->choices),
-            'select2' => false,
+            'label'                     => t('field.theme', [], 'EkynaUi'),
+            'choices'                   => array_flip($this->choices),
+            'choice_translation_domain' => false,
+            'select2'                   => false,
         ]);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }

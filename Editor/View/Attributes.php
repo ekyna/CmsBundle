@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\View;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidArgumentException;
@@ -11,30 +13,11 @@ use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidArgumentException;
  */
 class Attributes implements AttributesInterface
 {
-    /**
-     * @var string
-     */
-    private $id;
-
-    /**
-     * @var array
-     */
-    private $classes;
-
-    /**
-     * @var array
-     */
-    private $styles;
-
-    /**
-     * @var array
-     */
-    private $data;
-
-    /**
-     * @var array
-     */
-    private $extras;
+    private ?string $id = null;
+    private array   $classes;
+    private array   $styles;
+    private array   $data;
+    private array   $extras;
 
 
     /**
@@ -47,9 +30,9 @@ class Attributes implements AttributesInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function clear()
+    public function clear(): Attributes
     {
         $this->id = null;
         $this->classes = [];
@@ -61,9 +44,9 @@ class Attributes implements AttributesInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setId($id)
+    public function setId(string $id = null): AttributesInterface
     {
         $this->id = $id;
 
@@ -71,25 +54,25 @@ class Attributes implements AttributesInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function hasData($key)
+    public function hasData(string $key): bool
     {
         return isset($this->data[$key]);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setData($key, $value = null)
+    public function setData($key, $value = null): AttributesInterface
     {
         if (is_array($key) && null === $value) {
             $this->data = array_replace_recursive($this->data, $key);
@@ -103,11 +86,11 @@ class Attributes implements AttributesInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getData($key = null, $default = null)
+    public function getData(string $key = null, $default = null)
     {
-        if (0 < strlen($key)) {
+        if (!empty($key)) {
             return $this->hasData($key) ? $this->data[$key] : $default;
         }
 
@@ -115,17 +98,17 @@ class Attributes implements AttributesInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function hasExtra($key)
+    public function hasExtra(string $key): bool
     {
         return isset($this->extras[$key]);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setExtra($key, $value)
+    public function setExtra(string $key, string $value): AttributesInterface
     {
         if (!(is_string($key) && is_scalar($value))) {
             throw new InvalidArgumentException('Expected extra key and value as strings.');
@@ -145,11 +128,11 @@ class Attributes implements AttributesInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getExtra($key = null, $default = null)
+    public function getExtra(string $key = null, string $default = null)
     {
-        if (0 < strlen($key)) {
+        if (!empty($key)) {
             return $this->hasExtra($key) ? $this->extras[$key] : $default;
         }
 
@@ -157,9 +140,9 @@ class Attributes implements AttributesInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function addClass($class)
+    public function addClass($class): AttributesInterface
     {
         if (!is_array($class)) {
             $class = $this->parseClass($class);
@@ -174,7 +157,7 @@ class Attributes implements AttributesInterface
         }
 
         if (!preg_match('~^[a-zA-Z0-9-_]+$~', $class)) {
-            throw new InvalidArgumentException('Invalid css class.');
+            throw new InvalidArgumentException("CSS class '$class' is not valid.");
         }
 
         if (!in_array($class, $this->classes)) {
@@ -185,9 +168,9 @@ class Attributes implements AttributesInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function removeClass($class)
+    public function removeClass($class): AttributesInterface
     {
         if (!is_array($class)) {
             $class = $this->parseClass($class);
@@ -209,17 +192,17 @@ class Attributes implements AttributesInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getClasses()
+    public function getClasses(): array
     {
         return $this->classes;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function addStyle($key, $value)
+    public function addStyle(string $key, string $value): AttributesInterface
     {
         if (!(is_string($key) && is_string($value))) {
             throw new InvalidArgumentException('Expected key and value as strings.');
@@ -231,9 +214,9 @@ class Attributes implements AttributesInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function removeStyle($key)
+    public function removeStyle(string $key): AttributesInterface
     {
         if (isset($this->styles[$key])) {
             unset($this->styles[$key]);
@@ -243,17 +226,17 @@ class Attributes implements AttributesInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getStyles()
+    public function getStyles(): array
     {
         return $this->styles;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function toArray()
+    public function toArray(): array
     {
         $result = [];
 
@@ -287,7 +270,7 @@ class Attributes implements AttributesInterface
      *
      * @return array|string
      */
-    private function parseClass($class)
+    private function parseClass(string $class)
     {
         $class = trim($class);
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Ekyna\Bundle\ResourceBundle\Model\AbstractConstants;
@@ -11,19 +13,31 @@ use Ekyna\Bundle\ResourceBundle\Model\AbstractConstants;
  */
 class ChangeFrequencies extends AbstractConstants
 {
-    const HOURLY  = 'hourly';
-    const MONTHLY = 'monthly';
-    const YEARLY  = 'yearly';
+    public const HOURLY  = 'hourly';
+    public const MONTHLY = 'monthly';
+    public const YEARLY  = 'yearly';
 
+
+    /**
+     * @inheritDoc
+     */
     public static function getConfig(): array
     {
-        $prefix = 'ekyna_core.changefreq.';
+        $prefix = 'changefreq.';
 
         return [
             self::HOURLY  => [$prefix . self::HOURLY],
             self::MONTHLY => [$prefix . self::MONTHLY],
             self::YEARLY  => [$prefix . self::YEARLY],
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getTranslationDomain(): ?string
+    {
+        return 'EkynaUi';
     }
 
     /**

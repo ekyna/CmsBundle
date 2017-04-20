@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Ekyna\Bundle\ResourceBundle\Model\AbstractConstants;
@@ -11,11 +13,11 @@ use Ekyna\Bundle\ResourceBundle\Model\AbstractConstants;
  */
 final class Themes extends AbstractConstants
 {
-    const THEME_DEFAULT = 'default';
-    const THEME_PRIMARY = 'primary';
-    const THEME_SUCCESS = 'success';
-    const THEME_WARNING = 'warning';
-    const THEME_DANGER  = 'danger';
+    public const THEME_DEFAULT = 'default';
+    public const THEME_PRIMARY = 'primary';
+    public const THEME_SUCCESS = 'success';
+    public const THEME_WARNING = 'warning';
+    public const THEME_DANGER  = 'danger';
 
 
     /**
@@ -23,14 +25,14 @@ final class Themes extends AbstractConstants
      */
     public static function getConfig(): array
     {
-        $prefix = 'ekyna_cms.theme.';
+        $prefix = 'theme.';
 
         return [
-            static::THEME_DEFAULT => [$prefix . static::THEME_DEFAULT],
-            static::THEME_PRIMARY => [$prefix . static::THEME_PRIMARY],
-            static::THEME_SUCCESS => [$prefix . static::THEME_SUCCESS],
-            static::THEME_WARNING => [$prefix . static::THEME_WARNING],
-            static::THEME_DANGER  => [$prefix . static::THEME_DANGER],
+            self::THEME_DEFAULT => [$prefix . self::THEME_DEFAULT],
+            self::THEME_PRIMARY => [$prefix . self::THEME_PRIMARY],
+            self::THEME_SUCCESS => [$prefix . self::THEME_SUCCESS],
+            self::THEME_WARNING => [$prefix . self::THEME_WARNING],
+            self::THEME_DANGER  => [$prefix . self::THEME_DANGER],
         ];
     }
 
@@ -39,8 +41,16 @@ final class Themes extends AbstractConstants
      */
     public static function getTheme(string $constant): ?string
     {
-        static::isValid($constant, true);
+        self::isValid($constant, true);
 
         return $constant;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getTranslationDomain(): ?string
+    {
+        return 'EkynaCms';
     }
 }

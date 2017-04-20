@@ -3,10 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Listener;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\Events;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use FOS\ElasticaBundle\Persister\ObjectPersisterInterface;
 
@@ -15,7 +13,7 @@ use FOS\ElasticaBundle\Persister\ObjectPersisterInterface;
  * @package Ekyna\Bundle\CmsBundle\Listener
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class PageElasticaSubscriber implements EventSubscriber
+class PageElasticaSubscriber
 {
     /**
      * @var ObjectPersisterInterface
@@ -135,15 +133,5 @@ class PageElasticaSubscriber implements EventSubscriber
         }
 
         return null;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::onFlush,
-        );
     }
 }

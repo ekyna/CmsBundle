@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Ekyna\Component\Resource\Model\TranslationInterface;
@@ -14,32 +16,32 @@ interface PageTranslationInterface extends TranslationInterface
     /**
      * Sets the title.
      *
-     * @param string $title
+     * @param string|null $title
      *
      * @return PageTranslationInterface|$this
      */
-    public function setTitle(string $title): PageTranslationInterface;
+    public function setTitle(string $title = null): PageTranslationInterface;
 
     /**
      * Returns the title.
      *
-     * @return string
+     * @return string|null
      */
     public function getTitle(): ?string;
 
     /**
      * Sets the breadcrumb.
      *
-     * @param string $breadcrumb
+     * @param string|null $breadcrumb
      *
      * @return PageTranslationInterface|$this
      */
-    public function setBreadcrumb(string $breadcrumb): PageTranslationInterface;
+    public function setBreadcrumb(string $breadcrumb = null): PageTranslationInterface;
 
     /**
      * Returns the breadcrumb.
      *
-     * @return string
+     * @return string|null
      */
     public function getBreadcrumb(): ?string;
 
@@ -55,7 +57,7 @@ interface PageTranslationInterface extends TranslationInterface
     /**
      * Returns the html.
      *
-     * @return string
+     * @return string|null
      */
     public function getHtml(): ?string;
 
@@ -71,7 +73,7 @@ interface PageTranslationInterface extends TranslationInterface
     /**
      * Get path
      *
-     * @return string
+     * @return string|null
      */
     public function getPath(): ?string;
 }

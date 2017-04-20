@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\PluginException;
@@ -13,15 +15,8 @@ use Ekyna\Bundle\CmsBundle\Editor\Plugin\Container\PluginInterface as ContainerP
  */
 class PluginRegistry
 {
-    /**
-     * @var array
-     */
-    private $blockPlugins;
-
-    /**
-     * @var array
-     */
-    private $containerPlugins;
+    private array $blockPlugins;
+    private array $containerPlugins;
 
     /**
      * Constructor.
@@ -39,7 +34,7 @@ class PluginRegistry
      *
      * @throws PluginException
      */
-    public function addBlockPlugin(BlockPluginInterface $plugin)
+    public function addBlockPlugin(BlockPluginInterface $plugin): void
     {
         if ($this->hasBlockPlugin($plugin->getName())) {
             throw new PluginException(sprintf(
@@ -60,9 +55,9 @@ class PluginRegistry
      *
      * @param string $name
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasBlockPlugin($name)
+    public function hasBlockPlugin(string $name): bool
     {
         return array_key_exists($name, $this->blockPlugins);
     }
@@ -72,11 +67,11 @@ class PluginRegistry
      *
      * @param string $name
      *
+     * @return BlockPluginInterface
      * @throws PluginException
      *
-     * @return BlockPluginInterface
      */
-    public function getBlockPlugin($name)
+    public function getBlockPlugin(string $name): BlockPluginInterface
     {
         if (!$this->hasBlockPlugin($name)) {
             throw new PluginException(sprintf('Block plugin "%s" is not registered.', $name));
@@ -90,7 +85,7 @@ class PluginRegistry
      *
      * @return BlockPluginInterface[]
      */
-    public function getBlockPlugins()
+    public function getBlockPlugins(): array
     {
         return $this->blockPlugins;
     }
@@ -123,9 +118,9 @@ class PluginRegistry
      *
      * @param string $name
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasContainerPlugin($name)
+    public function hasContainerPlugin(string $name): bool
     {
         return array_key_exists($name, $this->containerPlugins);
     }
@@ -135,11 +130,10 @@ class PluginRegistry
      *
      * @param string $name
      *
-     * @throws PluginException
-     *
      * @return ContainerPluginInterface
+     * @throws PluginException
      */
-    public function getContainerPlugin($name)
+    public function getContainerPlugin(string $name): ContainerPluginInterface
     {
         if (!$this->hasContainerPlugin($name)) {
             throw new PluginException(sprintf('Container plugin "%s" is not registered.', $name));
@@ -153,7 +147,7 @@ class PluginRegistry
      *
      * @return ContainerPluginInterface[]
      */
-    public function getContainerPlugins()
+    public function getContainerPlugins(): array
     {
         return $this->containerPlugins;
     }

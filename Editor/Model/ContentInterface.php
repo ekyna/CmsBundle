@@ -1,40 +1,43 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Component\Resource\Model AS RM;
+use Doctrine\Common\Collections\Collection;
+use Ekyna\Component\Resource\Model as RM;
 
 /**
  * Interface ContentInterface
  * @package Ekyna\Bundle\CmsBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 interface ContentInterface extends RM\TimestampableInterface, RM\TaggedEntityInterface
 {
     /**
      * Sets the name
      *
-     * @param string $name
+     * @param string|null $name
+     *
      * @return ContentInterface|$this
      */
-    public function setName($name);
+    public function setName(string $name = null): ContentInterface;
 
     /**
      * Returns the name
      *
-     * @return string
+     * @return string|null
      */
-    public function getName();
+    public function getName(): ?string;
 
     /**
      * Set containers
      *
-     * @param ArrayCollection|ContainerInterface[] $containers
+     * @param Collection|ContainerInterface[] $containers
      *
      * @return ContentInterface|$this
      */
-    public function setContainers(ArrayCollection $containers);
+    public function setContainers(Collection $containers): ContentInterface;
 
     /**
      * Add container
@@ -43,7 +46,7 @@ interface ContentInterface extends RM\TimestampableInterface, RM\TaggedEntityInt
      *
      * @return ContentInterface|$this
      */
-    public function addContainer(ContainerInterface $container);
+    public function addContainer(ContainerInterface $container): ContentInterface;
 
     /**
      * Remove containers
@@ -52,19 +55,19 @@ interface ContentInterface extends RM\TimestampableInterface, RM\TaggedEntityInt
      *
      * @return ContentInterface|$this
      */
-    public function removeContainer(ContainerInterface $container);
+    public function removeContainer(ContainerInterface $container): ContentInterface;
 
     /**
      * Get containers
      *
-     * @return ArrayCollection|ContainerInterface[]
+     * @return Collection|ContainerInterface[]
      */
-    public function getContainers();
+    public function getContainers(): Collection;
 
     /**
      * Returns whether or not the content is named.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isNamed();
+    public function isNamed(): bool;
 }

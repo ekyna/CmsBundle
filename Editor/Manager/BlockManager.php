@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
+use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
 use Ekyna\Bundle\CmsBundle\Editor\Model;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class BlockManager
@@ -13,10 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class BlockManager extends AbstractManager
 {
-    /**
-     * @var string
-     */
-    private $defaultType;
+    private string $defaultType;
 
 
     /**
@@ -24,7 +25,7 @@ class BlockManager extends AbstractManager
      *
      * @param string $defaultType
      */
-    public function __construct($defaultType)
+    public function __construct(string $defaultType)
     {
         $this->defaultType = $defaultType;
     }
@@ -36,19 +37,17 @@ class BlockManager extends AbstractManager
      * @param string|null               $type
      * @param array                     $data
      *
-     * @throws InvalidOperationException
-     *
      * @return Model\BlockInterface
+     * @throws InvalidOperationException
      */
-    public function create($rowOrName, $type = null, array $data = [])
+    public function create($rowOrName, string $type = null, array $data = []): Model\BlockInterface
     {
         // Check if row or name is defined
-        if (!(
-            $rowOrName instanceof Model\RowInterface ||
-            (is_string($rowOrName) && 0 < strlen($rowOrName))
-        )
+        if (
+            !$rowOrName instanceof Model\RowInterface &&
+            !(is_string($rowOrName) && !empty($rowOrName))
         ) {
-            throw new InvalidOperationException("Excepted instance of RowInterface or string.");
+            throw new InvalidOperationException('Excepted instance of RowInterface or string.');
         }
 
         // Default type if null
@@ -86,9 +85,11 @@ class BlockManager extends AbstractManager
      * @param Model\BlockInterface $block
      * @param Request              $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response|null
+     * @return Response|null
+     *
+     * @throws EditorExceptionInterface
      */
-    public function update(Model\BlockInterface $block, Request $request)
+    public function update(Model\BlockInterface $block, Request $request): ?Response
     {
         // Plugin update
         return $this->editor
@@ -105,7 +106,7 @@ class BlockManager extends AbstractManager
      *
      * @throws InvalidOperationException
      */
-    public function changeType(Model\BlockInterface $block, $type, array $data = [])
+    public function changeType(Model\BlockInterface $block, string $type, array $data = [])
     {
         if ($type === $block->getType()) {
             return;
@@ -139,7 +140,7 @@ class BlockManager extends AbstractManager
      * @return Model\BlockInterface The removed block.
      * @throws InvalidOperationException
      */
-    public function delete(Model\BlockInterface $block)
+    public function delete(Model\BlockInterface $block): Model\BlockInterface
     {
         // Ensure not named / alone
         if ($block->isAlone() || $block->isNamed()) {
@@ -178,7 +179,7 @@ class BlockManager extends AbstractManager
      * @return Model\RowInterface The sibling row where the block has been moved into.
      * @throws InvalidOperationException
      */
-    public function moveUp(Model\BlockInterface $block)
+    public function moveUp(Model\BlockInterface $block): Model\RowInterface
     {
         $row = $block->getRow();
         if (null === $row || $row->isFirst()) {
@@ -213,7 +214,7 @@ class BlockManager extends AbstractManager
      * @return Model\RowInterface The sibling row where the block has been moved into.
      * @throws InvalidOperationException
      */
-    public function moveDown(Model\BlockInterface $block)
+    public function moveDown(Model\BlockInterface $block): Model\RowInterface
     {
         $row = $block->getRow();
         if (null === $row || $row->isLast()) {
@@ -248,7 +249,7 @@ class BlockManager extends AbstractManager
      * @return Model\BlockInterface The sibling block that has been swapped.
      * @throws InvalidOperationException
      */
-    public function moveLeft(Model\BlockInterface $block)
+    public function moveLeft(Model\BlockInterface $block): Model\BlockInterface
     {
         $sibling = $this->editor->getRepository()->findSiblingBlock($block, false);
         if (null === $sibling) {
@@ -273,7 +274,7 @@ class BlockManager extends AbstractManager
      * @return Model\BlockInterface The sibling block that has been swapped.
      * @throws InvalidOperationException
      */
-    public function moveRight(Model\BlockInterface $block)
+    public function moveRight(Model\BlockInterface $block): Model\BlockInterface
     {
         $sibling = $this->editor->getRepository()->findSiblingBlock($block, true);
         if (null === $sibling) {

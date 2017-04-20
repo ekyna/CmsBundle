@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
 use Symfony\Component\Form\AbstractType;
@@ -12,26 +14,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class BaseBlockTranslationType extends AbstractType
 {
-    /**
-     * @var string
-     */
-    private $dataClass;
+    private string $dataClass;
 
-
-    /**
-     * Constructor.
-     *
-     * @param string $dataClass
-     */
     public function __construct(string $dataClass)
     {
         $this->dataClass = $dataClass;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('data_class', $this->dataClass);
     }

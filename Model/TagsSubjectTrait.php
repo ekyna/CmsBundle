@@ -1,6 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Trait TagsSubjectTrait
@@ -10,10 +15,18 @@ namespace Ekyna\Bundle\CmsBundle\Model;
 trait TagsSubjectTrait
 {
     /**
-     * @var \Doctrine\Common\Collections\ArrayCollection|TagInterface[]
+     * @var Collection|TagInterface[]
      */
     protected $tags;
 
+
+    /**
+     * Initializes the tags collection.
+     */
+    protected function initializeTags(): void
+    {
+        $this->tags = new ArrayCollection();
+    }
 
     /**
      * Adds the tag.
@@ -22,7 +35,7 @@ trait TagsSubjectTrait
      *
      * @return $this|TagsSubjectInterface
      */
-    public function addTag(TagInterface $tag)
+    public function addTag(TagInterface $tag): TagsSubjectInterface
     {
         if (!$this->tags->contains($tag)) {
             $this->tags->add($tag);
@@ -38,7 +51,7 @@ trait TagsSubjectTrait
      *
      * @return $this|TagsSubjectInterface
      */
-    public function removeTag(TagInterface $tag)
+    public function removeTag(TagInterface $tag): TagsSubjectInterface
     {
         if ($this->tags->contains($tag)) {
             $this->tags->removeElement($tag);
@@ -50,9 +63,9 @@ trait TagsSubjectTrait
     /**
      * Returns the tags
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection|TagInterface[]
+     * @return Collection|TagInterface[]
      */
-    public function getTags()
+    public function getTags(): Collection
     {
         return $this->tags;
     }

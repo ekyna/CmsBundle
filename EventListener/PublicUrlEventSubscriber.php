@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\EventListener;
 
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Component\Resource\Event\ResourceEventInterface;
+use Ekyna\Component\Resource\Exception\UnexpectedTypeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -14,17 +17,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class PublicUrlEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * Page public url event handler.
-     *
-     * @param ResourceEventInterface $event
-     */
-    public function onPagePublicUrl(ResourceEventInterface $event)
+    public function onPagePublicUrl(ResourceEventInterface $event): void
     {
         $resource = $event->getResource();
 
         if (!$resource instanceof PageInterface) {
-            return;
+            throw new UnexpectedTypeException($resource, PageInterface::class);
         }
 
         $event->stopPropagation();
@@ -36,13 +34,10 @@ class PublicUrlEventSubscriber implements EventSubscriberInterface
         $event->addData('route', $resource->getRoute());
     }
 
-    /**
-     * @inheritDoc
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
-            PageEvents::PUBLIC_URL  => ['onPagePublicUrl', 0],
+            PageEvents::PUBLIC_URL => ['onPagePublicUrl', 0],
         ];
     }
 }

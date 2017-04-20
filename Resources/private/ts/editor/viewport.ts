@@ -1,4 +1,4 @@
-/// <reference path="../../../../../../../typings/index.d.ts" />
+/// <reference path="../../../../../../../../assets/typings/index.d.ts" />
 
 import * as $ from 'jquery';
 import * as Backbone from 'backbone';

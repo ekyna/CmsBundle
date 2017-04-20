@@ -1,30 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr;
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
-use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
-use Ekyna\Component\Resource\Doctrine\ORM\Util\LocaleAwareRepositoryTrait;
+use Ekyna\Component\Resource\Doctrine\ORM\Repository\LocaleAwareRepositoryTrait;
+use Ekyna\Component\Resource\Doctrine\ORM\Repository\ResourceRepository;
+use Ekyna\Component\Resource\Locale\LocaleProviderAwareInterface;
 
 /**
  * Class ContainerRepository
  * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class ContainerRepository extends ResourceRepository
+class ContainerRepository extends ResourceRepository implements LocaleProviderAwareInterface
 {
     use LocaleAwareRepositoryTrait;
 
     /**
-     * Finds the container by id.
+     * Finds the container by is name.
      *
-     * @param int $name
+     * @param string $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface|null
+     * @return ContainerInterface|null
      */
-    public function findOneByName($name)
+    public function findOneByName(string $name): ?ContainerInterface
     {
         $qb = $this->getQueryBuilder();
 
@@ -42,13 +45,13 @@ class ContainerRepository extends ResourceRepository
     }
 
     /**
-     * Finds the container by id.
+     * Finds the container by is id.
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface|null
+     * @return ContainerInterface|null
      */
-    public function findOneById($id)
+    public function findOneById(int $id): ?ContainerInterface
     {
         $qb = $this->getQueryBuilder();
 
@@ -72,22 +75,23 @@ class ContainerRepository extends ResourceRepository
      *
      * @return int
      */
-    public function getCopyCount(ContainerInterface $container)
+    public function getCopyCount(ContainerInterface $container): int
     {
-        /** @noinspection SqlResolve */
-        $query = $this->getEntityManager()->createQuery(
-            "SELECT COUNT(c.id) FROM {$this->getClassName()} c WHERE c.copy = :copied"
-        );
+        $qb = $this->createQueryBuilder('c');
+        $qb
+            ->select('COUNT(c.id)')
+            ->andWhere($qb->expr()->eq('c.copy', ':copy'));
 
-        return $query
-            ->setParameter('copied', $container)
+        return (int) $qb
+            ->getQuery()
+            ->setParameter('copy', $container)
             ->getSingleResult(Query::HYDRATE_SINGLE_SCALAR);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    protected function getAlias()
+    protected function getAlias(): string
     {
         return 'c';
     }

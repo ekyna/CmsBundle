@@ -1,35 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
+
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface;
 
 /**
  * Interface ContentSubjectInterface
  * @package Ekyna\Bundle\CmsBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 interface ContentSubjectInterface
 {
     /**
      * Sets the content.
      *
-     * @param ContentInterface $content
+     * @param ContentInterface|null $content
+     *
      * @return ContentSubjectInterface|$this
      */
-    public function setContent(ContentInterface $content = null);
+    public function setContent(ContentInterface $content = null): ContentSubjectInterface;
 
     /**
      * Returns the current content (last version).
      *
      * @return ContentInterface|null
      */
-    public function getContent();
-
-    /**
-     * Returns the content summary.
-     *
-     * @param int $maxLength
-     * @return string
-     */
-    public function getContentSummary($maxLength = 128);
+    public function getContent(): ?ContentInterface;
 }

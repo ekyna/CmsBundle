@@ -1,28 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Doctrine\ORM\Query\Expr;
-use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
-use Ekyna\Component\Resource\Doctrine\ORM\Util\LocaleAwareRepositoryTrait;
+use Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface;
+use Ekyna\Component\Resource\Doctrine\ORM\Repository\LocaleAwareRepositoryTrait;
+use Ekyna\Component\Resource\Doctrine\ORM\Repository\ResourceRepository;
+use Ekyna\Component\Resource\Locale\LocaleProviderAwareInterface;
 
 /**
  * Class RowRepository
  * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class RowRepository extends ResourceRepository
+class RowRepository extends ResourceRepository implements LocaleProviderAwareInterface
 {
     use LocaleAwareRepositoryTrait;
 
     /**
-     * Finds the row by id.
+     * Finds the row by its name.
      *
-     * @param int $name
+     * @param string $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface|null
+     * @return RowInterface|null
      */
-    public function findOneByName($name)
+    public function findOneByName(string $name): ?RowInterface
     {
         $qb = $this->getQueryBuilder();
 
@@ -39,13 +43,13 @@ class RowRepository extends ResourceRepository
     }
 
     /**
-     * Finds the row by id.
+     * Finds the row by its id.
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface|null
+     * @return RowInterface|null
      */
-    public function findOneById($id)
+    public function findOneById(int $id): ?RowInterface
     {
         $qb = $this->getQueryBuilder();
 
@@ -62,9 +66,9 @@ class RowRepository extends ResourceRepository
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    protected function getAlias()
+    protected function getAlias(): string
     {
         return 'r';
     }

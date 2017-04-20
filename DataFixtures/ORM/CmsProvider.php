@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\DataFixtures\ORM;
 
+use Ekyna\Bundle\CmsBUndle\Model\TagInterface;
 use Ekyna\Bundle\CmsBundle\Model\TagsSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Model\Themes;
-use Ekyna\Bundle\CoreBundle\DataFixtures\ORM\Fixtures;
-use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepositoryInterface;
+use Ekyna\Component\Resource\Repository\ResourceRepositoryInterface;
+use Faker\Factory;
+use Faker\Generator;
 
 /**
  * Class CmsProvider
@@ -14,17 +18,10 @@ use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepositoryInterface;
  */
 class CmsProvider
 {
-    /**
-     * @var ResourceRepositoryInterface
-     */
-    private $tagRepository;
+    private ResourceRepositoryInterface $tagRepository;
 
+    private ?Generator $faker = null;
 
-    /**
-     * Constructor.
-     *
-     * @param ResourceRepositoryInterface $tagRepository
-     */
     public function __construct(ResourceRepositoryInterface $tagRepository)
     {
         $this->tagRepository = $tagRepository;
@@ -40,6 +37,7 @@ class CmsProvider
      */
     public function htmlParagraphs(int $min = 2, int $max = 5): string
     {
+        $faker = $this->getFaker();
         $paragraphs = [];
 
         // Each paragraph
@@ -49,7 +47,7 @@ class CmsProvider
             // Each sentence
             for ($j = 0; $j < rand(3, 7); $j++) {
                 $nb = rand(5, 9);
-                $words = Fixtures::getFaker()->words($nb, false);
+                $words = $faker->words($nb, false);
                 $words[0] = ucwords($words[0]);
 
                 if (rand(0, 100) < 20) { // strong or em
@@ -80,7 +78,7 @@ class CmsProvider
      */
     public function randomTheme(): string
     {
-        return Fixtures::getFaker()->randomElement(Themes::getConstants());
+        return $this->getFaker()->randomElement(Themes::getConstants());
     }
 
     /**
@@ -90,7 +88,7 @@ class CmsProvider
      */
     public function generateTags(TagsSubjectInterface $subject): void
     {
-        /** @var \Ekyna\Bundle\CmsBUndle\Model\TagInterface $tag */
+        /** @var TagInterface $tag */
         if (0 < $count = rand(0, 2)) {
             if (1 == $count) {
                 if (null !== $tag = $this->tagRepository->findRandomOneBy([])) {
@@ -103,5 +101,19 @@ class CmsProvider
                 }
             }
         }
+    }
+
+    public function enabled(int $chance): bool
+    {
+        return rand(0, 100) <= $chance;
+    }
+
+    private function getFaker(): Generator
+    {
+        if ($this->faker) {
+            return $this->faker;
+        }
+
+        return $this->faker = Factory::create();
     }
 }

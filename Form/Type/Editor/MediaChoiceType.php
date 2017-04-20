@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
-use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
 use Ekyna\Bundle\MediaBundle\Form\Type\MediaChoiceType as ChoiceType;
 use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
+use Ekyna\Bundle\MediaBundle\Repository\MediaRepositoryInterface;
 use Ekyna\Bundle\MediaBundle\Validator\Constraints\MediaTypes;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -19,26 +21,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class MediaChoiceType extends AbstractType
 {
-    /**
-     * @var MediaRepository
-     */
-    private $mediaRepository;
+    private MediaRepositoryInterface $mediaRepository;
 
-
-    /**
-     * Constructor.
-     *
-     * @param MediaRepository $mediaRepository
-     */
-    public function __construct(MediaRepository $mediaRepository)
+    public function __construct(MediaRepositoryInterface $mediaRepository)
     {
         $this->mediaRepository = $mediaRepository;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('media', ChoiceType::class, [
@@ -80,10 +70,7 @@ class MediaChoiceType extends AbstractType
             ));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('types');
     }

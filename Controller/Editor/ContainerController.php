@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
-use Ekyna\Bundle\CoreBundle\Modal\Modal;
+use Ekyna\Bundle\UiBundle\Model\Modal;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -12,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @package Ekyna\Bundle\CmsBundle\Controller\Editor
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class ContainerController extends BaseController
+class ContainerController extends AbstractController
 {
     /**
      * Create and append a new row to the container.
@@ -21,14 +23,14 @@ class ContainerController extends BaseController
      *
      * @return Response
      */
-    public function createRowAction(Request $request)
+    public function createRow(Request $request): Response
     {
         $container = $this->findContainer(intval($request->attributes->get('containerId')));
 
         $target = is_null($container->getCopy()) ? $container : $container->getCopy();
 
         try {
-            $row = $this->getEditor()->createDefaultRow([], $target);
+            $row = $this->editor->createDefaultRow([], $target);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -53,12 +55,12 @@ class ContainerController extends BaseController
      *
      * @return Response
      */
-    public function editAction(Request $request)
+    public function edit(Request $request): Response
     {
         $container = $this->findContainerByRequest($request);
 
         try {
-            $response = $this->getEditor()->getContainerManager()->update($container, $request);
+            $response = $this->editor->getContainerManager()->update($container, $request);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -86,14 +88,14 @@ class ContainerController extends BaseController
      *
      * @return Response
      */
-    public function layoutAction(Request $request)
+    public function layout(Request $request): Response
     {
         $container = $this->findContainerByRequest($request);
 
         $data = $request->request->get('data', []);
 
         try {
-            $this->getEditor()->getLayoutAdapter()->updateContainerLayout($container, $data);
+            $this->editor->getLayoutAdapter()->updateContainerLayout($container, $data);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -115,7 +117,7 @@ class ContainerController extends BaseController
      *
      * @return Response
      */
-    public function changeTypeAction(Request $request)
+    public function changeType(Request $request): Response
     {
         $container = $this->findContainerByRequest($request);
 
@@ -125,7 +127,7 @@ class ContainerController extends BaseController
 
         if ($type != $container->getType()) {
             try {
-                $removed = $this->getEditor()->getContainerManager()->changeType($container, $type);
+                $removed = $this->editor->getContainerManager()->changeType($container, $type);
             } catch (EditorExceptionInterface $e) {
                 return $this->handleException($e);
             }
@@ -150,13 +152,13 @@ class ContainerController extends BaseController
      *
      * @return Response
      */
-    public function removeAction(Request $request)
+    public function remove(Request $request): Response
     {
         $container = $this->findContainerByRequest($request);
         $content = $container->getContent();
 
         try {
-            $this->getEditor()->getContainerManager()->delete($container);
+            $this->editor->getContainerManager()->delete($container);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -182,12 +184,12 @@ class ContainerController extends BaseController
      *
      * @return Response
      */
-    public function moveUpAction(Request $request)
+    public function moveUp(Request $request): Response
     {
         $container = $this->findContainerByRequest($request);
 
         try {
-            $sibling = $this->getEditor()->getContainerManager()->moveUp($container);
+            $sibling = $this->editor->getContainerManager()->moveUp($container);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -214,12 +216,12 @@ class ContainerController extends BaseController
      *
      * @return Response
      */
-    public function moveDownAction(Request $request)
+    public function moveDown(Request $request): Response
     {
         $container = $this->findContainerByRequest($request);
 
         try {
-            $sibling = $this->getEditor()->getContainerManager()->moveDown($container);
+            $sibling = $this->editor->getContainerManager()->moveDown($container);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }

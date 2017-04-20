@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
-use Ekyna\Bundle\CoreBundle\Model\TreeInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -13,66 +14,11 @@ use Ekyna\Component\Resource\Model as RM;
  *
  * @method MenuTranslationInterface translate($locale = null, $create = false)
  * @method MenuTranslationInterface[] getTranslations()
+ * @method Collection|MenuInterface[] getChildren()
+ * @method MenuInterface|null getParent()
  */
-interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterface, TreeInterface
+interface MenuInterface extends RM\TreeInterface, RM\TaggedEntityInterface, RM\TranslatableInterface
 {
-    /**
-     * Sets the parent.
-     *
-     * @param MenuInterface|null $parent
-     *
-     * @return MenuInterface|$this
-     */
-    public function setParent(MenuInterface $parent = null): MenuInterface;
-
-    /**
-     * Returns the parent.
-     *
-     * @return MenuInterface|null
-     */
-    public function getParent(): ?MenuInterface;
-
-    /**
-     * Sets the children.
-     *
-     * @param Collection $children
-     *
-     * @return MenuInterface|$this
-     */
-    public function setChildren(Collection $children): MenuInterface;
-
-    /**
-     * Returns whether the menu has children or not.
-     *
-     * @return bool
-     */
-    public function hasChildren(): bool;
-
-    /**
-     * Adds the child menu.
-     *
-     * @param MenuInterface $menu
-     *
-     * @return MenuInterface|$this
-     */
-    public function addChild(MenuInterface $menu): MenuInterface;
-
-    /**
-     * Removes the child menu.
-     *
-     * @param MenuInterface $menu
-     *
-     * @return MenuInterface|$this
-     */
-    public function removeChild(MenuInterface $menu): MenuInterface;
-
-    /**
-     * Returns the menu's children.
-     *
-     * @return Collection
-     */
-    public function getChildren(): Collection;
-
     /**
      * Set name
      *

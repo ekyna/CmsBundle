@@ -1,36 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Component\Resource\Model\ResourceInterface;
+use Doctrine\Common\Collections\Collection;
+use Ekyna\Bundle\CmsBundle\Model\SlideInterface;
+use Ekyna\Bundle\CmsBundle\Model\SlideShowInterface;
 
 /**
  * Class SlideShow
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class SlideShow implements ResourceInterface
+class SlideShow implements SlideShowInterface
 {
-    /**
-     * @var int
-     */
-    private $id;
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var string
-     */
-    private $tag;
-
-    /**
-     * @var ArrayCollection|Slide[]
-     */
-    private $slides;
+    private ?int $id = null;
+    private ?string $name  = null;
+    private ?string $tag = null;
+    private Collection $slides;
 
 
     /**
@@ -52,9 +41,7 @@ class SlideShow implements ResourceInterface
     }
 
     /**
-     * Returns the id.
-     *
-     * @return int
+     * @inheritDoc
      */
     public function getId(): ?int
     {
@@ -62,23 +49,17 @@ class SlideShow implements ResourceInterface
     }
 
     /**
-     * Returns the name.
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * Sets the name.
-     *
-     * @param string $name
-     *
-     * @return SlideShow
+     * @inheritDoc
      */
-    public function setName($name)
+    public function setName(string $name): SlideShowInterface
     {
         $this->name = $name;
 
@@ -86,23 +67,17 @@ class SlideShow implements ResourceInterface
     }
 
     /**
-     * Returns the tag.
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getTag()
+    public function getTag(): ?string
     {
         return $this->tag;
     }
 
     /**
-     * Sets the tag.
-     *
-     * @param string $tag
-     *
-     * @return SlideShow
+     * @inheritDoc
      */
-    public function setTag($tag)
+    public function setTag(string $tag = null): SlideShowInterface
     {
         $this->tag = $tag;
 
@@ -110,13 +85,9 @@ class SlideShow implements ResourceInterface
     }
 
     /**
-     * Adds the slide.
-     *
-     * @param Slide $slide
-     *
-     * @return SlideShow
+     * @inheritDoc
      */
-    public function addSlide(Slide $slide)
+    public function addSlide(SlideInterface $slide): SlideShowInterface
     {
         if (!$this->slides->contains($slide)) {
             $this->slides->add($slide);
@@ -127,13 +98,9 @@ class SlideShow implements ResourceInterface
     }
 
     /**
-     * Removes the slide.
-     *
-     * @param Slide $slide
-     *
-     * @return SlideShow
+     * @inheritDoc
      */
-    public function removeSlide(Slide $slide)
+    public function removeSlide(SlideInterface $slide): SlideShowInterface
     {
         if ($this->slides->contains($slide)) {
             $this->slides->removeElement($slide);
@@ -144,11 +111,9 @@ class SlideShow implements ResourceInterface
     }
 
     /**
-     * Returns the slides.
-     *
-     * @return ArrayCollection|Slide[]
+     * @inheritDoc
      */
-    public function getSlides()
+    public function getSlides(): Collection
     {
         return $this->slides;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\View;
 
 /**
@@ -7,34 +9,8 @@ namespace Ekyna\Bundle\CmsBundle\Editor\View;
  * @package Ekyna\Bundle\CmsBundle\Editor\View
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class BlockView
+class BlockView extends AbstractView
 {
-    /**
-     * @var AttributesInterface
-     */
-    private $attributes;
-
-    /**
-     * @var array|WidgetView[]
-     */
-    public $widgets = [];
-
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->attributes = new Attributes();
-    }
-
-    /**
-     * Returns the attributes.
-     *
-     * @return AttributesInterface
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
-    }
+    /** @var WidgetView[] */
+    public array $widgets = [];
 }

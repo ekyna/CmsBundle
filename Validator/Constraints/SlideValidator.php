@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Ekyna\Bundle\CmsBundle\Entity\Slide as Entity;
@@ -15,10 +17,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class SlideValidator extends ConstraintValidator
 {
-    /**
-     * @var TypeRegistryInterface
-     */
-    private $registry;
+    private TypeRegistryInterface $registry;
 
 
     /**
@@ -32,7 +31,7 @@ class SlideValidator extends ConstraintValidator
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function validate($slide, Constraint $constraint)
     {

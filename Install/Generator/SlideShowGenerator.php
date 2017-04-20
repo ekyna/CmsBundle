@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Install\Generator;
 
+use Ekyna\Bundle\CmsBundle\Model\SlideShowInterface;
+use Ekyna\Component\Resource\Factory\ResourceFactoryInterface;
+use Ekyna\Component\Resource\Manager\ResourceManagerInterface;
+use Ekyna\Component\Resource\Repository\ResourceRepositoryInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class SlideShowGenerator
@@ -12,68 +17,61 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SlideShowGenerator
 {
-    /**
-     * @var OutputInterface
-     */
-    private $output;
-
-    /**
-     * @var \Ekyna\Component\Resource\Operator\ResourceOperatorInterface
-     */
-    private $operator;
-
-    /**
-     * @var \Ekyna\Component\Resource\Doctrine\ORM\ResourceRepositoryInterface
-     */
-    private $repository;
-
-    /**
-     * @var array
-     */
-    private $names;
+    private ResourceManagerInterface    $manager;
+    private ResourceRepositoryInterface $repository;
+    private ResourceFactoryInterface    $factory;
+    private array                       $names;
 
 
     /**
      * Constructor.
      *
-     * @param ContainerInterface $container
-     * @param OutputInterface    $output
+     * @param ResourceManagerInterface    $manager
+     * @param ResourceRepositoryInterface $repository
+     * @param ResourceFactoryInterface    $factory
+     * @param array                       $names
      */
-    public function __construct(ContainerInterface $container, OutputInterface $output)
-    {
-        $this->output = $output;
-
-        $this->operator = $container->get('ekyna_cms.slide_show.operator');
-        $this->repository = $container->get('ekyna_cms.slide_show.repository');
-        $this->names = $container->getParameter('ekyna_cms.slide_show.static');
+    public function __construct(
+        ResourceManagerInterface $manager,
+        ResourceRepositoryInterface $repository,
+        ResourceFactoryInterface $factory,
+        array $names
+    ) {
+        $this->manager = $manager;
+        $this->repository = $repository;
+        $this->factory = $factory;
+        $this->names = $names;
     }
 
     /**
      * Generates the slide shows based on configuration.
+     *
+     * @param OutputInterface $output
      */
-    public function generateSlideShows()
+    public function generate(OutputInterface $output): void
     {
         foreach ($this->names as $tag => $name) {
-            $this->output->write(sprintf(
+            $output->write(sprintf(
                 '- <comment>%s</comment> %s ',
                 $name,
                 str_pad('.', 44 - mb_strlen($name), '.', STR_PAD_LEFT)
             ));
 
-            if (null !== $slideShow = $this->findSlideShowByTag($tag)) {
-                $this->output->writeln('already exists.');
+            if (null !== $this->findSlideShowByTag($tag)) {
+                $output->writeln('already exists.');
+
                 continue;
             }
 
-            /** @var \Ekyna\Bundle\CmsBundle\Entity\SlideShow $slideShow */
-            $slideShow = $this->repository->createNew();
+            /** @var SlideShowInterface $slideShow */
+            $slideShow = $this->factory->create();
             $slideShow
                 ->setName($name)
                 ->setTag($tag);
 
-            $this->operator->persist($slideShow);
+            $this->manager->save($slideShow);
 
-            $this->output->writeln('created.');
+            $output->writeln('created.');
         }
     }
 
@@ -82,9 +80,9 @@ class SlideShowGenerator
      *
      * @param string $tag
      *
-     * @return \Ekyna\Bundle\CmsBundle\Entity\SlideShow|null
+     * @return SlideShowInterface|null
      */
-    public function findSlideShowByTag($tag)
+    public function findSlideShowByTag(string $tag): ?SlideShowInterface
     {
         return $this->repository->findOneBy(['tag' => $tag]);
     }

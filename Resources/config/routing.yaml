@@ -1,0 +1,11 @@
+admin_ekyna_cms_editor:
+    resource: routing/editor.yaml
+    prefix:   /%ekyna_admin.routing_prefix%/cms/editor
+
+ekyna_cms_slide_types:
+    path: /js/slide-show-types.json
+    controller: Ekyna\Bundle\CmsBundle\Controller\SlideShowController::types
+
+ekyna_cms_routing:
+    resource: .
+    type: cms

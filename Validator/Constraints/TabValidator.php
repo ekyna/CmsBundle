@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\Tab as Model;
@@ -32,7 +34,7 @@ class TabValidator extends ConstraintValidator
             if (is_null($translation->getMedia()) xor $mediaRequired) {
                 $this
                     ->context
-                    ->buildViolation($constraint->media_or_anchor_but_not_both)
+                    ->buildViolation($constraint->mediaOrAnchorButNotBoth)
                     ->atPath('anchor')
                     ->addViolation();
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Repository;
 
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
@@ -17,37 +19,37 @@ interface RepositoryInterface
      *
      * @return EM\ContentInterface
      */
-    public function createContent();
+    public function createContent(): EM\ContentInterface;
 
     /**
      * Creates a new container.
      *
      * @return EM\ContainerInterface
      */
-    public function createContainer();
+    public function createContainer(): EM\ContainerInterface;
 
     /**
      * Creates a new row.
      *
      * @return EM\RowInterface
      */
-    public function createRow();
+    public function createRow(): EM\RowInterface;
 
     /**
      * Creates a new block.
      *
      * @return EM\BlockInterface
      */
-    public function createBlock();
+    public function createBlock(): EM\BlockInterface;
 
     /**
      * Finds the content by id.
      *
      * @param int $id
      *
-     * @return EM\ContentInterface
+     * @return EM\ContentInterface|null
      */
-    public function findContentById($id);
+    public function findContentById(int $id): ?EM\ContentInterface;
 
     /**
      * Finds the container by id.
@@ -56,7 +58,7 @@ interface RepositoryInterface
      *
      * @return EM\ContainerInterface|null
      */
-    public function findContainerById($id);
+    public function findContainerById(int $id): ?EM\ContainerInterface;
 
     /**
      * Finds the row by id.
@@ -65,7 +67,7 @@ interface RepositoryInterface
      *
      * @return EM\RowInterface|null
      */
-    public function findRowById($id);
+    public function findRowById(int $id): ?EM\RowInterface;
 
     /**
      * Finds the block by id.
@@ -74,53 +76,53 @@ interface RepositoryInterface
      *
      * @return EM\BlockInterface|null
      */
-    public function findBlockById($id);
+    public function findBlockById(int $id): ?EM\BlockInterface;
 
     /**
      * Finds the content by name.
      *
-     * @param int $name
+     * @param string $name
      *
-     * @return EM\ContentInterface
+     * @return EM\ContentInterface|null
      */
-    public function findContentByName($name);
+    public function findContentByName(string $name): ?EM\ContentInterface;
 
     /**
      * Finds the container by name.
      *
-     * @param int $name
+     * @param string $name
      *
      * @return EM\ContainerInterface|null
      */
-    public function findContainerByName($name);
+    public function findContainerByName(string $name): ?EM\ContainerInterface;
 
     /**
      * Finds the row by name.
      *
-     * @param int $name
+     * @param string $name
      *
      * @return EM\RowInterface|null
      */
-    public function findRowByName($name);
+    public function findRowByName(string $name): ?EM\RowInterface;
 
     /**
      * Finds the block by name.
      *
-     * @param int $name
+     * @param string $name
      *
      * @return EM\BlockInterface|null
      */
-    public function findBlockByName($name);
+    public function findBlockByName(string $name): ?EM\BlockInterface;
 
     /**
      * Returns the sibling of the given container.
      *
      * @param EM\ContainerInterface $container
-     * @param bool            $next Whether to look for the next or the previous
+     * @param bool                  $next Whether to look for the next or the previous
      *
      * @return EM\ContainerInterface|null
      */
-    public function findSiblingContainer(EM\ContainerInterface $container, $next = false);
+    public function findSiblingContainer(EM\ContainerInterface $container, bool $next = false): ?EM\ContainerInterface;
 
     /**
      * Returns the sibling of the given row.
@@ -130,17 +132,17 @@ interface RepositoryInterface
      *
      * @return EM\RowInterface|null
      */
-    public function findSiblingRow(EM\RowInterface $row, $next = false);
+    public function findSiblingRow(EM\RowInterface $row, bool $next = false): ?EM\RowInterface;
 
     /**
      * Returns the sibling of the given block.
      *
      * @param EM\BlockInterface $block
-     * @param bool            $next Whether to look for the next or the previous
+     * @param bool              $next Whether to look for the next or the previous
      *
      * @return EM\BlockInterface|null
      */
-    public function findSiblingBlock(EM\BlockInterface $block, $next = false);
+    public function findSiblingBlock(EM\BlockInterface $block, bool $next = false): ?EM\BlockInterface;
 
     /**
      * Loads and returns the subject's content.
@@ -149,5 +151,5 @@ interface RepositoryInterface
      *
      * @return EM\ContentInterface|null
      */
-    public function loadSubjectContent(CM\ContentSubjectInterface $subject);
+    public function loadSubjectContent(CM\ContentSubjectInterface $subject): ?EM\ContentInterface;
 }

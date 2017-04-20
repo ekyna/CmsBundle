@@ -1,15 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\EventListener;
 
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
-use Ekyna\Bundle\CmsBundle\Exception\RuntimeException;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Service\Updater\PageRedirectionUpdater;
 use Ekyna\Bundle\CmsBundle\Service\Updater\PageUpdater;
 use Ekyna\Component\Resource\Event\ResourceEventInterface;
 use Ekyna\Component\Resource\Event\ResourceMessage;
-use Ekyna\Component\Resource\Exception\InvalidArgumentException;
+use Ekyna\Component\Resource\Exception\UnexpectedTypeException;
 use Ekyna\Component\Resource\Persistence\PersistenceHelperInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -20,29 +21,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class PageEventListener implements EventSubscriberInterface
 {
-    /**
-     * @var PersistenceHelperInterface
-     */
-    private $persistenceHelper;
+    private PersistenceHelperInterface $persistenceHelper;
+    private PageUpdater $pageUpdater;
+    private PageRedirectionUpdater $redirectionUpdater;
 
-    /**
-     * @var PageUpdater
-     */
-    private $pageUpdater;
-
-    /**
-     * @var PageRedirectionUpdater
-     */
-    private $redirectionUpdater;
-
-
-    /**
-     * Constructor.
-     *
-     * @param PersistenceHelperInterface $persistenceHelper
-     * @param PageUpdater                $pageUpdater
-     * @param PageRedirectionUpdater     $redirectionUpdater
-     */
     public function __construct(
         PersistenceHelperInterface $persistenceHelper,
         PageUpdater $pageUpdater,
@@ -54,50 +36,32 @@ class PageEventListener implements EventSubscriberInterface
     }
 
     /**
-     * Initialize event handler.
-     *
-     * @param ResourceEventInterface $event
-     */
-    public function onInitialize(ResourceEventInterface $event): void
-    {
-        $page = $this->getPageFromEvent($event);
-
-        $parent = $page->getParent();
-        if ($parent && $parent->isLocked()) {
-            throw new RuntimeException("Cannot create child page under a locked parent page.");
-        }
-
-        $this->pageUpdater->updateRoute($page);
-    }
-
-    /**
      * Pre create event handler.
-     *
-     * @param ResourceEventInterface $event
      */
     public function onPreCreate(ResourceEventInterface $event): void
     {
         $page = $this->getPageFromEvent($event);
 
         if (!$this->checkEnabled($page)) {
-            $event->addMessage(new ResourceMessage(
-                'ekyna_cms.page.alert.parent_disabled',
+            $message = ResourceMessage::create(
+                'page.alert.parent_disabled',
                 ResourceMessage::TYPE_WARNING
-            ));
+            )->setDomain('EkynaCms');
+
+            $event->addMessage($message);
         }
     }
 
     /**
      * Insert event handler.
-     *
-     * @param ResourceEventInterface $event
      */
     public function onInsert(ResourceEventInterface $event): void
     {
         $page = $this->getPageFromEvent($event);
 
         $changed = $this->pageUpdater->updateIsDynamic($page);
-        $changed |= $this->pageUpdater->updateIsAdvanced($page);
+
+        $changed = $this->pageUpdater->updateIsAdvanced($page) || $changed;
 
         if ($changed) {
             $this->persistenceHelper->persistAndRecompute($page, false);
@@ -108,46 +72,49 @@ class PageEventListener implements EventSubscriberInterface
 
     /**
      * Pre update event handler.
-     *
-     * @param ResourceEventInterface $event
      */
     public function onPreUpdate(ResourceEventInterface $event): void
     {
         $page = $this->getPageFromEvent($event);
 
         if (!$this->checkEnabled($page)) {
-            $event->addMessage(new ResourceMessage(
-                'ekyna_cms.page.alert.parent_disabled',
+            $message = ResourceMessage::create(
+                'page.alert.parent_disabled',
                 ResourceMessage::TYPE_WARNING
-            ));
+            )->setDomain('EkynaCms');
+
+            $event->addMessage($message);
         }
 
         // Bubble disable
         if ($this->pageUpdater->disablePageChildren($page)) {
-            $event->addMessage(new ResourceMessage(
-                'ekyna_cms.page.alert.children_disabled',
+            $message = ResourceMessage::create(
+                'page.alert.children_disabled',
                 ResourceMessage::TYPE_WARNING
-            ));
+            )->setDomain('EkynaCms');
+
+            $event->addMessage($message);
         }
         if ($this->pageUpdater->disablePageRelativeMenus($page)) {
-            $event->addMessage(new ResourceMessage(
-                'ekyna_cms.page.alert.menus_disabled',
+            $message = ResourceMessage::create(
+                'page.alert.menus_disabled',
                 ResourceMessage::TYPE_WARNING
-            ));
+            )->setDomain('EkynaCms');
+
+            $event->addMessage($message);
         }
     }
 
     /**
      * Insert event handler.
-     *
-     * @param ResourceEventInterface $event
      */
     public function onUpdate(ResourceEventInterface $event): void
     {
         $page = $this->getPageFromEvent($event);
 
         $changed = $this->pageUpdater->updateIsDynamic($page);
-        $changed |= $this->pageUpdater->updateIsAdvanced($page);
+
+        $changed = $this->pageUpdater->updateIsAdvanced($page) || $changed;
 
         if ($changed) {
             $this->persistenceHelper->persistAndRecompute($page, false);
@@ -169,25 +136,23 @@ class PageEventListener implements EventSubscriberInterface
 
     /**
      * Pre delete event handler.
-     *
-     * @param ResourceEventInterface $event
      */
     public function onPreDelete(ResourceEventInterface $event): void
     {
         $page = $this->getPageFromEvent($event);
 
         if ($page->isStatic()) {
-            $event->addMessage(new ResourceMessage(
-                'ekyna_cms.page.alert.do_not_remove_static',
+            $message = ResourceMessage::create(
+                'page.alert.do_not_remove_static',
                 ResourceMessage::TYPE_ERROR
-            ));
+            )->setDomain('EkynaCms');
+
+            $event->addMessage($message);
         }
     }
 
     /**
      * Insert event handler.
-     *
-     * @param ResourceEventInterface $event
      */
     public function onDelete(ResourceEventInterface $event): void
     {
@@ -201,10 +166,6 @@ class PageEventListener implements EventSubscriberInterface
 
     /**
      * Changes the page's 'enabled' property if needed.
-     *
-     * @param PageInterface $page
-     *
-     * @return bool
      */
     private function checkEnabled(PageInterface $page): bool
     {
@@ -230,29 +191,21 @@ class PageEventListener implements EventSubscriberInterface
 
     /**
      * Returns the page from the event.
-     *
-     * @param ResourceEventInterface $event
-     *
-     * @return PageInterface
      */
     private function getPageFromEvent(ResourceEventInterface $event): PageInterface
     {
         $resource = $event->getResource();
 
         if (!$resource instanceof PageInterface) {
-            throw new InvalidArgumentException("Expected instance of PageInterface");
+            throw new UnexpectedTypeException($resource, PageInterface::class);
         }
 
         return $resource;
     }
 
-    /**
-     * @inheritdoc
-     */
     public static function getSubscribedEvents(): array
     {
         return [
-            PageEvents::INITIALIZE => ['onInitialize', 1024],
             PageEvents::PRE_CREATE => ['onPreCreate', -1024],
             PageEvents::INSERT     => ['onInsert', 1024],
             PageEvents::PRE_UPDATE => ['onPreUpdate', -1024],

@@ -1,16 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistryAwareInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistryAwareTrait;
-use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
 use Ekyna\Bundle\CmsBundle\Editor\View\AttributesInterface;
 use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\FeatureBlockType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
@@ -22,10 +25,10 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
 {
     use PluginRegistryAwareTrait;
 
-    const NAME = 'ekyna_block_feature';
+    public const NAME = 'ekyna_block_feature';
 
-    const DEFAULT_HTML_MAX_WIDTH  = '150px';
-    const DEFAULT_HTML_MARGIN_TOP = '20px';
+    private const DEFAULT_HTML_MAX_WIDTH  = '150px';
+    private const DEFAULT_HTML_MARGIN_TOP = '20px';
 
 
     /**
@@ -33,9 +36,8 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
      *
      * @param array $config
      */
-    public function __construct(
-        array $config
-    ) {
+    public function __construct(array $config)
+    {
         parent::__construct(array_replace([
             'image_filter' => 'cms_block_feature',
             'animations'   => PropertyDefaults::getDefaultAnimationChoices(),
@@ -43,9 +45,9 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function create(BlockInterface $block, array $data = [])
+    public function create(BlockInterface $block, array $data = []): void
     {
         parent::create($block, $data);
 
@@ -65,9 +67,9 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function update(BlockInterface $block, Request $request, array $options = [])
+    public function update(BlockInterface $block, Request $request, array $options = []): ?Response
     {
         $type = $request->get('widgetType');
 
@@ -80,7 +82,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
 
         // Feature update modal
         $form = $this->formFactory->create(FeatureBlockType::class, $block, [
-            'action'     => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
+            'action'     => $this->urlGenerator->generate('admin_ekyna_cms_editor_block_edit', [
                 'blockId'         => $block->getId(),
                 'widgetType'      => $request->get('widgetType', $block->getType()),
                 '_content_locale' => $this->localeProvider->getCurrentLocale(),
@@ -98,13 +100,13 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             return null;
         }
 
-        return $this->createModal('Modifier le bloc feature.', $form->createView());
+        return $this->createModalResponse('Modifier le bloc feature.', $form->createView());
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function remove(BlockInterface $block)
+    public function remove(BlockInterface $block): void
     {
         $this->getImagePlugin()->remove($block);
         $this->getHtmlPlugin()->remove($block);
@@ -113,18 +115,18 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function validate(BlockInterface $block, ExecutionContextInterface $context)
+    public function validate(BlockInterface $block, ExecutionContextInterface $context): void
     {
         $this->getImagePlugin()->validate($block, $context);
         $this->getHtmlPlugin()->validate($block, $context);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function render(BlockInterface $block, BlockView $view, AdapterInterface $adapter, array $options)
+    public function render(BlockInterface $block, BlockView $view, AdapterInterface $adapter, array $options): void
     {
         $options = array_replace([
             'editable' => false,
@@ -168,7 +170,8 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             ->createWidget($block, $adapter, array_replace($options, [
                 'filter'    => $this->config['image_filter'],
                 'animation' => !$hasAnim,
-            ]), 0);
+            ]));
+
         $overrideAttributes($widget->getAttributes(), 'image');
         $view->widgets[] = $widget;
 
@@ -191,25 +194,25 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return 'Feature';
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getJavascriptFilePath()
+    public function getJavascriptFilePath(): string
     {
         return 'ekyna-cms/editor/plugin/block/feature';
     }
@@ -219,7 +222,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
      *
      * @return PluginInterface
      */
-    protected function getImagePlugin()
+    protected function getImagePlugin(): PluginInterface
     {
         return $this->getBlockPlugin(ImagePlugin::NAME);
     }
@@ -229,7 +232,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
      *
      * @return PluginInterface
      */
-    protected function getHtmlPlugin()
+    protected function getHtmlPlugin(): PluginInterface
     {
         return $this->getBlockPlugin(TinymcePlugin::NAME);
     }

@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
+
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Interface TagsSubjectInterface
@@ -16,7 +20,7 @@ interface TagsSubjectInterface
      *
      * @return $this|TagsSubjectInterface
      */
-    public function addTag(TagInterface $tag);
+    public function addTag(TagInterface $tag): TagsSubjectInterface;
 
     /**
      * Removes the tag.
@@ -25,12 +29,12 @@ interface TagsSubjectInterface
      *
      * @return $this|TagsSubjectInterface
      */
-    public function removeTag(TagInterface $tag);
+    public function removeTag(TagInterface $tag): TagsSubjectInterface;
 
     /**
      * Returns the tags
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection|TagInterface[]
+     * @return Collection|TagInterface[]
      */
-    public function getTags();
+    public function getTags(): Collection;
 }

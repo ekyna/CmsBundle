@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity\Editor;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Component\Resource\Model as RM;
+use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
+use Ekyna\Component\Resource\Model as RM;
 
 /**
  * Class Row
- * @package Ekyna\Bundle\CmsBundle\Entity
- * @author  Etienne Dauvergne <contact@ekyna.com>
+ * @package      Ekyna\Bundle\CmsBundle\Entity
+ * @author       Etienne Dauvergne <contact@ekyna.com>
  */
 class Row implements EM\RowInterface
 {
@@ -22,25 +25,10 @@ class Row implements EM\RowInterface
     }
 
 
-    /**
-     * @var integer
-     */
-    protected $id;
-
-    /**
-     * @var EM\ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var ArrayCollection|EM\BlockInterface[]
-     */
-    protected $blocks;
+    protected ?int                   $id        = null;
+    protected ?EM\ContainerInterface $container = null;
+    protected ?string                $name      = null;
+    protected Collection             $blocks;
 
 
     /**
@@ -68,7 +56,7 @@ class Row implements EM\RowInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getId(): ?int
     {
@@ -76,9 +64,9 @@ class Row implements EM\RowInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setContainer(EM\ContainerInterface $container = null)
+    public function setContainer(EM\ContainerInterface $container = null): EM\RowInterface
     {
         $this->container = $container;
 
@@ -86,17 +74,17 @@ class Row implements EM\RowInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getContainer()
+    public function getContainer(): ?EM\ContainerInterface
     {
         return $this->container;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setName($name)
+    public function setName(string $name = null): EM\RowInterface
     {
         $this->name = $name;
 
@@ -104,17 +92,17 @@ class Row implements EM\RowInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setBlocks(ArrayCollection $blocks)
+    public function setBlocks(Collection $blocks): EM\RowInterface
     {
         foreach ($blocks as $block) {
             $this->addBlock($block);
@@ -124,9 +112,9 @@ class Row implements EM\RowInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function addBlock(EM\BlockInterface $block)
+    public function addBlock(EM\BlockInterface $block): EM\RowInterface
     {
         $block->setRow($this);
         $this->blocks->add($block);
@@ -135,38 +123,38 @@ class Row implements EM\RowInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function removeBlock(EM\BlockInterface $block)
+    public function removeBlock(EM\BlockInterface $block): EM\RowInterface
     {
-        $block->setRow(null);
+        $block->setRow();
         $this->blocks->removeElement($block);
 
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getBlocks()
+    public function getBlocks(): Collection
     {
         return $this->blocks;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isFirst()
+    public function isFirst(): bool
     {
         return 0 == $this->position;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isLast()
+    public function isLast(): bool
     {
-        if (null !== $this->container && ($this->container->getRows()->count() - 1 > $this->position)) {
+        if ($this->container && ($this->container->getRows()->count() - 1 > $this->position)) {
             return false;
         }
 
@@ -174,9 +162,9 @@ class Row implements EM\RowInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isAlone()
+    public function isAlone(): bool
     {
         if (null === $this->container) {
             return true;
@@ -186,19 +174,19 @@ class Row implements EM\RowInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isNamed()
+    public function isNamed(): bool
     {
-        return 0 < strlen($this->name);
+        return !empty($this->name);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getEntityTag()
+    public function getEntityTag(): string
     {
-        if (0 == strlen($this->name) && null !== $this->container) {
+        if (empty($this->name) && null !== $this->container) {
             return $this->container->getEntityTag();
         }
 
@@ -206,9 +194,9 @@ class Row implements EM\RowInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public static function getEntityTagPrefix()
+    public static function getEntityTagPrefix(): string
     {
         return 'ekyna_cms.row';
     }

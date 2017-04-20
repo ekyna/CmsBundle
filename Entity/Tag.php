@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CmsBundle\Model\TagInterface;
@@ -7,39 +9,16 @@ use Ekyna\Bundle\CmsBundle\Model\Themes;
 
 /**
  * Class Tag
- * @package Ekyna\Bundle\CmsBundle\Entity
- * @author  Etienne Dauvergne <contact@ekyna.com>
+ * @package      Ekyna\Bundle\CmsBundle\Entity
+ * @author       Etienne Dauvergne <contact@ekyna.com>
  */
 class Tag implements TagInterface
 {
-    /**
-     * @var int
-     */
-    private $id;
+    private ?int    $id    = null;
+    private ?string $name  = null;
+    private string  $theme = Themes::THEME_DEFAULT;
+    private ?string $icon  = null;
 
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var string
-     */
-    private $theme;
-
-    /**
-     * @var string
-     */
-    private $icon;
-
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->theme = Themes::THEME_DEFAULT;
-    }
 
     /**
      * Returns the string representation.
@@ -52,7 +31,7 @@ class Tag implements TagInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getId(): ?int
     {
@@ -60,17 +39,17 @@ class Tag implements TagInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setName($name)
+    public function setName(string $name = null): TagInterface
     {
         $this->name = $name;
 
@@ -78,17 +57,17 @@ class Tag implements TagInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getIcon()
+    public function getIcon(): ?string
     {
         return $this->icon;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setIcon($icon)
+    public function setIcon(string $icon = null): TagInterface
     {
         $this->icon = $icon;
 
@@ -96,17 +75,17 @@ class Tag implements TagInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTheme()
+    public function getTheme(): string
     {
         return $this->theme;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setTheme($theme)
+    public function setTheme(string $theme): TagInterface
     {
         $this->theme = $theme;
 

@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Slide;
 
-use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
 use Ekyna\Bundle\MediaBundle\Form\Type\MediaChoiceType;
 use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
 use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
+use Ekyna\Bundle\MediaBundle\Repository\MediaRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use function Symfony\Component\Translation\t;
 
 /**
  * Class ImageType
@@ -18,26 +22,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ImageType extends AbstractType
 {
-    /**
-     * @var MediaRepository
-     */
-    private $mediaRepository;
+    private MediaRepository $mediaRepository;
 
-
-    /**
-     * Constructor.
-     *
-     * @param MediaRepository $mediaRepository
-     */
     public function __construct(MediaRepository $mediaRepository)
     {
         $this->mediaRepository = $mediaRepository;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new CallbackTransformer(
             function ($data) { // Transform
@@ -57,21 +49,15 @@ class ImageType extends AbstractType
         ));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'label' => 'ekyna_core.field.image',
+            'label' => t('field.image', [], 'EkynaUi'),
             'types' => [MediaTypes::IMAGE],
         ]);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return MediaChoiceType::class;
     }

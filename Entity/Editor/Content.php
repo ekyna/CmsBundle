@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity\Editor;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Component\Resource\Model as RM;
 
@@ -16,20 +19,9 @@ class Content implements EM\ContentInterface
     use RM\TaggedEntityTrait;
     use RM\TimestampableTrait;
 
-    /**
-     * @var integer
-     */
-    protected $id;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var ArrayCollection|EM\ContainerInterface[]
-     */
-    protected $containers;
+    protected ?int       $id   = null;
+    protected ?string    $name = null;
+    protected Collection $containers;
 
 
     /**
@@ -55,7 +47,7 @@ class Content implements EM\ContentInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getId(): ?int
     {
@@ -65,7 +57,7 @@ class Content implements EM\ContentInterface
     /**
      * @inheritDoc
      */
-    public function setName($name)
+    public function setName(string $name = null): EM\ContentInterface
     {
         $this->name = $name;
 
@@ -75,15 +67,15 @@ class Content implements EM\ContentInterface
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setContainers(ArrayCollection $containers)
+    public function setContainers(Collection $containers): EM\ContentInterface
     {
         foreach ($containers as $container) {
             $this->addContainer($container);
@@ -93,9 +85,9 @@ class Content implements EM\ContentInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function addContainer(EM\ContainerInterface $container)
+    public function addContainer(EM\ContainerInterface $container): EM\ContentInterface
     {
         $container->setContent($this);
         $this->containers->add($container);
@@ -104,36 +96,36 @@ class Content implements EM\ContentInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function removeContainer(EM\ContainerInterface $container)
+    public function removeContainer(EM\ContainerInterface $container): EM\ContentInterface
     {
-        $container->setContent(null);
+        $container->setContent();
         $this->containers->removeElement($container);
 
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getContainers()
+    public function getContainers(): Collection
     {
         return $this->containers;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isNamed()
+    public function isNamed(): bool
     {
-        return 0 < strlen($this->name);
+        return !empty($this->name);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public static function getEntityTagPrefix()
+    public static function getEntityTagPrefix(): string
     {
         return 'ekyna_cms.content';
     }

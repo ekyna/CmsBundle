@@ -1,0 +1,44 @@
+# Liip Imagine
+liip_imagine:
+    filter_sets:
+        cms_container_background:
+            cache: local_media
+            data_loader: local_media
+            format: png
+            filters:
+                relative_resize: { widen: 1200 }
+            post_processors:
+                jpegoptim: { strip_all: true, max: "%ekyna_media.image.quality.jpeg%", progressive: true }
+                pngquant: { quality: "%ekyna_media.image.quality.png%" }
+        cms_block_image:
+            cache: local_media
+            data_loader: local_media
+            filters:
+                relative_resize: { widen: 1140 }
+            post_processors:
+                jpegoptim: { strip_all: true, max: "%ekyna_media.image.quality.jpeg%", progressive: true }
+                pngquant: { quality: "%ekyna_media.image.quality.png%" }
+        cms_block_feature:
+            cache: local_media
+            data_loader: local_media
+            filters:
+                thumbnail: { size: [ 600, 600 ], mode: outbound }
+            post_processors:
+                jpegoptim: { strip_all: true, max: "%ekyna_media.image.quality.jpeg%", progressive: true }
+                pngquant: { quality: "%ekyna_media.image.quality.png%" }
+        cms_block_tab:
+            cache: local_media
+            data_loader: local_media
+            filters:
+                thumbnail: { size: [ 820, 462 ], mode: outbound }
+            post_processors:
+                jpegoptim: { strip_all: true, max: "%ekyna_media.image.quality.jpeg%", progressive: true }
+                pngquant: { quality: "%ekyna_media.image.quality.png%" }
+        cms_slideshow_hero:
+            cache: local_media
+            data_loader: local_media
+            filters:
+                relative_resize: { widen: 570 }
+            post_processors:
+                jpegoptim: { strip_all: true, max: "%ekyna_media.image.quality.jpeg%", progressive: true }
+                pngquant: { quality: "%ekyna_media.image.quality.png%" }

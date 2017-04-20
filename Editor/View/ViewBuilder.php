@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\View;
 
 use Ekyna\Bundle\CmsBundle\Editor\EditorAwareInterface;
@@ -23,7 +25,7 @@ class ViewBuilder implements EditorAwareInterface
      *
      * @return ContentView
      */
-    public function buildContent(Model\ContentInterface $content)
+    public function buildContent(Model\ContentInterface $content): ContentView
     {
         $view = new ContentView();
         $attributes = $view->getAttributes()->addClass('cms-content');
@@ -56,7 +58,7 @@ class ViewBuilder implements EditorAwareInterface
      *
      * @return ContainerView
      */
-    public function buildContainer(Model\ContainerInterface $container)
+    public function buildContainer(Model\ContainerInterface $container): ContainerView
     {
         // Rendering source (for copy containers)
         $source = is_null($container->getCopy()) ? $container : $container->getCopy();
@@ -104,7 +106,7 @@ class ViewBuilder implements EditorAwareInterface
         $this->editor->getContainerPlugin($source->getType())->render($source, $view);
 
         // Don't build rows if the plugin did generate a content
-        if (0 == strlen($view->innerContent)) {
+        if (empty($view->innerContent)) {
             foreach ($source->getRows() as $row) {
                 $view->rows[] = $this->buildRow($row);
             }
@@ -120,7 +122,7 @@ class ViewBuilder implements EditorAwareInterface
      *
      * @return RowView
      */
-    public function buildRow(Model\RowInterface $row)
+    public function buildRow(Model\RowInterface $row): RowView
     {
         $view = new RowView();
         $attributes = $view->getAttributes()->addClass('cms-row');
@@ -162,7 +164,7 @@ class ViewBuilder implements EditorAwareInterface
      *
      * @return BlockView
      */
-    public function buildBlock(Model\BlockInterface $block)
+    public function buildBlock(Model\BlockInterface $block): BlockView
     {
         $editable = $this->editor->isEnabled();
 

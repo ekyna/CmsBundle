@@ -1,0 +1,203 @@
+label: Contenu
+settings:
+    cookies:
+        label: Cookies
+        mode:
+            label: Mode
+            header: En-tête
+            dialog: Dialogue
+        header_text: Texte du mode en-tête
+        dialog_text: Texte du mode dialogue
+        close: Masquer ce message
+        learn: En savoir plus
+page:
+    label:
+        singular: Page
+        plural: Pages
+    header:
+        list: Pages <small>Liste des pages</small>
+        show: Détail de la page <small>%name%</small>
+        content_show: Contenu de la page <small>%name%</small>
+        new: Créer une nouvelle page
+        new_child: Créer une nouvelle page sous <small>%name%</small>
+        edit: Modifier la page <small>%name%</small>
+        content_edit: Modifier le contenu de la page <small>%name%</small>
+        remove: Supprimer la page <small>%name%</small>
+    button:
+        list: Liste des pages
+        show: Détail de la page
+        new: Nouvelle page
+        edit: Modifier la page
+        remove: Supprimer la page
+    field:
+        controller: Gabarit
+    value:
+        root: Racine
+    alert:
+        no_item: Aucune page configuré
+        do_not_remove_static: Cette page ne peut être supprimée.
+        parent_disabled: Cette page ne peut être activée car une page parent est désactivée.
+        children_disabled: Les sous-pages ont été désactivées.
+        menus_disabled: Les menus liés à cette page ont été désactivés.
+        disabled:
+            allow_as_admin: >
+                Cette page est désactivé.<br>
+                En tant qu'administrateur, vous êtes autorisé à la consulter.
+            temporary_redirect: >
+                La page à laquelle vous tentiez d'accéder est temporairement désactivée.
+menu:
+    label:
+        singular: Menu
+        plural: Menus
+    header:
+        list: Menus <small>Liste des menus</small>
+        show: Détail du menu <small>%name%</small>
+        new: Créer un nouveau menu
+        new_child: Créer un nouveau menu sous <small>%name%</small>
+        edit: Modifier le menu <small>%name%</small>
+        remove: Supprimer le menu <small>%name%</small>
+    button:
+        list: Liste des menus
+        show: Détail du menu
+        new: Nouveau menu
+        edit: Modifier le menu
+        remove: Supprimer le menu
+    alert:
+        no_item: Aucun menu configuré
+        cant_enable_as_disabled_page: Ce menu ne peut être activé car la page ciblée est inactive.
+notice:
+    label:
+        singular: Annonce
+        plural: Annonces
+    header:
+        list: Annonces <small>Liste des annonces</small>
+        show: Détail de l'annonce <small>%name%</small>
+        new: Créer une nouvelle annonce
+        edit: Modifier l'annonce <small>%name%</small>
+        remove: Supprimer l'annonce <small>%name%</small>
+    button:
+        list: Liste des annonces
+        show: Détail de l'annonce
+        new: Nouvelle annonce
+        edit: Modifier l'annonce
+        remove: Supprimer l'annonce
+    alert:
+        no_item: Aucune annonce configuré
+slide_show:
+    label:
+        singular: Carousel
+        plural: Carousels
+    header:
+        list: Carousels <small>Liste des carousels</small>
+        show: Détail du carousel <small>%name%</small>
+        new: Créer un nouveau carousel
+        edit: Modifier le carousel <small>%name%</small>
+        remove: Supprimer le carousel <small>%name%</small>
+    button:
+        list: Liste des carousels
+        show: Détail du carousel
+        new: Nouveau carousel
+        edit: Modifier le carousel
+        remove: Supprimer le carousel
+    field:
+        render: Rendu
+    alert:
+        no_item: Aucun carousel configuré
+slide:
+    label:
+        singular: Scène
+        plural: Scènes
+    header:
+        list: Scènes <small>Liste des scènes</small>
+        show: Détail de la scène <small>%name%</small>
+        new: Créer une nouvelle scène
+        edit: Modifier la scène <small>%name%</small>
+        remove: Supprimer la scène <small>%name%</small>
+    button:
+        list: Liste des scènes
+        show: Détail de la scène
+        new: Nouvelle scène
+        edit: Modifier la scène
+        remove: Supprimer la scène
+    field:
+        background_image: Image de fond
+        background_color: Couleur de fond
+    type:
+        default:
+            label: Défaut
+            button_url: Lien bouton
+            button_label: Libellé bouton
+        hero:
+            label: Héro
+    alert:
+        no_item: Aucune scène configuré
+tag:
+    label:
+        singular: Tag
+        plural: Tags
+    header:
+        list: Tags <small>Liste des tags</small>
+        show: Détail du tag <small>%name%</small>
+        new: Créer un nouveau tag
+        edit: Modifier le tag <small>%name%</small>
+        remove: Supprimer le tag <small>%name%</small>
+    button:
+        list: Liste des tags
+        show: Détail du tag
+        new: Nouveau tag
+        edit: Modifier le tag
+        remove: Supprimer le tag
+    alert:
+        no_item: Aucun tag configuré
+seo:
+    label:
+        singular: Référencement
+        plural: Référencements
+content:
+    label:
+        singular: Contenu
+        plural: Contenus
+container:
+    label:
+        singular: Conteneur
+        plural: Conteneurs
+row:
+    label:
+        singular: Ligne
+        plural: Lignes
+block:
+    label:
+        singular: Bloc
+        plural: Blocs
+    field:
+        animation: Animation
+        theme: Thème
+        style: Style
+        duration: Durée (ms)
+        offset: Offset (px)
+        once: Un seule fois
+        hover: Survol
+        align: Alignement
+        max_width: Larg. max. (px/%)
+        margin_top: Marge haut (px)
+        poster: Poster
+        muted: Sans son
+        autoplay: Autoplay
+        loop: Boucle
+        player: Lecteur
+theme:
+    default: Par défaut
+    primary: Principal
+    success: Succès
+    warning: Attention
+    danger:  Danger
+field:
+    main_menu: Menu principal
+    footer_menu: Menu pied de page
+    show_main_menu: Afficher dans le menu principal
+    show_footer_menu: Afficher dans le menu du pied de page
+wide_search:
+    placeholder: Rechercher ...
+    title: Résultats de votre recherche sur "{{expression}}"
+editor:
+    title: Editeur partie publique

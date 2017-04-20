@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Listener;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
-use Doctrine\ORM\Events;
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 
@@ -13,14 +13,10 @@ use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
  * @package Ekyna\Bundle\CmsBundle\Listener
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class ContentSubjectSubscriber implements EventSubscriber
+class ContentSubjectSubscriber
 {
-    /**
-     * @param LoadClassMetadataEventArgs $eventArgs
-     */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs): void
     {
-        /** @var \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata */
         $metadata = $eventArgs->getClassMetadata();
 
         // Prevent doctrine:generate:entities command bug
@@ -52,15 +48,5 @@ class ContentSubjectSubscriber implements EventSubscriber
                 ],
             ],
         ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::loadClassMetadata,
-        ];
     }
 }

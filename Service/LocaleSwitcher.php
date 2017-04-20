@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service;
 
-use Ekyna\Bundle\AdminBundle\Helper\ResourceHelper;
+use Ekyna\Bundle\ResourceBundle\Helper\ResourceHelper;
+use Ekyna\Component\Resource\Manager\ManagerFactoryInterface;
 use Ekyna\Component\Resource\Model\ResourceInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+use function get_class;
 
 /**
  * Class LocaleSwitcher
@@ -14,52 +19,24 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class LocaleSwitcher
 {
-    /**
-     * @var ResourceHelper
-     */
-    private $resourceHelper;
+    private ResourceHelper          $resourceHelper;
+    private ManagerFactoryInterface $managerFactory;
+    private UrlGeneratorInterface   $urlGenerator;
+    private RequestStack            $requestStack;
+    private array                   $locales;
 
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
+    private ?ResourceInterface $resource = null;
+    private ?array             $urls     = null;
 
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
-     * @var string[]
-     */
-    private $locales;
-
-    /**
-     * @var ResourceInterface
-     */
-    private $resource;
-
-    /**
-     * @var array
-     */
-    private $urls;
-
-
-    /**
-     * Constructor.
-     *
-     * @param ResourceHelper        $resourceHelper
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param RequestStack          $requestStack
-     * @param array                 $locales
-     */
     public function __construct(
-        ResourceHelper $resourceHelper,
-        UrlGeneratorInterface $urlGenerator,
-        RequestStack $requestStack,
-        array $locales
+        ResourceHelper          $resourceHelper,
+        ManagerFactoryInterface $managerFactory,
+        UrlGeneratorInterface   $urlGenerator,
+        RequestStack            $requestStack,
+        array                   $locales
     ) {
         $this->resourceHelper = $resourceHelper;
+        $this->managerFactory = $managerFactory;
         $this->urlGenerator = $urlGenerator;
         $this->requestStack = $requestStack;
         $this->locales = $locales;
@@ -67,12 +44,8 @@ class LocaleSwitcher
 
     /**
      * Sets the current resource.
-     *
-     * @param ResourceInterface $resource
-     *
-     * @return LocaleSwitcher
      */
-    public function setResource(ResourceInterface $resource = null)
+    public function setResource(?ResourceInterface $resource): LocaleSwitcher
     {
         $this->resource = $resource;
 
@@ -84,22 +57,13 @@ class LocaleSwitcher
 
     /**
      * Returns whether the resource is set.
-     *
-     * @return bool
      */
-    public function hasResource()
+    public function hasResource(): bool
     {
-        return !!$this->resource;
+        return null !== $this->resource;
     }
 
-    /**
-     * Returns the urls.
-     *
-     * @param array $locales
-     *
-     * @return array
-     */
-    public function getUrls(array $locales = [])
+    public function getUrls(array $locales = []): ?array
     {
         if (!is_null($this->urls)) {
             return $this->urls;
@@ -110,34 +74,29 @@ class LocaleSwitcher
 
         // By resource
         if ($this->resource) {
-            $this->resourceHelper->getEntityManager()->refresh($this->resource);
+            $this->managerFactory->getManager(get_class($this->resource))->refresh($this->resource);
 
             foreach ($locales as $locale) {
                 $this->urls[$locale] = $this->resourceHelper->generatePublicUrl($this->resource, false, $locale);
             }
         } // By route and parameters
-        elseif ($request = $this->requestStack->getMasterRequest()) {
+        elseif ($request = $this->requestStack->getMainRequest()) {
             $route = $request->attributes->get('_route');
             $parameters = $request->attributes->get('_route_params');
 
             foreach ($locales as $locale) {
                 $params = array_replace($parameters, ['_locale' => $locale]);
-                $this->urls[$locale] = $this->urlGenerator->generate($route, $params,
-                    UrlGeneratorInterface::ABSOLUTE_PATH);
+
+                $this->urls[$locale] = $this
+                    ->urlGenerator
+                    ->generate($route, $params, UrlGeneratorInterface::ABSOLUTE_URL);
             }
         }
 
         return $this->urls;
     }
 
-    /**
-     * Sets the urls.
-     *
-     * @param array $urls
-     *
-     * @return LocaleSwitcher
-     */
-    public function setUrls(array $urls = null)
+    public function setUrls(array $urls = null): LocaleSwitcher
     {
         $this->urls = $urls;
 

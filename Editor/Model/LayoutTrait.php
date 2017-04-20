@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
 /**
@@ -9,10 +11,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Model;
  */
 trait LayoutTrait
 {
-    /**
-     * @var array
-     */
-    protected $layout = [];
+    protected array $layout = [];
 
 
     /**
@@ -20,7 +19,7 @@ trait LayoutTrait
      *
      * @param array $layout
      */
-    public function setLayout(array $layout)
+    public function setLayout(array $layout): void
     {
         $this->layout = $layout;
     }
@@ -30,7 +29,7 @@ trait LayoutTrait
      *
      * @return array
      */
-    public function getLayout()
+    public function getLayout(): array
     {
         return $this->layout;
     }

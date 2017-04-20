@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Adapter;
 
 use Ekyna\Bundle\CmsBundle\Editor\EditorAwareTrait;

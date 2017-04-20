@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
+use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginInterface as BaseInterface;
 use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Editor\View\WidgetView;
-use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
@@ -23,7 +27,7 @@ interface PluginInterface extends BaseInterface
      * @param BlockInterface $block
      * @param array          $data
      */
-    public function create(BlockInterface $block, array $data = []);
+    public function create(BlockInterface $block, array $data = []): void;
 
     /**
      * Updates a block.
@@ -32,16 +36,18 @@ interface PluginInterface extends BaseInterface
      * @param Request        $request
      * @param array          $options
      *
-     * @return \Symfony\Component\HttpFoundation\Response|null
+     * @return Response|null
+     *
+     * @throws EditorExceptionInterface
      */
-    public function update(BlockInterface $block, Request $request, array $options = []);
+    public function update(BlockInterface $block, Request $request, array $options = []): ?Response;
 
     /**
      * Removes a block.
      *
      * @param BlockInterface $block
      */
-    public function remove(BlockInterface $block);
+    public function remove(BlockInterface $block): void;
 
     /**
      * Validates the block (data).
@@ -49,7 +55,7 @@ interface PluginInterface extends BaseInterface
      * @param BlockInterface            $block
      * @param ExecutionContextInterface $context
      */
-    public function validate(BlockInterface $block, ExecutionContextInterface $context);
+    public function validate(BlockInterface $block, ExecutionContextInterface $context): void;
 
     /**
      * Returns the block content.
@@ -59,7 +65,7 @@ interface PluginInterface extends BaseInterface
      * @param AdapterInterface $adapter
      * @param array            $options
      */
-    public function render(BlockInterface $block, BlockView $view, AdapterInterface $adapter, array $options);
+    public function render(BlockInterface $block, BlockView $view, AdapterInterface $adapter, array $options): void;
 
     /**
      * Creates the widget view.
@@ -71,14 +77,19 @@ interface PluginInterface extends BaseInterface
      *
      * @return WidgetView
      */
-    public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0);
+    public function createWidget(
+        BlockInterface $block,
+        AdapterInterface $adapter,
+        array $options,
+        int $position = 0
+    ): WidgetView;
 
     /**
      * Returns whether the block is supported.
      *
      * @param BlockInterface $block
      *
-     * @return boolean
+     * @return bool
      */
-    public function supports(BlockInterface $block);
+    public function supports(BlockInterface $block): bool;
 }

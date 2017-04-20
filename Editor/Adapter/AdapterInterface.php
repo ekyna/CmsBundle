@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Adapter;
 
 use Ekyna\Bundle\CmsBundle\Editor\EditorAwareInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
-use Ekyna\Bundle\CmsBundle\Editor\View;
 use Ekyna\Bundle\CmsBundle\Editor\Model;
+use Ekyna\Bundle\CmsBundle\Editor\View;
 
 /**
  * Interface AdapterInterface
@@ -14,11 +16,11 @@ use Ekyna\Bundle\CmsBundle\Editor\Model;
  */
 interface AdapterInterface extends EditorAwareInterface
 {
-    const SIZE           = 'size';
-    const ORDER          = 'order';
-    const OFFSET         = 'offset';
-    const PADDING_TOP    = 'padding_top';
-    const PADDING_BOTTOM = 'padding_bottom';
+    public const SIZE           = 'size';
+    public const ORDER          = 'order';
+    public const OFFSET         = 'offset';
+    public const PADDING_TOP    = 'padding_top';
+    public const PADDING_BOTTOM = 'padding_bottom';
 
 
     /**
@@ -27,7 +29,7 @@ interface AdapterInterface extends EditorAwareInterface
      * @param Model\ContentInterface $content
      * @param View\ContentView       $view
      */
-    public function buildContent(Model\ContentInterface $content, View\ContentView $view);
+    public function buildContent(Model\ContentInterface $content, View\ContentView $view): void;
 
     /**
      * Builds the container view.
@@ -35,7 +37,7 @@ interface AdapterInterface extends EditorAwareInterface
      * @param Model\ContainerInterface $container
      * @param View\ContainerView       $view
      */
-    public function buildContainer(Model\ContainerInterface $container, View\ContainerView $view);
+    public function buildContainer(Model\ContainerInterface $container, View\ContainerView $view): void;
 
     /**
      * Builds the row view.
@@ -43,7 +45,7 @@ interface AdapterInterface extends EditorAwareInterface
      * @param Model\RowInterface $row
      * @param View\RowView       $view
      */
-    public function buildRow(Model\RowInterface $row, View\RowView $view);
+    public function buildRow(Model\RowInterface $row, View\RowView $view): void;
 
     /**
      * Builds the column view.
@@ -51,7 +53,7 @@ interface AdapterInterface extends EditorAwareInterface
      * @param Model\BlockInterface $block
      * @param View\BlockView       $view
      */
-    public function buildBlock(Model\BlockInterface $block, View\BlockView $view);
+    public function buildBlock(Model\BlockInterface $block, View\BlockView $view): void;
 
     /**
      * Updates the container layout.
@@ -61,7 +63,7 @@ interface AdapterInterface extends EditorAwareInterface
      *
      * @throws EditorExceptionInterface
      */
-    public function updateContainerLayout(Model\ContainerInterface $container, array $data);
+    public function updateContainerLayout(Model\ContainerInterface $container, array $data): void;
 
     /**
      * Updates the row layout.
@@ -71,7 +73,7 @@ interface AdapterInterface extends EditorAwareInterface
      *
      * @throws EditorExceptionInterface
      */
-    public function updateRowLayout(Model\RowInterface $row, array $data);
+    public function updateRowLayout(Model\RowInterface $row, array $data): void;
 
     /**
      * Updates the block layout.
@@ -81,49 +83,49 @@ interface AdapterInterface extends EditorAwareInterface
      *
      * @throws EditorExceptionInterface
      */
-    public function updateBlockLayout(Model\BlockInterface $block, array $data);
+    public function updateBlockLayout(Model\BlockInterface $block, array $data): void;
 
     /**
      * Expands the block.
      *
      * @param Model\BlockInterface $block
      */
-    public function expandBlock(Model\BlockInterface $block);
+    public function expandBlock(Model\BlockInterface $block): void;
 
     /**
      * Compresses the block.
      *
      * @param Model\BlockInterface $block
      */
-    public function compressBlock(Model\BlockInterface $block);
+    public function compressBlock(Model\BlockInterface $block): void;
 
     /**
      * Pulls the block.
      *
      * @param Model\BlockInterface $block
      */
-    public function pullBlock(Model\BlockInterface $block);
+    public function pullBlock(Model\BlockInterface $block): void;
 
     /**
      * Pushes the block.
      *
      * @param Model\BlockInterface $block
      */
-    public function pushBlock(Model\BlockInterface $block);
+    public function pushBlock(Model\BlockInterface $block): void;
 
     /**
      * Offsets the block to the left.
      *
      * @param Model\BlockInterface $block
      */
-    public function offsetLeftBlock(Model\BlockInterface $block);
+    public function offsetLeftBlock(Model\BlockInterface $block): void;
 
     /**
      * Offsets the block to the right.
      *
      * @param Model\BlockInterface $block
      */
-    public function offsetRightBlock(Model\BlockInterface $block);
+    public function offsetRightBlock(Model\BlockInterface $block): void;
 
     /**
      * Returns the block's image responsive map.
@@ -132,5 +134,5 @@ interface AdapterInterface extends EditorAwareInterface
      *
      * @return array
      */
-    public function getImageResponsiveMap(Model\BlockInterface $block);
+    public function getImageResponsiveMap(Model\BlockInterface $block): array;
 }

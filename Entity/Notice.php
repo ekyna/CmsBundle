@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use DateTime;
@@ -18,46 +20,13 @@ use Ekyna\Component\Resource\Model\AbstractTranslatable;
  */
 class Notice extends AbstractTranslatable implements NoticeInterface
 {
-    /**
-     * @var int
-     */
-    private $id;
+    private ?int      $id      = null;
+    private ?string   $name    = null;
+    private string    $theme   = Themes::THEME_DEFAULT;
+    private ?string   $icon    = null;
+    private ?DateTime $startAt = null;
+    private ?DateTime $endAt   = null;
 
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var string
-     */
-    private $theme;
-
-    /**
-     * @var string
-     */
-    private $icon;
-
-    /**
-     * @var DateTime
-     */
-    private $startAt;
-
-    /**
-     * @var DateTime
-     */
-    private $endAt;
-
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->theme = Themes::THEME_DEFAULT;
-    }
 
     /**
      * Returns the string representation.
@@ -98,7 +67,7 @@ class Notice extends AbstractTranslatable implements NoticeInterface
     /**
      * @inheritDoc
      */
-    public function getTheme(): ?string
+    public function getTheme(): string
     {
         return $this->theme;
     }

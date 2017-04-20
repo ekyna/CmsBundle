@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Editor\View\WidgetView;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
@@ -15,7 +19,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class TinymcePlugin extends AbstractPlugin
 {
-    const NAME = 'ekyna_block_tinymce';
+    public const NAME = 'ekyna_block_tinymce';
 
 
     /**
@@ -31,9 +35,9 @@ class TinymcePlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function create(BlockInterface $block, array $data = [])
+    public function create(BlockInterface $block, array $data = []): void
     {
         parent::create($block, $data);
 
@@ -47,9 +51,9 @@ class TinymcePlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function update(BlockInterface $block, Request $request, array $options = [])
+    public function update(BlockInterface $block, Request $request, array $options = []): ?Response
     {
         if (!$request->isMethod('POST')) {
             throw new InvalidOperationException('Tinymce block plugin only supports POST request.');
@@ -68,9 +72,9 @@ class TinymcePlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function remove(BlockInterface $block)
+    public function remove(BlockInterface $block): void
     {
         // TODO remove content images ?
 
@@ -78,12 +82,12 @@ class TinymcePlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function validate(BlockInterface $block, ExecutionContextInterface $context)
+    public function validate(BlockInterface $block, ExecutionContextInterface $context): void
     {
         $translationData = $block->translate($this->localeProvider->getCurrentLocale())->getData();
-        if (!array_key_exists('content', $translationData) || 0 == strlen($translationData['content'])) {
+        if (!array_key_exists('content', $translationData) || empty($translationData['content'])) {
             $context->addViolation(self::INVALID_DATA);
         }
     }
@@ -91,8 +95,12 @@ class TinymcePlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0)
-    {
+    public function createWidget(
+        BlockInterface $block,
+        AdapterInterface $adapter,
+        array $options,
+        int $position = 0
+    ): WidgetView {
         $view = parent::createWidget($block, $adapter, $options, $position);
 
         $translationData = $block->translate($this->localeProvider->getCurrentLocale(), true)->getData();
@@ -106,25 +114,25 @@ class TinymcePlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return 'Html';
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getJavascriptFilePath()
+    public function getJavascriptFilePath(): string
     {
         return 'ekyna-cms/editor/plugin/block/tinymce';
     }

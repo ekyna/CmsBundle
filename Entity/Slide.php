@@ -1,44 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
+use Ekyna\Bundle\CmsBundle\Model\SlideInterface;
+use Ekyna\Bundle\CmsBundle\Model\SlideShowInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
- * Class Slider
+ * Class Slide
  * @package Ekyna\Bundle\CmsBundle\Entity
- * @author  Etienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  *
  * @method SlideTranslation translate($locale = null, $create = false)
+ * @method Collection|SlideTranslation[] getTranslations()
  */
-class Slide extends RM\AbstractTranslatable implements RM\SortableInterface, RM\ResourceInterface
+class Slide extends RM\AbstractTranslatable implements SlideInterface
 {
     use RM\SortableTrait;
 
-    /**
-     * @var int
-     */
-    private $id;
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var SlideShow
-     */
-    private $slideShow;
-
-    /**
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @var array
-     */
-    private $data = [];
+    private ?int       $id        = null;
+    private ?string    $name      = null;
+    private ?SlideShow $slideShow = null;
+    private ?string    $type      = null;
+    private array      $data      = [];
 
 
     /**
@@ -52,9 +39,7 @@ class Slide extends RM\AbstractTranslatable implements RM\SortableInterface, RM\
     }
 
     /**
-     * Returns the id.
-     *
-     * @return int
+     * @inheritDoc
      */
     public function getId(): ?int
     {
@@ -62,23 +47,17 @@ class Slide extends RM\AbstractTranslatable implements RM\SortableInterface, RM\
     }
 
     /**
-     * Returns the name.
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * Sets the name.
-     *
-     * @param string $name
-     *
-     * @return Slide
+     * @inheritDoc
      */
-    public function setName($name)
+    public function setName(string $name): SlideInterface
     {
         $this->name = $name;
 
@@ -86,23 +65,17 @@ class Slide extends RM\AbstractTranslatable implements RM\SortableInterface, RM\
     }
 
     /**
-     * Returns the slide show.
-     *
-     * @return SlideShow
+     * @inheritDoc
      */
-    public function getSlideShow()
+    public function getSlideShow(): ?SlideShowInterface
     {
         return $this->slideShow;
     }
 
     /**
-     * Sets the slide show.
-     *
-     * @param SlideShow $slideShow
-     *
-     * @return Slide
+     * @inheritDoc
      */
-    public function setSlideShow(SlideShow $slideShow)
+    public function setSlideShow(SlideShowInterface $slideShow = null): SlideInterface
     {
         $this->slideShow = $slideShow;
 
@@ -110,23 +83,17 @@ class Slide extends RM\AbstractTranslatable implements RM\SortableInterface, RM\
     }
 
     /**
-     * Returns the type.
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
     /**
-     * Sets the type.
-     *
-     * @param string $type
-     *
-     * @return Slide
+     * @inheritDoc
      */
-    public function setType($type)
+    public function setType(string $type): SlideInterface
     {
         $this->type = $type;
 
@@ -134,23 +101,17 @@ class Slide extends RM\AbstractTranslatable implements RM\SortableInterface, RM\
     }
 
     /**
-     * Returns the data.
-     *
-     * @return array
+     * @inheritDoc
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
     /**
-     * Sets the data.
-     *
-     * @param array $data
-     *
-     * @return Slide
+     * @inheritDoc
      */
-    public function setData(array $data)
+    public function setData(array $data): SlideInterface
     {
         $this->data = $data;
 

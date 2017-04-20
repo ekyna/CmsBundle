@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -20,149 +23,149 @@ interface ContainerInterface
     /**
      * Sets the content.
      *
-     * @param ContentInterface $content
+     * @param ContentInterface|null $content
      *
      * @return ContainerInterface|$this
      */
-    public function setContent(ContentInterface $content = null);
+    public function setContent(ContentInterface $content = null): ContainerInterface;
 
     /**
      * Returns the content.
      *
-     * @return ContentInterface
+     * @return ContentInterface|null
      */
-    public function getContent();
+    public function getContent(): ?ContentInterface;
 
     /**
      * Sets the copied container.
      *
-     * @param ContainerInterface $copy
+     * @param ContainerInterface|null $copy
      *
-     * @return ContainerInterface
+     * @return ContainerInterface|$this
      */
-    public function setCopy(ContainerInterface $copy = null);
+    public function setCopy(ContainerInterface $copy = null): ContainerInterface;
 
     /**
      * Returns the copied container.
      *
-     * @return ContainerInterface
+     * @return ContainerInterface|null
      */
-    public function getCopy();
+    public function getCopy(): ?ContainerInterface;
 
     /**
      * Sets the name.
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return ContainerInterface|$this
      */
-    public function setName($name);
+    public function setName(string $name = null): ContainerInterface;
 
     /**
      * Returns the name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getName();
+    public function getName(): ?string;
 
     /**
      * Sets the title.
      *
-     * @param string $title
+     * @param string|null $title
      *
      * @return ContainerInterface|$this
      */
-    public function setTitle($title);
+    public function setTitle(string $title = null): ContainerInterface;
 
     /**
      * Returns the title.
      *
-     * @return string
+     * @return string|null
      */
-    public function getTitle();
+    public function getTitle(): ?string;
 
     /**
      * Sets the type.
      *
      * @param string $type
      *
-     * @return ContentInterface|$this
+     * @return ContainerInterface|$this
      */
-    public function setType($type);
+    public function setType(string $type): ContainerInterface;
 
     /**
      * Returns the type.
      *
-     * @return string
+     * @return string|null
      */
-    public function getType();
+    public function getType(): ?string;
 
     /**
      * Sets the rows.
      *
      * @param ArrayCollection|RowInterface[] $rows
      *
-     * @return ContentInterface|$this
+     * @return ContainerInterface|$this
      */
-    public function setRows(ArrayCollection $rows);
+    public function setRows(ArrayCollection $rows): ContainerInterface;
 
     /**
      * Adds the row.
      *
      * @param RowInterface $row
      *
-     * @return ContentInterface|$this
+     * @return ContainerInterface|$this
      */
-    public function addRow(RowInterface $row);
+    public function addRow(RowInterface $row): ContainerInterface;
 
     /**
      * Removes the row.
      *
      * @param RowInterface $row
      *
-     * @return ContentInterface|$this
+     * @return ContainerInterface|$this
      */
-    public function removeRow(RowInterface $row);
+    public function removeRow(RowInterface $row): ContainerInterface;
 
     /**
      * Returns the rows.
      *
-     * @return ArrayCollection|RowInterface[]
+     * @return Collection|RowInterface[]
      */
-    public function getRows();
+    public function getRows(): Collection;
 
     /**
      * Returns whether or not the container is the first of the content.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isFirst();
+    public function isFirst(): bool;
 
     /**
      * Returns whether or not the container is the last of the content.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isLast();
+    public function isLast(): bool;
 
     /**
      * Returns whether or not the container is the only content's child.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isAlone();
+    public function isAlone(): bool;
 
     /**
      * Returns whether or not the container is named.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isNamed();
+    public function isNamed(): bool;
 
     /**
      * Returns whether or not the container is titled.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isTitled();
+    public function isTitled(): bool;
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
@@ -11,13 +13,14 @@ use Symfony\Component\Validator\Constraint;
  */
 class Content extends Constraint
 {
-//    public $missing_row     = 'ekyna_cms.content.missing_row';
-//    public $columns_overlap = 'ekyna_cms.content.columns_overlap';
-//    public $row_too_large   = 'ekyna_cms.content.row_too_large';
-//    public $block_too_small = 'ekyna_cms.content.block_too_small';
+//    public $missingRow     = 'ekyna_cms.content.missing_row';
+//    public $columnsOverlap = 'ekyna_cms.content.columns_overlap';
+//    public $rowTooLarge    = 'ekyna_cms.content.row_too_large';
+//    public $blockTooSmall  = 'ekyna_cms.content.block_too_small';
+
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTargets()
     {

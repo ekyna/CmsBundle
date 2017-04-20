@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\SlideShow;
+
+use DOMElement;
 
 /**
  * Class Util
@@ -12,16 +16,16 @@ class DOMUtil
     /**
      * Adds the class to the dom element.
      *
-     * @param \DOMElement     $element
+     * @param DOMElement      $element
      * @param string|string[] $classes
      */
-    static public function addClass(\DOMElement $element, $classes)
+    public static function addClass(DOMElement $element, $classes): void
     {
         if (!is_array($classes)) {
             $classes = [$classes];
         }
 
-        $c = explode(' ', (string)$element->getAttribute('class'));
+        $c = explode(' ', $element->getAttribute('class'));
 
         foreach ($classes as $n) {
             if (empty($n)) {
@@ -38,13 +42,13 @@ class DOMUtil
     /**
      * Adds the style to the dom element.
      *
-     * @param \DOMElement $element
-     * @param string      $property
-     * @param string      $value
+     * @param DOMElement $element
+     * @param string     $property
+     * @param string     $value
      */
-    static public function addStyle(\DOMElement $element, $property, $value)
+    public static function addStyle(DOMElement $element, string $property, string $value): void
     {
-        $s = static::explodeStyles((string)$element->getAttribute('style'));
+        $s = static::explodeStyles($element->getAttribute('style'));
 
         $s[$property] = $value;
 
@@ -58,15 +62,17 @@ class DOMUtil
      *
      * @return array
      */
-    static public function explodeStyles($styles)
+    public static function explodeStyles(string $styles): array
     {
         $a = [];
 
         $s = explode(';', $styles);
 
         foreach ($s as $c) {
-            if (empty($c)) continue;
-            list($p, $v) = explode(':', $c);
+            if (empty($c)) {
+                continue;
+            }
+            [$p, $v] = explode(':', $c);
             $a[$p] = $v;
         }
 
@@ -80,7 +86,7 @@ class DOMUtil
      *
      * @return string
      */
-    static public function implodeStyles(array $styles)
+    public static function implodeStyles(array $styles): string
     {
         $a = [];
 

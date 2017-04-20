@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\SchemaOrg;
 
 /**
@@ -14,12 +16,12 @@ interface BuilderAwareInterface
      *
      * @param BuilderInterface $builder
      */
-    public function setSchemaBuilder(BuilderInterface $builder);
+    public function setSchemaBuilder(BuilderInterface $builder): void;
 
     /**
      * Returns the schema builder.
      *
      * @return BuilderInterface
      */
-    public function getSchemaBuilder();
+    public function getSchemaBuilder(): BuilderInterface;
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Component\Resource\Model as RM;
@@ -11,10 +13,7 @@ use Ekyna\Component\Resource\Model as RM;
  */
 class SlideTranslation extends RM\AbstractTranslation
 {
-    /**
-     * @var array
-     */
-    private $data = [];
+    private array $data = [];
 
 
     /**
@@ -22,7 +21,7 @@ class SlideTranslation extends RM\AbstractTranslation
      *
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
@@ -34,7 +33,7 @@ class SlideTranslation extends RM\AbstractTranslation
      *
      * @return SlideTranslation
      */
-    public function setData(array $data)
+    public function setData(array $data): SlideTranslation
     {
         $this->data = $data;
 

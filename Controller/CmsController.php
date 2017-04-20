@@ -1,61 +1,73 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Controller;
 
-use Ekyna\Bundle\CoreBundle\Controller\Controller;
 use Ekyna\Component\Resource\Search;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
 
 /**
  * Class CmsController
  * @package Ekyna\Bundle\CmsBundle\Controller
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class CmsController extends Controller
+class CmsController
 {
-    /**
-     * Default action.
-     *
-     * @return Response
-     */
-    public function defaultAction(): Response
+    private Environment   $twig;
+    private Search\Search $search;
+    private RequestStack  $requestStack;
+
+    public function __construct(Environment $twig, Search\Search $search, RequestStack $requestStack)
     {
-        return $this->configureSharedCache($this->render('@EkynaCms/Cms/default.html.twig'));
+        $this->twig = $twig;
+        $this->search = $search;
+        $this->requestStack = $requestStack;
+    }
+
+    /**
+     * Page action.
+     */
+    public function page(): Response
+    {
+        $content = $this->twig->render('@EkynaCms/Cms/page.html.twig');
+
+        return new Response($content);
     }
 
     /**
      * (Wide site) Search action.
-     *
-     * @param Request $request
-     *
-     * @return Response
      */
-    public function searchAction(Request $request): Response
+    public function search(Request $request): Response
     {
         $expression = $request->request->get('expression');
 
-        $results = $this->get(Search\Search::class)->search(new Search\Request($expression));
+        $results = $this->search->search(new Search\Request($expression));
 
-        return $this->render('@EkynaCms/Cms/search.html.twig', [
+        $content = $this->twig->render('@EkynaCms/Cms/search.html.twig', [
             'expression' => $expression,
             'results'    => $results,
-        ])->setPrivate();
+        ]);
+
+        $response = new Response($content);
+
+        return $response->setPrivate();
     }
 
     /**
      * Renders the footer fragment.
-     *
-     * @param string $locale
-     *
-     * @return Response
      */
-    public function footerAction(string $locale): Response
+    public function footer(string $locale): Response
     {
-        $this->get('request_stack')->getCurrentRequest()->setLocale($locale);
+        $this->requestStack->getCurrentRequest()->setLocale($locale);
 
-        return $this
-            ->render('@EkynaCms/Cms/Fragment/footer.html.twig')
-            ->setSharedMaxAge(3600);
+        $content = $this->twig->render('@EkynaCms/Cms/Fragment/footer.html.twig');
+
+        $response = new Response($content);
+
+        return $response->setSharedMaxAge(3600);
     }
 }

@@ -1,0 +1,14 @@
+fos_elastica:
+    indexes:
+        ekyna_cms.page:
+            index_name: "%env(ELASTICSEARCH_NAME)%_cms_page"
+            serializer:
+                groups: [Search]
+            indexable_callback: isIndexable
+            persistence:
+                driver: orm
+                model: "%ekyna_cms.class.page%"
+                provider:
+                    batch_size: 20
+                listener: ~
+                finder: ~

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 /**
@@ -12,16 +14,16 @@ interface SeoSubjectInterface
     /**
      * Returns the seo.
      *
-     * @return SeoInterface
+     * @return SeoInterface|null
      */
-    public function getSeo();
+    public function getSeo(): ?SeoInterface;
 
     /**
      * Sets the seo.
      *
-     * @param SeoInterface $seo
+     * @param SeoInterface|null $seo
      *
      * @return SeoSubjectInterface|$this
      */
-    public function setSeo(SeoInterface $seo = null);
+    public function setSeo(SeoInterface $seo = null): SeoSubjectInterface;
 }

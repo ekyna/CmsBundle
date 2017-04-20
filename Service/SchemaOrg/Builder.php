@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\SchemaOrg;
 
 use Ekyna\Bundle\CmsBundle\Exception\InvalidArgumentException;
+use Spatie\SchemaOrg\Type;
 
 /**
  * Class Builder
@@ -11,27 +14,15 @@ use Ekyna\Bundle\CmsBundle\Exception\InvalidArgumentException;
  */
 class Builder implements BuilderInterface
 {
-    /**
-     * @var RegistryInterface
-     */
-    protected $registry;
+    protected RegistryInterface $registry;
 
-
-    /**
-     * Constructor.
-     *
-     * @param RegistryInterface $registry
-     */
     public function __construct(RegistryInterface $registry)
     {
         $this->registry = $registry;
         $this->registry->setSchemaBuilder($this);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function build($object)
+    public function build(object $object): ?Type
     {
         try {
             return $this
@@ -39,7 +30,17 @@ class Builder implements BuilderInterface
                 ->getProvider($object)
                 ->build($object);
         } catch (InvalidArgumentException $e) {
-            return null;
         }
+
+        return null;
+    }
+
+    public function buildScript(object $object): string
+    {
+        if (null !== $schema = $this->build($object)) {
+            return $schema->toScript();
+        }
+
+        return '';
     }
 }

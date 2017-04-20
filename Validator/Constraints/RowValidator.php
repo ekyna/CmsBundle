@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface;
@@ -14,6 +16,9 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class RowValidator extends ConstraintValidator
 {
+    /**
+     * @inheritDoc
+     */
     public function validate($row, Constraint $constraint)
     {
         if (!$constraint instanceof Row) {
@@ -23,15 +28,10 @@ class RowValidator extends ConstraintValidator
             throw new UnexpectedTypeException($row, RowInterface::class);
         }
 
-        /**
-         * @var RowInterface $row
-         * @var Row          $constraint
-         */
-
         // Check that Content or Name is set, but not both.
         $container = $row->getContainer();
         $name = $row->getName();
-        if ((null === $container && 0 === strlen($name)) || (null !== $container && 0 < strlen($name))) {
+        if ((null === $container && empty($name)) || (null !== $container && !empty($name))) {
             $this->context->addViolation($constraint->containerOrNameButNotBoth);
         }
     }

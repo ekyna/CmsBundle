@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
 use Doctrine\ORM\EntityRepository;
@@ -15,10 +17,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
  */
 class CopyContainerType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->remove('title')
@@ -41,18 +40,12 @@ class CopyContainerType extends AbstractType
             ]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'ekyna_cms_container_copy';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return BaseContainerType::class;
     }

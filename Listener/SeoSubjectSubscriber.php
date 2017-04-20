@@ -1,25 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Listener;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
-use Doctrine\ORM\Events;
-use Ekyna\Bundle\CmsBundle\Model;
+use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
 
 /**
  * Class SeoSubjectSubscriber
  * @package Ekyna\Bundle\CmsBundle\Listener
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class SeoSubjectSubscriber implements EventSubscriber
+class SeoSubjectSubscriber
 {
-    /**
-     * @param LoadClassMetadataEventArgs $eventArgs
-     */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs): void
     {
-        /** @var \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata */
         $metadata = $eventArgs->getClassMetadata();
 
         // Prevent doctrine:generate:entities bug
@@ -28,7 +25,7 @@ class SeoSubjectSubscriber implements EventSubscriber
         }
 
         // Check if class implements the subject interface
-        if (!in_array(Model\SeoSubjectInterface::class, class_implements($metadata->getName()))) {
+        if (!in_array(SeoSubjectInterface::class, class_implements($metadata->getName()))) {
             return;
         }
 
@@ -39,7 +36,7 @@ class SeoSubjectSubscriber implements EventSubscriber
 
         $metadata->mapOneToOne([
             'fieldName'     => 'seo',
-            'targetEntity'  => Model\SeoInterface::class,
+            'targetEntity'  => SeoInterface::class,
             'cascade'       => ['persist', 'detach', 'remove'],
             'orphanRemoval' => true,
             'joinColumns'   => [
@@ -51,15 +48,5 @@ class SeoSubjectSubscriber implements EventSubscriber
                 ],
             ],
         ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::loadClassMetadata,
-        ];
     }
 }

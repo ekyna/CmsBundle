@@ -1,4 +1,4 @@
-/// <reference path="../../../../../../../../../typings/index.d.ts" />
+/// <reference path="../../../../../../../../../../assets/typings/index.d.ts" />
 
 import {BasePlugin} from '../base-plugin';
 import {BlockManager} from '../../document-manager';
@@ -13,7 +13,7 @@ class FeaturePlugin extends BasePlugin {
         super.edit();
 
         this.openModal(
-            BlockManager.generateUrl(this.$element, 'ekyna_cms_editor_block_edit'),
+            BlockManager.generateUrl(this.$element, 'admin_ekyna_cms_editor_block_edit'),
             (e:Ekyna.ModalResponseEvent) => {
                 if (e.contentType == 'json') {
                     AOS.refresh();

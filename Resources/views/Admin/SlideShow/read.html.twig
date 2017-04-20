@@ -1,0 +1,47 @@
+{% extends '@EkynaAdmin/Entity/Crud/read.html.twig' %}
+
+
+{% block main_tabs -%}
+    <li class="active">
+        <a href="#slideshow-general" id="toggle-general" data-toggle="tab">
+            {{ 'field.general'|trans({}, 'EkynaUi') }}
+        </a>
+    </li>
+    <li>
+        <a href="#slideshow-render" id="toggle-render" data-toggle="tab">
+            {{ 'slide_show.field.render'|trans({}, 'EkynaCms') }}
+        </a>
+    </li>
+{%- endblock main_tabs %}
+
+
+{% block main_contents -%}
+    <div class="tab-pane active" id="slideshow-general">
+        {{ show_row(slideShow.name, 'text', {
+            'label': 'field.name',
+            'trans_domain': 'EkynaUi'
+        }) }}
+        {{ show_row(slideShow.slides, 'table', {
+            'resource': 'ekyna_cms.slide'
+        }) }}
+        <div class="actions">
+            {{ admin_resource_btn(context.config.id, 'Ekyna\\Bundle\\AdminBundle\\Action\\CreateAction', {
+                'label': 'slide.button.new',
+                'trans_domain': 'EkynaCms',
+                'path': path('admin_ekyna_cms_slide_create', {
+                    'slideShowId': slideShow.id,
+                }),
+                'size': 'sm'
+            }) }}
+        </div>
+    </div>
+    <div class="tab-pane" id="slideshow-render">
+        {{ slide_show_render(slideShow) }}
+    </div>
+{%- endblock main_contents -%}
+
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/ekynacms/css/slide-show.css') }}" rel="stylesheet" type="text/css"/>
+{% endblock stylesheets %}

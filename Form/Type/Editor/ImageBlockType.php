@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
@@ -9,6 +11,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
+use function Symfony\Component\Translation\t;
+
 /**
  * Class ImageBlockType
  * @package Ekyna\Bundle\CmsBundle\Form\Type\Editor
@@ -16,10 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ImageBlockType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // Image form
         $image = $builder->create('image', null, [
@@ -51,27 +52,22 @@ class ImageBlockType extends AbstractType
             ]);
     }
 
-    /**
-     * Builds the image options form.
-     *
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     */
-    private function buildImageOptionsForm(FormBuilderInterface $builder, array $options)
+    private function buildImageOptionsForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('align', Type\ChoiceType::class, [
-                'label'    => 'ekyna_cms.block.field.align',
-                'choices'  => [
+                'label'                     => t('block.field.align', [], 'EkynaCms'),
+                'choices'                   => [
                     'Left'   => 'left',
                     'Center' => 'center',
                     'Right'  => 'right',
                 ],
-                'required' => true,
-                'select2'  => false,
+                'choice_translation_domain' => false,
+                'required'                  => true,
+                'select2'                   => false,
             ])
             ->add('max_width', Type\TextType::class, [
-                'label'       => 'ekyna_cms.block.field.max_width',
+                'label'       => t('block.field.max_width', [], 'EkynaCms'),
                 'required'    => false,
                 'constraints' => [
                     new Assert\Regex([
@@ -81,28 +77,27 @@ class ImageBlockType extends AbstractType
                 ],
             ])
             ->add('theme', Type\ChoiceType::class, [
-                'label'       => 'ekyna_cms.block.field.theme',
-                'choices'     => array_flip($options['themes']),
-                'placeholder' => 'ekyna_core.value.none',
-                'required'    => false,
-                'select2'     => false,
+                'label'                     => t('block.field.theme', [], 'EkynaCms'),
+                'choices'                   => array_flip($options['themes']),
+                'choice_translation_domain' => false,
+                'placeholder'               => t('value.none', [], 'EkynaUi'),
+                'required'                  => false,
+                'select2'                   => false,
             ])
             ->add('style', Type\ChoiceType::class, [
-                'label'       => 'ekyna_cms.block.field.style',
-                'choices'     => array_flip($options['styles']),
-                'placeholder' => 'ekyna_core.value.none',
-                'required'    => false,
-                'select2'     => false,
+                'label'                     => t('block.field.style', [], 'EkynaCms'),
+                'choices'                   => array_flip($options['styles']),
+                'choice_translation_domain' => false,
+                'placeholder'               => t('value.none', [], 'EkynaUi'),
+                'required'                  => false,
+                'select2'                   => false,
             ])
             ->add('animation', AnimationType::class, [
                 'animations' => $options['animations'],
             ]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setDefault('themes', [])
@@ -115,18 +110,12 @@ class ImageBlockType extends AbstractType
             ->setAllowedTypes('with_hover', 'bool');
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'ekyna_cms_block_image';
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return BaseBlockType::class;
     }

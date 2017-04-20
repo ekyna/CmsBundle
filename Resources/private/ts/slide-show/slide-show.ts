@@ -1,4 +1,4 @@
-/// <reference path="../../../../../../../typings/index.d.ts" />
+/// <reference path="../../../../../../../../assets/typings/index.d.ts" />
 /// <reference path="../../typings/slide-show.d.ts" />
 
 import * as es6Promise from 'es6-promise';

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
 /**
@@ -17,21 +19,21 @@ interface DataInterface
      *
      * @return DataInterface|$this
      */
-    public function setData($keyOrData, $value = null);
+    public function setData($keyOrData, $value = null): DataInterface;
 
     /**
      * Unsets the data for the given key.
      *
-     * @param string $key
+     * @param string|null $key
      *
      * @return DataInterface|$this
      */
-    public function unsetData($key = null);
+    public function unsetData(string $key = null): DataInterface;
 
     /**
      * Returns the data.
      *
      * @return array
      */
-    public function getData();
+    public function getData(): array;
 }

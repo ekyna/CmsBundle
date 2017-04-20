@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
 use Ekyna\Bundle\CmsBundle\Editor\Model;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Container\CopyPlugin;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class ContainerManager
@@ -14,10 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ContainerManager extends AbstractManager
 {
-    /**
-     * @var string
-     */
-    private $defaultType;
+    private string $defaultType;
 
 
     /**
@@ -25,7 +25,7 @@ class ContainerManager extends AbstractManager
      *
      * @param string $defaultType
      */
-    public function __construct($defaultType)
+    public function __construct(string $defaultType)
     {
         $this->defaultType = $defaultType;
     }
@@ -34,21 +34,20 @@ class ContainerManager extends AbstractManager
      * Creates a new container.
      *
      * @param Model\ContentInterface|string $contentOrName
-     * @param string                        $type
+     * @param string|null                   $type
      * @param array                         $data
      *
      * @return Model\ContainerInterface
      * @throws InvalidOperationException
      */
-    public function create($contentOrName, $type = null, array $data = [])
+    public function create($contentOrName, string $type = null, array $data = []): Model\ContainerInterface
     {
         // Check if container or name is defined
-        if (!(
-            $contentOrName instanceof Model\ContentInterface ||
-            (is_string($contentOrName) && 0 < strlen($contentOrName))
-        )
+        if (
+            !$contentOrName instanceof Model\ContentInterface &&
+            !(is_string($contentOrName) && !empty($contentOrName))
         ) {
-            throw new InvalidOperationException("Excepted instance of ContentInterface or string.");
+            throw new InvalidOperationException('Excepted instance of ContentInterface or string.');
         }
 
         // Default type if null
@@ -87,9 +86,9 @@ class ContainerManager extends AbstractManager
      * @param Model\ContainerInterface $container
      * @param Request                  $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response|null
+     * @return Response|null
      */
-    public function update(Model\ContainerInterface $container, Request $request)
+    public function update(Model\ContainerInterface $container, Request $request): ?Response
     {
         // Plugin update
         return $this->editor
@@ -108,7 +107,7 @@ class ContainerManager extends AbstractManager
      *
      * @throws InvalidOperationException
      */
-    public function changeType(Model\ContainerInterface $container, $type, array $data = [])
+    public function changeType(Model\ContainerInterface $container, string $type, array $data = []): array
     {
         if ($type === $container->getType()) {
             return [];
@@ -129,7 +128,7 @@ class ContainerManager extends AbstractManager
 
         // If we switch from Copy plugin and a copied container is set
         if ($fromPlugin instanceof CopyPlugin && null !== $copy = $container->getCopy()) {
-            // Fake copied's inner container
+            // Fake copied inner container
             $removed[] = $viewBuilder->buildContainer($copy)->getInnerAttributes()->getId();
         }
 
@@ -166,7 +165,7 @@ class ContainerManager extends AbstractManager
      * @return Model\ContainerInterface The removed container.
      * @throws InvalidOperationException
      */
-    public function delete(Model\ContainerInterface $container)
+    public function delete(Model\ContainerInterface $container): Model\ContainerInterface
     {
         // Ensure not named / alone
         if ($container->isAlone() || $container->isNamed() || $container->isTitled()) {
@@ -204,7 +203,7 @@ class ContainerManager extends AbstractManager
      * @return Model\ContainerInterface the sibling container that has been swapped.
      * @throws InvalidOperationException
      */
-    public function moveUp(Model\ContainerInterface $container)
+    public function moveUp(Model\ContainerInterface $container): Model\ContainerInterface
     {
         $sibling = $this->editor->getRepository()->findSiblingContainer($container, false);
         if (null === $sibling) {
@@ -229,7 +228,7 @@ class ContainerManager extends AbstractManager
      * @return Model\ContainerInterface the sibling container that has been swapped.
      * @throws InvalidOperationException
      */
-    public function moveDown(Model\ContainerInterface $container)
+    public function moveDown(Model\ContainerInterface $container): Model\ContainerInterface
     {
         $sibling = $this->editor->getRepository()->findSiblingContainer($container, true);
         if (null === $sibling) {
@@ -253,7 +252,7 @@ class ContainerManager extends AbstractManager
      *
      * @return ContainerManager
      */
-    public function fixRowsPositions(Model\ContainerInterface $container)
+    public function fixRowsPositions(Model\ContainerInterface $container): ContainerManager
     {
         $this->sortChildrenByPosition($container, 'rows');
 

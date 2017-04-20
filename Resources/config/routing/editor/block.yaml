@@ -1,0 +1,71 @@
+admin_ekyna_cms_editor_block_edit:
+    path: /{blockId}/edit
+    controller: ekyna_cms.controller.editor.block:edit
+    methods: [GET|POST]
+    requirements:
+        blockId: \d+
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_block_layout:
+    path: /{blockId}/layout
+    controller: ekyna_cms.controller.editor.block:layout
+    methods: [POST]
+    requirements:
+        blockId: \d+
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_block_change_type:
+    path: /{blockId}/change-type
+    controller: ekyna_cms.controller.editor.block:changeType
+    methods: [POST]
+    requirements:
+        blockId: \d+
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_block_remove:
+    path: /{blockId}/remove
+    controller: ekyna_cms.controller.editor.block:remove
+    methods: [POST]
+    requirements:
+        blockId: \d+
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_block_move_up:
+    path: /{blockId}/move-up
+    controller: ekyna_cms.controller.editor.block:moveUp
+    methods: [POST]
+    requirements:
+        blockId: \d+
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_block_move_down:
+    path: /{blockId}/move-down
+    controller: ekyna_cms.controller.editor.block:moveDown
+    methods: [POST]
+    requirements:
+        blockId: \d+
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_block_move_left:
+    path: /{blockId}/move-left
+    controller: ekyna_cms.controller.editor.block:moveLeft
+    methods: [POST]
+    requirements:
+        blockId: \d+
+    options:
+        expose: true
+
+admin_ekyna_cms_editor_block_move_right:
+    path: /{blockId}/move-right
+    controller: ekyna_cms.controller.editor.block:moveRight
+    methods: [POST]
+    requirements:
+        blockId: \d+
+    options:
+        expose: true

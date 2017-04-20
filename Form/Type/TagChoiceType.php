@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
-use Ekyna\Bundle\AdminBundle\Form\Type\ResourceType;
+use Ekyna\Bundle\CmsBundle\Model\TagInterface;
+use Ekyna\Bundle\ResourceBundle\Form\Type\ResourceChoiceType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -14,39 +16,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class TagChoiceType extends AbstractType
 {
-    /**
-     * @var string
-     */
-    private $tagClass;
-
-
-    /**
-     * Constructor.
-     *
-     * @param string $tagClass
-     */
-    public function __construct($tagClass)
-    {
-        $this->tagClass = $tagClass;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'label'       => function (Options $options, $value) {
-                if (!empty($value)) {
-                    return $value;
-                }
-
-                return 'ekyna_cms.tag.label.' . ($options['multiple'] ? 'plural' : 'singular');
-            },
-            'class'       => $this->tagClass,
-            'select2'     => false,
+            'resource'    => 'ekyna_cms.tag',
+            'required'    => false,
+            'multiple'    => true,
             'choice_attr' => function ($tag) {
-                /** @var \Ekyna\Bundle\CmsBundle\Model\TagInterface $tag */
+                /** @var TagInterface $tag */
                 return [
                     'data-icon'  => $tag->getIcon(),
                     'data-theme' => $tag->getTheme(),
@@ -55,15 +32,12 @@ class TagChoiceType extends AbstractType
             'attr'        => [
                 'class' => 'cms-tag-choice',
             ],
-            'allow_new' => true,
+            'allow_new'   => true,
         ]);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
-        return ResourceType::class;
+        return ResourceChoiceType::class;
     }
 }

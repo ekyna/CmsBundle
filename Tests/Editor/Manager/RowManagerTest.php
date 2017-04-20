@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Tests\Editor\Manager;
 
 use Ekyna\Bundle\CmsBundle\Editor\Editor;

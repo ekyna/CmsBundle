@@ -1,57 +1,53 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+use Doctrine\Common\Collections\Collection;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
  * Interface SeoInterface
  * @package Ekyna\Bundle\CmsBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  *
  * @method SeoTranslationInterface translate($locale = null, $create = false)
- * @method \Doctrine\Common\Collections\Collection|SeoTranslationInterface[] getTranslations()
+ * @method Collection|SeoTranslationInterface[] getTranslations()
  */
 interface SeoInterface extends RM\TaggedEntityInterface, RM\TranslatableInterface
 {
     /**
-     * Returns the valid changefreq choices.
+     * Sets the (translated) title.
      *
-     * @return array
-     */
-    public static function getChangefreqs();
-
-    /**
-     * Set title
-     *
-     * @param string $title
+     * @param string|null $title
      *
      * @return SeoInterface|$this
      */
-    public function setTitle($title);
+    public function setTitle(string $title = null): SeoInterface;
 
     /**
-     * Returns the title.
+     * Returns the (translated) title.
      *
-     * @return string
+     * @return string|null
      */
-    public function getTitle();
+    public function getTitle(): ?string;
 
     /**
      * Set description
      *
-     * @param string $description
+     * @param string|null $description
      *
      * @return SeoInterface|$this
      */
-    public function setDescription($description);
+    public function setDescription(string $description = null): SeoInterface;
 
     /**
      * Returns the description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDescription();
+    public function getDescription(): ?string;
 
     /**
      * Set changefreq
@@ -60,14 +56,14 @@ interface SeoInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfac
      *
      * @return SeoInterface|$this
      */
-    public function setChangefreq($changefreq);
+    public function setChangefreq(string $changefreq): SeoInterface;
 
     /**
      * Returns the change frequency.
      *
      * @return string
      */
-    public function getChangefreq();
+    public function getChangefreq(): string;
 
     /**
      * Set priority
@@ -76,65 +72,67 @@ interface SeoInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfac
      *
      * @return SeoInterface|$this
      */
-    public function setPriority($priority);
+    public function setPriority(string $priority): SeoInterface;
 
     /**
      * Returns the priority.
      *
      * @return string
      */
-    public function getPriority();
-
+    public function getPriority(): string;
 
     /**
      * Returns the follow.
      *
-     * @return boolean
+     * @return bool
      */
-    public function getFollow();
+    public function getFollow(): bool;
 
     /**
      * Sets the follow.
      *
-     * @param boolean $follow
+     * @param bool $follow
+     *
      * @return SeoInterface|$this
      */
-    public function setFollow($follow);
+    public function setFollow(bool $follow): SeoInterface;
 
     /**
      * Returns the index.
      *
-     * @return boolean
+     * @return bool
      */
-    public function getIndex();
+    public function getIndex(): bool;
 
     /**
      * Sets the index.
      *
-     * @param boolean $index
+     * @param bool $index
+     *
      * @return SeoInterface|$this
      */
-    public function setIndex($index);
+    public function setIndex(bool $index): SeoInterface;
 
     /**
      * Returns the canonical.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCanonical();
+    public function getCanonical(): ?string;
 
     /**
      * Sets the canonical.
      *
-     * @param string $canonical
+     * @param string|null $canonical
+     *
      * @return SeoInterface|$this
      */
-    public function setCanonical($canonical);
+    public function setCanonical(string $canonical = null): SeoInterface;
 
     /**
      * Returns whether the seo should be indexed or not by elasticsearch.
      *
      * @return bool
      */
-    public function isIndexable();
+    public function isIndexable(): bool;
 }

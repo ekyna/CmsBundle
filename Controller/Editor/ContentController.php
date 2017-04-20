@@ -1,31 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class ContentController
  * @package Ekyna\Bundle\CmsBundle\Controller\Editor
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class ContentController extends BaseController
+class ContentController extends AbstractController
 {
     /**
      * Create and append a new container to the content.
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function createContainerAction(Request $request)
+    public function createContainer(Request $request): Response
     {
         $content = $this->findContentByRequest($request);
-        $type = $request->request->get('type', null);
+        $type = $request->request->get('type');
 
         try {
-            $container = $this->getEditor()->createDefaultContainer($type, [], $content);
+            $container = $this->editor->createDefaultContainer($type, [], $content);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }

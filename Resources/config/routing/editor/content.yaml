@@ -1,0 +1,8 @@
+admin_ekyna_cms_editor_content_create_container:
+    path: /{contentId}/create-container
+    controller: ekyna_cms.controller.editor.content:createContainer
+    methods: [POST]
+    requirements:
+        contentId: \d+
+    options:
+        expose: true

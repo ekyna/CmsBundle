@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
 use Ekyna\Bundle\CmsBundle\Entity\NoticeTranslation;
-use Ekyna\Bundle\CoreBundle\Form\Type\TinymceType;
+use Ekyna\Bundle\UiBundle\Form\Type\TinymceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use function Symfony\Component\Translation\t;
 
 /**
  * Class NoticeTranslationType
@@ -15,27 +19,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class NoticeTranslationType extends AbstractType
 {
-    /**
-     * @inheritDoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('content', TinymceType::class, [
-            'label'        => 'ekyna_core.field.content',
+            'label'    => t('field.content', [], 'EkynaUi'),
             //'admin_helper' => 'CMS_NOTICE_CONTENT',
-            'theme'        => 'advanced',
-            'required'     => false,
+            'theme'    => 'advanced',
+            'required' => false,
         ]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver
-            ->setDefaults([
-                'data_class' => NoticeTranslation::class,
-            ]);
+        $resolver->setDefault('data_class', NoticeTranslation::class);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\Updater;
 
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
@@ -15,15 +17,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class PageRedirectionUpdater
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    /**
-     * @var array
-     */
-    private $locales;
+    private EventDispatcherInterface $dispatcher;
+    private array                    $locales;
 
 
     /**
@@ -52,8 +47,8 @@ class PageRedirectionUpdater
         foreach ($page->getTranslations() as $locale => $translation) {
             // TODO use url generator or i18n routing prefix strategy
             $localePrefix = $locale != 'fr' ? '/' . $locale : '';
-            $event        = new DiscardRedirectionEvent($localePrefix . $translation->getPath());
-            $this->dispatcher->dispatch(RedirectionEvents::DISCARD, $event);
+            $event = new DiscardRedirectionEvent($localePrefix . $translation->getPath());
+            $this->dispatcher->dispatch($event, RedirectionEvents::DISCARD);
         }
     }
 
@@ -73,7 +68,7 @@ class PageRedirectionUpdater
         // Store "from" paths for each locale
         $locales = [];
         foreach ($page->getTranslations() as $locale => $translation) {
-            $locales[$locale]      = $locale;
+            $locales[$locale] = $locale;
             $redirections[$locale] = [
                 'from' => $translation->getPath(),
             ];
@@ -112,7 +107,7 @@ class PageRedirectionUpdater
                     true
                 );
 
-                $this->dispatcher->dispatch(RedirectionEvents::BUILD, $event);
+                $this->dispatcher->dispatch($event, RedirectionEvents::BUILD);
             }
         }
     }

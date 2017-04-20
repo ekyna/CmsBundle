@@ -1,4 +1,4 @@
-/// <reference path="../../../../../../../typings/index.d.ts" />
+/// <reference path="../../../../../../../../assets/typings/index.d.ts" />
 
 import * as $ from 'jquery';
 import * as Router from 'routing';
@@ -156,7 +156,7 @@ class Editor {
         // TODO use resource controller
         let pageSelect = this.mainToolbar.getPageSelect(),
             pagesListXhr = $.ajax({
-                url: Router.generate('ekyna_cms_editor_pages_list', {'document_locale': locale}),
+                url: Router.generate('admin_ekyna_cms_editor_pages_list', {'document_locale': locale}),
                 method: 'GET',
                 dataType: 'json'
             });

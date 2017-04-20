@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface;
@@ -12,31 +14,16 @@ use Ekyna\Component\Resource\Model\AbstractTranslation;
  */
 class PageTranslation extends AbstractTranslation implements PageTranslationInterface
 {
-    /**
-     * @var string
-     */
-    protected $title;
-
-    /**
-     * @var string
-     */
-    protected $breadcrumb;
-
-    /**
-     * @var string
-     */
-    protected $html;
-
-    /**
-     * @var string
-     */
-    protected $path;
+    protected ?string $title      = null;
+    protected ?string $breadcrumb = null;
+    protected ?string $html       = null;
+    protected ?string $path       = null;
 
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setTitle(string $title): PageTranslationInterface
+    public function setTitle(string $title = null): PageTranslationInterface
     {
         $this->title = $title;
 
@@ -44,7 +31,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTitle(): ?string
     {
@@ -52,9 +39,9 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setBreadcrumb(string $breadcrumb): PageTranslationInterface
+    public function setBreadcrumb(string $breadcrumb = null): PageTranslationInterface
     {
         $this->breadcrumb = $breadcrumb;
 
@@ -62,7 +49,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getBreadcrumb(): ?string
     {
@@ -70,7 +57,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setHtml(string $html = null): PageTranslationInterface
     {
@@ -80,7 +67,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getHtml(): ?string
     {
@@ -88,7 +75,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setPath(string $path = null): PageTranslationInterface
     {
@@ -98,7 +85,7 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPath(): ?string
     {

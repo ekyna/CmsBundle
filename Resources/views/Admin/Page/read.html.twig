@@ -1,0 +1,105 @@
+{% extends '@EkynaAdmin/Entity/Crud/read.html.twig' %}
+
+
+{% block actions %}
+    {{ admin_resource_btn(context.config.id, 'Ekyna\\Bundle\\AdminBundle\\Action\\ListAction') }}
+{% endblock %}
+
+
+{% block main_actions -%}
+    {% if not page.dynamicPath %}
+        {{ admin_resource_btn(page, 'public') }}
+        {{ admin_resource_btn(page, 'editor') }}
+    {% endif %}
+    {{ parent() }}
+{%- endblock main_actions %}
+
+
+{% block main_tabs -%}
+    <li class="active">
+        <a href="#{{ resource_name }}-general" id="toggle-general" data-toggle="tab">
+            {{- 'field.general'|trans({}, 'EkynaUi') -}}
+        </a>
+    </li>
+    <li>
+        <a href="#{{ resource_name }}-seo" id="toggle-seo" data-toggle="tab">
+            {{- 'field.seo'|trans({}, 'EkynaUi') -}}
+        </a>
+    </li>
+{%- endblock main_tabs %}
+
+
+{% block main_contents -%}
+    <div class="tab-pane active" id="{{ resource_name }}-general">
+        {{ show_row(page.name, 'text', {
+            'label': 'field.name',
+            'label_trans_domain': 'EkynaUi'
+        }) }}
+        {{ show_row(page.parent, 'entity', {
+            'label': 'field.parent',
+            'label_trans_domain': 'EkynaUi',
+            'property': 'name',
+            'route': 'admin_ekyna_cms_page_read',
+            'route_parameters_map': {'pageId': 'id'}
+        }) }}
+        {{ show_row(page.enabled, 'boolean', {
+            'label': 'field.enabled',
+            'label_trans_domain': 'EkynaUi'
+        }) }}
+
+        {% if not page.static -%}
+            {{ show_row(cms_page_controller(page.controller), 'text', {
+                'label': 'page.field.controller',
+                'trans_domain': 'EkynaCms'
+            }) }}
+        {%- endif %}
+
+        {% if page.advanced -%}
+            {{ show_row(page.translations, 'translations', {
+                'fields': {
+                    'title': {
+                        'label': 'field.title',
+                        'options': {'label_trans_domain': 'EkynaUi'}
+                    },
+                    'breadcrumb': {
+                        'label': 'field.breadcrumb',
+                        'options': {'label_trans_domain': 'EkynaUi'}
+                    },
+                    'path': {
+                        'label': 'field.url',
+                        'options': {'label_trans_domain': 'EkynaUi'}
+                    }
+                }
+            }) }}
+        {%- else -%}
+            {{ show_row(page.translations, 'translations', {
+                'fields': {
+                    'title': {
+                        'label': 'field.title',
+                        'options': {'label_trans_domain': 'EkynaUi'}
+                    },
+                    'breadcrumb': {
+                        'label': 'field.breadcrumb',
+                        'options': {'label_trans_domain': 'EkynaUi'}
+                    },
+                    'path': {
+                        'label': 'field.url',
+                        'options': {'label_trans_domain': 'EkynaUi'}
+                    },
+                    'html': {
+                        'label': 'field.content',
+                        'type': 'tinymce',
+                        'property_path': null,
+                        'options': {
+                            'label_trans_domain': 'EkynaUi',
+                            'field': 'html'
+                        }
+                    }
+                }
+            }) }}
+        {%- endif %}
+    </div>
+    <div class="tab-pane" id="{{ resource_name }}-seo">
+        {{ show_row(page.seo, 'seo') }}
+    </div>
+{%- endblock main_contents -%}

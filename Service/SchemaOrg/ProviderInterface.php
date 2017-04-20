@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\SchemaOrg;
+
+use Spatie\SchemaOrg\Type;
 
 /**
  * Interface ProviderInterface
@@ -14,9 +18,9 @@ interface ProviderInterface
      *
      * @param object $object
      *
-     * @return \Spatie\SchemaOrg\Type
+     * @return Type|null
      */
-    public function build($object);
+    public function build(object $object): ?Type;
 
     /**
      * Returns whether this provider supports the given object.
@@ -25,5 +29,5 @@ interface ProviderInterface
      *
      * @return bool
      */
-    public function supports($object);
+    public function supports(object $object): bool;
 }

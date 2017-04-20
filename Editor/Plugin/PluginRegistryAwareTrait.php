@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 
 /**
@@ -9,10 +11,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
  */
 trait PluginRegistryAwareTrait
 {
-    /**
-     * @var PluginRegistry
-     */
-    private $pluginRegistry;
+    private PluginRegistry $pluginRegistry;
 
 
     /**
@@ -20,7 +19,7 @@ trait PluginRegistryAwareTrait
      *
      * @param PluginRegistry $registry
      */
-    public function setPluginRegistry(PluginRegistry $registry)
+    public function setPluginRegistry(PluginRegistry $registry): void
     {
         $this->pluginRegistry = $registry;
     }
@@ -32,7 +31,7 @@ trait PluginRegistryAwareTrait
      *
      * @return Block\PluginInterface
      */
-    public function getBlockPlugin($name)
+    public function getBlockPlugin(string $name): Block\PluginInterface
     {
         return $this->pluginRegistry->getBlockPlugin($name);
     }
@@ -44,7 +43,7 @@ trait PluginRegistryAwareTrait
      *
      * @return Container\PluginInterface
      */
-    public function getContainerPlugin($name)
+    public function getContainerPlugin(string $name): Container\PluginInterface
     {
         return $this->pluginRegistry->getContainerPlugin($name);
     }

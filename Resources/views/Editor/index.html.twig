@@ -1,4 +1,4 @@
-{% spaceless -%}
+{% apply spaceless -%}
 <!DOCTYPE html>
 <html lang="{{ app.request.locale }}"{{ ui_assets_base_url() }}>
 <head>
@@ -11,16 +11,16 @@
     <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"
           rel="stylesheet" type="text/css"/>
 
-    <link href="{{ absolute_url(asset('bundles/ekynacore/css/fontawesome.css')) }}" type="text/css" rel="stylesheet">
-    <link href="{{ absolute_url(asset('bundles/ekynacore/css/glyphicons.css')) }}" type="text/css" rel="stylesheet">
-    <link href="{{ absolute_url(asset('bundles/ekynacore/css/bootstrap.css')) }}" rel="stylesheet" type="text/css" />
-    <link href="{{ absolute_url(asset('bundles/ekynacore/css/jquery-ui.css')) }}" rel="stylesheet" type="text/css" />
+    <link href="{{ absolute_url(asset('bundles/ekynaui/css/fontawesome.css')) }}" type="text/css" rel="stylesheet">
+    <link href="{{ absolute_url(asset('bundles/ekynaui/css/glyphicons.css')) }}" type="text/css" rel="stylesheet">
+    <link href="{{ absolute_url(asset('bundles/ekynaui/css/bootstrap.css')) }}" rel="stylesheet" type="text/css" />
+    <link href="{{ absolute_url(asset('bundles/ekynaui/css/jquery-ui.css')) }}" rel="stylesheet" type="text/css" />
     {{ admin_stylesheets() }}
     {{ ui_forms_stylesheets() }}
     <link href="{{ absolute_url(asset('bundles/ekynacms/css/editor.css')) }}" type="text/css" rel="stylesheet">
     <link href="{{ absolute_url(asset('bundles/ekynacms/css/editor-icons.css')) }}" type="text/css" rel="stylesheet">
 
-    {% include '@EkynaCore/Ui/ie-fix.html.twig' %}
+    {% include '@EkynaUi/Fix/ie.html.twig' %}
 
     {{ require_js(not app.debug) }}
 </head>
@@ -61,4 +61,4 @@
     {%- endblock javascripts %}
 </body>
 </html>
-{%- endspaceless -%}
+{%- endapply -%}

@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
 use Ekyna\Component\Resource\Model\TranslatableInterface;
 use Ekyna\Component\Resource\Model\TranslatableTrait;
+use UnexpectedValueException;
 
 /**
  * Class Tabs
@@ -12,26 +17,15 @@ use Ekyna\Component\Resource\Model\TranslatableTrait;
  * @author  Etienne Dauvergne <contact@ekyna.com>
  *
  * @method TabsTranslation translate($locale = null, $create = false)
- * @method ArrayCollection|TabsTranslation[] getTranslations()
+ * @method Collection|TabsTranslation[] getTranslations()
  */
 class Tabs implements TranslatableInterface
 {
     use TranslatableTrait;
 
-    /**
-     * @var string
-     */
-    private $theme = 'default';
-
-    /**
-     * @var string
-     */
-    private $align = 'left';
-
-    /**
-     * @var ArrayCollection|Tab[]
-     */
-    private $tabs;
+    private string $theme = 'default';
+    private string $align = 'left';
+    private Collection $tabs;
 
 
     /**
@@ -45,7 +39,7 @@ class Tabs implements TranslatableInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @TODO Remove
      */
@@ -59,7 +53,7 @@ class Tabs implements TranslatableInterface
      *
      * @return string
      */
-    public function getTheme()
+    public function getTheme(): string
     {
         return $this->theme;
     }
@@ -71,7 +65,7 @@ class Tabs implements TranslatableInterface
      *
      * @return Tabs
      */
-    public function setTheme(string $theme)
+    public function setTheme(string $theme): Tabs
     {
         $this->theme = $theme;
 
@@ -83,7 +77,7 @@ class Tabs implements TranslatableInterface
      *
      * @return string
      */
-    public function getAlign()
+    public function getAlign(): string
     {
         return $this->align;
     }
@@ -95,7 +89,7 @@ class Tabs implements TranslatableInterface
      *
      * @return Tabs
      */
-    public function setAlign(string $align)
+    public function setAlign(string $align): Tabs
     {
         $this->align = $align;
 
@@ -105,17 +99,18 @@ class Tabs implements TranslatableInterface
     /**
      * Sets the tabs.
      *
-     * @param array|ArrayCollection $tabs
+     * @param array|Collection $tabs
      *
-     * @return $this
+     * @return Tabs
      */
-    public function setsTabs($tabs)
+    public function setsTabs($tabs): Tabs
     {
         if (is_array($tabs)) {
             $tabs = new ArrayCollection($tabs);
         }
-        if (!$tabs instanceof ArrayCollection) {
-            throw new \UnexpectedValueException("Expected array or instance of " . ArrayCollection::class);
+
+        if (!$tabs instanceof Collection) {
+            throw new UnexpectedValueException('Expected array or instance of ' . ArrayCollection::class);
         }
 
         $this->tabs = $tabs;
@@ -130,7 +125,7 @@ class Tabs implements TranslatableInterface
      *
      * @return Tabs
      */
-    public function addTab(Tab $tab)
+    public function addTab(Tab $tab): Tabs
     {
         if (!$this->tabs->contains($tab)) {
             $this->tabs->add($tab);
@@ -146,10 +141,10 @@ class Tabs implements TranslatableInterface
      *
      * @return Tabs
      */
-    public function removeTab(Tab $tab)
+    public function removeTab(Tab $tab): Tabs
     {
         if ($this->tabs->contains($tab)) {
-            $this->tabs->remove($tab);
+            $this->tabs->removeElement($tab);
         }
 
         return $this;
@@ -158,49 +153,49 @@ class Tabs implements TranslatableInterface
     /**
      * Returns the tabs.
      *
-     * @return ArrayCollection|Tab[]
+     * @return Collection|Tab[]
      */
-    public function getTabs()
+    public function getTabs(): Collection
     {
         return $this->tabs;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->translate()->getTitle();
     }
 
     /**
-     * @return \Ekyna\Bundle\MediaBundle\Model\MediaInterface
+     * @return MediaInterface|null
      */
-    public function getMedia()
+    public function getMedia(): ?MediaInterface
     {
         return $this->translate()->getMedia();
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getContent()
+    public function getContent(): ?string
     {
         return $this->translate()->getContent();
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getButtonLabel()
+    public function getButtonLabel(): ?string
     {
         return $this->translate()->getButtonLabel();
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getButtonUrl()
+    public function getButtonUrl(): ?string
     {
         return $this->translate()->getButtonUrl();
     }
@@ -210,7 +205,7 @@ class Tabs implements TranslatableInterface
      *
      * @return bool
      */
-    public function hasButton()
+    public function hasButton(): bool
     {
         if (!empty($this->getButtonLabel())) {
             return true;
@@ -230,7 +225,7 @@ class Tabs implements TranslatableInterface
      *
      * @return bool
      */
-    public function isAnchorMode()
+    public function isAnchorMode(): bool
     {
         foreach ($this->tabs as $tab) {
             if (!empty($tab->getAnchor())) {

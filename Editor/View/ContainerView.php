@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\View;
 
 /**
@@ -7,32 +9,14 @@ namespace Ekyna\Bundle\CmsBundle\Editor\View;
  * @package Ekyna\Bundle\CmsBundle\Editor\View
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class ContainerView
+class ContainerView extends AbstractView
 {
-    /**
-     * @var AttributesInterface
-     */
-    private $attributes;
+    private AttributesInterface $innerAttributes;
 
-    /**
-     * @var AttributesInterface
-     */
-    private $innerAttributes;
-
-    /**
-     * @var array|RowView[]
-     */
-    public $rows = [];
-
-    /**
-     * @var string
-     */
-    public $content = '';
-
-    /**
-     * @var string
-     */
-    public $innerContent = '';
+    /** @var RowView[] */
+    public array  $rows         = [];
+    public string $content      = '';
+    public string $innerContent = '';
 
 
     /**
@@ -40,18 +24,9 @@ class ContainerView
      */
     public function __construct()
     {
-        $this->attributes = new Attributes();
-        $this->innerAttributes = new Attributes();
-    }
+        parent::__construct();
 
-    /**
-     * Returns the attributes.
-     *
-     * @return AttributesInterface
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
+        $this->innerAttributes = new Attributes();
     }
 
     /**
@@ -59,7 +34,7 @@ class ContainerView
      *
      * @return AttributesInterface
      */
-    public function getInnerAttributes()
+    public function getInnerAttributes(): AttributesInterface
     {
         return $this->innerAttributes;
     }

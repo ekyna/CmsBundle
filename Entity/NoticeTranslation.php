@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CmsBundle\Model\NoticeTranslationInterface;
@@ -12,10 +14,7 @@ use Ekyna\Component\Resource\Model\AbstractTranslation;
  */
 class NoticeTranslation extends AbstractTranslation implements NoticeTranslationInterface
 {
-    /**
-     * @var string
-     */
-    protected $content;
+    protected ?string $content = null;
 
 
     /**

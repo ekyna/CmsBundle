@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
@@ -9,6 +11,7 @@ use Ekyna\Bundle\CmsBundle\Repository\ContainerRepository;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
@@ -18,15 +21,8 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class ContainerValidator extends ConstraintValidator
 {
-    /**
-     * @var PluginRegistry
-     */
-    private $pluginRegistry;
-
-    /**
-     * @var ContainerRepository
-     */
-    private $containerRepository;
+    private PluginRegistry $pluginRegistry;
+    private ContainerRepository $containerRepository;
 
 
     /**
@@ -42,7 +38,7 @@ class ContainerValidator extends ConstraintValidator
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function validate($container, Constraint $constraint)
     {
@@ -61,7 +57,7 @@ class ContainerValidator extends ConstraintValidator
         $name = $container->getName();
 
         // Checks that Content or Name is set, but not both.
-        if ((null === $content && 0 === strlen($name)) || (null !== $content && 0 < strlen($name))) {
+        if ((null === $content && empty($name)) || (null !== $content && !empty($name))) {
             $this
                 ->context
                 ->buildViolation($constraint->contentOrNameButNotBoth)
@@ -89,7 +85,7 @@ class ContainerValidator extends ConstraintValidator
 
         // Title must be filled if this container as been copied
         if (empty($container->getTitle()) && 0 < $container->getId()) {
-            if (0 < $count = $this->containerRepository->getCopyCount($container)) {
+            if (0 < $this->containerRepository->getCopyCount($container)) {
                 $this
                     ->context
                     ->buildViolation($constraint->titleMustBeFilled)
@@ -111,7 +107,7 @@ class ContainerValidator extends ConstraintValidator
                 new Assert\Valid(),
             ]);
 
-        /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
+        /** @var ConstraintViolationInterface $violation */
         foreach ($violationList as $violation) {
             $this
                 ->context

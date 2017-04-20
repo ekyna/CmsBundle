@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\View;
 
 /**
@@ -12,23 +14,23 @@ interface AttributesInterface
     /**
      * Clears the attributes.
      */
-    public function clear();
+    public function clear(): AttributesInterface;
 
     /**
      * Sets the id.
      *
-     * @param string $id
+     * @param string|null $id
      *
      * @return AttributesInterface
      */
-    public function setId($id);
+    public function setId(string $id = null): AttributesInterface;
 
     /**
      * Returns the id.
      *
-     * @return string
+     * @return string|null
      */
-    public function getId();
+    public function getId(): ?string;
 
     /**
      * Returns whether or not the data exists for the given key.
@@ -37,7 +39,7 @@ interface AttributesInterface
      *
      * @return bool
      */
-    public function hasData($key);
+    public function hasData(string $key): bool;
 
     /**
      * Sets the data.
@@ -49,17 +51,17 @@ interface AttributesInterface
      *
      * @return AttributesInterface
      */
-    public function setData($key, $value = null);
+    public function setData($key, $value = null): AttributesInterface;
 
     /**
      * Returns the data for the given key, or all data if key is omitted.
      *
-     * @param string $key
-     * @param mixed  $default
+     * @param string|null $key
+     * @param mixed       $default
      *
      * @return mixed
      */
-    public function getData($key = null, $default = null);
+    public function getData(string $key = null, $default = null);
 
     /**
      * Returns whether or not the extra exists for the given key.
@@ -68,7 +70,7 @@ interface AttributesInterface
      *
      * @return bool
      */
-    public function hasExtra($key);
+    public function hasExtra(string $key): bool;
 
     /**
      * Sets the extra.
@@ -78,17 +80,17 @@ interface AttributesInterface
      *
      * @return AttributesInterface
      */
-    public function setExtra($key, $value);
+    public function setExtra(string $key, string $value): AttributesInterface;
 
     /**
      * Returns the extra for the given key, or all extras if key is omitted.
      *
-     * @param string $key
-     * @param string $default
+     * @param string|null $key
+     * @param string|null $default
      *
      * @return string|array
      */
-    public function getExtra($key = null, $default = null);
+    public function getExtra(string $key = null, string $default = null);
 
     /**
      * Adds the css class.
@@ -97,23 +99,23 @@ interface AttributesInterface
      *
      * @return AttributesInterface
      */
-    public function addClass($class);
+    public function addClass($class): AttributesInterface;
 
     /**
      * Removes the css class.
      *
-     * @param string $class
+     * @param array|string $class
      *
      * @return AttributesInterface
      */
-    public function removeClass($class);
+    public function removeClass($class): AttributesInterface;
 
     /**
      * Returns the css classes.
      *
      * @return array
      */
-    public function getClasses();
+    public function getClasses(): array;
 
     /**
      * Adds the css style.
@@ -123,7 +125,7 @@ interface AttributesInterface
      *
      * @return AttributesInterface
      */
-    public function addStyle($key, $value);
+    public function addStyle(string $key, string $value): AttributesInterface;
 
     /**
      * Removes the css style.
@@ -132,19 +134,19 @@ interface AttributesInterface
      *
      * @return AttributesInterface
      */
-    public function removeStyle($key);
+    public function removeStyle(string $key): AttributesInterface;
 
     /**
      * Returns the css styles.
      *
      * @return array
      */
-    public function getStyles();
+    public function getStyles(): array;
 
     /**
      * Transforms to an array.
      *
      * @return array
      */
-    public function toArray();
+    public function toArray(): array;
 }

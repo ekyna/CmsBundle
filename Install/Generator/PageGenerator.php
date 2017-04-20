@@ -1,18 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Install\Generator;
 
-use Ekyna\Bundle\CmsBundle\Entity\Seo;
-use Ekyna\Bundle\CmsBundle\Helper\RoutingHelper;
+use Doctrine\ORM\EntityManagerInterface;
+use Ekyna\Bundle\CmsBundle\Factory\MenuFactoryInterface;
+use Ekyna\Bundle\CmsBundle\Factory\PageFactoryInterface;
+use Ekyna\Bundle\CmsBundle\Factory\SeoFactoryInterface;
+use Ekyna\Bundle\CmsBundle\Manager\MenuManagerInterface;
+use Ekyna\Bundle\CmsBundle\Manager\PageManagerInterface;
+use Ekyna\Bundle\CmsBundle\Model\ChangeFrequencies;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
-use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+use Ekyna\Bundle\CmsBundle\Repository\MenuRepositoryInterface;
+use Ekyna\Bundle\CmsBundle\Repository\PageRepositoryInterface;
+use Ekyna\Bundle\CmsBundle\Service\Helper\RoutingHelper;
+use Exception;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+use function array_key_exists;
+use function array_merge;
+use function array_replace;
+use function is_array;
+use function is_null;
+use function is_scalar;
+use function is_string;
+use function preg_match;
+use function sprintf;
 
 /**
  * Class PageGenerator
@@ -21,111 +41,109 @@ use Symfony\Component\Routing\Route;
  */
 class PageGenerator
 {
-    /**
-     * @var OutputInterface
-     */
-    private $output;
+    private PageManagerInterface    $pageManager;
+    private PageRepositoryInterface $pageRepository;
+    private PageFactoryInterface    $pageFactory;
+
+    private MenuManagerInterface    $menuManager;
+    private MenuRepositoryInterface $menuRepository;
+    private MenuFactoryInterface    $menuFactory;
+
+    private SeoFactoryInterface $seoFactory;
+
+    private ValidatorInterface     $validator;
+    private RoutingHelper          $routingHelper;
+    private EntityManagerInterface $entityManager;
+    private array                  $locales;
+    private string                 $homeRouteName;
+
+    private OutputInterface $output;
+    private OptionsResolver $optionsResolver;
+    private RouteDefinition $homeDefinition;
+
+    public function __construct(
+        PageManagerInterface    $pageManager,
+        PageRepositoryInterface $pageRepository,
+        PageFactoryInterface    $pageFactory,
+        MenuManagerInterface    $menuManager,
+        MenuRepositoryInterface $menuRepository,
+        MenuFactoryInterface    $menuFactory,
+        SeoFactoryInterface     $seoFactory,
+        ValidatorInterface      $validator,
+        RoutingHelper           $routingHelper,
+        EntityManagerInterface  $entityManager,
+        array                   $locales,
+        string                  $homeRouteName
+    ) {
+        $this->pageManager = $pageManager;
+        $this->pageRepository = $pageRepository;
+        $this->pageFactory = $pageFactory;
+        $this->menuManager = $menuManager;
+        $this->menuRepository = $menuRepository;
+        $this->menuFactory = $menuFactory;
+        $this->seoFactory = $seoFactory;
+        $this->validator = $validator;
+        $this->routingHelper = $routingHelper;
+        $this->entityManager = $entityManager;
+        $this->locales = $locales;
+        $this->homeRouteName = $homeRouteName;
+    }
 
     /**
-     * @var \Ekyna\Component\Resource\Operator\ResourceOperatorInterface
+     * Generates pages based on routing '_cms' option.
      */
-    private $pageOperator;
-
-    /**
-     * @var \Ekyna\Component\Resource\Operator\ResourceOperatorInterface
-     */
-    private $menuOperator;
-
-    /**
-     * @var \Symfony\Component\Validator\Validator\ValidatorInterface
-     */
-    private $validator;
-
-    /**
-     * @var \Symfony\Component\Translation\TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var array
-     */
-    private $locales;
-
-    /**
-     * @var string
-     */
-    private $routesTranslationDomain = 'routes'; // TODO DI
-
-    /**
-     * @var \Ekyna\Bundle\CmsBundle\Repository\SeoRepository
-     */
-    private $seoRepository;
-
-    /**
-     * @var \Ekyna\Bundle\CmsBundle\Repository\PageRepository
-     */
-    private $pageRepository;
-
-    /**
-     * @var \Ekyna\Bundle\CmsBundle\Repository\MenuRepository
-     */
-    private $menuRepository;
-
-    /**
-     * @var RoutingHelper
-     */
-    private $routingHelper;
-
-    /**
-     * @var OptionsResolver
-     */
-    private $optionsResolver;
-
-    /**
-     * @var string
-     */
-    private $homeRouteName;
-
-    /**
-     * @var RouteDefinition
-     */
-    private $homeDefinition;
-
-
-    /**
-     * Constructor.
-     *
-     * @param ContainerInterface $container
-     * @param OutputInterface    $output
-     */
-    public function __construct(ContainerInterface $container, OutputInterface $output)
+    public function generate(OutputInterface $output): void
     {
         $this->output = $output;
 
-        $this->homeRouteName = $container->getParameter('ekyna_cms.home_route');
-
-        $this->pageOperator   = $container->get('ekyna_cms.page.operator');
-        $this->menuOperator   = $container->get('ekyna_cms.menu.operator');
-        $this->validator      = $container->get('validator');
-        $this->translator     = $container->get('translator');
-        $this->locales        = $container->getParameter('locales');
-        $this->seoRepository  = $container->get('ekyna_cms.seo.repository');
-        $this->pageRepository = $container->get('ekyna_cms.page.repository');
-        $this->menuRepository = $container->get('ekyna_cms.menu.repository');
-        $this->routingHelper  = $container->get(RoutingHelper::class);
-    }
-
-    public function generatePages(): void
-    {
         $this->configureOptionsResolver();
         $this->gatherRoutesDefinitions();
 
         $this->createPage($this->homeDefinition);
 
         $this->removeNonMappedPages();
+
+        $this->pageManager->clear();
     }
 
-    /** @noinspection PhpUnusedParameterInspection */
+    /**
+     * Removes all menus.
+     */
+    public function truncate(OutputInterface $output): void
+    {
+        $output->writeln('Removing pages ...');
+
+        $count = 0;
+        $pages = $this->pageRepository->findAll();
+        foreach ($pages as $page) {
+            $this->pageManager->remove($page);
+            $count++;
+        }
+        $this->pageManager->flush();
+        $this->pageManager->clear();
+
+        $metadata = $this->entityManager->getClassMetadata($this->pageRepository->getClassName());
+        $connection = $this->entityManager->getConnection();
+        $dbPlatform = $connection->getDatabasePlatform();
+        $connection->beginTransaction();
+
+        try {
+            $connection->executeQuery('SET FOREIGN_KEY_CHECKS=0');
+            $q = $dbPlatform->getTruncateTableSQL($metadata->getTableName());
+            $connection->executeQuery($q);
+            $connection->executeQuery('SET FOREIGN_KEY_CHECKS=1');
+            $connection->commit();
+        } catch (Exception $e) {
+            $output->writeln('<error>Failed to remove pages.</error>');
+            $connection->rollBack();
+        }
+
+        $output->writeln('<info>Pages purged.</info>');
+    }
+
+    /**
+     * Configures the option resolver.
+     */
     private function configureOptionsResolver(): void
     {
         /**
@@ -145,7 +163,7 @@ class PageGenerator
             ->setAllowedTypes('follow', 'bool')
             ->setAllowedTypes('index', 'bool')
             ->setAllowedTypes('canonical', ['string', 'null'])
-            ->setAllowedValues('changefreq', Seo::getChangefreqs())
+            ->setAllowedValues('changefreq', ChangeFrequencies::getConstants())
             ->setNormalizer('priority', function (Options $options, $value) {
                 if (0 > $value) {
                     return 0;
@@ -176,6 +194,7 @@ class PageGenerator
         $this->optionsResolver
             ->setDefaults([
                 'name'     => null,
+                'title'    => null,
                 'path'     => null,
                 'parent'   => null,
                 'locked'   => true,
@@ -187,6 +206,7 @@ class PageGenerator
             ])
             ->setRequired(['name', 'path'])
             ->setAllowedTypes('name', 'string')
+            ->setAllowedTypes('title', ['null', 'string', 'array'])
             ->setAllowedTypes('path', 'string')
             ->setAllowedTypes('parent', ['string', 'null'])
             ->setAllowedTypes('locked', 'bool')
@@ -195,6 +215,34 @@ class PageGenerator
             ->setAllowedTypes('position', 'int')
             ->setAllowedTypes('seo', ['null', 'array'])
             ->setAllowedTypes('menus', 'array')
+            ->setAllowedValues('title', function ($value) {
+                if (is_null($value)) {
+                    return true;
+                }
+
+                if (is_string($value) && !empty($value)) {
+                    return true;
+                }
+
+                if (is_array($value)) {
+                    if (empty($value)) {
+                        return false;
+                    }
+
+                    foreach ($value as $locale => $title) {
+                        if (!preg_match('~^[a-z]{2}$~', $locale)) {
+                            return false;
+                        }
+                        if (!is_string($title) && !empty($title)) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+                return false;
+            })
             ->setNormalizer('locked', function (Options $options, $value) {
                 // Lock pages with parameters in path
                 if (preg_match('#{[^}]+}#', $options['path'])) {
@@ -212,9 +260,9 @@ class PageGenerator
                         } elseif (is_scalar($key) && null == $val) {
                             $normalized[$key] = [];
                         } elseif (is_array($val)) {
-                            $normalized[$key] = $menuOptionResolver->resolve((array)$val);
+                            $normalized[$key] = $menuOptionResolver->resolve($val);
                         } else {
-                            throw new InvalidArgumentException("Unexpected menu options format.");
+                            throw new InvalidArgumentException('Unexpected menu options format.');
                         }
                     }
                 }
@@ -231,7 +279,7 @@ class PageGenerator
      */
     private function gatherRoutesDefinitions(): void
     {
-        if (!$route = $this->routingHelper->findRouteByName($this->homeRouteName)) {
+        if (!$route = $this->routingHelper->findRouteByName($this->homeRouteName, null)) {
             throw new RuntimeException("Route '$this->homeRouteName' not found.");
         }
 
@@ -240,25 +288,53 @@ class PageGenerator
             $this->resolveRouteOptions($route, $this->homeRouteName)
         );
 
+        $routes = $this->routingHelper->getRoutes();
+
         /** @var Route $route */
-        foreach ($this->routingHelper->getRoutes() as $name => $route) {
-            if (($name !== $this->homeRouteName) && !is_null($cms = $route->getOption('_cms'))) {
-                if (array_key_exists('name', $cms)) {
-                    $this->createRouteDefinition($name, $route);
-                }
+        foreach ($routes as $name => $route) {
+            // Skip routes without _cms.name option
+            if (is_null($cms = $route->getOption('_cms')) || !array_key_exists('name', $cms)) {
+                continue;
             }
+
+            // Skip home page
+            if ($name === $this->homeRouteName) {
+                $this->handleRouteLocalization($name, $route, $this->homeDefinition);
+
+                continue;
+            }
+
+            $this->createRouteDefinition($name, $route);
         }
 
         $this->homeDefinition->sortChildren();
     }
 
     /**
+     * Handles the route localization.
+     */
+    private function handleRouteLocalization(string $name, Route $route, RouteDefinition $definition): void
+    {
+        if (null === $locale = $route->getDefault('_locale')) {
+            return;
+        }
+
+        $options = $this->resolveRouteOptions($route, $name);
+
+        $title = $options['name'];
+        if (isset($options['title'])) {
+            if (is_array($options['title'])) {
+                $title = $options['title'][$locale] ?? $title;
+            } else {
+                $title = $options['title'] ?? $title;
+            }
+        }
+
+        $definition->addLocalization($locale, $title, $name);
+    }
+
+    /**
      * Resolves route options.
-     *
-     * @param Route  $route
-     * @param string $routeName
-     *
-     * @return array
      */
     private function resolveRouteOptions(Route $route, string $routeName): array
     {
@@ -269,47 +345,66 @@ class PageGenerator
             ));
         }
 
-        return $this->optionsResolver->resolve(array_merge($cmsOptions, [
-            'path'    => $this->routingHelper->buildPagePath($routeName),
-            'dynamic' => $this->routingHelper->isPagePathDynamic($routeName),
-        ]));
+        $locale = $route->getDefault('_locale');
+
+        $options = array_merge($cmsOptions, [
+            'path'    => $this->routingHelper->buildPagePath($routeName, $locale),
+            'dynamic' => $this->routingHelper->isPagePathDynamic($routeName, $locale),
+        ]);
+
+        return $this->optionsResolver->resolve($options);
     }
 
     /**
      * Creates a route definition
-     *
-     * @param string $routeName
-     * @param Route  $route
-     *
-     * @return RouteDefinition
      */
     private function createRouteDefinition(string $routeName, Route $route): RouteDefinition
     {
-        if (null === $definition = $this->findRouteDefinitionByRouteName($routeName)) {
-            $definition = new RouteDefinition($routeName, $this->resolveRouteOptions($route, $routeName));
-            if (null === $parentRouteName = $definition->getParentRouteName()) {
-                // If parent route name is null => home page child
-                $definition->setParentRouteName($this->homeRouteName);
-                $this->homeDefinition->appendChild($definition);
-            } else {
-                // Creates parent route definition if needed
-                if (!$parentRoute = $this->routingHelper->findRouteByName($parentRouteName)) {
-                    throw new RuntimeException("Route '$parentRouteName' not found.");
-                }
-                $parentDefinition = $this->createRouteDefinition($parentRouteName, $parentRoute);
-                $parentDefinition->appendChild($definition);
-            }
+        $canonical = $this->getRouteCanonicalName($routeName, $route);
+
+        if ($definition = $this->findRouteDefinitionByRouteName($canonical)) {
+            $this->handleRouteLocalization($routeName, $route, $definition);
+
+            return $definition;
         }
+
+        $options = $this->resolveRouteOptions($route, $routeName);
+
+        $definition = new RouteDefinition($canonical, $options);
+
+        $this->handleRouteLocalization($routeName, $route, $definition);
+
+        if (null === $parentRouteName = $definition->getParentRouteName()) {
+            // If parent route name is null => home page child
+            $definition->setParentRouteName($this->homeRouteName);
+            $this->homeDefinition->appendChild($definition);
+
+            return $definition;
+        }
+
+        // Creates parent route definition if needed
+        if (!$parentRoute = $this->routingHelper->findRouteByName($parentRouteName, null)) {
+            throw new RuntimeException("Route '$parentRouteName' not found.");
+        }
+
+        $parentDefinition = $this->createRouteDefinition($parentRouteName, $parentRoute);
+        $parentDefinition->appendChild($definition);
 
         return $definition;
     }
 
     /**
+     * Returns the route canonical name.
+     */
+    private function getRouteCanonicalName(string $routeName, Route $route): string
+    {
+        return $route->hasDefault('_canonical_route')
+            ? $route->getDefault('_canonical_route')
+            : $routeName;
+    }
+
+    /**
      * Finds a RouteDefinition by route name
-     *
-     * @param string $routeName
-     *
-     * @return RouteDefinition|null
      */
     private function findRouteDefinitionByRouteName(string $routeName): ?RouteDefinition
     {
@@ -322,11 +417,6 @@ class PageGenerator
 
     /**
      * Creates a Page from given Route
-     *
-     * @param RouteDefinition    $definition
-     * @param PageInterface|null $parentPage
-     *
-     * @return bool
      */
     private function createPage(RouteDefinition $definition, PageInterface $parentPage = null): bool
     {
@@ -353,11 +443,16 @@ class PageGenerator
 
             // Watch for paths update
             foreach ($this->locales as $locale) {
+                $localization = array_replace([
+                    'route' => $routeName,
+                ], (array)$definition->getLocalization($locale));
+
                 $path = $this
                     ->routingHelper
-                    ->buildPagePath($page->getRoute(), $locale);
+                    ->buildPagePath($localization['route'], $locale);
 
                 $pageTranslation = $page->translate($locale, true);
+
                 if ($pageTranslation->getPath() !== $path) {
                     $pageTranslation->setPath($path);
                     $updated = true;
@@ -368,27 +463,23 @@ class PageGenerator
                 if (!$this->validate($page)) {
                     return false;
                 }
-                $this->pageOperator->persist($page);
+                $this->pageManager->save($page);
             }
 
             $this->outputPageAction($page->getName(), $updated ? 'updated' : 'already exists');
-
         } else {
-            /** @var PageInterface $page */
-            $page = $this->pageRepository->createNew();
-
             // Seo
             $seoDefinition = $definition->getSeo();
-            /** @var SeoInterface $seo */
-            $seo = $this->seoRepository->createNew();
+            $seo = $this->seoFactory->create();
             $seo
                 ->setChangefreq($seoDefinition['changefreq'])
-                ->setPriority($seoDefinition['priority'])
-                ->setFollow($seoDefinition['follow'])
-                ->setIndex($seoDefinition['index'])
+                ->setPriority((string)$seoDefinition['priority'])
+                ->setFollow((bool)$seoDefinition['follow'])
+                ->setIndex((bool)$seoDefinition['index'])
                 ->setCanonical($seoDefinition['canonical']);
 
             // Page
+            $page = $this->pageFactory->create();
             $page
                 ->setName($definition->getPageName())
                 ->setRoute($routeName)
@@ -401,7 +492,17 @@ class PageGenerator
                 ->setSeo($seo);
 
             foreach ($this->locales as $locale) {
-                $title = $seoTitle = $definition->getPageName();
+                $localization = array_replace([
+                    'title' => $definition->getPageName(),
+                    'route' => $routeName,
+                ], (array)$definition->getLocalization($locale));
+
+                $path = $this
+                    ->routingHelper
+                    ->buildPagePath($localization['route'], $locale);
+
+                $title = $seoTitle = $localization['title'];
+
                 if (null !== $parentPage && $parentPage->getRoute() !== $this->homeRouteName) {
                     $seoTitle = sprintf('%s - %s', $parentPage->getSeo()->translate($locale)->getTitle(), $title);
                 }
@@ -409,10 +510,6 @@ class PageGenerator
                 $seoTranslation = $seo->translate($locale, true);
                 $seoTranslation
                     ->setTitle($seoTitle);
-
-                $path = $this
-                    ->routingHelper
-                    ->buildPagePath($page->getRoute(), $locale);
 
                 $pageTranslation = $page->translate($locale, true);
                 $pageTranslation
@@ -425,7 +522,7 @@ class PageGenerator
                 return false;
             }
 
-            $this->pageOperator->persist($page);
+            $this->pageManager->save($page);
 
             $this->outputPageAction($page->getName(), 'created');
         }
@@ -446,33 +543,30 @@ class PageGenerator
 
     /**
      * Validates the element.
-     *
-     * @param object $element
-     *
-     * @return bool
      */
     private function validate(object $element): bool
     {
         $violationList = $this->validator->validate($element, null, ['Generator']);
-        if (0 < $violationList->count()) {
-            $this->output->writeln('<error>Invalid element</error>');
-            /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
-            foreach ($violationList as $violation) {
-                $this->output->writeln(sprintf('<error>%s : %s</error>', $violation->getPropertyPath(),
-                    $violation->getMessage()));
-            }
 
-            return false;
+        if (0 === $violationList->count()) {
+            return true;
         }
 
-        return true;
+        $this->output->writeln('<error>Invalid element</error>');
+
+        foreach ($violationList as $violation) {
+            $this->output->writeln(sprintf(
+                '<error>%s : %s</error>',
+                $violation->getPropertyPath(),
+                $violation->getMessage()
+            ));
+        }
+
+        return false;
     }
 
     /**
      * Outputs the page action.
-     *
-     * @param string $name
-     * @param string $action
      */
     private function outputPageAction(string $name, string $action): void
     {
@@ -486,11 +580,6 @@ class PageGenerator
 
     /**
      * Creates the menus entries.
-     *
-     * @param PageInterface $page
-     * @param array         $menus
-     *
-     * @return bool
      */
     private function createMenus(PageInterface $page, array $menus): bool
     {
@@ -508,8 +597,7 @@ class PageGenerator
 
                 $name = $page->getRoute();
                 if (null === $this->menuRepository->findOneBy(['name' => $name, 'parent' => $parent])) {
-                    /** @var \Ekyna\Bundle\CmsBundle\Model\MenuInterface $menu */
-                    $menu = $this->menuRepository->createNew();
+                    $menu = $this->menuFactory->create();
                     $menu
                         ->setParent($parent)
                         ->setName($name)
@@ -532,7 +620,7 @@ class PageGenerator
                         return false;
                     }
 
-                    $this->menuOperator->persist($menu);
+                    $this->menuManager->save($menu);
                 }
             }
         }
@@ -545,13 +633,16 @@ class PageGenerator
      */
     private function removeNonMappedPages(): void
     {
-        /** @var PageInterface[] $staticPages */
-        $staticPages = $this->pageRepository->findBy(['static' => true], ['left' => 'DESC']);
-        foreach ($staticPages as $page) {
-            if (null === $this->findRouteDefinitionByRouteName($page->getRoute())) {
-                $this->outputPageAction($page->getName(), 'removed');
-                $this->pageOperator->delete($page);
+        $pages = $this->pageRepository->findBy(['static' => true], ['left' => 'DESC']);
+
+        foreach ($pages as $page) {
+            if (null !== $this->findRouteDefinitionByRouteName($page->getRoute())) {
+                continue;
             }
+
+            $this->outputPageAction($page->getName(), 'removed');
+
+            $this->pageManager->delete($page);
         }
     }
 }

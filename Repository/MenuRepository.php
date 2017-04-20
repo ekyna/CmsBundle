@@ -1,29 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Doctrine\ORM\Query\Expr;
 use Ekyna\Bundle\CmsBundle\Exception\InvalidArgumentException;
 use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
-use Ekyna\Component\Resource\Doctrine\ORM\TranslatableResourceRepositoryInterface;
-use Ekyna\Component\Resource\Doctrine\ORM\Util\TranslatableResourceRepositoryTrait;
-use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
+use Ekyna\Component\Resource\Doctrine\ORM\Repository\TranslatableRepository;
 
 /**
  * Class MenuRepository
  * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class MenuRepository extends NestedTreeRepository implements TranslatableResourceRepositoryInterface
+class MenuRepository extends TranslatableRepository implements MenuRepositoryInterface
 {
-    use TranslatableResourceRepositoryTrait;
-
     /**
      * Finds the menu by his name, optionally filtered by root ("rootName:menuName" format).
      *
      * @param string $name
      *
      * @return MenuInterface|null
+     * @throws InvalidArgumentException
+     * @noinspection PhpDocMissingThrowsInspection
      */
     public function findOneByName(string $name): ?MenuInterface
     {
@@ -50,11 +50,12 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
             ];
         }
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         return $qb
             ->getQuery()
             ->useQueryCache(true)
             // TODO ->enableResultCache(3600, Menu::getEntityTagPrefix() . '[name=' . $name . ']')
-            ->setMaxResults(1)
+            //->setMaxResults(1)
             ->setParameters($parameters)
             ->getOneOrNullResult();
     }
@@ -62,14 +63,14 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
     /**
      * Returns the menus data for the menu provider.
      *
-     * @return array
+     * @return array[]
      */
     public function findForProvider(): array
     {
         $qb = $this->createQueryBuilder('m');
         $qb
             ->select(
-                'm.id, IDENTITY(m.parent) as parent, m.name, m.route, m.parameters, m.root, '.
+                'm.id, IDENTITY(m.parent) as parent, m.name, m.route, m.parameters, m.root, ' .
                 'm.attributes, m.options, t.title, t.path'
             )
             ->leftJoin('m.translations', 't', Expr\Join::WITH, $qb->expr()->eq('t.locale', ':locale'))
@@ -107,9 +108,9 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    protected function getAlias()
+    protected function getAlias(): string
     {
         return 'm';
     }

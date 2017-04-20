@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\Serializer;
 
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model;
-use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
+use Ekyna\Bundle\MediaBundle\Repository\MediaRepository;
 use Ekyna\Component\Resource\Locale\LocaleProviderInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -15,15 +17,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    /**
-     * @var LocaleProviderInterface
-     */
-    protected $localeProvider;
-
-    /**
-     * @var MediaRepository
-     */
-    protected $mediaRepository;
+    protected LocaleProviderInterface $localeProvider;
+    protected MediaRepository $mediaRepository;
 
 
     /**
@@ -41,7 +36,7 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @param Model\Tabs $tabs
      */
@@ -97,9 +92,9 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, $type, $format = null, array $context = [])
     {
         $tabs = new Model\Tabs();
         $tabs
@@ -143,8 +138,8 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
                 $translation
                     ->setLocale($trans['locale'])
                     ->setTitle($trans['title'])
-                    ->setButtonLabel(isset($trans['button_label']) ? $trans['button_label'] : null) // TODO TMP isset
-                    ->setButtonUrl(isset($trans['button_url']) ? $trans['button_url'] : null); // TODO TMP isset
+                    ->setButtonLabel($trans['button_label'] ?? null) // TODO TMP isset
+                    ->setButtonUrl($trans['button_url'] ?? null); // TODO TMP isset
 
                 if (isset($trans['media'])) {
                     $translation->setMedia($this->mediaRepository->find($trans['media']));
@@ -160,17 +155,17 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null): bool
     {
         return $data instanceof Model\Tabs;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, $format = null): bool
     {
         return $type === Model\Tabs::class;
     }

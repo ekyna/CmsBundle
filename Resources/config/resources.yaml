@@ -1,0 +1,199 @@
+namespaces:
+    ekyna_cms:
+        label: label
+        prefix: /content
+        trans_domain: EkynaCms
+
+resources:
+    ekyna_cms:
+        # Editor
+        block:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\Editor\Block
+            repository: Ekyna\Bundle\CmsBundle\Repository\BlockRepository
+            translation:
+                class: Ekyna\Bundle\CmsBundle\Entity\Editor\BlockTranslation
+                fields: [data]
+
+        container:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\Editor\Container
+            repository: Ekyna\Bundle\CmsBundle\Repository\ContainerRepository
+
+        content:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\Editor\Content
+            repository: Ekyna\Bundle\CmsBundle\Repository\ContentRepository
+            normalizer: Ekyna\Bundle\CmsBundle\Service\Serializer\ContentNormalizer
+
+        row:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\Editor\Row
+            repository: Ekyna\Bundle\CmsBundle\Repository\RowRepository
+
+        # Cms
+        seo:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\CmsBundle\Model\SeoInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\Seo
+            repository:
+                interface: Ekyna\Bundle\CmsBundle\Repository\SeoRepositoryInterface
+                class: Ekyna\Bundle\CmsBundle\Repository\SeoRepository
+            factory:
+                interface: Ekyna\Bundle\CmsBundle\Factory\SeoFactoryInterface
+                class: Ekyna\Bundle\CmsBundle\Factory\SeoFactory
+            normalizer: Ekyna\Bundle\CmsBundle\Service\Serializer\SeoNormalizer
+            form: Ekyna\Bundle\CmsBundle\Form\Type\SeoType
+            trans_domain: EkynaCms
+            translation:
+                interface: Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\SeoTranslation
+                fields: [title, description, keywords]
+
+        tag:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\CmsBundle\Model\TagInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\Tag
+            form: Ekyna\Bundle\CmsBundle\Form\Type\TagType
+            table: Ekyna\Bundle\CmsBundle\Table\Type\TagType
+            trans_domain: EkynaCms
+            actions:
+                admin_crud:
+                    read: '@EkynaCms/Admin/Tag/read.html.twig'
+                    form: '@EkynaCms/Admin/Tag/_form.html.twig'
+
+        page:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\CmsBundle\Model\PageInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\Page
+            repository:
+                interface: Ekyna\Bundle\CmsBundle\Repository\PageRepositoryInterface
+                class: Ekyna\Bundle\CmsBundle\Repository\PageRepository
+            manager:
+                interface: Ekyna\Bundle\CmsBundle\Manager\PageManagerInterface
+                class: Ekyna\Bundle\CmsBundle\Manager\PageManager
+            factory:
+                interface: Ekyna\Bundle\CmsBundle\Factory\PageFactoryInterface
+                class: Ekyna\Bundle\CmsBundle\Factory\PageFactory
+            search:
+                class: Ekyna\Bundle\CmsBundle\Service\Search\PageRepository
+                global: true
+            normalizer: Ekyna\Bundle\CmsBundle\Service\Serializer\PageNormalizer
+            form: Ekyna\Bundle\CmsBundle\Form\Type\PageType
+            table: Ekyna\Bundle\CmsBundle\Table\Type\PageType
+            trans_domain: EkynaCms
+            translation:
+                interface: Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\PageTranslation
+                fields: [title, breadcrumb, html, path]
+            actions:
+                admin_crud:
+                    templates: '@EkynaCms/Admin/Page'
+                admin_toggle:
+                    properties: enabled
+                admin_tree:
+                    create_child:
+                        template: '@EkynaCms/Admin/Page/create_child.html.twig'
+                        form_template: '@EkynaCms/Admin/Page/_form.html.twig'
+            # TODO behaviors:
+
+        menu:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\CmsBundle\Model\MenuInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\Menu
+            repository:
+                interface: Ekyna\Bundle\CmsBundle\Repository\MenuRepositoryInterface
+                class: Ekyna\Bundle\CmsBundle\Repository\MenuRepository
+            manager:
+                interface: Ekyna\Bundle\CmsBundle\Manager\MenuManagerInterface
+                class: Ekyna\Bundle\CmsBundle\Manager\MenuManager
+            factory:
+                interface: Ekyna\Bundle\CmsBundle\Factory\MenuFactoryInterface
+                class: Ekyna\Bundle\CmsBundle\Factory\MenuFactory
+            form: Ekyna\Bundle\CmsBundle\Form\Type\MenuType
+            table: Ekyna\Bundle\CmsBundle\Table\Type\MenuType
+            trans_domain: EkynaCms
+            translation:
+                interface: Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\MenuTranslation
+                fields: [title, path]
+            actions:
+                admin_crud:
+                    templates: '@EkynaCms/Admin/Menu'
+                admin_toggle:
+                    properties: enabled
+                admin_tree:
+                    create_child:
+                        template: '@EkynaCms/Admin/Menu/create_child.html.twig'
+                        form_template: '@EkynaCms/Admin/Menu/_form.html.twig'
+
+        notice:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\CmsBundle\Model\NoticeInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\Notice
+            repository:
+                interface: Ekyna\Bundle\CmsBundle\Repository\NoticeRepositoryInterface
+                class: Ekyna\Bundle\CmsBundle\Repository\NoticeRepository
+            form: Ekyna\Bundle\CmsBundle\Form\Type\NoticeType
+            table: Ekyna\Bundle\CmsBundle\Table\Type\NoticeType
+            trans_domain: EkynaCms
+            translation:
+                interface: Ekyna\Bundle\CmsBundle\Model\NoticeTranslationInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\NoticeTranslation
+                fields: [content]
+            actions:
+                admin_crud:
+                    read: '@EkynaCms/Admin/Notice/read.html.twig'
+                    form: '@EkynaCms/Admin/Notice/_form.html.twig'
+                admin_tinymce: ~
+
+        slide_show:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\CmsBundle\Model\SlideShowInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\SlideShow
+            repository:
+                interface: Ekyna\Bundle\CmsBundle\Repository\SlideShowRepositoryInterface
+                class: Ekyna\Bundle\CmsBundle\Repository\SlideShowRepository
+            form: Ekyna\Bundle\CmsBundle\Form\Type\SlideShowType
+            table: Ekyna\Bundle\CmsBundle\Table\Type\SlideShowType
+            trans_domain: EkynaCms
+            actions:
+                admin_crud:
+                    read: '@EkynaCms/Admin/SlideShow/read.html.twig'
+                    form: '@EkynaCms/Admin/SlideShow/_form.html.twig'
+
+        slide:
+            driver: doctrine/orm
+            entity:
+                interface: Ekyna\Bundle\CmsBundle\Model\SlideInterface
+                class: Ekyna\Bundle\CmsBundle\Entity\Slide
+            form: Ekyna\Bundle\CmsBundle\Form\Type\SlideType
+            table: Ekyna\Bundle\CmsBundle\Table\Type\SlideType
+            parent: ekyna_cms.slide_show
+            trans_domain: EkynaCms
+            translation:
+                class: Ekyna\Bundle\CmsBundle\Entity\SlideTranslation
+                fields: [data]
+            actions:
+                admin_crud:
+                    templates: '@EkynaCms/Admin/Slide'
+                    create: false
+                    list: false
+                Ekyna\Bundle\CmsBundle\Action\SlideCreateFlowAction:
+                    template: '@EkynaCms/Admin/Slide/create.html.twig'
+                admin_move_up: ~
+                admin_move_down: ~

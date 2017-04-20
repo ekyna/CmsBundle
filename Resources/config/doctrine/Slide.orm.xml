@@ -23,7 +23,7 @@
 
         <field name="name" type="string" column="name" length="255"/>
         <field name="type" type="string" column="type" length="32"/>
-        <field name="data" type="json_array" column="data"/>
+        <field name="data" type="json" column="data"/>
         <field name="position" type="smallint" column="position">
             <gedmo:sortable-position/>
         </field>

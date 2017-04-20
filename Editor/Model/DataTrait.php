@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidArgumentException;
@@ -11,10 +13,7 @@ use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidArgumentException;
  */
 trait DataTrait
 {
-    /**
-     * @var array
-     */
-    protected $data = [];
+    protected array $data = [];
 
 
     /**
@@ -25,11 +24,11 @@ trait DataTrait
      *
      * @return DataInterface|$this
      */
-    public function setData($keyOrData, $value = null)
+    public function setData($keyOrData, $value = null): DataInterface
     {
-        if (is_string($keyOrData) && 0 < strlen($keyOrData)) {
+        if (is_string($keyOrData) && !empty($keyOrData)) {
             $this->data[$keyOrData] = $value;
-        } elseif(is_array($keyOrData)) {
+        } elseif (is_array($keyOrData)) {
             $this->data = $keyOrData;
         } else {
             throw new InvalidArgumentException('Expected key/value or array.');
@@ -41,13 +40,13 @@ trait DataTrait
     /**
      * Unsets the data for the given key.
      *
-     * @param string $key
+     * @param string|null $key
      *
      * @return DataInterface|$this
      */
-    public function unsetData($key = null)
+    public function unsetData(string $key = null): DataInterface
     {
-        if (is_string($key) && 0 < strlen($key)) {
+        if (is_string($key) && !empty($key)) {
             unset($this->data[$key]);
         } else {
             $this->data = [];
@@ -61,7 +60,7 @@ trait DataTrait
      *
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }

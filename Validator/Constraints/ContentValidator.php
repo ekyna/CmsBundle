@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface;
@@ -14,6 +16,9 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class ContentValidator extends ConstraintValidator
 {
+    /**
+     * @inheritDoc
+     */
     public function validate($content, Constraint $constraint)
     {
         if (!$constraint instanceof Content) {

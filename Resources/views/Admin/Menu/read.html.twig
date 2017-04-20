@@ -1,0 +1,57 @@
+{% extends '@EkynaAdmin/Entity/Crud/read.html.twig' %}
+
+
+{% block actions %}
+    {{ admin_resource_btn(context.config.id, 'Ekyna\\Bundle\\AdminBundle\\Action\\ListAction') }}
+{% endblock %}
+
+
+{% block main_contents -%}
+    <div class="tab-pane active" id="{{ resource_name }}-general">
+        {{ show_row(menu.name, 'text', {
+            'label': 'field.name',
+            'trans_domain': 'EkynaUi'
+        }) }}
+        {{ show_row(menu.parent, 'entity', {
+            'label': 'field.parent',
+            'trans_domain': 'EkynaUi',
+            'property': 'name',
+            'route': 'admin_ekyna_cms_menu_read',
+            'route_parameters_map': {'menuId': 'id'}
+        }) }}
+        <hr>
+        {{ show_row(menu.translations, 'translations', {
+            'fields': {
+                'title': {
+                    'label': 'field.title',
+                    'trans_domain': 'EkynaUi'
+                },
+                'path': {
+                    'label': 'field.url',
+                    'trans_domain': 'EkynaUi'
+                }
+            }
+        }) }}
+        {{ show_row(menu.description, 'textarea', {
+            'label': 'field.description',
+            'trans_domain': 'EkynaUi'
+        }) }}
+        {% if is_granted('ROLE_SUPER_ADMIN') -%}
+            {{ show_row(menu.attributes, 'map', {
+                'label': 'field.attributes',
+                'trans_domain': 'EkynaUi'
+            }) }}
+        {%- endif %}
+        <hr>
+        {% if is_granted('ROLE_SUPER_ADMIN') -%}
+            {{ show_row(menu.route, 'text', {
+                'label':'field.route',
+                'trans_domain': 'EkynaUi'
+            }) }}
+            {{ show_row(menu.parameters, 'map', {
+                'label': 'field.parameters',
+                'trans_domain': 'EkynaUi'
+            }) }}
+        {%- endif %}
+    </div>
+{%- endblock main_contents %}

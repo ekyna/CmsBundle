@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\Tabs;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
+use Ekyna\Bundle\CmsBundle\Editor\View\WidgetView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\TabsType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Serializer;
 use Twig\Environment;
 use Twig\TemplateWrapper;
@@ -21,28 +25,16 @@ class TabsPlugin extends AbstractPlugin
 {
     const NAME = 'ekyna_block_tabs';
 
-
-    /**
-     * @var Serializer
-     */
-    private $serializer;
-
-    /**
-     * @var Environment
-     */
-    private $twig;
-
-    /**
-     * @var TemplateWrapper
-     */
-    private $template;
+    private Serializer       $serializer;
+    private Environment      $twig;
+    private ?TemplateWrapper $template = null;
 
 
     /**
      * Constructor.
      *
-     * @param array             $config
-     * @param Serializer        $serializer
+     * @param array       $config
+     * @param Serializer  $serializer
      * @param Environment $twig
      */
     public function __construct(
@@ -60,9 +52,9 @@ class TabsPlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function create(BlockInterface $block, array $data = [])
+    public function create(BlockInterface $block, array $data = []): void
     {
         parent::create($block, $data);
 
@@ -73,17 +65,17 @@ class TabsPlugin extends AbstractPlugin
             ->setCurrentLocale($this->localeProvider->getCurrentLocale())
             ->setFallbackLocale($this->localeProvider->getFallbackLocale())
             ->translate($this->localeProvider->getCurrentLocale())
-                ->setTitle('Default tabs')
-                ->setContent('<p>Edit the container to configure tabs.</p>')
-                ->setButtonLabel('Some button')
-                ->setButtonUrl('javascript: void(0)');
+            ->setTitle('Default tabs')
+            ->setContent('<p>Edit the container to configure tabs.</p>')
+            ->setButtonLabel('Some button')
+            ->setButtonUrl('javascript: void(0)');
 
         $tab = new Model\Tab();
         $tab
             ->setCurrentLocale($this->localeProvider->getCurrentLocale())
             ->setFallbackLocale($this->localeProvider->getFallbackLocale())
             ->translate($this->localeProvider->getCurrentLocale())
-                ->setTitle('Default tab');
+            ->setTitle('Default tab');
 
         $tabs->addTab($tab);
 
@@ -91,12 +83,12 @@ class TabsPlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function update(BlockInterface $block, Request $request, array $options = [])
+    public function update(BlockInterface $block, Request $request, array $options = []): ?Response
     {
         $options = array_replace([
-            'action' => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
+            'action' => $this->urlGenerator->generate('admin_ekyna_cms_editor_block_edit', [
                 'blockId'         => $block->getId(),
                 'widgetType'      => $request->get('widgetType', $block->getType()),
                 '_content_locale' => $this->localeProvider->getCurrentLocale(),
@@ -122,14 +114,18 @@ class TabsPlugin extends AbstractPlugin
             return null;
         }
 
-        return $this->createModal('Modifier le bloc tabs.', $form->createView());
+        return $this->createModalResponse('Modifier le bloc tabs.', $form->createView());
     }
 
     /**
      * @inheritDoc
      */
-    public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0)
-    {
+    public function createWidget(
+        BlockInterface $block,
+        AdapterInterface $adapter,
+        array $options,
+        int $position = 0
+    ): WidgetView {
         /** @var Tabs $tabs */
         $tabs = $this->serializer->denormalize($block->getData(), Tabs::class);
 
@@ -149,7 +145,7 @@ class TabsPlugin extends AbstractPlugin
      *
      * @return TemplateWrapper
      */
-    private function getTemplate()
+    private function getTemplate(): TemplateWrapper
     {
         if ($this->template) {
             return $this->template;
@@ -159,25 +155,25 @@ class TabsPlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return 'Tabs';
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getJavascriptFilePath()
+    public function getJavascriptFilePath(): string
     {
         return 'ekyna-cms/editor/plugin/block/tabs';
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Container;
 
-use Ekyna\Bundle\CmsBundle\Editor\Plugin\AbstractPlugin as BasePlugin;
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
-use Ekyna\Bundle\CoreBundle\Modal\Modal;
+use Ekyna\Bundle\CmsBundle\Editor\Plugin\AbstractPlugin as BasePlugin;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
@@ -14,87 +15,45 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 abstract class AbstractPlugin extends BasePlugin implements PluginInterface
 {
-    const INVALID_DATA = 'ekyna_cms.container.invalid_data';
+    public const INVALID_DATA = 'ekyna_cms.container.invalid_data';
 
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function create(ContainerInterface $container, array $data = [])
+    public function create(ContainerInterface $container, array $data = []): void
     {
         $container->setData($data);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function remove(ContainerInterface $container)
+    public function remove(ContainerInterface $container): void
     {
         $container->unsetData();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function validate(ContainerInterface $container, ExecutionContextInterface $context)
+    public function validate(ContainerInterface $container, ExecutionContextInterface $context): void
     {
 
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function supports(ContainerInterface $container)
+    public function supports(ContainerInterface $container): bool
     {
         return $container->getType() === $this->getName();
     }
 
     /**
-     * Creates a modal.
-     *
-     * @param string $title
-     * @param mixed  $content
-     * @param array  $buttons
-     *
-     * @return Modal
+     * @inheritDoc
      */
-    protected function createModal($title, $content = null, array $buttons = [])
-    {
-        $modal = new Modal($title);
-
-        $buttons = [];
-
-        if (empty($buttons)) {
-            $buttons['submit'] = [
-                'id'       => 'submit',
-                'label'    => 'ekyna_core.button.save',
-                'icon'     => 'glyphicon glyphicon-ok',
-                'cssClass' => 'btn-success',
-                'autospin' => true,
-            ];
-        }
-        if (!array_key_exists('close', $buttons)) {
-            $buttons['close'] = [
-                'id'       => 'close',
-                'label'    => 'ekyna_core.button.cancel',
-                'icon'     => 'glyphicon glyphicon-remove',
-                'cssClass' => 'btn-default',
-            ];
-        }
-
-        $modal->setButtons($buttons);
-
-        if ($content) {
-            $modal->setContent($content);
-        }
-
-        return $modal;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getJavascriptFilePath()
+    public function getJavascriptFilePath(): string
     {
         return 'ekyna-cms/editor/plugin/container/default';
     }

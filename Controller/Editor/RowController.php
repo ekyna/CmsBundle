@@ -1,31 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class RowController
  * @package Ekyna\Bundle\CmsBundle\Controller\Editor
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class RowController extends BaseController
+class RowController extends AbstractController
 {
     /**
      * Create and append a new block to the row.
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function createBlockAction(Request $request)
+    public function createBlock(Request $request): Response
     {
         $row = $this->findRowByRequest($request);
         $type = $request->request->get('type', null);
 
         try {
-            $block = $this->getEditor()->createDefaultBlock($type, [], $row);
+            $block = $this->editor->createDefaultBlock($type, [], $row);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -48,16 +51,16 @@ class RowController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function layoutAction(Request $request)
+    public function layout(Request $request): Response
     {
         $row = $this->findRowByRequest($request);
 
         $data = $request->request->get('data', []);
 
         try {
-            $this->getEditor()->getLayoutAdapter()->updateRowLayout($row, $data);
+            $this->editor->getLayoutAdapter()->updateRowLayout($row, $data);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -77,15 +80,15 @@ class RowController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function removeAction(Request $request)
+    public function remove(Request $request): Response
     {
         $row = $this->findRowByRequest($request);
         $container = $row->getContainer();
 
         try {
-            $this->getEditor()->getRowManager()->delete($row);
+            $this->editor->getRowManager()->delete($row);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -109,14 +112,14 @@ class RowController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function moveUpAction(Request $request)
+    public function moveUp(Request $request): Response
     {
         $row = $this->findRowByRequest($request);
 
         try {
-            $sibling = $this->getEditor()->getRowManager()->moveUp($row);
+            $sibling = $this->editor->getRowManager()->moveUp($row);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -141,14 +144,14 @@ class RowController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function moveDownAction(Request $request)
+    public function moveDown(Request $request): Response
     {
         $row = $this->findRowByRequest($request);
 
         try {
-            $sibling = $this->getEditor()->getRowManager()->moveDown($row);
+            $sibling = $this->editor->getRowManager()->moveDown($row);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
-use Ekyna\Bundle\CoreBundle\Model\TreeInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -13,74 +14,19 @@ use Ekyna\Component\Resource\Model as RM;
  *
  * @method PageTranslationInterface translate($locale = null, $create = false)
  * @method PageTranslationInterface[] getTranslations()
+ * @method Collection|PageInterface[] getChildren()
+ * @method PageInterface|null getParent()
  */
 interface PageInterface extends
     ContentSubjectInterface,
     SeoSubjectInterface,
+    RM\TreeInterface,
     RM\TimestampableInterface,
     RM\TaggedEntityInterface,
-    RM\TranslatableInterface,
-    TreeInterface
+    RM\TranslatableInterface
 {
     /**
-     * Set parent
-     *
-     * @param PageInterface|null $parent
-     *
-     * @return PageInterface|$this
-     */
-    public function setParent(PageInterface $parent = null): PageInterface;
-
-    /**
-     * Get parent
-     *
-     * @return PageInterface|null
-     */
-    public function getParent(): ?PageInterface;
-
-    /**
-     * Returns whether the page has the child or not.
-     *
-     * @param PageInterface $child
-     *
-     * @return bool
-     */
-    public function hasChild(PageInterface $child): bool;
-
-    /**
-     * Add children
-     *
-     * @param PageInterface $child
-     *
-     * @return PageInterface|$this
-     */
-    public function addChild(PageInterface $child): PageInterface;
-
-    /**
-     * Remove children
-     *
-     * @param PageInterface $child
-     *
-     * @return PageInterface|$this
-     */
-    public function removeChild(PageInterface $child): PageInterface;
-
-    /**
-     * Has children
-     *
-     * @return bool
-     */
-    public function hasChildren(): bool;
-
-    /**
-     * Get children
-     *
-     * @return Collection|PageInterface[]
-     */
-    public function getChildren(): Collection;
-
-    /**
-     * Set name
+     * Sets the name
      *
      * @param string $name
      *
@@ -89,46 +35,46 @@ interface PageInterface extends
     public function setName(string $name): PageInterface;
 
     /**
-     * Get name
+     * Returns the name
      *
      * @return string
      */
     public function getName(): ?string;
 
     /**
-     * Set title
+     * Sets the (translated) title.
      *
-     * @param string $title
+     * @param string|null $title
      *
      * @return PageInterface|$this
      */
-    public function setTitle(string $title): PageInterface;
+    public function setTitle(string $title = null): PageInterface;
 
     /**
-     * Get title
+     * Returns the title
      *
      * @return string
      */
     public function getTitle(): ?string;
 
     /**
-     * Set breadcrumb
+     * Sets the (translated) breadcrumb.
      *
-     * @param string $breadcrumb
+     * @param string|null $breadcrumb
      *
      * @return PageInterface|$this
      */
-    public function setBreadcrumb(string $breadcrumb): PageInterface;
+    public function setBreadcrumb(string $breadcrumb = null): PageInterface;
 
     /**
-     * Get breadcrumb
+     * Returns the breadcrumb
      *
      * @return string
      */
     public function getBreadcrumb(): ?string;
 
     /**
-     * Set html
+     * Sets the (translated) html.
      *
      * @param string|null $html
      *
@@ -137,14 +83,14 @@ interface PageInterface extends
     public function setHtml(string $html = null): PageInterface;
 
     /**
-     * Return html
+     * Returns the html
      *
      * @return string
      */
     public function getHtml(): ?string;
 
     /**
-     * Set path
+     * Sets the (translated) path.
      *
      * @param string|null $path
      *
@@ -153,14 +99,14 @@ interface PageInterface extends
     public function setPath(string $path = null): PageInterface;
 
     /**
-     * Get path
+     * Returns the path
      *
      * @return string
      */
     public function getPath(): ?string;
 
     /**
-     * Set route
+     * Sets the route
      *
      * @param string|null $route
      *
@@ -169,14 +115,14 @@ interface PageInterface extends
     public function setRoute(string $route = null): PageInterface;
 
     /**
-     * Get route
+     * Returns the route
      *
      * @return string
      */
     public function getRoute(): ?string;
 
     /**
-     * Set static
+     * Sets whether this page is static
      *
      * @param bool $static
      *
@@ -185,14 +131,14 @@ interface PageInterface extends
     public function setStatic(bool $static): PageInterface;
 
     /**
-     * Get static
+     * Returns whether this page is static
      *
      * @return bool
      */
     public function isStatic(): bool;
 
     /**
-     * Set locked
+     * Sets whether this page is locked
      *
      * @param bool $locked
      *
@@ -201,14 +147,14 @@ interface PageInterface extends
     public function setLocked(bool $locked): PageInterface;
 
     /**
-     * Get locked
+     * Returns whether this page is locked
      *
      * @return bool
      */
     public function isLocked(): bool;
 
     /**
-     * Set controller
+     * Sets the controller
      *
      * @param string|null $controller
      *
@@ -217,14 +163,14 @@ interface PageInterface extends
     public function setController(string $controller = null): PageInterface;
 
     /**
-     * Get controller
+     * Returns the controller
      *
      * @return string
      */
     public function getController(): ?string;
 
     /**
-     * Set advanced
+     * Sets whether this page is advanced
      *
      * @param bool $advanced
      *
@@ -233,14 +179,14 @@ interface PageInterface extends
     public function setAdvanced(bool $advanced): PageInterface;
 
     /**
-     * Get advanced
+     * Returns whether this page is advanced
      *
      * @return bool
      */
     public function isAdvanced(): bool;
 
     /**
-     * Sets the dynamic path.
+     * Sets whether this page has dynamic path.
      *
      * @param bool $dynamicPath
      *
@@ -249,14 +195,14 @@ interface PageInterface extends
     public function setDynamicPath(bool $dynamicPath): PageInterface;
 
     /**
-     * Returns the dynamic path.
+     * Returns whether this page has dynamic path.
      *
      * @return bool
      */
     public function isDynamicPath(): bool;
 
     /**
-     * Sets the enabled.
+     * Sets whether this page is enabled.
      *
      * @param bool $enabled
      *
@@ -265,7 +211,7 @@ interface PageInterface extends
     public function setEnabled(bool $enabled): PageInterface;
 
     /**
-     * Returns the enabled.
+     * Returns whether this page is enabled.
      *
      * @return bool
      */

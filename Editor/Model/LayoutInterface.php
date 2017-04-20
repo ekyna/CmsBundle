@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
 /**
@@ -14,14 +16,14 @@ interface LayoutInterface
      *
      * @param array $layout
      */
-    public function setLayout(array $layout);
+    public function setLayout(array $layout): void;
 
     /**
      * Returns the layout.
      *
      * @return array
      */
-    public function getLayout();
+    public function getLayout(): array;
 
     /**
      * Returns the layout styles configuration.

@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\Tabs;
-use Ekyna\Bundle\CoreBundle\Form\Type\CollectionType;
+use Ekyna\Bundle\UiBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use function Symfony\Component\Translation\t;
 
 /**
  * Class TabsBlockType
@@ -17,29 +21,28 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class TabsType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('theme', Type\ChoiceType::class, [
-                'label'       => 'ekyna_cms.block.field.theme',
-                'choices'     => array_flip($options['themes']),
-                'placeholder' => 'ekyna_core.value.none',
-                'required'    => true,
-                'select2'     => false,
+                'label'                     => t('block.field.theme', [], 'EkynaCms'),
+                'choices'                   => array_flip($options['themes']),
+                'choice_translation_domain' => false,
+                'placeholder'               => 'value.none',
+                'required'                  => true,
+                'select2'                   => false,
             ])
             ->add('align', Type\ChoiceType::class, [
-                'label'       => 'ekyna_cms.block.field.align',
-                'choices'     => [
+                'label'                     => t('block.field.align', [], 'EkynaCms'),
+                'choices'                   => [
                     'Left'   => 'left',
                     'Right'  => 'right',
                     'Center' => 'center',
                 ],
-                'placeholder' => 'ekyna_core.value.none',
-                'required'    => true,
-                'select2'     => false,
+                'choice_translation_domain' => false,
+                'placeholder'               => t('value.none', [], 'EkynaUi'),
+                'required'                  => true,
+                'select2'                   => false,
             ])
             ->add('translations', TranslationsFormsType::class, [
                 'form_type'      => TabsTranslationType::class,
@@ -53,16 +56,13 @@ class TabsType extends AbstractType
                 'allow_add'       => true,
                 'allow_delete'    => true,
                 'allow_sort'      => true,
-                'add_button_text' => 'ekyna_core.button.add',
+                'add_button_text' => t('button.add', [], 'EkynaUi'),
                 'sub_widget_col'  => 10,
                 'button_col'      => 2,
             ]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setDefault('data_class', Tabs::class)
@@ -70,10 +70,7 @@ class TabsType extends AbstractType
             ->setAllowedTypes('themes', 'array');
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'ekyna_cms_block_tabs';
     }

@@ -1,96 +1,79 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Command;
 
 use Ekyna\Bundle\CmsBundle\Install\Generator\PageGenerator;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
+use function sprintf;
+
 /**
  * Class GeneratePagesCommand
  * @package Ekyna\Bundle\CmsBundle\Command
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class GeneratePagesCommand extends ContainerAwareCommand
+class GeneratePagesCommand extends Command
 {
+    protected static $defaultName = 'ekyna:cms:generate:page';
+
+    private PageGenerator $pageGenerator;
+
+
     /**
-     * @inheritdoc
+     * Constructor.
+     *
+     * @param PageGenerator $pageGenerator
+     */
+    public function __construct(PageGenerator $pageGenerator)
+    {
+        parent::__construct();
+
+        $this->pageGenerator = $pageGenerator;
+    }
+
+    /**
+     * @inheritDoc
      */
     protected function configure()
     {
         $this
-            ->setName('ekyna:cms:generate-pages')
+            ->setName('ekyna:cms:generate:page')
             ->addOption('truncate', null, InputOption::VALUE_NONE, 'Whether to first remove the pages or not.')
             ->setDescription('Generates CMS pages.');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $truncate = (bool)$input->getOption('truncate');
 
         $output->writeln(sprintf('Loading pages with truncate <info>%s</info>.', $truncate ? 'true' : 'false'));
 
-        /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion('Do you want to continue ?', false);
 
         if (!$helper->ask($input, $output, $question)) {
-            return;
+            return 0;
         }
 
         if ($truncate) {
-            $this->truncate($output);
+            $this->pageGenerator->truncate($output);
         }
 
         $output->writeln('Generating pages based and routing configuration :');
 
-        $generator = new PageGenerator($this->getContainer(), $output);
-        $generator->generatePages();
-    }
+        $this->pageGenerator->generate($output);
 
-    /**
-     * Removes all the pages.
-     *
-     * @param OutputInterface $output
-     */
-    private function truncate(OutputInterface $output)
-    {
-        $output->writeln('Removing pages ...');
-
-        $em = $this->getContainer()->get('ekyna_cms.page.manager');
-        $repository = $this->getContainer()->get('ekyna_cms.page.repository');
-
-        $count = 0;
-        $pages = $repository->findAll();
-        foreach ($pages as $page) {
-            $em->remove($page);
-            $count++;
-        }
-        $em->flush();
-        $em->clear();
-
-        $class = $this->getContainer()->getParameter('ekyna_cms.page.class');
-        $cmd = $em->getClassMetadata($class);
-        $connection = $em->getConnection();
-        $dbPlatform = $connection->getDatabasePlatform();
-        $connection->beginTransaction();
-        try {
-            $connection->query('SET FOREIGN_KEY_CHECKS=0');
-            $q = $dbPlatform->getTruncateTableSQL($cmd->getTableName());
-            $connection->executeUpdate($q);
-            $connection->query('SET FOREIGN_KEY_CHECKS=1');
-            $connection->commit();
-        } catch (\Exception $e) {
-            $output->writeln(sprintf('<error>Failed to truncate table for class %s.</error>', $class));
-            $connection->rollBack();
-        }
-
-        $output->writeln(sprintf('<info>%s</info> pages removed.', $count));
+        return 0;
     }
 }

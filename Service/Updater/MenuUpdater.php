@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\Updater;
 
 use Behat\Transliterator\Transliterator;
 use Doctrine\ORM\EntityManagerInterface;
 use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
-use Ekyna\Bundle\CmsBundle\Repository\PageRepository;
-use Ekyna\Bundle\CoreBundle\Cache\TagManager;
+use Ekyna\Bundle\CmsBundle\Repository\PageRepositoryInterface;
+use Ekyna\Bundle\ResourceBundle\Service\Http\TagManager;
 
 /**
  * Class MenuUpdater
@@ -17,37 +19,22 @@ class MenuUpdater
 {
     private const NAME_REGEX = '#^[a-z0-9_]+$#';
 
-    /**
-     * @var PageRepository
-     */
-    private $pageRepository;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var TagManager
-     */
-    private $tagManager;
-
-    /**
-     * @var string
-     */
-    private $menuClass;
+    private PageRepositoryInterface $pageRepository;
+    private EntityManagerInterface  $entityManager;
+    private TagManager              $tagManager;
+    private string                  $menuClass;
 
 
     /**
      * Constructor.
      *
-     * @param PageRepository $pageRepository
-     * @param EntityManagerInterface $entityManager
-     * @param TagManager $tagManager
-     * @param string $menuClass
+     * @param PageRepositoryInterface $pageRepository
+     * @param EntityManagerInterface  $entityManager
+     * @param TagManager              $tagManager
+     * @param string                  $menuClass
      */
     public function __construct(
-        PageRepository $pageRepository,
+        PageRepositoryInterface $pageRepository,
         EntityManagerInterface $entityManager,
         TagManager $tagManager,
         string $menuClass
@@ -147,7 +134,7 @@ class MenuUpdater
                 $changed = true;
             }
 
-            $changed |= $this->disabledMenuRecursively($menu->getChildren()->toArray());
+            $changed = $this->disabledMenuRecursively($menu->getChildren()->toArray()) || $changed;
         }
 
         return $changed;

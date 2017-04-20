@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 
-use Ekyna\Bundle\CoreBundle\Modal\Modal;
+use Ekyna\Bundle\UiBundle\Model\Modal;
+use Ekyna\Bundle\UiBundle\Service\Modal\ModalRenderer;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -13,20 +17,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 abstract class AbstractPlugin implements PluginInterface
 {
-    /**
-     * @var array
-     */
-    protected $config;
-
-    /**
-     * @var UrlGeneratorInterface
-     */
-    protected $urlGenerator;
-
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
+    protected array                 $config;
+    protected UrlGeneratorInterface $urlGenerator;
+    protected FormFactoryInterface  $formFactory;
+    protected ModalRenderer         $modalRenderer;
 
 
     /**
@@ -44,7 +38,7 @@ abstract class AbstractPlugin implements PluginInterface
      *
      * @param UrlGeneratorInterface $generator
      */
-    public function setUrlGenerator(UrlGeneratorInterface $generator)
+    public function setUrlGenerator(UrlGeneratorInterface $generator): void
     {
         $this->urlGenerator = $generator;
     }
@@ -54,9 +48,19 @@ abstract class AbstractPlugin implements PluginInterface
      *
      * @param FormFactoryInterface $formFactory
      */
-    public function setFormFactory(FormFactoryInterface $formFactory)
+    public function setFormFactory(FormFactoryInterface $formFactory): void
     {
         $this->formFactory = $formFactory;
+    }
+
+    /**
+     * Sets the modalRenderer.
+     *
+     * @param ModalRenderer $modalRenderer
+     */
+    public function setModalRenderer(ModalRenderer $modalRenderer): void
+    {
+        $this->modalRenderer = $modalRenderer;
     }
 
     /**
@@ -64,40 +68,31 @@ abstract class AbstractPlugin implements PluginInterface
      *
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
 
     /**
-     * Creates a modal.
+     * Creates a modal response.
      *
      * @param string $title
      * @param mixed  $content
      * @param array  $buttons
      *
-     * @return Modal
+     * @return Response
      */
-    protected function createModal($title, $content = null, array $buttons = [])
+    protected function createModalResponse(string $title, $content = null, array $buttons = []): Response
     {
         $modal = new Modal($title);
 
         if (empty($buttons)) {
-            $buttons['submit'] = [
-                'id'       => 'submit',
-                'label'    => 'ekyna_core.button.save',
-                'icon'     => 'glyphicon glyphicon-ok',
-                'cssClass' => 'btn-success',
-                'autospin' => true,
-            ];
+            $buttons['submit'] = array_replace(Modal::BTN_SUBMIT, [
+                'label' => 'button.save',
+            ]);
         }
         if (!array_key_exists('close', $buttons)) {
-            $buttons['close'] = [
-                'id'       => 'close',
-                'label'    => 'ekyna_core.button.cancel',
-                'icon'     => 'glyphicon glyphicon-remove',
-                'cssClass' => 'btn-default',
-            ];
+            $buttons['close'] = Modal::BTN_CLOSE;
         }
 
         $modal->setButtons($buttons);
@@ -106,6 +101,6 @@ abstract class AbstractPlugin implements PluginInterface
             $modal->setContent($content);
         }
 
-        return $modal;
+        return $this->modalRenderer->render($modal);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface;
@@ -12,21 +14,14 @@ use Ekyna\Component\Resource\Model\AbstractTranslation;
  */
 class MenuTranslation extends AbstractTranslation implements MenuTranslationInterface
 {
-    /**
-     * @var string
-     */
-    protected $title;
-
-    /**
-     * @var string
-     */
-    protected $path;
+    protected ?string $title = null;
+    protected ?string $path  = null;
 
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setTitle(string $title): MenuTranslationInterface
+    public function setTitle(string $title = null): MenuTranslationInterface
     {
         $this->title = $title;
 
@@ -34,7 +29,7 @@ class MenuTranslation extends AbstractTranslation implements MenuTranslationInte
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTitle(): ?string
     {
@@ -42,7 +37,7 @@ class MenuTranslation extends AbstractTranslation implements MenuTranslationInte
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setPath(string $path = null): MenuTranslationInterface
     {
@@ -52,7 +47,7 @@ class MenuTranslation extends AbstractTranslation implements MenuTranslationInte
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPath(): ?string
     {

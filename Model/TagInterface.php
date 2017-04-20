@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Ekyna\Component\Resource\Model\ResourceInterface;
@@ -14,41 +16,25 @@ interface TagInterface extends ResourceInterface
     /**
      * Returns the name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getName();
+    public function getName(): ?string;
 
     /**
      * Sets the name.
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return $this|TagInterface
      */
-    public function setName($name);
-
-    /**
-     * Returns the icon.
-     *
-     * @return string
-     */
-    public function getIcon();
-
-    /**
-     * Sets the icon.
-     *
-     * @param string $icon
-     *
-     * @return $this|TagInterface
-     */
-    public function setIcon($icon);
+    public function setName(string $name = null): TagInterface;
 
     /**
      * Returns the theme.
      *
      * @return string
      */
-    public function getTheme();
+    public function getTheme(): string;
 
     /**
      * Sets the theme.
@@ -57,5 +43,21 @@ interface TagInterface extends ResourceInterface
      *
      * @return $this|TagInterface
      */
-    public function setTheme($theme);
+    public function setTheme(string $theme): TagInterface;
+
+    /**
+     * Returns the icon.
+     *
+     * @return string|null
+     */
+    public function getIcon(): ?string;
+
+    /**
+     * Sets the icon.
+     *
+     * @param string|null $icon
+     *
+     * @return $this|TagInterface
+     */
+    public function setIcon(string $icon = null): TagInterface;
 }

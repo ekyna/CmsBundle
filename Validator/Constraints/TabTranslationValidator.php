@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\TabTranslation as Model;
@@ -29,7 +31,7 @@ class TabTranslationValidator extends ConstraintValidator
         if (empty($translation->getButtonLabel()) xor empty($translation->getButtonUrl())) {
             $this
                 ->context
-                ->buildViolation($constraint->label_and_url_but_not_both)
+                ->buildViolation($constraint->labelAndUrlButNotBoth)
                 ->atPath('buttonUrl')
                 ->addViolation();
         }

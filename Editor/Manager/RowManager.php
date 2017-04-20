@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
@@ -21,15 +23,14 @@ class RowManager extends AbstractManager
      * @return Model\RowInterface
      * @throws InvalidOperationException
      */
-    public function create($containerOrName, array $data = [])
+    public function create($containerOrName, array $data = []): Model\RowInterface
     {
         // Check if parent or name is defined
-        if (!(
-            $containerOrName instanceof Model\ContainerInterface ||
-            (is_string($containerOrName) && 0 < strlen($containerOrName))
-        )
+        if (
+            !$containerOrName instanceof Model\ContainerInterface &&
+            !(is_string($containerOrName) && !empty($containerOrName))
         ) {
-            throw new InvalidOperationException("Excepted instance of ContainerInterface or string.");
+            throw new InvalidOperationException('Excepted instance of ContainerInterface or string.');
         }
 
         // New instance
@@ -59,7 +60,7 @@ class RowManager extends AbstractManager
      * @return Model\RowInterface The removed row.
      * @throws InvalidOperationException
      */
-    public function delete(Model\RowInterface $row, $force = false)
+    public function delete(Model\RowInterface $row, bool $force = false): Model\RowInterface
     {
         $container = $row->getContainer();
 
@@ -97,7 +98,7 @@ class RowManager extends AbstractManager
      * @return Model\RowInterface the sibling row that has been swapped.
      * @throws InvalidOperationException
      */
-    public function moveUp(Model\RowInterface $row)
+    public function moveUp(Model\RowInterface $row): Model\RowInterface
     {
         $sibling = $this->editor->getRepository()->findSiblingRow($row, false);
         if (null === $sibling) {
@@ -122,7 +123,7 @@ class RowManager extends AbstractManager
      * @return Model\RowInterface the sibling row that has been swapped.
      * @throws InvalidOperationException
      */
-    public function moveDown(Model\RowInterface $row)
+    public function moveDown(Model\RowInterface $row): Model\RowInterface
     {
         $sibling = $this->editor->getRepository()->findSiblingRow($row, true);
         if (null === $sibling) {
@@ -146,7 +147,7 @@ class RowManager extends AbstractManager
      *
      * @return RowManager
      */
-    public function fixBlocksPositions(Model\RowInterface $row)
+    public function fixBlocksPositions(Model\RowInterface $row): RowManager
     {
         $this->sortChildrenByPosition($row, 'blocks');
 

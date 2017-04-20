@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
-use Ekyna\Bundle\CmsBundle\Helper\RoutingHelper;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\CmsBundle\Service\Helper\RoutingHelper;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -15,20 +17,9 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class PageValidator extends ConstraintValidator
 {
-    /**
-     * @var RoutingHelper
-     */
-    private $routingHelper;
-
-    /**
-     * @var array
-     */
-    private $pageConfig;
-
-    /**
-     * @var array
-     */
-    private $locales;
+    private RoutingHelper $routingHelper;
+    private array $pageConfig;
+    private array $locales;
 
 
     /**
@@ -46,26 +37,26 @@ class PageValidator extends ConstraintValidator
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function validate($page, Constraint $constraint)
+    public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof Page) {
             throw new UnexpectedTypeException($constraint, Page::class);
         }
-        if (!$page instanceof PageInterface) {
-            throw new UnexpectedTypeException($page, PageInterface::class);
+        if (!$value instanceof PageInterface) {
+            throw new UnexpectedTypeException($value, PageInterface::class);
         }
 
         /**
-         * @var PageInterface $page
+         * @var PageInterface $value
          * @var Page          $constraint
          */
 
         // Validates the translations title
         if (!in_array('Generator', $constraint->groups)) {
             foreach ($this->locales as $locale) {
-                if (0 === strlen($page->translate($locale, true)->getTitle())) {
+                if (empty($value->translate($locale, true)->getTitle())) {
                     $this->context
                         ->buildViolation($constraint->titleIsMandatory)
                         ->atPath('translations[' . $locale . '].title')
@@ -77,20 +68,19 @@ class PageValidator extends ConstraintValidator
         }
 
         // Validates routing
-        if ($page->isStatic()) {
-            if (null === $route = $this->routingHelper->findRouteByName($page->getRoute())) {
+        if ($value->isStatic()) {
+            if (null === $this->routingHelper->findRouteByName($value->getRoute(), null)) {
                 $this->context
                     ->buildViolation($constraint->routeNotFound)
                     ->atPath('route')
                     ->addViolation();
             } else {
-                /** @var \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface $translation */
-                foreach ($page->getTranslations() as $translation) {
+                foreach ($value->getTranslations() as $translation) {
                     $locale = $translation->getLocale();
 
                     $expected = $this
                         ->routingHelper
-                        ->buildPagePath($page->getRoute(), $locale);
+                        ->buildPagePath($value->getRoute(), $locale);
 
                     if ($expected === $translation->getPath()) {
                         continue;
@@ -104,14 +94,14 @@ class PageValidator extends ConstraintValidator
             }
         } else {
             // Check that the parent page is not locked
-            if (!is_null($parentPage = $page->getParent()) && $parentPage->isLocked()) {
+            if (!is_null($parentPage = $value->getParent()) && $parentPage->isLocked()) {
                 $this->context
                     ->buildViolation($constraint->invalidParent)
                     ->atPath('parent')
                     ->addViolation();
             }
             // Check that the controller is defined
-            if (null === $controller = $page->getController()) {
+            if (null === $controller = $value->getController()) {
                 $this->context
                     ->buildViolation($constraint->controllerIsMandatory)
                     ->atPath('controller')

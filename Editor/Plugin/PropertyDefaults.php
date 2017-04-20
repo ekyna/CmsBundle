@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 
 /**
@@ -14,7 +16,7 @@ final class PropertyDefaults
      *
      * @return array
      */
-    static public function getDefaultThemeChoices()
+    public static function getDefaultThemeChoices(): array
     {
         return [
             'light' => 'Light',
@@ -27,7 +29,7 @@ final class PropertyDefaults
      *
      * @return array
      */
-    static public function getDefaultStyleChoices()
+    public static function getDefaultStyleChoices(): array
     {
         return [
             'img-rounded'   => 'Rounded',
@@ -41,7 +43,7 @@ final class PropertyDefaults
      *
      * @return array
      */
-    static public function getDefaultAnimationChoices()
+    public static function getDefaultAnimationChoices(): array
     {
         return [
             // Fade

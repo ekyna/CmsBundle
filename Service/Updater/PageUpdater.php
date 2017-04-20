@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\Updater;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
-use Ekyna\Bundle\CmsBundle\Helper\RoutingHelper;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
-use Ekyna\Bundle\CmsBundle\Repository\MenuRepository;
-use Ekyna\Bundle\CmsBundle\Repository\PageRepository;
-use Ekyna\Bundle\CoreBundle\Cache\TagManager;
+use Ekyna\Bundle\CmsBundle\Repository\MenuRepositoryInterface;
+use Ekyna\Bundle\CmsBundle\Repository\PageRepositoryInterface;
+use Ekyna\Bundle\CmsBundle\Service\Helper\PageHelper;
+use Ekyna\Bundle\CmsBundle\Service\Helper\RoutingHelper;
+use Ekyna\Bundle\ResourceBundle\Service\Http\TagManager;
+use RuntimeException;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 /**
@@ -19,76 +22,22 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
  */
 class PageUpdater
 {
-    /**
-     * @var PageRepository
-     */
-    private $pageRepository;
+    private PageRepositoryInterface $pageRepository;
+    private RoutingHelper           $routingHelper;
+    private MenuUpdater             $menuUpdater;
+    private MenuRepositoryInterface $menuRepository;
+    private EntityManagerInterface  $entityManager;
+    private TagManager              $tagManager;
+    private AdapterInterface        $cmsCache;
+    private array                   $config;
+    private string                  $pageClass;
+    private ?CacheProvider          $resultCache;
 
-    /**
-     * @var RoutingHelper
-     */
-    private $routingHelper;
-
-    /**
-     * @var MenuUpdater
-     */
-    private $menuUpdater;
-
-    /**
-     * @var MenuRepository
-     */
-    private $menuRepository;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var TagManager
-     */
-    private $tagManager;
-
-    /**
-     * @var AdapterInterface
-     */
-    private $cmsCache;
-
-    /**
-     * @var CacheProvider
-     */
-    private $resultCache;
-
-    /**
-     * @var array
-     */
-    private $config;
-
-    /**
-     * @var string
-     */
-    private $pageClass;
-
-
-    /**
-     * Constructor.
-     *
-     * @param PageRepository         $pageRepository
-     * @param RoutingHelper          $routingHelper
-     * @param MenuUpdater            $menuUpdater
-     * @param MenuRepository         $menuRepository
-     * @param EntityManagerInterface $entityManager
-     * @param TagManager             $tagManager
-     * @param AdapterInterface       $cmsCache
-     * @param array                  $config
-     * @param string                 $pageClass
-     * @param CacheProvider|null     $resultCache
-     */
     public function __construct(
-        PageRepository $pageRepository,
+        PageRepositoryInterface $pageRepository,
         RoutingHelper $routingHelper,
         MenuUpdater $menuUpdater,
-        MenuRepository $menuRepository,
+        MenuRepositoryInterface $menuRepository,
         EntityManagerInterface $entityManager,
         TagManager $tagManager,
         AdapterInterface $cmsCache,
@@ -110,16 +59,12 @@ class PageUpdater
 
     /**
      * Updates the page's route property.
-     *
-     * @param PageInterface $page
-     *
-     * @return bool
      */
-    public function updateRoute(PageInterface $page): bool
+    public function updateRoute(PageInterface $page): void
     {
         // Generate random route name.
         if (null !== $page->getRoute()) {
-            return false;
+            return;
         }
 
         do {
@@ -128,20 +73,14 @@ class PageUpdater
         } while (null !== $duplicate);
 
         $page->setRoute($route);
-
-        return true;
     }
 
     /**
      * Updates the page's isDynamic property.
-     *
-     * @param PageInterface $page
-     *
-     * @return bool
      */
     public function updateIsDynamic(PageInterface $page): bool
     {
-        $dynamicPath = $this->routingHelper->isPagePathDynamic($page->getRoute());
+        $dynamicPath = $this->routingHelper->isPagePathDynamic($page->getRoute(), null);
         if ($dynamicPath !== $page->isDynamicPath()) {
             $page->setDynamicPath($dynamicPath);
 
@@ -153,10 +92,6 @@ class PageUpdater
 
     /**
      * Updates the page's 'isAdvanced' property.
-     *
-     * @param PageInterface $page
-     *
-     * @return bool
      */
     public function updateIsAdvanced(PageInterface $page): bool
     {
@@ -172,10 +107,6 @@ class PageUpdater
 
     /**
      * Returns whether the page is advanced or not.
-     *
-     * @param PageInterface $page
-     *
-     * @return bool|null
      */
     private function isAdvanced(PageInterface $page): ?bool
     {
@@ -184,7 +115,7 @@ class PageUpdater
                 return $this->config['controllers'][$controller]['advanced'];
             }
 
-            throw new \RuntimeException("Undefined page controller '{$controller}'.");
+            throw new RuntimeException("Undefined page controller '$controller'.");
         }
 
         return null;
@@ -192,10 +123,6 @@ class PageUpdater
 
     /**
      * Disables the page children if needed.
-     *
-     * @param PageInterface $page
-     *
-     * @return bool
      */
     public function disablePageChildren(PageInterface $page): bool
     {
@@ -217,7 +144,7 @@ class PageUpdater
 
             $this->disablePageRelativeMenus($child);
 
-            $childrenDisabled |= $this->disablePageChildren($child);
+            $childrenDisabled = $this->disablePageChildren($child) || $childrenDisabled;
         }
 
         return $childrenDisabled;
@@ -225,10 +152,6 @@ class PageUpdater
 
     /**
      * Disable the page relative menus if needed.
-     *
-     * @param PageInterface $page
-     *
-     * @return bool
      */
     public function disablePageRelativeMenus(PageInterface $page): bool
     {
@@ -257,8 +180,6 @@ class PageUpdater
 
     /**
      * Purges the page cache.
-     *
-     * @param PageInterface $page
      */
     public function purgePageCache(PageInterface $page): void
     {

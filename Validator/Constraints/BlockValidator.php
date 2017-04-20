@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry;
@@ -15,10 +17,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class BlockValidator extends ConstraintValidator
 {
-    /**
-     * @var PluginRegistry
-     */
-    private $pluginRegistry;
+    private PluginRegistry $pluginRegistry;
 
 
     /**
@@ -32,7 +31,7 @@ class BlockValidator extends ConstraintValidator
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function validate($block, Constraint $constraint)
     {
@@ -51,10 +50,10 @@ class BlockValidator extends ConstraintValidator
         $name = $block->getName();
 
         // Checks that Content or Name is set, but not both.
-        if ((null === $row && 0 === strlen($name)) || (null !== $row && 0 < strlen($name))) {
+        if ((null === $row && empty($name)) || (null !== $row && !empty($name))) {
             $this
                 ->context
-                ->buildViolation($constraint->row_or_name_but_not_both)
+                ->buildViolation($constraint->rowOrNameButNotBoth)
                 ->atPath('row')
                 ->addViolation();
         }
@@ -64,7 +63,7 @@ class BlockValidator extends ConstraintValidator
             if (0 > $block->getPosition() || $block->getPosition() > 11) {
                 $this
                     ->context
-                    ->buildViolation($constraint->invalid_position)
+                    ->buildViolation($constraint->invalidPosition)
                     ->atPath('position')
                     ->addViolation();
             }

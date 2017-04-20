@@ -1,4 +1,4 @@
-/// <reference path="../../../../../../../typings/index.d.ts" />
+/// <reference path="../../../../../../../../assets/typings/index.d.ts" />
 
 import * as Backbone from 'backbone';
 import * as _ from 'underscore';

@@ -1,12 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Repository;
 
 use Doctrine\Common\Collections\Collection;
-use Ekyna\Bundle\CmsBundle\Repository as ER;
-use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
+use Ekyna\Bundle\CmsBundle\Editor\Model;
+use Ekyna\Bundle\CmsBundle\Entity\Editor as entity;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
+use Ekyna\Bundle\CmsBundle\Repository\BlockRepository;
+use Ekyna\Bundle\CmsBundle\Repository\ContainerRepository;
+use Ekyna\Bundle\CmsBundle\Repository\ContentRepository;
+use Ekyna\Bundle\CmsBundle\Repository\RowRepository;
+use Ekyna\Component\Resource\Factory\FactoryFactoryInterface;
+use Ekyna\Component\Resource\Factory\ResourceFactoryInterface;
 use Ekyna\Component\Resource\Model\SortableInterface;
+use Ekyna\Component\Resource\Repository\RepositoryFactoryInterface;
+use Ekyna\Component\Resource\Repository\ResourceRepositoryInterface;
 
 /**
  * Class Repository
@@ -15,153 +25,145 @@ use Ekyna\Component\Resource\Model\SortableInterface;
  */
 class Repository implements RepositoryInterface
 {
-    /**
-     * @var ER\ContentRepository
-     */
-    private $contentRepository;
-
-    /**
-     * @var ER\ContainerRepository
-     */
-    private $containerRepository;
-
-    /**
-     * @var ER\RowRepository
-     */
-    private $rowRepository;
-
-    /**
-     * @var ER\BlockRepository
-     */
-    private $blockRepository;
+    private FactoryFactoryInterface    $factoryFactory;
+    private RepositoryFactoryInterface $repositoryFactory;
+    private array                      $classes;
 
 
     /**
      * Constructor.
      *
-     * @param ER\ContentRepository   $contentRepository
-     * @param ER\ContainerRepository $containerRepository
-     * @param ER\RowRepository       $rowRepository
-     * @param ER\BlockRepository     $blockRepository
+     * @param FactoryFactoryInterface    $factoryFactory
+     * @param RepositoryFactoryInterface $repositoryFactory
+     * @param array                      $classes
      */
     public function __construct(
-        ER\ContentRepository $contentRepository,
-        ER\ContainerRepository $containerRepository,
-        ER\RowRepository $rowRepository,
-        ER\BlockRepository $blockRepository
+        FactoryFactoryInterface $factoryFactory,
+        RepositoryFactoryInterface $repositoryFactory,
+        array $classes
     ) {
-        $this->contentRepository = $contentRepository;
-        $this->containerRepository = $containerRepository;
-        $this->rowRepository = $rowRepository;
-        $this->blockRepository = $blockRepository;
+        $this->factoryFactory = $factoryFactory;
+        $this->repositoryFactory = $repositoryFactory;
+        $this->classes = array_replace([
+            Model\ContentInterface::class   => Entity\Content::class,
+            Model\ContainerInterface::class => Entity\Container::class,
+            Model\RowInterface::class       => Entity\Row::class,
+            Model\BlockInterface::class     => Entity\Block::class,
+        ], $classes);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createContent()
+    public function createContent(): Model\ContentInterface
     {
-        return $this->contentRepository->createNew();
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getFactory(Model\ContentInterface::class)->create();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createContainer()
+    public function createContainer(): Model\ContainerInterface
     {
-        return $this->containerRepository->createNew();
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getFactory(Model\ContainerInterface::class)->create();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createRow()
+    public function createRow(): Model\RowInterface
     {
-        return $this->rowRepository->createNew();
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getFactory(Model\RowInterface::class)->create();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createBlock()
+    public function createBlock(): Model\BlockInterface
     {
-        return $this->blockRepository->createNew();
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getFactory(Model\BlockInterface::class)->create();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function findContentById($id)
+    public function findContentById(int $id): ?Model\ContentInterface
     {
-        return $this->contentRepository->findOneById($id);
+        return $this->getContentRepository()->findOneById($id);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function findContainerById($id)
+    public function findContainerById(int $id): ?Model\ContainerInterface
     {
-        return $this->containerRepository->findOneById($id);
+        return $this->getContainerRepository()->findOneById($id);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function findRowById($id)
+    public function findRowById(int $id): ?Model\RowInterface
     {
-        return $this->rowRepository->findOneById($id);
+        return $this->getRowRepository()->findOneById($id);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function findBlockById($id)
+    public function findBlockById(int $id): ?Model\BlockInterface
     {
-        return $this->blockRepository->findOneById($id);
+        return $this->getBlockRepository()->findOneById($id);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function findContentByName($name)
+    public function findContentByName(string $name): ?Model\ContentInterface
     {
-        return $this->contentRepository->findOneByName($name);
+        return $this->getContentRepository()->findOneByName($name);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function findContainerByName($name)
+    public function findContainerByName(string $name): ?Model\ContainerInterface
     {
-        return $this->containerRepository->findOneByName($name);
+        return $this->getContainerRepository()->findOneByName($name);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function findRowByName($name)
+    public function findRowByName(string $name): ?Model\RowInterface
     {
-        return $this->rowRepository->findOneByName($name);
+        return $this->getRowRepository()->findOneByName($name);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function findBlockByName($name)
+    public function findBlockByName(string $name): ?Model\BlockInterface
     {
-        return $this->blockRepository->findOneByName($name);
+        return $this->getBlockRepository()->findOneByName($name);
     }
 
     /**
      * Returns the sibling of the given container.
      *
-     * @param EM\ContainerInterface $container
-     * @param bool            $next Whether to look for the next or the previous
+     * @param Model\ContainerInterface $container
+     * @param bool                     $next Whether to look for the next or the previous
      *
-     * @return EM\ContainerInterface|null
+     * @return Model\ContainerInterface|null
      */
-    public function findSiblingContainer(EM\ContainerInterface $container, $next = false)
-    {
+    public function findSiblingContainer(
+        Model\ContainerInterface $container,
+        bool $next = false
+    ): ?Model\ContainerInterface {
         if (null === $content = $container->getContent()) {
             return null;
         }
@@ -172,12 +174,12 @@ class Repository implements RepositoryInterface
     /**
      * Returns the sibling of the given row.
      *
-     * @param EM\RowInterface $row
-     * @param bool            $next Whether to look for the next or the previous
+     * @param Model\RowInterface $row
+     * @param bool               $next Whether to look for the next or the previous
      *
-     * @return EM\RowInterface|null
+     * @return Model\RowInterface|null
      */
-    public function findSiblingRow(EM\RowInterface $row, $next = false)
+    public function findSiblingRow(Model\RowInterface $row, bool $next = false): ?Model\RowInterface
     {
         if (null === $container = $row->getContainer()) {
             return null;
@@ -189,12 +191,12 @@ class Repository implements RepositoryInterface
     /**
      * Returns the sibling of the given block.
      *
-     * @param EM\BlockInterface $block
-     * @param bool            $next Whether to look for the next or the previous
+     * @param Model\BlockInterface $block
+     * @param bool                 $next Whether to look for the next or the previous
      *
-     * @return EM\BlockInterface|null
+     * @return Model\BlockInterface|null
      */
-    public function findSiblingBlock(EM\BlockInterface $block, $next = false)
+    public function findSiblingBlock(Model\BlockInterface $block, bool $next = false): ?Model\BlockInterface
     {
         if (null === $row = $block->getRow()) {
             return null;
@@ -212,7 +214,7 @@ class Repository implements RepositoryInterface
      *
      * @return mixed
      */
-    private function findSibling(Collection $elements, SortableInterface $current, $next = false)
+    private function findSibling(Collection $elements, SortableInterface $current, bool $next = false)
     {
         if ($next) {
             $sibling = $elements->filter(function (SortableInterface $s) use ($current) {
@@ -228,10 +230,48 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function loadSubjectContent(ContentSubjectInterface $subject)
+    public function loadSubjectContent(ContentSubjectInterface $subject): ?Model\ContentInterface
     {
-        return $this->contentRepository->findBySubject($subject);
+        return $this->getContentRepository()->findBySubject($subject);
+    }
+
+    private function getContentRepository(): ContentRepository
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getRepository(Model\ContentInterface::class);
+    }
+
+    private function getContainerRepository(): ContainerRepository
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getRepository(Model\ContainerInterface::class);
+    }
+
+    private function getRowRepository(): RowRepository
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getRepository(Model\RowInterface::class);
+    }
+
+    private function getBlockRepository(): BlockRepository
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getRepository(Model\BlockInterface::class);
+    }
+
+    private function getFactory(string $interface): ResourceFactoryInterface
+    {
+        return $this->factoryFactory->getFactory(
+            $this->classes[$interface]
+        );
+    }
+
+    private function getRepository(string $interface): ResourceRepositoryInterface
+    {
+        return $this->repositoryFactory->getRepository(
+            $this->classes[$interface]
+        );
     }
 }

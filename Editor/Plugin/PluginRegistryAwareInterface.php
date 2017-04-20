@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
 
 /**
@@ -14,5 +16,5 @@ interface PluginRegistryAwareInterface
      *
      * @param PluginRegistry $registry
      */
-    public function setPluginRegistry(PluginRegistry $registry);
+    public function setPluginRegistry(PluginRegistry $registry): void;
 }

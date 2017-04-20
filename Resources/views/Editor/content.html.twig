@@ -9,18 +9,18 @@
 {% endblock attributes %}
 
 {% block cms_content %}
-{% spaceless %}
+{% apply spaceless %}
     {% set attr = content.attributes %}
     <div{{ block('attributes') }}>
         {% for container in content.containers %}
             {{ cms_container(container) }}
         {% endfor %}
     </div>
-{% endspaceless %}
+{% endapply %}
 {% endblock cms_content %}
 
 {% block cms_container %}
-{% spaceless %}
+{% apply spaceless %}
     {% set attr = container.attributes %}
     <div{{ block('attributes') }}>
         {{ container.content|raw }}
@@ -32,11 +32,11 @@
             {% endfor %}
         </div>
     </div>
-{% endspaceless %}
+{% endapply %}
 {% endblock cms_container %}
 
 {% block cms_row %}
-{% spaceless %}
+{% apply spaceless %}
     {% set attr = row.attributes %}
     <div{{ block('attributes') }}>
         {% for block in row.blocks %}
@@ -46,18 +46,18 @@
             </div>
         {% endfor %}
     </div>
-{% endspaceless %}
+{% endapply %}
 {% endblock cms_row %}
 
 {% block cms_block %}
-{% spaceless %}
+{% apply spaceless %}
     {% for widget in block.widgets %}
         {% set attr = widget.attributes %}
         <div{{ block('attributes') }}>
             {{ widget.content|raw }}
         </div>
     {% endfor %}
-{% endspaceless %}
+{% endapply %}
 {% endblock cms_block %}
 
 

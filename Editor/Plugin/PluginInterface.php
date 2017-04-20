@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin;
-
 
 /**
  * Interface PluginInterface
@@ -16,19 +16,19 @@ interface PluginInterface
      *
      * @return string
      */
-    public function getTitle();
+    public function getTitle(): string;
 
     /**
      * Returns the supported block type.
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Returns the javascript file path.
      *
      * @return string
      */
-    public function getJavascriptFilePath();
+    public function getJavascriptFilePath(): string;
 }

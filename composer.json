@@ -5,7 +5,7 @@
     "authors": [
         {
             "name": "Etienne Dauvergne",
-            "homepage": "http://ekyna.com"
+            "homepage": "https://ekyna.com"
         }
     ],
     "keywords": [
@@ -16,12 +16,13 @@
     "homepage": "https://github.com/ekyna/CmsBundle",
     "license": "MIT",
     "require": {
-        "php": ">=7.0",
-        "ekyna/media-bundle": "0.7.x-dev",
-        "ekyna/sitemap-bundle": "0.7.x-dev",
-        "ekyna/cookie-consent-bundle": "0.7.x-dev",
-        "league/uri": "^5.0",
-        "spatie/schema-org": "^1.4"
+        "php": ">=7.4",
+        "ekyna/media-bundle": "0.8.x-dev",
+        "ekyna/sitemap-bundle": "0.8.x-dev",
+        "ekyna/cookie-consent-bundle": "0.8.x-dev",
+        "symfony-cmf/routing": "^2.3",
+        "league/uri": "^6.4",
+        "spatie/schema-org": "^3.3"
     },
     "autoload": {
         "psr-4": {

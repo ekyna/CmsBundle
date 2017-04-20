@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+use DateTime;
 use Ekyna\Component\Resource\Model\TranslatableInterface;
 
 /**
@@ -32,7 +35,7 @@ interface NoticeInterface extends TranslatableInterface
      *
      * @return string
      */
-    public function getTheme(): ?string;
+    public function getTheme(): string;
 
     /**
      * Sets the theme.
@@ -53,7 +56,7 @@ interface NoticeInterface extends TranslatableInterface
     /**
      * Sets the icon.
      *
-     * @param string $icon
+     * @param string|null $icon
      *
      * @return NoticeInterface
      */
@@ -62,46 +65,46 @@ interface NoticeInterface extends TranslatableInterface
     /**
      * Returns the start date.
      *
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getStartAt(): ?\DateTime;
+    public function getStartAt(): ?DateTime;
 
     /**
      * Sets the start date.
      *
-     * @param \DateTime $date
+     * @param DateTime $date
      *
      * @return NoticeInterface
      */
-    public function setStartAt(\DateTime $date): NoticeInterface;
+    public function setStartAt(DateTime $date): NoticeInterface;
 
     /**
      * Returns the end date.
      *
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getEndAt(): ?\DateTime;
+    public function getEndAt(): ?DateTime;
 
     /**
      * Sets the end date.
      *
-     * @param \DateTime $date
+     * @param DateTime $date
      *
      * @return NoticeInterface
      */
-    public function setEndAt(\DateTime $date): NoticeInterface;
+    public function setEndAt(DateTime $date): NoticeInterface;
 
     /**
-     * Sets the content.
+     * Sets the (translatable) content.
      *
-     * @param string $content
+     * @param string|null $content
      *
      * @return NoticeInterface
      */
     public function setContent(string $content = null): NoticeInterface;
 
     /**
-     * Returns the content.
+     * Returns the (translatable) content.
      *
      * @return string
      */

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
@@ -21,14 +23,14 @@ class ContentManager extends AbstractManager
      * @return ContentInterface
      * @throws InvalidOperationException
      */
-    public function create($subjectOrName)
+    public function create($subjectOrName): ContentInterface
     {
         // Check if container or name is defined
         if (
             !$subjectOrName instanceof ContentSubjectInterface &&
-            !(is_string($subjectOrName) && 0 < strlen($subjectOrName))
+            !(is_string($subjectOrName) && !empty($subjectOrName))
         ) {
-            throw new InvalidOperationException("Excepted instance of ContentSubjectInterface or string.");
+            throw new InvalidOperationException('Excepted instance of ContentSubjectInterface or string.');
         }
 
         // New instance
@@ -54,7 +56,7 @@ class ContentManager extends AbstractManager
      *
      * @return ContentManager
      */
-    public function fixContainersPositions(ContentInterface $content)
+    public function fixContainersPositions(ContentInterface $content): ContentManager
     {
         $this->sortChildrenByPosition($content, 'containers');
 

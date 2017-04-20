@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
 use Ekyna\Component\Resource\Model as RM;
@@ -22,34 +24,34 @@ interface BlockInterface
     /**
      * Set row
      *
-     * @param RowInterface $row
+     * @param RowInterface|null $row
      *
      * @return BlockInterface|$this
      */
-    public function setRow(RowInterface $row = null);
+    public function setRow(RowInterface $row = null): BlockInterface;
 
     /**
      * Get row
      *
-     * @return RowInterface
+     * @return RowInterface|null
      */
-    public function getRow();
+    public function getRow(): ?RowInterface;
 
     /**
      * Sets the name
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return BlockInterface|$this
      */
-    public function setName($name);
+    public function setName(string $name = null): BlockInterface;
 
     /**
      * Returns the name
      *
-     * @return string
+     * @return string|null
      */
-    public function getName();
+    public function getName(): ?string;
 
     /**
      * Sets the type.
@@ -58,40 +60,40 @@ interface BlockInterface
      *
      * @return BlockInterface|$this
      */
-    public function setType($type);
+    public function setType(string $type): BlockInterface;
 
     /**
      * Returns the type.
      *
-     * @return string
+     * @return string|null
      */
-    public function getType();
+    public function getType(): ?string;
 
     /**
      * Returns whether or not the block is the first of the row.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isFirst();
+    public function isFirst(): bool;
 
     /**
      * Returns whether or not the block is the last of the row.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isLast();
+    public function isLast(): bool;
 
     /**
      * Returns whether or not the block is the only row's child.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isAlone();
+    public function isAlone(): bool;
 
     /**
      * Returns whether or not the block is named.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isNamed();
+    public function isNamed(): bool;
 }

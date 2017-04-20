@@ -2,13 +2,14 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Container;
 
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
 use Ekyna\Bundle\CmsBundle\Editor\View\ContainerView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\BackgroundContainerType;
-use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
-use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
+use Ekyna\Bundle\MediaBundle\Repository\MediaRepository;
 use Ekyna\Bundle\MediaBundle\Service\Renderer;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class BackgroundPlugin
@@ -62,9 +63,9 @@ class BackgroundPlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function create(ContainerInterface $container, array $data = [])
+    public function create(ContainerInterface $container, array $data = []): void
     {
         //parent::create($container, $data);
 
@@ -74,9 +75,9 @@ class BackgroundPlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function update(ContainerInterface $container, Request $request)
+    public function update(ContainerInterface $container, Request $request): ?Response
     {
         $this->upgrade($container);
 
@@ -84,7 +85,7 @@ class BackgroundPlugin extends AbstractPlugin
             ->formFactory
             ->create(BackgroundContainerType::class, $container, [
                 'action' => $this->urlGenerator->generate(
-                    'ekyna_cms_editor_container_edit',
+                    'admin_ekyna_cms_editor_container_edit',
                     ['containerId' => $container->getId()]
                 ),
                 'method' => 'post',
@@ -100,7 +101,7 @@ class BackgroundPlugin extends AbstractPlugin
             return null;
         }
 
-        return $this->createModal('Modifier le conteneur.', $form->createView()); // TODO trans
+        return $this->createModalResponse('Modifier le conteneur.', $form->createView()); // TODO trans
     }
 
     /**
@@ -108,7 +109,7 @@ class BackgroundPlugin extends AbstractPlugin
      *
      * @param ContainerInterface $container
      */
-    private function upgrade(ContainerInterface $container)
+    private function upgrade(ContainerInterface $container): void
     {
         $data = array_replace(self::DEFAULT_DATA, $container->getData());
 
@@ -128,9 +129,9 @@ class BackgroundPlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function render(ContainerInterface $container, ContainerView $view, $editable = false)
+    public function render(ContainerInterface $container, ContainerView $view, $editable = false): void
     {
         $this->upgrade($container);
 
@@ -145,7 +146,7 @@ class BackgroundPlugin extends AbstractPlugin
 
         // Background color
         $bgColor = array_key_exists('color', $data) ? $data['color'] : $this->config['default_color'];
-        if (0 < strlen($bgColor)) {
+        if (!empty($bgColor)) {
             $attributes->addStyle('background-color', $bgColor);
         }
 
@@ -181,25 +182,25 @@ class BackgroundPlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return 'Background'; // TODO trans
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return 'ekyna_container_background';
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getJavascriptFilePath()
+    public function getJavascriptFilePath(): string
     {
         return 'ekyna-cms/editor/plugin/container/background';
     }

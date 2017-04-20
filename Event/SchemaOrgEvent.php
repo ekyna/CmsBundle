@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Event;
 
 use Ekyna\Component\Resource\Event\ResourceEvent;
-use Spatie\SchemaOrg\Schema;
 use Spatie\SchemaOrg\Type;
 
 /**
@@ -11,32 +12,16 @@ use Spatie\SchemaOrg\Type;
  * @package Ekyna\Bundle\CmsBundle\Event
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class SchemaOrgEvent extends ResourceEvent
+final class SchemaOrgEvent extends ResourceEvent
 {
-    /**
-     * @var Schema
-     */
-    private $schema;
+    private ?Type $schema = null;
 
-
-    /**
-     * Returns the schema.
-     *
-     * @return Schema
-     */
-    public function getSchema()
+    public function getSchema(): ?Type
     {
         return $this->schema;
     }
 
-    /**
-     * Sets the schema.
-     *
-     * @param Type $schema
-     *
-     * @return SchemaOrgEvent
-     */
-    public function setSchema(Type $schema)
+    public function setSchema(Type $schema): SchemaOrgEvent
     {
         $this->schema = $schema;
 

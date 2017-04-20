@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\SchemaOrg;
 
 use Ekyna\Bundle\CmsBundle\Exception\InvalidArgumentException;
@@ -14,45 +16,36 @@ class Registry implements RegistryInterface
 {
     use BuilderAwareTrait;
 
-    /**
-     * @var ProviderInterface[]
-     */
-    protected $providers = [];
-
-    /**
-     * @var string[]
-     */
-    protected $classes = [];
-
-    /**
-     * @var bool
-     */
-    protected $initialized = false;
+    /** @var ProviderInterface[] */
+    protected array $providers = [];
+    /** @var string[] */
+    protected array $classes     = [];
+    protected bool  $initialized = false;
 
 
     /**
      * @inheritDoc
      */
-    public function registerClass($classes)
+    public function registerClass($classes): void
     {
         if (is_array($classes)) {
             foreach ($classes as $class) {
                 $this->addClass($class);
             }
-        } elseif(is_string($classes)) {
+        } elseif (is_string($classes)) {
             $this->addClass($classes);
         } else {
-            throw new InvalidArgumentException("Expected string or array of string.");
+            throw new InvalidArgumentException('Expected string or array of string.');
         }
     }
 
     /**
      * @inheritDoc
      */
-    public function registerProvider(ProviderInterface $provider)
+    public function registerProvider(ProviderInterface $provider): void
     {
         if ($this->initialized) {
-            throw new RuntimeException("You can't register provider as registry as been initialized.");
+            throw new RuntimeException('You can\'t register provider as registry as been initialized.');
         }
 
         $this->providers[] = $provider;
@@ -61,21 +54,21 @@ class Registry implements RegistryInterface
     /**
      * @inheritDoc
      */
-    public function getProvider($object)
+    public function getProvider($classOrObject): ProviderInterface
     {
         $this->initialize();
 
-        if (!is_object($object)) {
-            throw new InvalidArgumentException("Expected object.");
+        if (!is_object($classOrObject)) {
+            throw new InvalidArgumentException('Expected object.');
         }
 
         foreach ($this->providers as $provider) {
-            if ($provider->supports($object)) {
+            if ($provider->supports($classOrObject)) {
                 return $provider;
             }
         }
 
-        $class = get_class($object);
+        $class = get_class($classOrObject);
 
         throw new InvalidArgumentException("Provider not found for object of class $class");
     }
@@ -85,10 +78,10 @@ class Registry implements RegistryInterface
      *
      * @param string $class
      */
-    protected function addClass(string $class)
+    protected function addClass(string $class): void
     {
         if ($this->initialized) {
-            throw new RuntimeException("You can't register provider class as registry as been initialized.");
+            throw new RuntimeException('You can\'t register provider class as registry as been initialized.');
         }
 
         if (!class_exists($class)) {
@@ -105,14 +98,14 @@ class Registry implements RegistryInterface
     /**
      * Initializes the registry.
      */
-    protected function initialize()
+    protected function initialize(): void
     {
         if ($this->initialized) {
             return;
         }
 
         foreach ($this->classes as $class) {
-            $this->providers[] = new $class;
+            $this->providers[] = new $class();
         }
 
         foreach ($this->providers as $provider) {

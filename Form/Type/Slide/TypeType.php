@@ -1,17 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Slide;
 
 use Ekyna\Bundle\CmsBundle\Entity\Slide;
 use Ekyna\Bundle\CmsBundle\Entity\SlideShow;
 use Ekyna\Bundle\CmsBundle\SlideShow\TypeRegistryInterface;
-use Ekyna\Bundle\CoreBundle\Form\Util\FormUtil;
-use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepositoryInterface;
+use Ekyna\Bundle\UiBundle\Form\Util\FormUtil;
+use Ekyna\Component\Resource\Factory\ResourceFactoryInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+use function Symfony\Component\Translation\t;
 
 /**
  * Class TypeType
@@ -20,35 +25,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class TypeType extends AbstractType
 {
-    /**
-     * @var TypeRegistryInterface
-     */
-    private $registry;
+    private TypeRegistryInterface    $registry;
+    private ResourceFactoryInterface $factory;
+    private TranslatorInterface      $translator;
 
-    /**
-     * @var ResourceRepositoryInterface
-     */
-    private $repository;
-
-
-    /**
-     * Constructor.
-     *
-     * @param TypeRegistryInterface       $registry
-     * @param ResourceRepositoryInterface $repository
-     */
     public function __construct(
-        TypeRegistryInterface $registry,
-        ResourceRepositoryInterface $repository
+        TypeRegistryInterface    $factory,
+        ResourceFactoryInterface $repository,
+        TranslatorInterface      $translator
     ) {
-        $this->registry = $registry;
-        $this->repository = $repository;
+        $this->registry = $factory;
+        $this->factory = $repository;
+        $this->translator = $translator;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         if ($options['disabled']) {
             return;
@@ -58,7 +49,7 @@ class TypeType extends AbstractType
 
         foreach ($this->registry->all() as $type) {
             /** @var Slide $slide */
-            $slide = $this->repository->createNew();
+            $slide = $this->factory->create();
             $type->buildExample($slide);
             $slideShow->addSlide($slide);
         }
@@ -68,36 +59,30 @@ class TypeType extends AbstractType
         FormUtil::addClass($view, 'cms-slide-type');
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [];
 
         foreach ($this->registry->all() as $type) {
-            $choices[$type->getLabel()] = $type->getName();
+            $label = $this->translator->trans($type->getLabel(), [], $type->getDomain());
+
+            $choices[$label] = $type->getName();
         }
 
         $resolver->setDefaults([
-            'label'   => 'ekyna_core.field.type',
-            'choices' => $choices,
-            'select2' => false,
+            'label'                     => t('field.type', [], 'EkynaUi'),
+            'choices'                   => $choices,
+            'choice_translation_domain' => false,
+            'select2'                   => false,
         ]);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'ekyna_cms_slide_type';
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }

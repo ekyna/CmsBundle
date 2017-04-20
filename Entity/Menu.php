@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
-use Ekyna\Bundle\CoreBundle\Model\TreeTrait;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -18,88 +17,19 @@ use Ekyna\Component\Resource\Model as RM;
  */
 class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
 {
+    use RM\TreeTrait;
     use RM\TaggedEntityTrait;
-    use TreeTrait;
 
-    /**
-     * @var int
-     */
-    protected $id;
-
-    /**
-     * @var Menu
-     */
-    protected $parent;
-
-    /**
-     * @var int
-     */
-    protected $left;
-
-    /**
-     * @var int
-     */
-    protected $right;
-
-    /**
-     * @var int
-     */
-    protected $root;
-
-    /**
-     * @var int
-     */
-    protected $level;
-
-    /**
-     * @var Collection|Menu[]
-     */
-    protected $children;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $description;
-
-    /**
-     * @var string
-     */
-    protected $route;
-
-    /**
-     * @var array
-     */
-    protected $parameters;
-
-    /**
-     * @var array
-     */
-    protected $attributes;
-
-    /**
-     * @var bool
-     */
-    protected $locked;
-
-    /**
-     * @var bool
-     */
-    protected $enabled;
-
-    /**
-     * @var array
-     */
-    protected $options;
-
-    /**
-     * @var Cms\PageInterface
-     */
-    protected $page;
+    protected ?int               $id          = null;
+    protected ?string            $name        = null;
+    protected ?string            $description = null;
+    protected ?string            $route       = null;
+    protected array              $parameters;
+    protected array              $attributes;
+    protected bool               $locked;
+    protected bool               $enabled;
+    protected array              $options;
+    protected ?Cms\PageInterface $page        = null;
 
 
     /**
@@ -109,7 +39,8 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     {
         parent::__construct();
 
-        $this->children = new ArrayCollection();
+        $this->initializeNode();
+
         $this->parameters = [];
         $this->attributes = [];
         $this->options = [];
@@ -128,7 +59,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getId(): ?int
     {
@@ -136,71 +67,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
-     */
-    public function setParent(Cms\MenuInterface $parent = null): Cms\MenuInterface
-    {
-        $this->parent = $parent;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getParent(): ?Cms\MenuInterface
-    {
-        return $this->parent;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setChildren(Collection $children): Cms\MenuInterface
-    {
-        $this->children = $children;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function hasChildren(): bool
-    {
-        return 0 < count($this->children);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function addChild(Cms\MenuInterface $menu): Cms\MenuInterface
-    {
-        $this->children[] = $menu;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function removeChild(Cms\MenuInterface $menu): Cms\MenuInterface
-    {
-        $this->children->removeElement($menu);
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getChildren(): Collection
-    {
-        return $this->children;
-    }
-
-    /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setName(string $name): Cms\MenuInterface
     {
@@ -210,7 +77,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getName(): ?string
     {
@@ -218,7 +85,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setDescription(string $description = null): Cms\MenuInterface
     {
@@ -228,7 +95,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getDescription(): ?string
     {
@@ -236,7 +103,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setRoute(string $route = null): Cms\MenuInterface
     {
@@ -246,7 +113,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getRoute(): ?string
     {
@@ -254,7 +121,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setParameters(array $parameters = []): Cms\MenuInterface
     {
@@ -264,7 +131,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getParameters(): array
     {
@@ -272,7 +139,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setAttributes(array $attributes = []): Cms\MenuInterface
     {
@@ -282,7 +149,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAttributes(): array
     {
@@ -290,7 +157,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setLocked(bool $locked): Cms\MenuInterface
     {
@@ -300,7 +167,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isLocked(): bool
     {
@@ -308,7 +175,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setEnabled(bool $enabled): Cms\MenuInterface
     {
@@ -318,7 +185,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isEnabled(): bool
     {
@@ -326,15 +193,15 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getOption(string $key)
     {
-        return isset($this->options[$key]) ? $this->options[$key] : null;
+        return $this->options[$key] ?? null;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setOptions(array $options): Cms\MenuInterface
     {
@@ -344,7 +211,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getOptions(): array
     {
@@ -352,7 +219,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setTitle(string $title): Cms\MenuInterface
     {
@@ -362,7 +229,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTitle(): ?string
     {
@@ -370,7 +237,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setPath(string $path = null): Cms\MenuInterface
     {
@@ -380,7 +247,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPath(): ?string
     {
@@ -388,7 +255,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setPage(Cms\PageInterface $page): Cms\MenuInterface
     {
@@ -398,16 +265,13 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPage(): ?CMS\PageInterface
     {
         return $this->page;
     }
 
-    /**
-     * @inheritdoc
-     */
     public static function getEntityTagPrefix(): string
     {
         return 'ekyna_cms.menu';

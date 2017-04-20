@@ -1,8 +1,0 @@
-ekyna_cms_editor_content_create_container:
-    path: /{contentId}/create-container
-    defaults: { _controller: "EkynaCmsBundle:Editor/Content:createContainer" }
-    methods: [POST]
-    requirements:
-        contentId: \d+
-    options:
-        expose: true

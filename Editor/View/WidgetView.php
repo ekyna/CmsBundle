@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\View;
 
 /**
@@ -7,34 +9,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\View;
  * @package Ekyna\Bundle\CmsBundle\Editor\View
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class WidgetView
+class WidgetView extends AbstractView
 {
-    /**
-     * @var AttributesInterface
-     */
-    private $attributes;
-
-    /**
-     * @var string
-     */
-    public $content = '';
-
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->attributes = new Attributes();
-    }
-
-    /**
-     * Returns the attributes.
-     *
-     * @return AttributesInterface
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
-    }
+    public string $content = '';
 }

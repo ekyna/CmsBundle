@@ -1,0 +1,14 @@
+{% extends '@EkynaAdmin/Entity/Crud/read.html.twig' %}
+
+
+{% block actions %}{% endblock %}
+
+
+{% block main_contents -%}
+    <div class="tab-pane active" id="slideshow-general">
+        {{ show_row(slide.name, 'text', {
+            'label': 'field.name',
+            'trans_domain': 'EkynaUi'
+        }) }}
+    </div>
+{%- endblock main_contents %}

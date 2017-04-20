@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\SchemaOrg;
 
 /**
@@ -12,16 +14,16 @@ interface RegistryInterface extends BuilderAwareInterface
     /**
      * Registers the given provider class.
      *
-     * @param string|array $class
+     * @param string|array $classes
      */
-    public function registerClass($class);
+    public function registerClass($classes): void;
 
     /**
      * Registers the given provider.
      *
      * @param ProviderInterface|string $provider
      */
-    public function registerProvider(ProviderInterface $provider);
+    public function registerProvider(ProviderInterface $provider): void;
 
     /**
      * Returns the provider for the given object class.
@@ -30,5 +32,5 @@ interface RegistryInterface extends BuilderAwareInterface
      *
      * @return ProviderInterface
      */
-    public function getProvider($classOrObject);
+    public function getProvider($classOrObject): ProviderInterface;
 }

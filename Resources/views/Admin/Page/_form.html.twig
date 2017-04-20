@@ -1,13 +1,13 @@
-{% spaceless %}
-<ul class="nav nav-tabs" data-tab-key="{{ resource_id }}">
+{% apply spaceless %}
+<ul class="nav nav-tabs" data-tab-key="{{ context.config.id }}">
     <li class="active">
         <a href="#page-general" id="toggle-general" data-toggle="tab">
-            {{- 'ekyna_core.field.general'|trans -}}
+            {{- 'field.general'|trans({}, 'EkynaUi') -}}
         </a>
     </li>
     <li>
         <a href="#page-seo" id="toggle-seo" data-toggle="tab">
-            {{- 'ekyna_core.field.seo'|trans -}}
+            {{- 'field.seo'|trans({}, 'EkynaUi') -}}
         </a>
     </li>
 </ul>
@@ -31,4 +31,4 @@
     </div>
     {{ form_rest(form) }}
 </div>
-{% endspaceless %}
+{% endapply %}

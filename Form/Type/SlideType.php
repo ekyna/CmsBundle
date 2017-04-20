@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
-use Ekyna\Bundle\AdminBundle\Form\Type\ResourceFormType;
 use Ekyna\Bundle\CmsBundle\Entity\Slide;
 use Ekyna\Bundle\CmsBundle\Form\Type\Slide\TypeType;
 use Ekyna\Bundle\CmsBundle\SlideShow\TypeRegistryInterface;
+use Ekyna\Bundle\ResourceBundle\Form\Type\AbstractResourceType;
+use InvalidArgumentException;
+use LogicException;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -13,38 +17,27 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotNull;
 
+use function Symfony\Component\Translation\t;
+
 /**
  * Class SlideType
  * @package Ekyna\Bundle\CmsBundle\Form\Type
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class SlideType extends ResourceFormType
+class SlideType extends AbstractResourceType
 {
-    /**
-     * @var TypeRegistryInterface
-     */
-    private $registry;
+    private TypeRegistryInterface $registry;
 
-    /**
-     * Constructor.
-     *
-     * @param TypeRegistryInterface $registry
-     */
-    public function __construct(TypeRegistryInterface $registry, $class)
+    public function __construct(TypeRegistryInterface $registry)
     {
-        parent::__construct($class);
-
         $this->registry = $registry;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'ekyna_core.field.name',
+                'label' => t('field.name', [], 'EkynaUi'),
             ])
             ->add('type', TypeType::class, [
                 'disabled'    => !$options['type_mode'],
@@ -54,30 +47,27 @@ class SlideType extends ResourceFormType
             ]);
 
         if (!$options['type_mode']) {
-            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
                 $slide = $event->getData();
                 $form = $event->getForm();
 
                 if (null === $slide) {
-                    throw new \LogicException("Form data must be set.");
+                    throw new LogicException('Form data must be set.');
                 }
                 if (!$slide instanceof Slide) {
-                    throw new \InvalidArgumentException("Expected instance of " . Slide::class);
+                    throw new InvalidArgumentException('Expected instance of ' . Slide::class);
                 }
                 if (null === $typeName = $slide->getType()) {
-                    throw new \LogicException("Slide's type must be set.");
+                    throw new LogicException('Slide\'s type must be set.');
                 }
 
-                $type = $this->registry->get($slide->getType());
+                $type = $this->registry->get($typeName);
                 $type->buildForm($form);
             });
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\SchemaOrg;
 
 /**
@@ -9,10 +11,7 @@ namespace Ekyna\Bundle\CmsBundle\Service\SchemaOrg;
  */
 trait BuilderAwareTrait
 {
-    /**
-     * @var BuilderInterface
-     */
-    protected $schemaBuilder;
+    protected BuilderInterface $schemaBuilder;
 
 
     /**
@@ -20,7 +19,7 @@ trait BuilderAwareTrait
      *
      * @param BuilderInterface $schemaBuilder
      */
-    public function setSchemaBuilder(BuilderInterface $schemaBuilder)
+    public function setSchemaBuilder(BuilderInterface $schemaBuilder): void
     {
         $this->schemaBuilder = $schemaBuilder;
     }
@@ -30,7 +29,7 @@ trait BuilderAwareTrait
      *
      * @return BuilderInterface
      */
-    public function getSchemaBuilder()
+    public function getSchemaBuilder(): BuilderInterface
     {
         return $this->schemaBuilder;
     }

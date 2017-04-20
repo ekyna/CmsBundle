@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model;
 
 use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
@@ -15,34 +17,15 @@ class TabsTranslation implements TranslationInterface
 {
     use TranslationTrait;
 
-    /**
-     * @var string
-     */
-    private $title;
-
-    /**
-     * @var string
-     */
-    private $content;
-
-    /**
-     * @var MediaInterface
-     */
-    private $media;
-
-    /**
-     * @var string
-     */
-    private $buttonLabel;
-
-    /**
-     * @var string
-     */
-    private $buttonUrl;
+    private ?string $title = null;
+    private ?string $content = null;
+    private ?MediaInterface $media = null;
+    private ?string $buttonLabel = null;
+    private ?string $buttonUrl = null;
 
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @TODO Remove
      */
@@ -56,7 +39,7 @@ class TabsTranslation implements TranslationInterface
      *
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -64,11 +47,11 @@ class TabsTranslation implements TranslationInterface
     /**
      * Sets the title.
      *
-     * @param string $title
+     * @param string|null $title
      *
      * @return TabsTranslation
      */
-    public function setTitle(string $title)
+    public function setTitle(string $title = null): TabsTranslation
     {
         $this->title = $title;
 
@@ -80,7 +63,7 @@ class TabsTranslation implements TranslationInterface
      *
      * @return string
      */
-    public function getContent()
+    public function getContent(): ?string
     {
         return $this->content;
     }
@@ -92,7 +75,7 @@ class TabsTranslation implements TranslationInterface
      *
      * @return TabsTranslation
      */
-    public function setContent(string $content)
+    public function setContent(string $content): TabsTranslation
     {
         $this->content = $content;
 
@@ -104,7 +87,7 @@ class TabsTranslation implements TranslationInterface
      *
      * @return MediaInterface
      */
-    public function getMedia()
+    public function getMedia(): ?MediaInterface
     {
         return $this->media;
     }
@@ -112,11 +95,11 @@ class TabsTranslation implements TranslationInterface
     /**
      * Sets the media.
      *
-     * @param MediaInterface $media
+     * @param MediaInterface|null $media
      *
      * @return TabsTranslation
      */
-    public function setMedia(MediaInterface $media = null)
+    public function setMedia(MediaInterface $media = null): TabsTranslation
     {
         $this->media = $media;
 
@@ -128,7 +111,7 @@ class TabsTranslation implements TranslationInterface
      *
      * @return string
      */
-    public function getButtonLabel()
+    public function getButtonLabel(): ?string
     {
         return $this->buttonLabel;
     }
@@ -136,11 +119,11 @@ class TabsTranslation implements TranslationInterface
     /**
      * Sets the buttonLabel.
      *
-     * @param string $label
+     * @param string|null $label
      *
      * @return TabsTranslation
      */
-    public function setButtonLabel(string $label = null)
+    public function setButtonLabel(string $label = null): TabsTranslation
     {
         $this->buttonLabel = $label;
 
@@ -152,7 +135,7 @@ class TabsTranslation implements TranslationInterface
      *
      * @return string
      */
-    public function getButtonUrl()
+    public function getButtonUrl(): ?string
     {
         return $this->buttonUrl;
     }
@@ -160,11 +143,11 @@ class TabsTranslation implements TranslationInterface
     /**
      * Sets the buttonUrl.
      *
-     * @param string $url
+     * @param string|null $url
      *
      * @return TabsTranslation
      */
-    public function setButtonUrl(string $url = null)
+    public function setButtonUrl(string $url = null): TabsTranslation
     {
         $this->buttonUrl = $url;
 

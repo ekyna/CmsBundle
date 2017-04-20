@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\DataFixtures\ORM;
 
-use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+use Ekyna\Bundle\CmsBundle\Factory\SeoFactoryInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
-use Ekyna\Bundle\CmsBundle\Repository\SeoRepository;
-use Ekyna\Bundle\CoreBundle\DataFixtures\ORM\Fixtures;
+use Faker\Factory;
 use Fidry\AliceDataFixtures\ProcessorInterface;
 
 /**
@@ -15,20 +16,17 @@ use Fidry\AliceDataFixtures\ProcessorInterface;
  */
 class CmsProcessor implements ProcessorInterface
 {
-    /**
-     * @var SeoRepository
-     */
-    private $seoRepository;
+    private SeoFactoryInterface $seoFactory;
 
 
     /**
      * Constructor.
      *
-     * @param SeoRepository $seoRepository
+     * @param SeoFactoryInterface $seoFactory
      */
-    public function __construct(SeoRepository $seoRepository)
+    public function __construct(SeoFactoryInterface $seoFactory)
     {
-        $this->seoRepository = $seoRepository;
+        $this->seoFactory = $seoFactory;
     }
 
     /**
@@ -36,15 +34,21 @@ class CmsProcessor implements ProcessorInterface
      */
     public function preProcess(string $id, $object): void
     {
+        // TODO ContentSubjectInterface
+
         if (!$object instanceof SeoSubjectInterface) {
             return;
         }
 
-        /** @var SeoInterface $seo */
-        $seo = $this->seoRepository->createNew();
+        $seo = $this->seoFactory->create();
+
+        $faker = Factory::create();
+
         $seo
-            ->setTitle(Fixtures::getFaker()->sentence())
-            ->setDescription(Fixtures::getFaker()->sentence());
+            ->setTitle($faker->sentence())
+            ->setDescription($faker->sentence());
+
+        $object->setSeo($seo);
     }
 
     /**
@@ -52,6 +56,5 @@ class CmsProcessor implements ProcessorInterface
      */
     public function postProcess(string $id, $object): void
     {
-
     }
 }

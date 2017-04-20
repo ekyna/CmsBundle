@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
+use Ekyna\Bundle\CmsBundle\Editor\View\WidgetView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\TemplateBlockType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Twig\Environment;
 
 /**
  * Class TemplatePlugin
@@ -16,33 +20,30 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class TemplatePlugin extends AbstractPlugin
 {
-    const NAME = 'ekyna_block_template';
+    public const NAME = 'ekyna_block_template';
 
-    /**
-     * @var EngineInterface
-     */
-    private $engine;
+    private Environment $twig;
 
 
     /**
      * Constructor.
      *
-     * @param EngineInterface $engine
-     * @param array           $config
+     * @param array       $config
+     * @param Environment $twig
      */
-    public function __construct(EngineInterface $engine, array $config)
+    public function __construct(array $config, Environment $twig)
     {
-        $this->engine = $engine;
-
         parent::__construct(array_replace([
             'templates' => [],
         ], $config));
+
+        $this->twig = $twig;
     }
 
     /**
      * @inheritDoc
      */
-    public function update(BlockInterface $block, Request $request, array $options = [])
+    public function update(BlockInterface $block, Request $request, array $options = []): ?Response
     {
         $choices = [];
         foreach ($this->config['templates'] as $name => $config) {
@@ -51,7 +52,7 @@ class TemplatePlugin extends AbstractPlugin
 
         // Feature update modal
         $form = $this->formFactory->create(TemplateBlockType::class, $block, [
-            'action'    => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
+            'action'    => $this->urlGenerator->generate('admin_ekyna_cms_editor_block_edit', [
                 'blockId'         => $block->getId(),
                 'widgetType'      => $request->get('widgetType', $block->getType()),
                 '_content_locale' => $this->localeProvider->getCurrentLocale(),
@@ -69,13 +70,13 @@ class TemplatePlugin extends AbstractPlugin
             return null;
         }
 
-        return $this->createModal('Modifier le bloc static.', $form->createView());
+        return $this->createModalResponse('Modifier le bloc static.', $form->createView());
     }
 
     /**
      * @inheritDoc
      */
-    public function validate(BlockInterface $block, ExecutionContextInterface $context)
+    public function validate(BlockInterface $block, ExecutionContextInterface $context): void
     {
         $data = $block->getData();
 
@@ -90,15 +91,19 @@ class TemplatePlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0)
-    {
+    public function createWidget(
+        BlockInterface $block,
+        AdapterInterface $adapter,
+        array $options,
+        int $position = 0
+    ): WidgetView {
         $view = parent::createWidget($block, $adapter, $options, $position);
 
         $data = $block->getData();
 
         if (isset($data['content']) && isset($this->config['templates'][$data['content']])) {
             $template = $this->config['templates'][$data['content']]['path'];
-            $view->content = $this->engine->render($template);
+            $view->content = $this->twig->render($template);
         } else {
             $view->content = 'Please select a template.';
         }
@@ -109,7 +114,7 @@ class TemplatePlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return 'Template';
     }
@@ -117,7 +122,7 @@ class TemplatePlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }

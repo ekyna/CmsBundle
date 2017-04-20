@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\Renderer;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Model\TagInterface;
 use Ekyna\Bundle\CmsBundle\Model\TagsSubjectInterface;
+use InvalidArgumentException;
 
 /**
  * Class TagRenderer
@@ -22,7 +25,7 @@ class TagRenderer
      *
      * @return string
      */
-    public function renderTags($subjectOrTags, array $options = [])
+    public function renderTags($subjectOrTags, array $options = []): string
     {
         if ($subjectOrTags instanceof TagsSubjectInterface) {
             $tags = $subjectOrTags->getTags();
@@ -31,8 +34,8 @@ class TagRenderer
         } elseif (is_array($subjectOrTags)) {
             $tags = new ArrayCollection($subjectOrTags);
         } else {
-            throw new \InvalidArgumentException(sprintf(
-                "Expected instance of %s, %s or array of %s.",
+            throw new InvalidArgumentException(sprintf(
+                'Expected instance of %s, %s or array of %s.',
                 TagsSubjectInterface::class,
                 Collection::class,
                 TagInterface::class
@@ -64,9 +67,9 @@ class TagRenderer
      *
      * @param array $options
      *
-     * @return \Closure
+     * @return callable
      */
-    private function getRenderer(array $options)
+    private function getRenderer(array $options): callable
     {
         if ($options['text']) {
             if ($options['badge']) {
@@ -76,30 +79,30 @@ class TagRenderer
                         $tag->getTheme(), $tag->getIcon(), $tag->getName()
                     );
                 };
-            } else {
-                return function (TagInterface $tag) {
-                    return sprintf(
-                        '<span class="text-%s"><i class="fa fa-%s"></i> %s</span>',
-                        $tag->getTheme(), $tag->getIcon(), $tag->getName()
-                    );
-                };
             }
-        } else {
-            if ($options['badge']) {
-                return function (TagInterface $tag) {
-                    return sprintf(
-                        '<span class="label label-%s" title="%s"><i class="fa fa-%s"></i></span>',
-                        $tag->getTheme(), $tag->getName(), $tag->getIcon()
-                    );
-                };
-            } else {
-                return function (TagInterface $tag) {
-                    return sprintf(
-                        '<i class="text-%s fa fa-%s" title="%s"></i>',
-                        $tag->getTheme(), $tag->getIcon(), $tag->getName()
-                    );
-                };
-            }
+
+            return function (TagInterface $tag) {
+                return sprintf(
+                    '<span class="text-%s"><i class="fa fa-%s"></i> %s</span>',
+                    $tag->getTheme(), $tag->getIcon(), $tag->getName()
+                );
+            };
         }
+
+        if ($options['badge']) {
+            return function (TagInterface $tag) {
+                return sprintf(
+                    '<span class="label label-%s" title="%s"><i class="fa fa-%s"></i></span>',
+                    $tag->getTheme(), $tag->getName(), $tag->getIcon()
+                );
+            };
+        }
+
+        return function (TagInterface $tag) {
+            return sprintf(
+                '<i class="text-%s fa fa-%s" title="%s"></i>',
+                $tag->getTheme(), $tag->getIcon(), $tag->getName()
+            );
+        };
     }
 }

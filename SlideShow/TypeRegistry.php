@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\SlideShow;
 
 use Ekyna\Bundle\CmsBundle\SlideShow\Type\TypeInterface;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Class SlideTypeRegistry
@@ -11,10 +15,8 @@ use Ekyna\Bundle\CmsBundle\SlideShow\Type\TypeInterface;
  */
 class TypeRegistry implements TypeRegistryInterface
 {
-    /**
-     * @var TypeInterface[]
-     */
-    private $types;
+    /** @var TypeInterface[] */
+    private array $types;
 
 
     /**
@@ -32,10 +34,10 @@ class TypeRegistry implements TypeRegistryInterface
      *
      * @return $this
      */
-    public function register(TypeInterface $type)
+    public function register(TypeInterface $type): TypeRegistryInterface
     {
         if (isset($this->types[$name = $type->getName()])) {
-            throw new \RuntimeException("Slide type '$name' is already registered.");
+            throw new RuntimeException("Slide type '$name' is already registered.");
         }
 
         $this->types[$name] = $type;
@@ -44,21 +46,21 @@ class TypeRegistry implements TypeRegistryInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function get($name)
+    public function get(string $name): TypeInterface
     {
         if (!isset($this->types)) {
-            throw new \InvalidArgumentException("No slide type registered for name '$name'.");
+            throw new InvalidArgumentException("No slide type registered for name '$name'.");
         }
 
         return $this->types[$name];
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function all()
+    public function all(): array
     {
         return $this->types;
     }

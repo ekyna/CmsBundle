@@ -1,66 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Component\Resource\Model as RM;
+use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
+use Ekyna\Component\Resource\Model as RM;
 
 /**
  * Class Seo
- * @package Ekyna\Bundle\CmsBundle\Entity
- * @author  Étienne Dauvergne <contact@ekyna.com>
+ * @package      Ekyna\Bundle\CmsBundle\Entity
+ * @author       Étienne Dauvergne <contact@ekyna.com>
  *
  * @method Cms\SeoTranslationInterface translate($locale = null, $create = false)
- * @method \Doctrine\Common\Collections\Collection|Cms\SeoTranslationInterface[] getTranslations()
+ * @method Collection|Cms\SeoTranslationInterface[] getTranslations()
  */
 class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
 {
     use RM\TaggedEntityTrait;
 
-    /**
-     * @var int
-     */
-    protected $id;
+    protected ?int    $id         = null;
+    protected string  $changefreq = Cms\ChangeFrequencies::MONTHLY;
+    protected string  $priority   = '0.5';
+    protected bool    $follow     = true;
+    protected bool    $index      = true;
+    protected ?string $canonical  = null;
 
-    /**
-     * @var string
-     */
-    protected $changefreq;
-
-    /**
-     * @var string
-     */
-    protected $priority;
-
-    /**
-     * @var bool
-     */
-    protected $follow;
-
-    /**
-     * @var bool
-     */
-    protected $index;
-
-    /**
-     * @var string
-     */
-    protected $canonical;
-
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->changefreq = 'monthly';
-        $this->priority = 0.5;
-        $this->follow = true;
-        $this->index = true;
-    }
 
     /**
      * Clones the seo.
@@ -83,7 +49,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getId(): ?int
     {
@@ -91,9 +57,9 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setTitle($title)
+    public function setTitle(string $title = null): Cms\SeoInterface
     {
         $this->translate()->setTitle($title);
 
@@ -101,17 +67,17 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->translate()->getTitle();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setDescription($description)
+    public function setDescription(string $description = null): Cms\SeoInterface
     {
         $this->translate()->setDescription($description);
 
@@ -119,17 +85,17 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->translate()->getDescription();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setChangefreq($changefreq)
+    public function setChangefreq(string $changefreq): Cms\SeoInterface
     {
         $this->changefreq = $changefreq;
 
@@ -137,17 +103,17 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getChangefreq()
+    public function getChangefreq(): string
     {
         return $this->changefreq;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setPriority($priority)
+    public function setPriority(string $priority): Cms\SeoInterface
     {
         $this->priority = $priority;
 
@@ -155,61 +121,53 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getPriority()
+    public function getPriority(): string
     {
         return $this->priority;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getFollow()
+    public function setFollow(bool $follow): Cms\SeoInterface
+    {
+        $this->follow = $follow;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFollow(): bool
     {
         return $this->follow;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setFollow($follow)
+    public function setIndex(bool $index): Cms\SeoInterface
     {
-        $this->follow = (bool)$follow;
+        $this->index = $index;
 
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getIndex()
+    public function getIndex(): bool
     {
         return $this->index;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setIndex($index)
-    {
-        $this->index = (bool)$index;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCanonical()
-    {
-        return $this->canonical;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setCanonical($canonical)
+    public function setCanonical(string $canonical = null): Cms\SeoInterface
     {
         $this->canonical = $canonical;
 
@@ -217,11 +175,11 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public static function getChangefreqs()
+    public function getCanonical(): ?string
     {
-        return ['hourly', 'monthly', 'yearly'];
+        return $this->canonical;
     }
 
     /**
@@ -229,15 +187,12 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
      *
      * @return bool
      */
-    public function isIndexable()
+    public function isIndexable(): bool
     {
         return $this->getIndex();
     }
 
-    /**
-     * @inheritdoc
-     */
-    public static function getEntityTagPrefix()
+    public static function getEntityTagPrefix(): string
     {
         return 'ekyna_cms.seo';
     }

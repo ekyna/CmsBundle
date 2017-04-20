@@ -1,4 +1,4 @@
-{% spaceless %}
+{% apply spaceless %}
 <!DOCTYPE html>
 <html lang="{{ app.request.locale }}"{{ ui_assets_base_url() }}{{ cms_document_data() }}{% if app.debug %} data-debug="1"{% endif %}>
 <head>
@@ -15,16 +15,15 @@
 
     {% block stylesheets -%}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-        <link href="{{ absolute_url(asset('bundles/ekynacore/css/fontawesome.css')) }}" rel="stylesheet" type="text/css" />
-        <link href="{{ absolute_url(asset('bundles/ekynacore/css/glyphicons.css')) }}" rel="stylesheet" type="text/css" />
+        <link href="{{ absolute_url(asset('bundles/ekynaui/css/fontawesome.css')) }}" rel="stylesheet" type="text/css" />
+        <link href="{{ absolute_url(asset('bundles/ekynaui/css/glyphicons.css')) }}" rel="stylesheet" type="text/css" />
         <link href="{{ absolute_url(asset('bundles/ekynacms/css/bootstrap-content.css')) }}" rel="stylesheet" type="text/css" />
-        <link href="{{ absolute_url(asset('bundles/ekynacookieconsent/css/cookie-consent.css')) }}" rel="stylesheet" type="text/css" />
     {%- endblock stylesheets %}
 
     {{ ui_fonts_stylesheets() }}
     {{ ui_forms_stylesheets() }}
 
-    {% include '@EkynaCore/Ui/ie-fix.html.twig' %}
+    {% include '@EkynaUi/Fix/ie.html.twig' %}
 
     {{ require_js(not app.debug) }}
 </head>
@@ -36,7 +35,7 @@
         {% block breadcrumb -%}
             <div class="container">
                 {{ cms_notices() }}
-                {%- include '@EkynaCore/Ui/flashes.html.twig' -%}
+                {%- include '@EkynaUi/flashes.html.twig' -%}
                 {{ cms_breadcrumb() }}
             </div>
         {%- endblock breadcrumb %}
@@ -44,7 +43,7 @@
         {% block content %}{% endblock content %}
 
         <div class="container" id="footer">
-            {{ render_esi(controller('EkynaCmsBundle:Cms:footer', {'locale': app.request.locale})) }}
+            {{ render_esi(controller('Ekyna\\Bundle\\CmsBundle\\Controller\\CmsController::footer', {'locale': app.request.locale})) }}
             <div>
                 {{ cms_locale_switcher() }}
             </div>
@@ -53,13 +52,7 @@
 
     {% block javascripts -%}
         <script type="text/javascript">require(['bundles/ekynacms/js/main']);</script>
-        {{ ekyna_cookie_consent_render() }}
-
-        {#{% if ekyna_cookie_consent_category_allowed('analytic') -%}
-            Analytic cookie dependant scripts here
-        {%- endif %}#}
-
     {%- endblock javascripts %}
 </body>
 </html>
-{% endspaceless %}
+{% endapply %}

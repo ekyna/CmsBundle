@@ -2,9 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Listener;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
@@ -20,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @todo resource (persistence) event subscriber
  */
-class PageTranslationListener implements EventSubscriber
+class PageTranslationListener
 {
     /**
      * @var EventDispatcherInterface
@@ -59,7 +57,7 @@ class PageTranslationListener implements EventSubscriber
             $from = $eventArgs->getOldValue('path');
             $to   = $eventArgs->getNewValue('path');
 
-            if (0 < strlen($from) && 0 < strlen($to) && $from != $to) {
+            if (!empty($from) && !empty($to) && $from != $to) {
                 // TODO use url generator or i18n routing prefix strategy
                 $localePrefix = $locale != 'fr' ? '/' . $locale : '';
                 $this->redirections[] = array(
@@ -97,7 +95,7 @@ class PageTranslationListener implements EventSubscriber
 
             // Redirect to this parent page.
             $to = $parentPage->translate($locale)->getPath();
-            if (0 < strlen($from) && 0 < strlen($to) && $from != $to) {
+            if (!empty($from) && !empty($to) && $from != $to) {
                 $this->redirections[] = array(
                     'from' => $localePrefix . $from,
                     'to'   => $localePrefix . $to,
@@ -134,7 +132,7 @@ class PageTranslationListener implements EventSubscriber
                 $translation->setPath($newPath);
                 $uow->recomputeSingleEntityChangeSet($metadata, $translation);
 
-                if (0 < strlen($oldPath) && 0 < strlen($newPath) && $oldPath != $newPath) {
+                if (!empty($oldPath) && !empty($newPath) && $oldPath != $newPath) {
                     $this->redirections[] = array(
                         'from' => $localePrefix . $oldPath,
                         'to'   => $localePrefix . $newPath,
@@ -156,21 +154,9 @@ class PageTranslationListener implements EventSubscriber
     {
         foreach ($this->redirections as $redirection) {
             $redirectionEvent = new BuildRedirectionEvent($redirection['from'], $redirection['to'], true);
-            $this->dispatcher->dispatch(RedirectionEvents::BUILD, $redirectionEvent);
+            $this->dispatcher->dispatch($redirectionEvent, RedirectionEvents::BUILD);
         }
 
         $this->redirections = [];
-    }
-
-    /**
-     * Returns an array of events this subscriber wants to listen to.
-     *
-     * @return array
-     */
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::postFlush,
-        );
     }
 }

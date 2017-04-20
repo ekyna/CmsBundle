@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Event;
 
 /**
@@ -10,21 +12,17 @@ namespace Ekyna\Bundle\CmsBundle\Event;
 final class MenuEvents
 {
     // Persistence
-    const INSERT      = 'ekyna_cms.menu.insert';
-    const UPDATE      = 'ekyna_cms.menu.update';
-    const DELETE      = 'ekyna_cms.menu.delete';
+    public const INSERT      = 'ekyna_cms.menu.insert';
+    public const UPDATE      = 'ekyna_cms.menu.update';
+    public const DELETE      = 'ekyna_cms.menu.delete';
 
     // Domain
-    const INITIALIZE  = 'ekyna_cms.menu.initialize';
-
-    const PRE_CREATE  = 'ekyna_cms.menu.pre_create';
-    const POST_CREATE = 'ekyna_cms.menu.post_create';
-
-    const PRE_UPDATE  = 'ekyna_cms.menu.pre_update';
-    const POST_UPDATE = 'ekyna_cms.menu.post_update';
-
-    const PRE_DELETE  = 'ekyna_cms.menu.pre_delete';
-    const POST_DELETE = 'ekyna_cms.menu.post_delete';
+    public const PRE_CREATE  = 'ekyna_cms.menu.pre_create';
+    public const POST_CREATE = 'ekyna_cms.menu.post_create';
+    public const PRE_UPDATE  = 'ekyna_cms.menu.pre_update';
+    public const POST_UPDATE = 'ekyna_cms.menu.post_update';
+    public const PRE_DELETE  = 'ekyna_cms.menu.pre_delete';
+    public const POST_DELETE = 'ekyna_cms.menu.post_delete';
 
     /**
      * Disabled constructor.

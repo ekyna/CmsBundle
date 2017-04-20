@@ -1,4 +1,4 @@
-/// <reference path="../../../../../../../../../typings/index.d.ts" />
+/// <reference path="../../../../../../../../../../assets/typings/index.d.ts" />
 
 import * as es6Promise from 'es6-promise';
 
@@ -125,7 +125,7 @@ class TinymcePlugin extends BasePlugin {
 
                     return BlockManager.request(
                             this.$element,
-                            'ekyna_cms_editor_block_edit',
+                            'admin_ekyna_cms_editor_block_edit',
                             null,
                             {data: {data: {content: content}}}
                         )

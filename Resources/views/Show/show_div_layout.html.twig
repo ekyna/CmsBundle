@@ -1,47 +1,76 @@
+{% use '@EkynaAdmin/Show/show_div_layout.html.twig' %}
+
 {% block seo_widget %}
-{% spaceless %}
-    {{ show_row(value.translations, 'translations', {
-        'id': prefix ~'_translations',
-        'fields': {
-            'title': {'label': 'ekyna_core.field.title'},
-            'description': {'label': 'ekyna_core.field.description', 'type': 'textarea'},
-        },
-    }) }}
-    <div class="row">
-        <div class="col-md-6">
-            {{ show_row(value.changefreq, 'text', {
-                'label': 'ekyna_core.field.changefreq',
-                'label_col': 4,
-                'id': prefix ~ '_changeFreq'
-            }) }}
+    {% apply spaceless %}
+        {{ show_row(value.translations, 'translations', {
+            'id': prefix ~'_translations',
+            'fields': {
+                'title': {
+                    'label': 'field.title',
+                    'options': {'label_trans_domain': 'EkynaUi'}
+                },
+                'description': {
+                    'label': 'field.description',
+                    'type': 'textarea',
+                    'options': {'label_trans_domain': 'EkynaUi'}
+                },
+            },
+        }) }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ show_row(value.changefreq, 'text', {
+                    'label': 'field.changefreq',
+                    'label_trans_domain': 'EkynaUi',
+                    'label_col': 4,
+                    'id': prefix ~ '_changeFreq'
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ show_row(value.priority, 'text', {
+                    'label': 'field.priority',
+                    'label_trans_domain': 'EkynaUi',
+                    'label_col': 4,
+                    'id': prefix ~ '_priority'
+                }) }}
+            </div>
         </div>
-        <div class="col-md-6">
-            {{ show_row(value.priority, 'text', {
-                'label': 'ekyna_core.field.priority',
-                'label_col': 4,
-                'id': prefix ~ '_priority'
-            }) }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ show_row(value.follow, 'boolean', {
+                    'label': 'field.follow',
+                    'label_trans_domain': 'EkynaUi',
+                    'label_col': 4,
+                    'id': prefix ~ '_follow'
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ show_row(value.index, 'boolean', {
+                    'label': 'field.index',
+                    'label_trans_domain': 'EkynaUi',
+                    'label_col': 4,
+                    'id': prefix ~ '_index'
+                }) }}
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            {{ show_row(value.follow, 'boolean', {
-                'label': 'ekyna_core.field.follow',
-                'label_col': 4,
-                'id': prefix ~ '_follow'
-            }) }}
-        </div>
-        <div class="col-md-6">
-            {{ show_row(value.index, 'boolean', {
-                'label': 'ekyna_core.field.index',
-                'label_col': 4,
-                'id': prefix ~ '_index'
-            }) }}
-        </div>
-    </div>
-    {{ show_row(value.canonical, 'url', {
-        'label': 'ekyna_core.field.canonical_url',
-        'id': prefix ~ '_canonicalUrl'
-    }) }}
-{% endspaceless %}
+        {{ show_row(value.canonical, 'url', {
+            'label': 'field.canonical_url',
+            'label_trans_domain': 'EkynaUi',
+            'id': prefix ~ '_canonicalUrl'
+        }) }}
+    {% endapply %}
 {% endblock seo_widget %}
+
+{% block tags_widget -%}
+{% apply spaceless -%}
+    {% set attr = attr|merge({'class': ('show-widget show-widget-block ' ~ attr.class|default(''))|trim }) -%}
+    <div{{ block('widget_attributes') }}>
+        {% for tag in value -%}
+            <a href="{{ admin_resource_path(tag) }}" class="label label-{{ tag.theme }}">
+                <span class="fa fa-{{ tag.icon }}"></span> {{ tag.name }}
+            </a>
+        {%- else -%}
+            {{ 'value.none'|trans({}, 'EkynaUi') }}
+        {%- endfor %}
+    </div>
+{%- endapply %}
+{%- endblock tags_widget %}

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model;
@@ -36,7 +38,7 @@ class TabsValidator extends ConstraintValidator
             if (!empty(array_diff($locales, $l)) or !empty(array_diff($l, $locales))) {
                 $this
                     ->context
-                    ->buildViolation($constraint->locales_miss_match)
+                    ->buildViolation($constraint->localesMissMatch)
                     ->atPath("tabs[$index].translations")
                     ->addViolation();
             }
@@ -52,7 +54,7 @@ class TabsValidator extends ConstraintValidator
                 if ($hasMedia xor !is_null($tab->getMedia())) {
                     $this
                         ->context
-                        ->buildViolation($constraint->media_must_be_null)
+                        ->buildViolation($constraint->mediaMustBeNull)
                         ->atPath("tabs[$index].translations[$locale].media")
                         ->addViolation();
                 }

@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Adapter;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidArgumentException;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\RuntimeException;
-use Ekyna\Bundle\CmsBundle\Editor\View;
 use Ekyna\Bundle\CmsBundle\Editor\Model;
+use Ekyna\Bundle\CmsBundle\Editor\View;
+use Exception;
 
 /**
  * Class Bootstrap3Adapter
@@ -14,24 +17,24 @@ use Ekyna\Bundle\CmsBundle\Editor\Model;
  */
 class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
 {
-    const XS = 'xs';
-    const SM = 'sm';
-    const MD = 'md';
-    const LG = 'lg';
+    private const LAYOUT_XS = 'xs';
+    private const LAYOUT_SM = 'sm';
+    private const LAYOUT_MD = 'md';
+    private const LAYOUT_LG = 'lg';
 
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function buildContent(Model\ContentInterface $content, View\ContentView $view)
+    public function buildContent(Model\ContentInterface $content, View\ContentView $view): void
     {
         $view->getAttributes()->addClass('content');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function buildContainer(Model\ContainerInterface $container, View\ContainerView $view)
+    public function buildContainer(Model\ContainerInterface $container, View\ContainerView $view): void
     {
         $view->getInnerAttributes()->addClass('container');
 
@@ -39,9 +42,9 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function buildRow(Model\RowInterface $row, View\RowView $view)
+    public function buildRow(Model\RowInterface $row, View\RowView $view): void
     {
         $view->getAttributes()->addClass('row');
 
@@ -49,9 +52,9 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function buildBlock(Model\BlockInterface $block, View\BlockView $view)
+    public function buildBlock(Model\BlockInterface $block, View\BlockView $view): void
     {
         $attributes = $view->getAttributes();
 
@@ -96,7 +99,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function updateContainerLayout(Model\ContainerInterface $container, array $data)
+    public function updateContainerLayout(Model\ContainerInterface $container, array $data): void
     {
         foreach (array_diff_key($data, [static::PADDING_TOP, static::PADDING_BOTTOM]) as $property) {
             unset($data[$property]);
@@ -110,7 +113,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function updateRowLayout(Model\RowInterface $row, array $data)
+    public function updateRowLayout(Model\RowInterface $row, array $data): void
     {
         foreach (array_diff_key($data, [static::PADDING_TOP, static::PADDING_BOTTOM]) as $property) {
             unset($data[$property]);
@@ -124,15 +127,15 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function updateBlockLayout(Model\BlockInterface $block, array $data)
+    public function updateBlockLayout(Model\BlockInterface $block, array $data): void
     {
         $expectedKeys = [
             static::PADDING_TOP,
             static::PADDING_BOTTOM,
-            static::XS,
-            static::SM,
-            static::MD,
-            static::LG,
+            static::LAYOUT_XS,
+            static::LAYOUT_SM,
+            static::LAYOUT_MD,
+            static::LAYOUT_LG,
         ];
         foreach (array_diff(array_keys($data), $expectedKeys) as $property) {
             unset($data[$property]);
@@ -147,25 +150,25 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function pullBlock(Model\BlockInterface $block)
+    public function pullBlock(Model\BlockInterface $block): void
     {
-        throw new \Exception('Not yet implemented'); // TODO
+        throw new Exception('Not yet implemented'); // TODO
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function pushBlock(Model\BlockInterface $block)
+    public function pushBlock(Model\BlockInterface $block): void
     {
-        throw new \Exception('Not yet implemented'); // TODO
+        throw new Exception('Not yet implemented'); // TODO
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function offsetLeftBlock(Model\BlockInterface $block)
+    public function offsetLeftBlock(Model\BlockInterface $block): void
     {
         $offset = $this->getCurrentBlockProperty($block, static::OFFSET, 0);
         $size = $this->getCurrentBlockProperty($block, static::SIZE, 12);
@@ -179,9 +182,9 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function offsetRightBlock(Model\BlockInterface $block)
+    public function offsetRightBlock(Model\BlockInterface $block): void
     {
         $offset = $this->getCurrentBlockProperty($block, static::OFFSET, 0);
         $size = $this->getCurrentBlockProperty($block, static::SIZE, 12);
@@ -195,9 +198,9 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function compressBlock(Model\BlockInterface $block)
+    public function compressBlock(Model\BlockInterface $block): void
     {
         $size = $this->getCurrentBlockProperty($block, static::SIZE, 12);
         $offset = $this->getCurrentBlockProperty($block, static::OFFSET, 0);
@@ -211,9 +214,9 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function expandBlock(Model\BlockInterface $block)
+    public function expandBlock(Model\BlockInterface $block): void
     {
         $size = $this->getCurrentBlockProperty($block, static::SIZE, 12);
         $offset = $this->getCurrentBlockProperty($block, static::OFFSET, 0);
@@ -227,9 +230,9 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getImageResponsiveMap(Model\BlockInterface $block)
+    public function getImageResponsiveMap(Model\BlockInterface $block): array
     {
         $map = [];
 
@@ -255,7 +258,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      *
      * @throws InvalidArgumentException
      */
-    protected function validateBlockLayout(array $data)
+    protected function validateBlockLayout(array $data): void
     {
         foreach (array_keys(static::getDevices()) as $device) {
             // If layout set for this device
@@ -263,8 +266,8 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
                 continue;
             }
 
-            $size = isset($data[$device][static::SIZE]) ? $data[$device][static::SIZE] : 12;
-            $offset = isset($data[$device][static::OFFSET]) ? $data[$device][static::OFFSET] : 0;
+            $size = $data[$device][static::SIZE] ?? 12;
+            $offset = $data[$device][static::OFFSET] ?? 0;
 
             // Validate size
             if (1 > $size || $size > 12) {
@@ -291,7 +294,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      *
      * @return array
      */
-    protected function cleanUpBlockLayout(Model\BlockInterface $block, array $data)
+    protected function cleanUpBlockLayout(Model\BlockInterface $block, array $data): array
     {
         $clean = [];
 
@@ -332,8 +335,8 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
                 continue;
             }
 
-            $size = isset($data[$device][static::SIZE]) ? $data[$device][static::SIZE] : $previousSize;
-            $offset = isset($data[$device][static::OFFSET]) ? $data[$device][static::OFFSET] : $previousOffset;
+            $size = $data[$device][static::SIZE] ?? $previousSize;
+            $offset = $data[$device][static::OFFSET] ?? $previousOffset;
 
             $cleanDevice = [];
 
@@ -367,7 +370,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      *
      * @param array $layout
      */
-    protected function validateLayoutStyles(array $layout)
+    protected function validateLayoutStyles(array $layout): void
     {
         if (isset($layout[static::PADDING_TOP])
             && (0 > $layout[static::PADDING_TOP] || 300 < $layout[static::PADDING_TOP])
@@ -388,7 +391,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      * @param View\AttributesInterface $attributes
      * @param array                    $layout
      */
-    protected function applyLayoutStyles(View\AttributesInterface $attributes, array $layout)
+    protected function applyLayoutStyles(View\AttributesInterface $attributes, array $layout): void
     {
         foreach ([static::PADDING_TOP => '%spx', static::PADDING_BOTTOM => '%spx'] as $property => $template) {
             if (isset($layout[$property]) && 0 < $layout[$property]) {
@@ -409,7 +412,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      *
      * @return int
      */
-    protected function getCurrentBlockProperty(Model\BlockInterface $block, $property, $default)
+    protected function getCurrentBlockProperty(Model\BlockInterface $block, string $property, int $default): int
     {
         $layout = $block->getLayout();
         $currentSize = $default;
@@ -431,7 +434,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      * @param string               $property
      * @param int                  $current
      */
-    protected function setCurrentBlockProperty(Model\BlockInterface $block, $property, $current)
+    protected function setCurrentBlockProperty(Model\BlockInterface $block, string $property, int $current): void
     {
         $layout = $block->getLayout();
 
@@ -459,7 +462,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      * @return string
      * @throws RuntimeException
      */
-    private function resolveCurrentDevice()
+    private function resolveCurrentDevice(): string
     {
         if (0 == $viewportWidth = $this->editor->getViewportWidth()) {
             throw new RuntimeException('Unexpected editor viewport width.');
@@ -471,7 +474,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
             }
         }
 
-        return static::XS;
+        return static::LAYOUT_XS;
     }
 
     /**
@@ -480,7 +483,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      * @return array
      * @throws RuntimeException
      */
-    private function resolveLowerDevices()
+    private function resolveLowerDevices(): array
     {
         if (0 == $viewportWidth = $this->editor->getViewportWidth()) {
             throw new RuntimeException('Unexpected editor viewport width.');
@@ -495,7 +498,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
         }
 
         if (empty($devices)) { // TODO may be useless
-            $devices[] = static::XS;
+            $devices[] = static::LAYOUT_XS;
         }
 
         return $devices;
@@ -507,7 +510,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      * @return array
      * @throws RuntimeException
      */
-    private function resolveGreaterDevices()
+    private function resolveGreaterDevices(): array
     {
         if (0 == $viewportWidth = $this->editor->getViewportWidth()) {
             throw new RuntimeException('Unexpected editor viewport width.');
@@ -516,7 +519,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
         $devices = [];
 
         foreach (static::getDevices() as $device => $config) {
-            if ($device === static::XS) {
+            if ($device === static::LAYOUT_XS) {
                 continue;
             }
 
@@ -533,25 +536,25 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      *
      * @return array
      */
-    public static function getDevices()
+    public static function getDevices(): array
     {
         return [
-            static::LG => [
+            static::LAYOUT_LG => [
                 'min'   => 1200,
                 'max'   => null,
                 'width' => 1140,
             ],
-            static::MD => [
+            static::LAYOUT_MD => [
                 'min'   => 992,
                 'max'   => 1199,
                 'width' => 940,
             ],
-            static::SM => [
+            static::LAYOUT_SM => [
                 'min'   => 768,
                 'max'   => 991,
                 'width' => 720,
             ],
-            static::XS => [
+            static::LAYOUT_XS => [
                 'min'   => null,
                 'max'   => 479,
                 'width' => 450,

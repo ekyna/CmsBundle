@@ -1,47 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle;
 
 use Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler as Pass;
-use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
-use Ekyna\Bundle\CmsBundle\Model as CM;
-use Ekyna\Bundle\ResourceBundle\AbstractBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * Class EkynaCmsBundle
  * @package Ekyna\Bundle\CmsBundle
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class EkynaCmsBundle extends AbstractBundle
+class EkynaCmsBundle extends Bundle
 {
-    /**
-     * @inheritdoc
-     */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
-        parent::build($container);
-
+        $container->addCompilerPass(new Pass\AdminMenuPass());
+        $container->addCompilerPass(new Pass\RegisterRoutersPass());
         $container->addCompilerPass(new Pass\EditorPluginPass());
         $container->addCompilerPass(new Pass\SchemaOrgProviderPass());
     }
-
-    /**
-     * @inheritdoc
-     */
-    protected function getModelInterfaces()
-    {
-        return [
-            CM\SeoInterface::class       => 'ekyna_cms.seo.class',
-            CM\PageInterface::class      => 'ekyna_cms.page.class',
-            CM\MenuInterface::class      => 'ekyna_cms.menu.class',
-            CM\TagInterface::class       => 'ekyna_cms.tag.class',
-            CM\NoticeInterface::class    => 'ekyna_cms.notice.class',
-            EM\BlockInterface::class     => 'ekyna_cms.block.class',
-            EM\ContainerInterface::class => 'ekyna_cms.container.class',
-            EM\ContentInterface::class   => 'ekyna_cms.content.class',
-            EM\RowInterface::class       => 'ekyna_cms.row.class',
-        ];
-    }
 }
-

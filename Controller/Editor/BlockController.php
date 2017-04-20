@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
-use Ekyna\Bundle\CoreBundle\Modal\Modal;
+use Ekyna\Bundle\UiBundle\Model\Modal;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -12,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @package Ekyna\Bundle\CmsBundle\Controller\Editor
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class BlockController extends BaseController
+class BlockController extends AbstractController
 {
     /**
      * Edits the block.
@@ -21,12 +23,12 @@ class BlockController extends BaseController
      *
      * @return Response
      */
-    public function editAction(Request $request)
+    public function edit(Request $request): Response
     {
         $block = $this->findBlockByRequest($request);
 
         try {
-            $response = $this->getEditor()->getBlockManager()->update($block, $request);
+            $response = $this->editor->getBlockManager()->update($block, $request);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -42,7 +44,7 @@ class BlockController extends BaseController
 
         $view = $this->getViewBuilder()->buildBlock($block);
 
-        if (0 < strlen($block->getName())) {
+        if (!empty($block->getName())) {
             $data = ['widgets' => $view->widgets];
         } else {
             $data = ['blocks' => [$view]];
@@ -58,14 +60,14 @@ class BlockController extends BaseController
      *
      * @return Response
      */
-    public function layoutAction(Request $request)
+    public function layout(Request $request): Response
     {
         $block = $this->findBlockByRequest($request);
 
         $data = $request->request->get('data', []);
 
         try {
-            $this->getEditor()->getLayoutAdapter()->updateBlockLayout($block, $data);
+            $this->editor->getLayoutAdapter()->updateBlockLayout($block, $data);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -87,10 +89,10 @@ class BlockController extends BaseController
      *
      * @return Response
      */
-    public function changeTypeAction(Request $request)
+    public function changeType(Request $request): Response
     {
         $block = $this->findBlockByRequest($request);
-        $type = $request->request->get('type', null);
+        $type = $request->request->get('type');
         $removed = [];
 
         if ($type != $block->getType()) {
@@ -99,7 +101,7 @@ class BlockController extends BaseController
             }
 
             try {
-                $this->getEditor()->getBlockManager()->changeType($block, $type);
+                $this->editor->getBlockManager()->changeType($block, $type);
             } catch (EditorExceptionInterface $e) {
                 return $this->handleException($e);
             }
@@ -125,13 +127,13 @@ class BlockController extends BaseController
      *
      * @return Response
      */
-    public function removeAction(Request $request)
+    public function remove(Request $request): Response
     {
         $block = $this->findBlockByRequest($request);
         $row = $block->getRow();
 
         try {
-            $this->getEditor()->getBlockManager()->delete($block);
+            $this->editor->getBlockManager()->delete($block);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -157,7 +159,7 @@ class BlockController extends BaseController
      *
      * @return Response
      */
-    public function moveUpAction(Request $request)
+    public function moveUp(Request $request): Response
     {
         $block = $this->findBlockByRequest($request);
         $row = $block->getRow();
@@ -165,7 +167,7 @@ class BlockController extends BaseController
         $removedId = $this->getViewBuilder()->buildBlock($block)->getAttributes()->getId();
 
         try {
-            $sibling = $this->getEditor()->getBlockManager()->moveUp($block);
+            $sibling = $this->editor->getBlockManager()->moveUp($block);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -196,7 +198,7 @@ class BlockController extends BaseController
      *
      * @return Response
      */
-    public function moveDownAction(Request $request)
+    public function moveDown(Request $request): Response
     {
         $block = $this->findBlockByRequest($request);
         $row = $block->getRow();
@@ -204,7 +206,7 @@ class BlockController extends BaseController
         $removedId = $this->getViewBuilder()->buildBlock($block)->getAttributes()->getId();
 
         try {
-            $sibling = $this->getEditor()->getBlockManager()->moveDown($block);
+            $sibling = $this->editor->getBlockManager()->moveDown($block);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -235,12 +237,12 @@ class BlockController extends BaseController
      *
      * @return Response
      */
-    public function moveLeftAction(Request $request)
+    public function moveLeft(Request $request): Response
     {
         $block = $this->findBlockByRequest($request);
 
         try {
-            $sibling = $this->getEditor()->getBlockManager()->moveLeft($block);
+            $sibling = $this->editor->getBlockManager()->moveLeft($block);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }
@@ -265,12 +267,12 @@ class BlockController extends BaseController
      *
      * @return Response
      */
-    public function moveRightAction(Request $request)
+    public function moveRight(Request $request): Response
     {
         $block = $this->findBlockByRequest($request);
 
         try {
-            $sibling = $this->getEditor()->getBlockManager()->moveRight($block);
+            $sibling = $this->editor->getBlockManager()->moveRight($block);
         } catch (EditorExceptionInterface $e) {
             return $this->handleException($e);
         }

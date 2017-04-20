@@ -1,7 +1,7 @@
 {% extends 'knp_menu.html.twig' %}
 
 {% block label %}
-{% spaceless %}
+{% apply spaceless %}
     {{ item.label|trans }}
-{% endspaceless %}
+{% endapply %}
 {% endblock %}

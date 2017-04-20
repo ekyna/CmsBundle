@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,10 +16,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class NoticeEventListener implements EventSubscriberInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $manager;
+    private EntityManagerInterface $manager;
 
 
     /**
@@ -33,7 +32,7 @@ class NoticeEventListener implements EventSubscriberInterface
     /**
      * Notice insert event handler.
      */
-    public function onInsert()
+    public function onInsert(): void
     {
         $this->clearQueryCache();
     }
@@ -41,7 +40,7 @@ class NoticeEventListener implements EventSubscriberInterface
     /**
      * Notice update event handler.
      */
-    public function onUpdate()
+    public function onUpdate(): void
     {
         $this->clearQueryCache();
     }
@@ -49,7 +48,7 @@ class NoticeEventListener implements EventSubscriberInterface
     /**
      * Notice delete event handler.
      */
-    public function onDelete()
+    public function onDelete(): void
     {
         $this->clearQueryCache();
     }
@@ -69,7 +68,7 @@ class NoticeEventListener implements EventSubscriberInterface
     /**
      * @inheritDoc
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             NoticeEvents::INSERT => ['onInsert'],

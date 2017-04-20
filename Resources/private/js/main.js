@@ -1,5 +1,5 @@
-require(['require', 'ekyna-core', 'ekyna-cms', 'ekyna-media'], function(require, Core, Cms, Media) {
-    Core.init();
+require(['require', 'ekyna-ui', 'ekyna-cms', 'ekyna-media'], function(require, Ui, Cms, Media) {
+    Ui.init();
     Cms.init();
     Media.init();
 });

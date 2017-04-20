@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
@@ -14,10 +16,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class MenuValidator extends ConstraintValidator
 {
-    /**
-     * @var array
-     */
-    private $locales;
+    private array $locales;
 
 
     /**
@@ -29,7 +28,7 @@ class MenuValidator extends ConstraintValidator
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function validate($menu, Constraint $constraint)
     {
@@ -40,7 +39,7 @@ class MenuValidator extends ConstraintValidator
             throw new UnexpectedTypeException($menu, MenuInterface::class);
         }
 
-        if (0 === $menu->getLevel() || $menu->isLocked()) {
+        if ((0 === $menu->getLevel()) || $menu->isLocked()) {
             return;
         }
 
@@ -49,19 +48,19 @@ class MenuValidator extends ConstraintValidator
          * @var Menu          $constraint
          */
         $page = null !== $menu->getPage();
-        $route = 0 < strlen($menu->getRoute());
+        $route = !empty($menu->getRoute());
 
         $path = true;
         foreach ($this->locales as $locale) {
-            if (0 === strlen($menu->translate($locale, true)->getPath())) {
+            if (empty($menu->translate($locale, true)->getPath())) {
                 $path = false;
             }
         }
 
         if (!($page || $path || $route)) {
-            $this->context->addViolation($constraint->invalid_routing);
-        } elseif ($page && ($path || $route) || ($path && $route)) {
-            $this->context->addViolation($constraint->invalid_routing);
+            $this->context->addViolation($constraint->invalidRouting);
+        } elseif (!$page && ($path || $route) || ($path && $route)) {
+            $this->context->addViolation($constraint->invalidRouting);
         }
     }
 }

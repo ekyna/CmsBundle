@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
@@ -11,10 +13,10 @@ use Symfony\Component\Validator\Constraint;
  */
 class Menu extends Constraint
 {
-    public $invalid_routing = 'ekyna_cms.menu.invalid_routing';
+    public $invalidRouting = 'ekyna_cms.menu.invalid_routing';
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTargets()
     {
@@ -22,7 +24,7 @@ class Menu extends Constraint
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     /*public function validatedBy()
     {

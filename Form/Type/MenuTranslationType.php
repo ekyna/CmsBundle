@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Form\Type;
 
 use Ekyna\Bundle\CmsBundle\Entity\MenuTranslation;
@@ -8,6 +10,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use function Symfony\Component\Translation\t;
+
 /**
  * Class MenuTranslationType
  * @package Ekyna\Bundle\CmsBundle\Form\Type
@@ -15,29 +19,23 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class MenuTranslationType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('title', TextType::class, [
-                'label'        => 'ekyna_core.field.title',
+                'label'        => t('field.title', [], 'EkynaUi'),
                 'admin_helper' => 'CMS_MENU_TITLE',
                 'required'     => true,
             ])
             ->add('path', TextType::class, [
-                'label'        => 'ekyna_core.field.url',
+                'label'        => t('field.url', [], 'EkynaUi'),
                 'admin_helper' => 'CMS_MENU_PATH',
                 'required'     => false,
                 'disabled'     => $options['locked'],
             ]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setDefaults([

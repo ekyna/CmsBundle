@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\Renderer;
 
 use Ekyna\Bundle\CmsBundle\Repository\NoticeRepositoryInterface;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 /**
  * Class NoticeRenderer
@@ -12,42 +14,21 @@ use Symfony\Component\Templating\EngineInterface;
  */
 class NoticeRenderer
 {
-    /**
-     * @var NoticeRepositoryInterface
-     */
-    private $repository;
+    private NoticeRepositoryInterface $repository;
+    private Environment               $twig;
+    private array                     $config;
 
-    /**
-     * @var EngineInterface
-     */
-    private $engine;
-
-    /**
-     * @var array
-     */
-    private $config;
-
-
-    /**
-     * Constructor.
-     *
-     * @param NoticeRepositoryInterface $repository
-     * @param EngineInterface           $engine
-     */
-    public function __construct(NoticeRepositoryInterface $repository, EngineInterface $engine, array $config)
+    public function __construct(NoticeRepositoryInterface $repository, Environment $twig, array $config)
     {
         $this->repository = $repository;
-        $this->engine     = $engine;
-
-        $this->config     = array_replace([
+        $this->twig = $twig;
+        $this->config = array_replace([
             'template' => '@EkynaCms/Cms/Fragment/notices.html.twig',
         ], $config);
     }
 
     /**
      * Renders the active notices.
-     *
-     * @return string
      */
     public function render(): string
     {
@@ -55,7 +36,8 @@ class NoticeRenderer
             return '';
         }
 
-        return $this->engine->render($this->config['template'], [
+        /** @noinspection PhpUnhandledExceptionInspection */
+        return $this->twig->render($this->config['template'], [
             'notices' => $notices,
         ]);
     }

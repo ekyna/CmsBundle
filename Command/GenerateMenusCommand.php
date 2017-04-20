@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Command;
 
 use Ekyna\Bundle\CmsBundle\Install\Generator\MenuGenerator;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,85 +15,62 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 /**
  * Class GenerateMenusCommand
  * @package Ekyna\Bundle\CmsBundle\Command
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class GenerateMenusCommand extends ContainerAwareCommand
+class GenerateMenusCommand extends Command
 {
+    protected static $defaultName = 'ekyna:cms:generate:menu';
+
+    private MenuGenerator $menuGenerator;
+
+
     /**
-     * @inheritdoc
+     * Constructor.
+     *
+     * @param MenuGenerator $menuGenerator
+     */
+    public function __construct(MenuGenerator $menuGenerator)
+    {
+        parent::__construct();
+
+        $this->menuGenerator = $menuGenerator;
+    }
+
+    /**
+     * @inheritDoc
      */
     protected function configure()
     {
         $this
-            ->setName('ekyna:cms:generate-menus')
             ->addOption('truncate', null, InputOption::VALUE_NONE, 'Whether to first remove the menus or not.')
             ->setDescription('Generates CMS menus.');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $truncate = (bool)$input->getOption('truncate');
 
         $output->writeln(sprintf('Loading menus with truncate <info>%s</info>.', $truncate ? 'true' : 'false'));
 
-        /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion('Do you want to continue ?', false);
 
         if (!$helper->ask($input, $output, $question)) {
-            return;
+            return 0;
         }
 
         if ($truncate) {
-            $this->truncate($output);
+            $this->menuGenerator->truncate($output);
         }
 
         $output->writeln('Generating menus based and routing configuration :');
 
-        $generator = new MenuGenerator($this->getContainer(), $output);
-        $generator->generateMenus();
-    }
+        $this->menuGenerator->generate($output);
 
-    /**
-     * Removes all the menus.
-     *
-     * @param OutputInterface $output
-     */
-    private function truncate(OutputInterface $output)
-    {
-        $output->writeln('Removing menus ...');
-
-        $em = $this->getContainer()->get('ekyna_cms.menu.manager');
-        $repository = $this->getContainer()->get('ekyna_cms.menu.repository');
-
-        $count = 0;
-        $menus = $repository->findAll();
-        foreach ($menus as $menu) {
-            $em->remove($menu);
-            $count++;
-        }
-        $em->flush();
-        $em->clear();
-
-        $class = $this->getContainer()->getParameter('ekyna_cms.menu.class');
-        $cmd = $em->getClassMetadata($class);
-        $connection = $em->getConnection();
-        $dbPlatform = $connection->getDatabasePlatform();
-        $connection->beginTransaction();
-        try {
-            $connection->query('SET FOREIGN_KEY_CHECKS=0');
-            $q = $dbPlatform->getTruncateTableSQL($cmd->getTableName());
-            $connection->executeUpdate($q);
-            $connection->query('SET FOREIGN_KEY_CHECKS=1');
-            $connection->commit();
-        } catch (\Exception $e) {
-            $output->writeln(sprintf('<error>Failed to truncate table for class %s.</error>', $class));
-            $connection->rollBack();
-        }
-
-        $output->writeln(sprintf('<info>%s</info> menus removed.', $count));
+        return 0;
     }
 }

@@ -1,61 +1,69 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Install;
 
 use Ekyna\Bundle\CmsBundle\Install\Generator\MenuGenerator;
 use Ekyna\Bundle\CmsBundle\Install\Generator\PageGenerator;
 use Ekyna\Bundle\CmsBundle\Install\Generator\SlideShowGenerator;
 use Ekyna\Bundle\InstallBundle\Install\AbstractInstaller;
-use Ekyna\Bundle\InstallBundle\Install\OrderedInstallerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Class CmsInstaller
  * @package Ekyna\Bundle\CmsBundle\Install
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class CmsInstaller extends AbstractInstaller implements OrderedInstallerInterface, ContainerAwareInterface
+class CmsInstaller extends AbstractInstaller
 {
-    use ContainerAwareTrait;
+    private PageGenerator      $pageGenerator;
+    private MenuGenerator      $menuGenerator;
+    private SlideShowGenerator $slideShowGenerator;
+
 
     /**
-     * @inheritdoc
+     * Constructor.
+     *
+     * @param PageGenerator $pageGenerator
+     * @param MenuGenerator $menuGenerator
+     * @param SlideShowGenerator $slideShowGenerator
      */
-    public function install(Command $command, InputInterface $input, OutputInterface $output)
+    public function __construct(
+        PageGenerator $pageGenerator,
+        MenuGenerator $menuGenerator,
+        SlideShowGenerator $slideShowGenerator
+    ) {
+        $this->pageGenerator = $pageGenerator;
+        $this->menuGenerator = $menuGenerator;
+        $this->slideShowGenerator = $slideShowGenerator;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function install(Command $command, InputInterface $input, OutputInterface $output): void
     {
         $output->writeln('<info>[CMS] Generating menus:</info>');
-        $menuGenerator = new MenuGenerator($this->container, $output);
-        $menuGenerator->generateMenus();
+        $this->menuGenerator->generate($output);
         $output->writeln('');
 
         $output->writeln('<info>[CMS] Generating pages based on routing configuration:</info>');
-        $pageGenerator = new PageGenerator($this->container, $output);
-        $pageGenerator->generatePages();
+        $this->pageGenerator->generate($output);
         $output->writeln('');
 
         $output->writeln('<info>[CMS] Generating slide shows:</info>');
-        $pageGenerator = new SlideShowGenerator($this->container, $output);
-        $pageGenerator->generateSlideShows();
+        $this->slideShowGenerator->generate($output);
         $output->writeln('');
     }
 
     /**
      * @inheritDoc
      */
-    public function getName()
+    public static function getName(): string
     {
         return 'ekyna_cms';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getOrder()
-    {
-        return 512;
     }
 }

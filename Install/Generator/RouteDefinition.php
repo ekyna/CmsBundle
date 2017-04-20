@@ -1,100 +1,66 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Install\Generator;
+
+use LogicException;
+
+use function array_key_exists;
+use function count;
+use function sprintf;
+use function trim;
+use function uasort;
 
 /**
  * Class RouteDefinition
  * @package Ekyna\Bundle\CmsBundle\Install\Generator
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class RouteDefinition
 {
-    /**
-     * @var string
-     */
-    protected $routeName;
-
-    /**
-     * @var string
-     */
-    protected $parentRouteName;
-
-    /**
-     * @var string
-     */
-    protected $path;
-
-    /**
-     * @var string
-     */
-    protected $pageName;
-
-    /**
-     * @var boolean
-     */
-    protected $locked;
-
-    /**
-     * @var boolean
-     */
-    protected $advanced;
-
-    /**
-     * @var boolean
-     */
-    protected $dynamic;
-
-    /**
-     * @var integer
-     */
-    protected $position = 0;
-
-    /**
-     * @var array
-     */
-    protected $seo;
-
-    /**
-     * @var array
-     */
-    protected $menus;
-
-    /**
-     * @var array
-     */
-    protected $children;
+    protected string  $routeName;
+    protected ?string $parentRouteName;
+    protected string  $pageName;
+    protected string  $path;
+    protected array   $localizations;
+    protected bool    $locked;
+    protected bool    $advanced;
+    protected bool    $dynamic;
+    protected int     $position = 0;
+    protected array   $seo;
+    protected array   $menus;
+    protected array   $children;
 
 
     /**
      * Constructor
      *
      * @param string $routeName
-     * @param array $options
-     *
-     * @throws \InvalidArgumentException
-     * @throws \Exception
+     * @param array  $options
      */
-    public function __construct($routeName, array $options)
+    public function __construct(string $routeName, array $options)
     {
         $this->routeName = $routeName;
         $this->parentRouteName = $options['parent'];
 
         $this->pageName = $options['name'];
-        $this->path     = '/'.trim($options['path'], '/');
-        $this->locked   = $options['locked'];
+        $this->path = '/' . trim($options['path'], '/');
+        $this->locked = $options['locked'];
         $this->advanced = $options['advanced'];
-        $this->dynamic  = $options['dynamic'];
+        $this->dynamic = $options['dynamic'];
         $this->position = $options['position'];
-        $this->seo      = $options['seo'];
-        $this->menus    = $options['menus'];
+        $this->seo = $options['seo'];
+        $this->menus = $options['menus'];
 
+        $this->localizations = [];
         $this->children = [];
     }
 
     /**
      * Returns the route name
      */
-    public function getRouteName()
+    public function getRouteName(): string
     {
         return $this->routeName;
     }
@@ -102,9 +68,9 @@ class RouteDefinition
     /**
      * Returns the parent route name
      *
-     * @return string
+     * @return string|null
      */
-    public function getParentRouteName()
+    public function getParentRouteName(): ?string
     {
         return $this->parentRouteName;
     }
@@ -112,11 +78,11 @@ class RouteDefinition
     /**
      * Sets the parent route name
      *
-     * @param string
+     * @param string|null $name
      *
      * @return RouteDefinition
      */
-    public function setParentRouteName($name)
+    public function setParentRouteName(?string $name): RouteDefinition
     {
         $this->parentRouteName = $name;
 
@@ -126,7 +92,7 @@ class RouteDefinition
     /**
      * Returns the page name
      */
-    public function getPageName()
+    public function getPageName(): string
     {
         return $this->pageName;
     }
@@ -136,17 +102,58 @@ class RouteDefinition
      *
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
     /**
+     * Adds the localization.
+     *
+     * @param string $locale
+     * @param string $title
+     * @param string $route
+     *
+     * @return $this
+     */
+    public function addLocalization(string $locale, string $title, string $route): RouteDefinition
+    {
+        $this->localizations[$locale] = [
+            'title' => $title,
+            'route' => $route,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Returns the localization.
+     *
+     * @param string $locale
+     *
+     * @return array|null
+     */
+    public function getLocalization(string $locale): ?array
+    {
+        return $this->localizations[$locale] ?? null;
+    }
+
+    /**
+     * Returns the localizations.
+     *
+     * @return array
+     */
+    public function getLocalizations(): array
+    {
+        return $this->localizations;
+    }
+
+    /**
      * Returns whether page should be locked
      *
-     * @return boolean
+     * @return bool
      */
-    public function isLocked()
+    public function isLocked(): bool
     {
         return $this->locked;
     }
@@ -154,9 +161,9 @@ class RouteDefinition
     /**
      * Returns whether page has an advanced content
      *
-     * @return boolean
+     * @return bool
      */
-    public function isAdvanced()
+    public function isAdvanced(): bool
     {
         return $this->advanced;
     }
@@ -164,13 +171,13 @@ class RouteDefinition
     /**
      * Sets whether page has an advanced content
      *
-     * @param boolean $advanced
+     * @param bool $advanced
      *
      * @return RouteDefinition
      */
-    public function setAdvanced($advanced)
+    public function setAdvanced(bool $advanced): RouteDefinition
     {
-        $this->advanced = (bool)$advanced;
+        $this->advanced = $advanced;
 
         return $this;
     }
@@ -180,7 +187,7 @@ class RouteDefinition
      *
      * @return bool
      */
-    public function isDynamic()
+    public function isDynamic(): bool
     {
         return $this->dynamic;
     }
@@ -192,9 +199,9 @@ class RouteDefinition
      *
      * @return RouteDefinition
      */
-    public function setDynamic($dynamic)
+    public function setDynamic(bool $dynamic): RouteDefinition
     {
-        $this->dynamic = (bool)$dynamic;
+        $this->dynamic = $dynamic;
 
         return $this;
     }
@@ -202,9 +209,9 @@ class RouteDefinition
     /**
      * Returns the position
      *
-     * @return integer
+     * @return int
      */
-    public function getPosition()
+    public function getPosition(): int
     {
         return $this->position;
     }
@@ -212,13 +219,13 @@ class RouteDefinition
     /**
      * Sets the position
      *
-     * @param integer
+     * @param int
      *
      * @return RouteDefinition
      */
-    public function setPosition($position)
+    public function setPosition(int $position): RouteDefinition
     {
-        $this->position = intval($position);
+        $this->position = $position;
 
         return $this;
     }
@@ -228,7 +235,7 @@ class RouteDefinition
      *
      * @return array
      */
-    public function getSeo()
+    public function getSeo(): array
     {
         return $this->seo;
     }
@@ -237,11 +244,13 @@ class RouteDefinition
      * Sets the seo.
      *
      * @param array $seo
+     *
      * @return RouteDefinition
      */
-    public function setSeo(array $seo)
+    public function setSeo(array $seo): RouteDefinition
     {
         $this->seo = $seo;
+
         return $this;
     }
 
@@ -250,7 +259,7 @@ class RouteDefinition
      *
      * @return array
      */
-    public function getMenus()
+    public function getMenus(): array
     {
         return $this->menus;
     }
@@ -259,11 +268,13 @@ class RouteDefinition
      * Sets the menus.
      *
      * @param array $menus
+     *
      * @return RouteDefinition
      */
-    public function setMenus(array $menus = [])
+    public function setMenus(array $menus): RouteDefinition
     {
         $this->menus = $menus;
+
         return $this;
     }
 
@@ -274,24 +285,26 @@ class RouteDefinition
      *
      * @return RouteDefinition
      */
-    public function appendChild(RouteDefinition $routeDefinition)
+    public function appendChild(RouteDefinition $routeDefinition): RouteDefinition
     {
         if ($routeDefinition->getPosition() == 0) {
             $routeDefinition->setPosition(count($this->children));
         }
+
         $seo = $routeDefinition->getSeo();
         if (!$this->seo['follow'] && $seo['follow']) {
             $seo['follow'] = false;
-            $routeDefinition->setSeo($seo);
         }
         if (!$this->seo['index'] && $seo['index']) {
             $seo['index'] = false;
-            $routeDefinition->setSeo($seo);
         }
+        $routeDefinition->setSeo($seo);
+
         $routeName = $routeDefinition->getRouteName();
         if (array_key_exists($routeName, $this->children)) {
-            throw new \LogicException(sprintf('Route "%s" already exists.', $routeName));
+            throw new LogicException(sprintf('Route "%s" already exists.', $routeName));
         }
+
         $this->children[$routeName] = $routeDefinition;
 
         return $this;
@@ -302,7 +315,7 @@ class RouteDefinition
      *
      * @return array
      */
-    public function getChildren()
+    public function getChildren(): array
     {
         return $this->children;
     }
@@ -310,9 +323,9 @@ class RouteDefinition
     /**
      * Returns whether the definition has children definitions
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return 0 < count($this->children);
     }
@@ -322,9 +335,9 @@ class RouteDefinition
      *
      * @param string $routeName
      *
-     * @return RouteDefinition|NULL
+     * @return RouteDefinition|null
      */
-    public function findChildByRouteName($routeName)
+    public function findChildByRouteName(string $routeName): ?RouteDefinition
     {
         if ($this->hasChildren()) {
             if (array_key_exists($routeName, $this->children)) {
@@ -338,6 +351,7 @@ class RouteDefinition
                 }
             }
         }
+
         return null;
     }
 
@@ -351,12 +365,14 @@ class RouteDefinition
             foreach ($this->children as $definition) {
                 $definition->sortChildren();
             }
+
             uasort($this->children, function ($a, $b) {
                 /** @var RouteDefinition $a */
                 /** @var RouteDefinition $b */
                 if ($a->getPosition() == $b->getPosition()) {
                     return 0;
                 }
+
                 return $a->getPosition() < $b->getPosition() ? -1 : 1;
             });
         }

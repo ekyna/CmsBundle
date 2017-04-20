@@ -1,57 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Event;
 
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Class MenuEvent
  * @package Ekyna\Bundle\CmsBundle\Event
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class MenuEvent extends Event
+final class MenuEvent extends Event
 {
-    /**
-     * @var FactoryInterface
-     */
-    private $factory;
+    private FactoryInterface $factory;
+    private ItemInterface    $menu;
 
-    /**
-     * @var ItemInterface
-     */
-    private $menu;
-
-
-    /**
-     * Constructor.
-     *
-     * @param FactoryInterface $factory
-     * @param ItemInterface    $menu
-     */
     public function __construct(FactoryInterface $factory, ItemInterface $menu)
     {
         $this->factory = $factory;
         $this->menu = $menu;
     }
 
-    /**
-     * Returns the menu factory.
-     *
-     * @return \Knp\Menu\FactoryInterface
-     */
-    public function getFactory()
+    public function getFactory(): FactoryInterface
     {
         return $this->factory;
     }
 
-    /**
-     * Returns the menu item.
-     *
-     * @return \Knp\Menu\ItemInterface
-     */
-    public function getMenu()
+    public function getMenu(): ItemInterface
     {
         return $this->menu;
     }

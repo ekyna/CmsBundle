@@ -1,16 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor;
 
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter;
-use Ekyna\Bundle\CmsBundle\Editor\Repository\RepositoryInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin;
-use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
+use Ekyna\Bundle\CmsBundle\Editor\Repository\RepositoryInterface;
 use Ekyna\Bundle\CmsBundle\Model as CM;
+use Ekyna\Bundle\CmsBundle\Service\Helper\PageHelper;
 use Ekyna\Component\Resource\Locale\LocaleProviderInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Class Editor
@@ -28,98 +29,41 @@ class Editor
     private const VIEWPORT_ADJUST  = 'adjust';
 
 
-    /**
-     * @var RepositoryInterface
-     */
-    private $repository;
+    private RepositoryInterface     $repository;
+    private Plugin\PluginRegistry   $pluginRegistry;
+    private LocaleProviderInterface $contentLocaleProvider;
+    private PageHelper              $pageHelper;
+    private array                   $config;
 
-    /**
-     * @var Plugin\PluginRegistry
-     */
-    private $pluginRegistry;
+    private bool $enabled       = false;
+    private int  $viewportWidth = 0;
 
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
-
-    /**
-     * @var LocaleProviderInterface
-     */
-    private $contentLocaleProvider;
-
-    /**
-     * @var PageHelper
-     */
-    private $pageHelper;
-
-    /**
-     * @var array
-     */
-    private $config;
-
-    /**
-     * @var bool
-     */
-    private $enabled;
-
-    /**
-     * @var int
-     */
-    private $viewportWidth;
-
-    /**
-     * @var AdapterInterface
-     */
-    private $layoutAdapter;
-
-    /**
-     * @var Manager\BlockManager
-     */
-    private $blockManager;
-
-    /**
-     * @var Manager\RowManager
-     */
-    private $rowManager;
-
-    /**
-     * @var Manager\ContainerManager
-     */
-    private $containerManager;
-
-    /**
-     * @var Manager\ContentManager
-     */
-    private $contentManager;
-
-    /**
-     * @var View\ViewBuilder
-     */
-    private $viewBuilder;
+    private ?AdapterInterface         $layoutAdapter    = null;
+    private ?Manager\BlockManager     $blockManager     = null;
+    private ?Manager\RowManager       $rowManager       = null;
+    private ?Manager\ContainerManager $containerManager = null;
+    private ?Manager\ContentManager   $contentManager   = null;
+    private ?View\ViewBuilder         $viewBuilder      = null;
 
 
     /**
      * Constructor.
      *
-     * @param RepositoryInterface     $factory
+     * @param RepositoryInterface     $repository
      * @param Plugin\PluginRegistry   $pluginRegistry
-     * @param ValidatorInterface      $validator
      * @param LocaleProviderInterface $contentLocaleProvider
      * @param PageHelper              $pageHelper
      * @param array                   $config
      */
     public function __construct(
-        RepositoryInterface $factory,
+        RepositoryInterface $repository,
         Plugin\PluginRegistry $pluginRegistry,
-        ValidatorInterface $validator,
         LocaleProviderInterface $contentLocaleProvider,
         PageHelper $pageHelper,
         array $config
     ) {
-        $this->repository = $factory;
+        $this->repository = $repository;
         $this->pluginRegistry = $pluginRegistry;
-        $this->validator = $validator;
         $this->contentLocaleProvider = $contentLocaleProvider;
         $this->pageHelper = $pageHelper;
 
@@ -131,7 +75,7 @@ class Editor
      *
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
@@ -141,7 +85,7 @@ class Editor
      *
      * @return RepositoryInterface
      */
-    public function getRepository()
+    public function getRepository(): RepositoryInterface
     {
         return $this->repository;
     }
@@ -151,7 +95,7 @@ class Editor
      *
      * @return Manager\BlockManager
      */
-    public function getBlockManager()
+    public function getBlockManager(): Manager\BlockManager
     {
         if (null === $this->blockManager) {
             $this->blockManager = new Manager\BlockManager(
@@ -168,7 +112,7 @@ class Editor
      *
      * @return Manager\RowManager
      */
-    public function getRowManager()
+    public function getRowManager(): Manager\RowManager
     {
         if (null === $this->rowManager) {
             $this->rowManager = new Manager\RowManager();
@@ -183,7 +127,7 @@ class Editor
      *
      * @return Manager\ContainerManager
      */
-    public function getContainerManager()
+    public function getContainerManager(): Manager\ContainerManager
     {
         if (null === $this->containerManager) {
             $this->containerManager = new Manager\ContainerManager(
@@ -200,7 +144,7 @@ class Editor
      *
      * @return Manager\ContentManager
      */
-    public function getContentManager()
+    public function getContentManager(): Manager\ContentManager
     {
         if (null === $this->contentManager) {
             $this->contentManager = new Manager\ContentManager();
@@ -215,12 +159,12 @@ class Editor
      *
      * @return AdapterInterface
      */
-    public function getLayoutAdapter()
+    public function getLayoutAdapter(): AdapterInterface
     {
         if (null === $this->layoutAdapter) {
             $class = $this->config['layout']['adapter'];
 
-            $this->layoutAdapter = new $class;
+            $this->layoutAdapter = new $class();
             $this->layoutAdapter->setEditor($this);
         }
 
@@ -232,7 +176,7 @@ class Editor
      *
      * @return View\ViewBuilder
      */
-    public function getViewBuilder()
+    public function getViewBuilder(): View\ViewBuilder
     {
         if (null === $this->viewBuilder) {
             $this->viewBuilder = new View\ViewBuilder();
@@ -246,14 +190,10 @@ class Editor
      * Sets the enabled.
      *
      * @param bool $enabled
-     *
-     * @return Editor
      */
-    public function setEnabled($enabled)
+    public function setEnabled(bool $enabled): void
     {
-        $this->enabled = (bool)$enabled;
-
-        return $this;
+        $this->enabled = $enabled;
     }
 
     /**
@@ -261,19 +201,9 @@ class Editor
      *
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
-        return (bool)$this->enabled;
-    }
-
-    /**
-     * Returns the viewport width.
-     *
-     * @return int
-     */
-    public function getViewportWidth()
-    {
-        return $this->viewportWidth;
+        return $this->enabled;
     }
 
     /**
@@ -281,9 +211,19 @@ class Editor
      *
      * @param int $width
      */
-    public function setViewportWidth($width)
+    public function setViewportWidth(int $width): void
     {
         $this->viewportWidth = $width;
+    }
+
+    /**
+     * Returns the viewport width.
+     *
+     * @return int
+     */
+    public function getViewportWidth(): int
+    {
+        return $this->viewportWidth;
     }
 
     /**
@@ -293,7 +233,7 @@ class Editor
      *
      * @return Plugin\Block\PluginInterface
      */
-    public function getBlockPlugin($name)
+    public function getBlockPlugin(string $name): Plugin\Block\PluginInterface
     {
         return $this->pluginRegistry->getBlockPlugin($name);
     }
@@ -305,7 +245,7 @@ class Editor
      *
      * @return Plugin\Container\PluginInterface
      */
-    public function getContainerPlugin($name)
+    public function getContainerPlugin(string $name): Plugin\Container\PluginInterface
     {
         return $this->pluginRegistry->getContainerPlugin($name);
     }
@@ -315,7 +255,7 @@ class Editor
      *
      * @return array
      */
-    public function getContentData()
+    public function getContentData(): array
     {
         $data = [
             'locale' => $this->contentLocaleProvider->getCurrentLocale(),
@@ -334,7 +274,7 @@ class Editor
      *
      * @return EM\ContentInterface
      */
-    public function createDefaultContent($subjectOrName)
+    public function createDefaultContent($subjectOrName): EM\ContentInterface
     {
         return $this->getContentManager()->create($subjectOrName);
     }
@@ -342,26 +282,31 @@ class Editor
     /**
      * Creates a default container.
      *
-     * @param string              $type
-     * @param array               $data
-     * @param EM\ContentInterface $content
+     * @param string|null              $type
+     * @param array                    $data
+     * @param EM\ContentInterface|null $content
      *
      * @return EM\ContainerInterface
+     * @throws Exception\InvalidOperationException
      */
-    public function createDefaultContainer($type = null, array $data = [], EM\ContentInterface $content = null)
-    {
+    public function createDefaultContainer(
+        string $type = null,
+        array $data = [],
+        EM\ContentInterface $content = null
+    ): EM\ContainerInterface {
         return $this->getContainerManager()->create($content, $type, $data);
     }
 
     /**
      * Creates a default row.
      *
-     * @param array                 $data
-     * @param EM\ContainerInterface $container
+     * @param array                      $data
+     * @param EM\ContainerInterface|null $container
      *
      * @return EM\RowInterface
+     * @throws Exception\InvalidOperationException
      */
-    public function createDefaultRow(array $data = [], EM\ContainerInterface $container = null)
+    public function createDefaultRow(array $data = [], EM\ContainerInterface $container = null): EM\RowInterface
     {
         return $this->getRowManager()->create($container, $data);
     }
@@ -369,14 +314,18 @@ class Editor
     /**
      * Creates a default block.
      *
-     * @param string          $type
-     * @param array           $data
-     * @param EM\RowInterface $row
+     * @param string|null          $type
+     * @param array                $data
+     * @param EM\RowInterface|null $row
      *
      * @return EM\BlockInterface
+     * @throws Exception\InvalidOperationException
      */
-    public function createDefaultBlock($type = null, array $data = [], EM\RowInterface $row = null)
-    {
+    public function createDefaultBlock(
+        string $type = null,
+        array $data = [],
+        EM\RowInterface $row = null
+    ): EM\BlockInterface {
         return $this->getBlockManager()->create($row, $type, $data);
     }
 
@@ -385,7 +334,7 @@ class Editor
      *
      * @return array
      */
-    public function getPluginsConfig()
+    public function getPluginsConfig(): array
     {
         $config = [
             'block'     => [],
@@ -414,7 +363,7 @@ class Editor
      *
      * @return array
      */
-    static private function getDefaultConfig()
+    private static function getDefaultConfig(): array
     {
         return [
             'locales'                  => ['en'],
@@ -431,7 +380,7 @@ class Editor
      *
      * @return array
      */
-    static function getDefaultViewportsConfig()
+    public static function getDefaultViewportsConfig(): array
     {
         return [
             [
@@ -460,7 +409,8 @@ class Editor
                 'width'  => 1920,
                 'height' => 1080,
                 'icon'   => 'desktop',
-                'title'  => 'Desktop'],
+                'title'  => 'Desktop',
+            ],
             [
                 'name'   => static::VIEWPORT_ADJUST,
                 'icon'   => 'fullscreen',
@@ -475,7 +425,7 @@ class Editor
      *
      * @return array
      */
-    static function getViewportsKeys()
+    public static function getViewportsKeys(): array
     {
         return [
             static::VIEWPORT_PHONE,
@@ -491,7 +441,7 @@ class Editor
      *
      * @return array
      */
-    static function getDefaultLayoutConfig()
+    public static function getDefaultLayoutConfig(): array
     {
         return [
             'adapter' => Bootstrap3Adapter::class,

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Show\Type;
 
-use Ekyna\Bundle\AdminBundle\Show\Exception\InvalidArgumentException;
 use Ekyna\Bundle\AdminBundle\Show\Type\AbstractType;
 use Ekyna\Bundle\AdminBundle\Show\View;
 use Ekyna\Bundle\CmsBundle\Entity\Seo;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+use Ekyna\Component\Resource\Exception\UnexpectedTypeException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -19,14 +21,14 @@ class SeoType extends AbstractType
     /**
      * @inheritDoc
      */
-    public function build(View $view, $value, array $options = [])
+    public function build(View $view, $value, array $options = []): void
     {
         if (null === $value) {
             $value = new Seo();
         }
 
         if (!$value instanceof SeoInterface) {
-            throw new InvalidArgumentException("Expected instance of " . SeoInterface::class);
+            throw new UnexpectedTypeException($value, SeoInterface::class);
         }
 
         parent::build($view, $value, $options);
@@ -37,7 +39,7 @@ class SeoType extends AbstractType
     /**
      * @inheritDoc
      */
-    public function getWidgetPrefix()
+    public static function getName(): string
     {
         return 'seo';
     }
@@ -45,7 +47,7 @@ class SeoType extends AbstractType
     /**
      * @inheritDoc
      */
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setDefaults([

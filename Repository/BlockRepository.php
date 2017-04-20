@@ -1,24 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
-use Ekyna\Component\Resource\Doctrine\ORM\TranslatableResourceRepository;
+use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
+use Ekyna\Component\Resource\Doctrine\ORM\Repository\TranslatableRepository;
 
 /**
  * Class BlockRepository
  * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class BlockRepository extends TranslatableResourceRepository
+class BlockRepository extends TranslatableRepository
 {
     /**
-     * Finds the block by name
+     * Finds the block by its name.
      *
      * @param string $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface|null
+     * @return BlockInterface|null
      */
-    public function findOneByName($name)
+    public function findOneByName(string $name): ?BlockInterface
     {
         $qb = $this->getQueryBuilder();
 
@@ -33,13 +36,13 @@ class BlockRepository extends TranslatableResourceRepository
     }
 
     /**
-     * Finds the block by id.
+     * Finds the block by its id.
      *
      * @param int $id
      *
-     * @return \Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface|null
+     * @return BlockInterface|null
      */
-    public function findOneById($id)
+    public function findOneById(int $id): ?BlockInterface
     {
         $qb = $this->getQueryBuilder();
 
@@ -53,9 +56,9 @@ class BlockRepository extends TranslatableResourceRepository
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    protected function getAlias()
+    protected function getAlias(): string
     {
         return 'b';
     }

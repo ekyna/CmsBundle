@@ -1,44 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Table\Type;
 
-use Ekyna\Bundle\AdminBundle\Table\Type\ResourceTableType;
+use Ekyna\Bundle\AdminBundle\Action;
+use Ekyna\Bundle\ResourceBundle\Table\Type\AbstractResourceType;
 use Ekyna\Bundle\TableBundle\Extension\Type as BType;
 use Ekyna\Component\Table\Extension\Core\Type as CType;
 use Ekyna\Component\Table\Source\RowInterface;
 use Ekyna\Component\Table\TableBuilderInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+use function Symfony\Component\Translation\t;
+
 /**
  * Class PageType
  * @package Ekyna\Bundle\CmsBundle\Table\Type
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class PageType extends ResourceTableType
+class PageType extends AbstractResourceType
 {
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
+    private UrlGeneratorInterface $urlGenerator;
 
-
-    /**
-     * Constructor.
-     *
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param string                $class
-     */
-    public function __construct(UrlGeneratorInterface $urlGenerator, string $class)
+    public function __construct(UrlGeneratorInterface $urlGenerator)
     {
-        parent::__construct($class);
-
         $this->urlGenerator = $urlGenerator;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function buildTable(TableBuilderInterface $builder, array $options)
+    public function buildTable(TableBuilderInterface $builder, array $options): void
     {
         $builder
             ->addDefaultSort('root')
@@ -47,84 +37,56 @@ class PageType extends ResourceTableType
             ->setFilterable(false)
             ->setPerPageChoices([100])
             ->addColumn('name', BType\Column\NestedAnchorType::class, [
-                'label'                => 'ekyna_core.field.name',
-                'route_name'           => 'ekyna_cms_page_admin_show',
-                'route_parameters_map' => [
-                    'pageId' => 'id',
-                ],
-                'position'             => 10,
+                'label'    => t('field.name', [], 'EkynaUi'),
+                'position' => 10,
             ])
             ->addColumn('enabled', CType\Column\BooleanType::class, [
                 'disable_property_path' => 'static',
-                'label'                 => 'ekyna_core.field.enabled',
-                'route_name'            => 'ekyna_cms_page_admin_toggle',
-                'route_parameters'      => ['field' => 'enabled'],
-                'route_parameters_map'  => ['pageId' => 'id'],
+                'label'                 => t('field.enabled', [], 'EkynaUi'),
+                'property'              => 'enabled',
                 'position'              => 20,
             ])
             ->addColumn('actions', BType\Column\NestedActionsType::class, [
                 'roots'                 => true,
+                'resource'              => $this->dataClass,
                 'disable_property_path' => 'locked',
-                'new_child_route'       => 'ekyna_cms_page_admin_new_child',
-                'move_up_route'         => 'ekyna_cms_page_admin_move_up',
-                'move_down_route'       => 'ekyna_cms_page_admin_move_down',
-                'routes_parameters_map' => [
-                    'pageId' => 'id',
+                'actions'               => [
+                    Action\UpdateAction::class,
+                    Action\DeleteAction::class,
                 ],
                 'buttons'               => [
                     function (RowInterface $row) {
-                        $page = $row->getData();
+                        $page = $row->getData(null);
 
                         if (!$page->isEnabled() || $page->isDynamicPath()) {
                             return null;
                         }
 
                         return [
-                            'label'  => 'ekyna_admin.resource.button.show_front',
-                            'class'  => 'default',
+                            'label'  => t('resource.button.show_front', [], 'EkynaAdmin'),
+                            'theme'  => 'default',
                             'icon'   => 'eye-open',
                             'target' => '_blank',
                             'path'   => $this->urlGenerator->generate($page->getRoute()),
                         ];
                     },
                     function (RowInterface $row) {
-                        $page = $row->getData();
+                        $page = $row->getData(null);
 
                         if (!$page->isEnabled() || $page->isDynamicPath()) {
                             return null;
                         }
 
                         return [
-                            'label'  => 'ekyna_admin.resource.button.show_editor',
-                            'class'  => 'default',
+                            'label'  => t('resource.button.show_editor', [], 'EkynaAdmin'),
+                            'theme'  => 'default',
                             'icon'   => 'edit',
                             'target' => '_blank',
-                            'path'   => $this->urlGenerator->generate('ekyna_cms_editor_index', [
+                            'path'   => $this->urlGenerator->generate('admin_ekyna_cms_editor_index', [
                                 'path' => $this->urlGenerator->generate($page->getRoute()),
                             ]),
                         ];
                     },
-                    [
-                        'label'                => 'ekyna_core.button.edit',
-                        'icon'                 => 'pencil',
-                        'class'                => 'warning',
-                        'route_name'           => 'ekyna_cms_page_admin_edit',
-                        'route_parameters_map' => [
-                            'pageId' => 'id',
-                        ],
-                        'permission'           => 'edit',
-                    ],
-                    [
-                        'label'                 => 'ekyna_core.button.remove',
-                        'icon'                  => 'trash',
-                        'class'                 => 'danger',
-                        'route_name'            => 'ekyna_cms_page_admin_remove',
-                        'route_parameters_map'  => [
-                            'pageId' => 'id',
-                        ],
-                        'disable_property_path' => 'static',
-                        'permission'            => 'delete',
-                    ],
                 ],
             ]);
     }

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Service\Search;
 
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Component\Resource\Bridge\Symfony\Elastica\SearchRepository;
 use Ekyna\Component\Resource\Exception\RuntimeException;
 use Ekyna\Component\Resource\Locale;
-use Ekyna\Component\Resource\Search\Elastica\ResourceRepository;
 use Ekyna\Component\Resource\Search\Request;
 use Ekyna\Component\Resource\Search\Result;
 
@@ -14,7 +16,7 @@ use Ekyna\Component\Resource\Search\Result;
  * @package Ekyna\Bundle\CmsBundle\Search
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class PageRepository extends ResourceRepository implements Locale\LocaleProviderAwareInterface
+class PageRepository extends SearchRepository implements Locale\LocaleProviderAwareInterface
 {
     use Locale\LocaleProviderAwareTrait;
 
@@ -25,7 +27,7 @@ class PageRepository extends ResourceRepository implements Locale\LocaleProvider
     protected function createResult($source, Request $request): ?Result
     {
         if (!$source instanceof PageInterface) {
-            throw new RuntimeException("Expected instance of " . PageInterface::class);
+            throw new RuntimeException('Expected instance of ' . PageInterface::class);
         }
 
         $result = new Result();
@@ -33,7 +35,7 @@ class PageRepository extends ResourceRepository implements Locale\LocaleProvider
 
         if ($request->isPrivate()) {
             $result
-                ->setRoute('ekyna_cms_page_admin_show')
+                ->setRoute('admin_ekyna_cms_page_read') // TODO Use resource/action
                 ->setParameters(['pageId' => $source->getId()]);
 
             return $result;

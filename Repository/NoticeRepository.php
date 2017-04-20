@@ -1,25 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr;
-use Ekyna\Component\Resource\Doctrine\ORM\TranslatableResourceRepository;
+use Ekyna\Component\Resource\Doctrine\ORM\Repository\TranslatableRepository;
 
 /**
  * Class NoticeRepository
  * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class NoticeRepository extends TranslatableResourceRepository implements NoticeRepositoryInterface
+class NoticeRepository extends TranslatableRepository implements NoticeRepositoryInterface
 {
     /**
      * @inheritDoc
      */
     public function findActives(): array
     {
-        $now = new \DateTime();
-        $now->setTime($now->format('H'), floor($now->format('i') / 15) * 15, 0, 0);
+        $now = new DateTime();
+        $now->setTime((int)$now->format('H'), (int)floor($now->format('i') / 15) * 15);
 
         $qb = $this->createQueryBuilder('n');
         $ex = $qb->expr();

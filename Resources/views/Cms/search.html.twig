@@ -1,9 +1,9 @@
-{% extends '@EkynaCms/Cms/default.html.twig' %}
+{% extends '@EkynaCms/Cms/page.html.twig' %}
 
 {% block content %}
     {{ parent() }}
     <div class="container">
-        <h2>{{ 'ekyna_cms.wide_search.title'|trans({'{{expression}}': expression}) }}</h2>
+        <h2>{{ 'wide_search.title'|trans({'{{expression}}': expression}, 'EkynaCms') }}</h2>
         {% for result in results %}
         <div class="search-result" data-score="{{ result.score }}">
             <h4>

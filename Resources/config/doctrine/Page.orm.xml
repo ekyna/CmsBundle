@@ -8,6 +8,7 @@
 
     <mapped-superclass
             name="Ekyna\Bundle\CmsBundle\Entity\Page"
+            repository-class="Gedmo\Tree\Entity\Repository\NestedTreeRepository"
             table="cms_page">
 
         <indexes>
@@ -33,6 +34,13 @@
         <field name="dynamicPath" column="dynamic_path" type="boolean" />
         <field name="enabled" column="enabled" type="boolean" />
 
+        <field name="createdAt" column="created_at" type="datetime">
+            <gedmo:timestampable on="create" />
+        </field>
+        <field name="updatedAt" column="updated_at" type="datetime" nullable="true">
+            <gedmo:timestampable on="update" />
+        </field>
+
         <field name="left" column="lft" type="integer">
             <gedmo:tree-left />
         </field>
@@ -44,13 +52,6 @@
         </field>
         <field name="level" column="lvl" type="integer">
             <gedmo:tree-level />
-        </field>
-
-        <field name="createdAt" column="created_at" type="datetime">
-            <gedmo:timestampable on="create" />
-        </field>
-        <field name="updatedAt" column="updated_at" type="datetime" nullable="true">
-            <gedmo:timestampable on="update" />
         </field>
 
         <one-to-many field="children" target-entity="Ekyna\Bundle\CmsBundle\Model\PageInterface" mapped-by="parent">
