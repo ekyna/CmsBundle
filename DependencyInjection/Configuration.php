@@ -4,8 +4,6 @@ namespace Ekyna\Bundle\CmsBundle\DependencyInjection;
 
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
-use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\FeaturePlugin;
-use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\ImagePlugin;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -349,6 +347,15 @@ class Configuration implements ConfigurationInterface
                                         ->end()
                                     ->end()
                                 ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('tag')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Tag')->end()
+                                ->scalarNode('repository')->end()
+                                ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\TagType')->end()
+                                ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\TagType')->end()
                             ->end()
                         ->end()
                         ->arrayNode('page')

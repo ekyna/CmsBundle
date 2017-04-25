@@ -36,6 +36,22 @@
             <argument>%ekyna_cms.seo.class%</argument>
             <tag name="form.type"/>
         </service>
+        <service id="ekyna_cms.tag.form_type"
+                 class="Ekyna\Bundle\CmsBundle\Form\Type\TagType">
+            <argument>%ekyna_cms.tag.class%</argument>
+            <tag name="form.type"/>
+        </service>
+        <service id="ekyna_cms.tag_choice.form_type"
+                 class="Ekyna\Bundle\CmsBundle\Form\Type\TagChoiceType">
+            <argument>%ekyna_cms.tag.class%</argument>
+            <tag name="form.type"/>
+            <tag name="form.js" selector=".cms-tag-choice" path="ekyna-cms/form/tag-choice" />
+        </service>
+
+        <!-- Table types -->
+        <service id="ekyna_cms.table.column.tags_type" class="Ekyna\Bundle\CmsBundle\Table\Column\TagsType">
+            <tag name="table.column_type" alias="ekyna_cms_tags" />
+        </service>
 
         <!-- Event listeners -->
         <service id="ekyna_cms.kernel_event_listener"
@@ -73,6 +89,11 @@
         </service>
         <service id="ekyna_cms.seo.subject_subscriber"
                  class="Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber"
+                 public="false">
+            <tag name="doctrine.event_subscriber" connection="default"/>
+        </service>
+        <service id="ekyna_cms.tag.subject_subscriber"
+                 class="Ekyna\Bundle\CmsBundle\Listener\TagsSubjectSubscriber"
                  public="false">
             <tag name="doctrine.event_subscriber" connection="default"/>
         </service>

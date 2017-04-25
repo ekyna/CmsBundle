@@ -36,6 +36,7 @@ class EkynaCmsBundle extends AbstractBundle
             CM\SeoInterface::class  => 'ekyna_cms.seo.class',
             CM\PageInterface::class => 'ekyna_cms.page.class',
             CM\MenuInterface::class => 'ekyna_cms.menu.class',
+            CM\TagInterface::class  => 'ekyna_cms.tag.class',
 
             EM\BlockInterface::class     => 'ekyna_cms.block.class',
             EM\ContainerInterface::class => 'ekyna_cms.container.class',

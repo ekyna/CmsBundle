@@ -43,5 +43,12 @@ class AdminMenuPass implements CompilerPassInterface
             'resource' => 'ekyna_cms_menu',
             'position' => 90,
         ]]);
+        $pool->addMethodCall('createEntry', ['content', [
+            'name'     => 'tags',
+            'route'    => 'ekyna_cms_tag_admin_home',
+            'label'    => 'ekyna_cms.tag.label.plural',
+            'resource' => 'ekyna_cms_tag',
+            'position' => 91,
+        ]]);
     }
 }

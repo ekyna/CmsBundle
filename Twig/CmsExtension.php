@@ -8,6 +8,7 @@ use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Menu\MenuProvider;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
+use Ekyna\Bundle\CmsBundle\Service\Renderer\TagRenderer;
 use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 use Ekyna\Bundle\SettingBundle\Manager\SettingsManagerInterface;
 use Knp\Menu\Twig\Helper;
@@ -57,6 +58,11 @@ class CmsExtension extends \Twig_Extension
     protected $fragmentHandler;
 
     /**
+     * @var TagRenderer
+     */
+    protected $tagRenderer;
+
+    /**
      * @var array
      */
     protected $config;
@@ -93,6 +99,16 @@ class CmsExtension extends \Twig_Extension
         $this->fragmentHandler = $fragmentHandler;
 
         $this->config = array_merge($this->getDefaultConfig(), $config);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFilters()
+    {
+        return [
+            new \Twig_SimpleFilter('cms_tags', [$this, 'renderTags'], ['is_safe' => ['html']]),
+        ];
     }
 
     /**
@@ -267,6 +283,23 @@ class CmsExtension extends \Twig_Extension
             //'currentAsLink' => false,
             'depth'    => 1,
         ], $options));
+    }
+
+    /**
+     * Renders the tags.
+     *
+     * @param mixed $subjectOrTags
+     * @param array $options
+     *
+     * @return string
+     */
+    public function renderTags($subjectOrTags, array $options = [])
+    {
+        if (null === $this->tagRenderer) {
+            $this->tagRenderer = new TagRenderer();
+        }
+
+        return $this->tagRenderer->renderTags($subjectOrTags, $options);
     }
 
     /**

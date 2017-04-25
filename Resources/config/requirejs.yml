@@ -5,6 +5,7 @@ config:
             location: 'bundles/ekynacms/js/editor'
             main: 'editor'
     paths:
+        'ekyna-cms/form/tag-choice': 'bundles/ekynacms/js/form/tag-choice'
         'ekyna-cms/cookie': 'bundles/ekynacms/js/cookie'
         'ekyna-cms/user': 'bundles/ekynacms/js/user'
 build:
