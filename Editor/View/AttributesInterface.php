@@ -44,8 +44,8 @@ interface AttributesInterface
      *
      * It will recursively replace current value if both old and new values are arrays.
      *
-     * @param string $key
-     * @param mixed  $value
+     * @param string|array $key
+     * @param mixed        $value
      *
      * @return AttributesInterface
      */
@@ -55,7 +55,7 @@ interface AttributesInterface
      * Returns the data for the given key, or all data if key is omitted.
      *
      * @param string $key
-     * @param mixed $default
+     * @param mixed  $default
      *
      * @return mixed
      */

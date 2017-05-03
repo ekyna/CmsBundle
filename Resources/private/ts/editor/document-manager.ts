@@ -348,17 +348,18 @@ export class ContainerManager {
                 throw 'Unexpected container data';
             }
 
+            // Inner container
+            let $innerContainer: JQuery;
             let $container: JQuery = BaseManager.findOrCreateElement(container.attributes['id'], $content);
             BaseManager.setElementAttributes($container, container.attributes);
 
             // Parse content
             let content: string = container.hasOwnProperty('content') ? container.content : null;
             if (content && 0 < content.length) {
-                $container.html(content);
+                let $innerContainer = $container.find('> .cms-inner-container').detach();
+                $container.html(content).append($innerContainer);
             }
 
-            // Inner container
-            let $innerContainer: JQuery;
             if (container.hasOwnProperty('inner_attributes')) {
                 $innerContainer = BaseManager.findOrCreateElement(container.inner_attributes['id'], $container);
                 BaseManager.setElementAttributes($innerContainer, container.inner_attributes);
@@ -368,7 +369,7 @@ export class ContainerManager {
 
             let innerContent: string = container.hasOwnProperty('innerContent') ? container.innerContent : null;
             if (innerContent && 0 < innerContent.length) {
-                $container.html(innerContent);
+                $innerContainer.html(innerContent);
             } else {
                 // Parse children (if no inner content)
                 if (container.hasOwnProperty('rows')) {

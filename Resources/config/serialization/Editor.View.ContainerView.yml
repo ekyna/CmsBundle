@@ -8,3 +8,5 @@ Ekyna\Bundle\CmsBundle\Editor\View\ContainerView:
             groups: [Layout, Default]
         content:
             groups: [Content, Default]
+        innerContent:
+            groups: [Content, Default]
