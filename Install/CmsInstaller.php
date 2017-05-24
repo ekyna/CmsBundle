@@ -39,6 +39,14 @@ class CmsInstaller extends AbstractInstaller implements OrderedInstallerInterfac
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getName()
+    {
+        return 'ekyna_cms';
+    }
+
+    /**
      * @inheritdoc
      */
     public function getOrder()
