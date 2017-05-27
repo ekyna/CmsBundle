@@ -3,9 +3,12 @@
 namespace Ekyna\Bundle\CmsBundle\Table\Column;
 
 use Ekyna\Bundle\CmsBundle\Service\Renderer\TagRenderer;
-use Ekyna\Component\Table\Extension\Core\Type\Column\TextType;
-use Ekyna\Component\Table\Table;
-use Ekyna\Component\Table\View\Cell;
+use Ekyna\Component\Table\Column\AbstractColumnType;
+use Ekyna\Component\Table\Column\ColumnBuilderInterface;
+use Ekyna\Component\Table\Column\ColumnInterface;
+use Ekyna\Component\Table\Extension\Core\Type\Column\PropertyType;
+use Ekyna\Component\Table\Source\RowInterface;
+use Ekyna\Component\Table\View\CellView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -13,12 +16,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * @package Ekyna\Bundle\CmsBundle\Table\Column
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class TagsType extends TextType
+class TagsType extends AbstractColumnType
 {
     /**
      * @var TagRenderer
      */
-    static $renderer;
+    static private $renderer;
+
 
     /**
      * @inheritDoc
@@ -31,19 +35,22 @@ class TagsType extends TextType
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function buildViewCell(Cell $cell, Table $table, array $options)
+    public function buildColumn(ColumnBuilderInterface $builder, array $options)
     {
-        $tags = $table->getCurrentRowData($options['property_path']);
+        $builder->setSortable(false);
+    }
 
-        $cell->setVars([
-            'type'   => 'text',
-            'value'  => static::$renderer->renderTags($tags, [
-                'text'  => false,
-            ]),
-            'sorted' => $options['sorted'],
+    /**
+     * @inheritDoc
+     */
+    public function buildCellView(CellView $view, ColumnInterface $column, RowInterface $row, array $options)
+    {
+        $view->vars['value'] = static::$renderer->renderTags($view->vars['value'], [
+            'text'  => false,
         ]);
+        $view->vars['block_prefix'] = 'text';
     }
 
     /**
@@ -51,16 +58,14 @@ class TagsType extends TextType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        parent::configureOptions($resolver);
-
         $resolver->setDefault('label', 'ekyna_cms.tag.label.plural');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function getName()
+    public function getParent()
     {
-        return 'ekyna_cms_tags';
+        return PropertyType::class;
     }
 }

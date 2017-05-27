@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Table\Type;
 
 use Ekyna\Bundle\AdminBundle\Table\Type\ResourceTableType;
+use Ekyna\Bundle\TableBundle\Extension\Type as BType;
 use Ekyna\Component\Table\TableBuilderInterface;
 
 /**
@@ -18,7 +19,7 @@ class TagType extends ResourceTableType
     public function buildTable(TableBuilderInterface $builder, array $options)
     {
         $builder
-            ->addColumn('name', 'anchor', [
+            ->addColumn('name', BType\Column\AnchorType::class, [
                 'label'                => 'ekyna_core.field.name',
                 'route_name'           => 'ekyna_cms_tag_admin_show',
                 'route_parameters_map' => [
@@ -26,8 +27,8 @@ class TagType extends ResourceTableType
                 ],
                 'position'             => 10,
             ])
-            ->addColumn('actions', 'admin_actions', [
-                'buttons'               => [
+            ->addColumn('actions', BType\Column\ActionsType::class, [
+                'buttons' => [
                     [
                         'label'                => 'ekyna_core.button.edit',
                         'icon'                 => 'pencil',
@@ -39,24 +40,16 @@ class TagType extends ResourceTableType
                         'permission'           => 'edit',
                     ],
                     [
-                        'label'                 => 'ekyna_core.button.remove',
-                        'icon'                  => 'trash',
-                        'class'                 => 'danger',
-                        'route_name'            => 'ekyna_cms_tag_admin_remove',
-                        'route_parameters_map'  => [
+                        'label'                => 'ekyna_core.button.remove',
+                        'icon'                 => 'trash',
+                        'class'                => 'danger',
+                        'route_name'           => 'ekyna_cms_tag_admin_remove',
+                        'route_parameters_map' => [
                             'tagId' => 'id',
                         ],
-                        'permission'            => 'delete',
+                        'permission'           => 'delete',
                     ],
                 ],
             ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'ekyna_cms_tag';
     }
 }

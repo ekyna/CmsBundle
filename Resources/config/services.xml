@@ -50,7 +50,7 @@
 
         <!-- Table types -->
         <service id="ekyna_cms.table.column.tags_type" class="Ekyna\Bundle\CmsBundle\Table\Column\TagsType">
-            <tag name="table.column_type" alias="ekyna_cms_tags" />
+            <tag name="table.column_type" />
         </service>
 
         <!-- Event listeners -->

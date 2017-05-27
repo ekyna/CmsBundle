@@ -3,8 +3,9 @@
 namespace Ekyna\Bundle\CmsBundle\Table\Type;
 
 use Ekyna\Bundle\AdminBundle\Table\Type\ResourceTableType;
+use Ekyna\Bundle\TableBundle\Extension\Type as BType;
+use Ekyna\Component\Table\Extension\Core\Type as CType;
 use Ekyna\Component\Table\TableBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class MenuType
@@ -19,7 +20,12 @@ class MenuType extends ResourceTableType
     public function buildTable(TableBuilderInterface $builder, array $options)
     {
         $builder
-            ->addColumn('title', 'nested_anchor', [
+            ->addDefaultSort('root')
+            ->addDefaultSort('left')
+            ->setSortable(false)
+            ->setFilterable(false)
+            ->setPerPageChoices([100])
+            ->addColumn('title', BType\Column\NestedAnchorType::class, [
                 'label'                => 'ekyna_core.field.title',
                 'route_name'           => 'ekyna_cms_menu_admin_show',
                 'route_parameters_map' => [
@@ -27,11 +33,11 @@ class MenuType extends ResourceTableType
                 ],
                 'position'             => 10,
             ])
-            ->addColumn('name', 'text', [
+            ->addColumn('name', CType\Column\TextType::class, [
                 'label'    => 'ekyna_core.field.name',
                 'position' => 20,
             ])
-            ->addColumn('enabled', 'boolean', [
+            ->addColumn('enabled', CType\Column\BooleanType::class, [
                 'disable_property_path' => 'locked',
                 'label'                 => 'ekyna_core.field.enabled',
                 'route_name'            => 'ekyna_cms_menu_admin_toggle',
@@ -39,7 +45,7 @@ class MenuType extends ResourceTableType
                 'route_parameters_map'  => ['menuId' => 'id'],
                 'position'              => 30,
             ])
-            ->addColumn('actions', 'admin_nested_actions', [
+            ->addColumn('actions', BType\Column\NestedActionsType::class, [
                 'disable_property_path' => 'locked',
                 'new_child_route'       => 'ekyna_cms_menu_admin_new_child',
                 'move_up_route'         => 'ekyna_cms_menu_admin_move_up',
@@ -71,26 +77,5 @@ class MenuType extends ResourceTableType
                     ],
                 ],
             ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        parent::configureOptions($resolver);
-
-        $resolver->setDefaults([
-            'default_sorts' => ['root asc', 'left asc'],
-            'max_per_page'  => 200,
-        ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'ekyna_cms_menu';
     }
 }

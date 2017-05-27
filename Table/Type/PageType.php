@@ -3,8 +3,9 @@
 namespace Ekyna\Bundle\CmsBundle\Table\Type;
 
 use Ekyna\Bundle\AdminBundle\Table\Type\ResourceTableType;
+use Ekyna\Bundle\TableBundle\Extension\Type as BType;
+use Ekyna\Component\Table\Extension\Core\Type as CType;
 use Ekyna\Component\Table\TableBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class PageType
@@ -19,7 +20,12 @@ class PageType extends ResourceTableType
     public function buildTable(TableBuilderInterface $builder, array $options)
     {
         $builder
-            ->addColumn('name', 'nested_anchor', [
+            ->addDefaultSort('root')
+            ->addDefaultSort('left')
+            ->setSortable(false)
+            ->setFilterable(false)
+            ->setPerPageChoices([100])
+            ->addColumn('name', BType\Column\NestedAnchorType::class, [
                 'label'                => 'ekyna_core.field.name',
                 'route_name'           => 'ekyna_cms_page_admin_show',
                 'route_parameters_map' => [
@@ -27,7 +33,7 @@ class PageType extends ResourceTableType
                 ],
                 'position'             => 10,
             ])
-            ->addColumn('enabled', 'boolean', [
+            ->addColumn('enabled', CType\Column\BooleanType::class, [
                 'disable_property_path' => 'static',
                 'label'                 => 'ekyna_core.field.enabled',
                 'route_name'            => 'ekyna_cms_page_admin_toggle',
@@ -35,7 +41,7 @@ class PageType extends ResourceTableType
                 'route_parameters_map'  => ['pageId' => 'id'],
                 'position'              => 20,
             ])
-            ->addColumn('actions', 'admin_nested_actions', [
+            ->addColumn('actions', BType\Column\NestedActionsType::class, [
                 'disable_property_path' => 'locked',
                 'new_child_route'       => 'ekyna_cms_page_admin_new_child',
                 'move_up_route'         => 'ekyna_cms_page_admin_move_up',
@@ -67,26 +73,5 @@ class PageType extends ResourceTableType
                     ],
                 ],
             ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        parent::configureOptions($resolver);
-
-        $resolver->setDefaults([
-            'default_sorts' => ['left asc'],
-            'max_per_page'  => 200,
-        ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'ekyna_cms_page';
     }
 }
