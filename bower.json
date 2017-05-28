@@ -1,6 +1,10 @@
 {
   "name": "ekyna/MediaBundle",
+  "license": "UNLICENSED",
+  "private": true,
   "devDependencies": {
+    "bootstrap": "^3.3.6",
+    "jquery-ui": "^1.11.4"
   },
   "resolutions": {
     "jquery": "1.12.4"

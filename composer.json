@@ -1,29 +1,28 @@
 {
-    "name" : "ekyna/cms-bundle",
-    "description" : "Content management",
-    "type" : "symfony-bundle",
-    "authors" : [{
-            "name" : "Etienne Dauvergne",
-            "homepage" : "http://ekyna.com"
+    "name": "ekyna/cms-bundle",
+    "description": "Content management",
+    "type": "symfony-bundle",
+    "authors": [
+        {
+            "name": "Etienne Dauvergne",
+            "homepage": "http://ekyna.com"
         }
     ],
-    "keywords" : [
-        "symfony2",
+    "keywords": [
+        "symfony",
         "content",
         "bundle"
     ],
-    "homepage" : "https://github.com/ekyna/CmsBundle",
-    "license" : [
-        "MIT"
-    ],
-    "require" : {
-        "php" : ">=7.0.0",
-        "ekyna/media-bundle" : "0.6.x-dev",
-        "ekyna/sitemap-bundle" : "0.6.x-dev"
+    "homepage": "https://github.com/ekyna/CmsBundle",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.0",
+        "ekyna/media-bundle": "0.7.x-dev",
+        "ekyna/sitemap-bundle": "0.7.x-dev"
     },
-    "autoload" : {
-        "psr-4" : {
-            "Ekyna\\Bundle\\CmsBundle\\" : ""
+    "autoload": {
+        "psr-4": {
+            "Ekyna\\Bundle\\CmsBundle\\": ""
         }
     }
 }
