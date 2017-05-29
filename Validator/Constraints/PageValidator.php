@@ -87,10 +87,10 @@ class PageValidator extends ConstraintValidator
                     $current = $translation->getPath();
                     $locale = $translation->getLocale();
                     $expected = $this->urlGenerator->generate($page->getRoute(), ['_locale' => $locale]);
-                    if (0 === strpos($expected, '/app_dev.php')) {
+                    if (0 === strpos($expected, '/app_dev.php/')) {
                         $expected = substr($expected, strlen('/app_dev.php'));
                     }
-                    if (0 === strpos($expected, '/'.$locale)) {
+                    if (0 === strpos($expected, '/'.$locale.'/')) {
                         $expected = substr($expected, strlen('/'.$locale));
                     }
                     if ($current != $expected) {
