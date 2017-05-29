@@ -23,7 +23,10 @@
         </id>
 
         <field name="name" type="string" column="name" nullable="true"/>
-        <field name="position" type="smallint" column="position"/>
+
+        <field name="position" type="integer" column="position">
+            <gedmo:sortable-position/>
+        </field>
 
         <field name="type" type="string" column="type" length="32"/>
         <field name="layout" type="object" column="layout"/>
@@ -36,8 +39,8 @@
             <gedmo:timestampable on="update"/>
         </field>
 
-        <one-to-many field="rows" target-entity="Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface" mapped-by="container"
-                     orphan-removal="true">
+        <one-to-many target-entity="Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface"
+                     field="rows" mapped-by="container" orphan-removal="true">
             <cascade>
                 <cascade-all/>
             </cascade>
@@ -46,8 +49,10 @@
             </order-by>
         </one-to-many>
 
-        <many-to-one field="content" target-entity="Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface" inversed-by="containers">
+        <many-to-one target-entity="Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface"
+                     field="content" inversed-by="containers">
             <join-column name="content_id" referenced-column-name="id" on-delete="CASCADE" nullable="true"/>
+            <gedmo:sortable-group/>
         </many-to-one>
 
     </mapped-superclass>

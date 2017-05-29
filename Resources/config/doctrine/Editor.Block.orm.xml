@@ -7,7 +7,7 @@
                         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <mapped-superclass name="Ekyna\Bundle\CmsBundle\Entity\Editor\Block"
-            table="cms_block">
+                       table="cms_block">
 
         <indexes>
             <index columns="name" name="index_cms_block_name"/>
@@ -22,7 +22,10 @@
         </id>
 
         <field name="name" type="string" column="name" nullable="true"/>
-        <field name="position" type="smallint" column="position"/>
+
+        <field name="position" type="integer" column="position">
+            <gedmo:sortable-position/>
+        </field>
 
         <field name="type" type="string" column="type" length="32"/>
         <field name="layout" type="object" column="layout"/>
@@ -35,8 +38,10 @@
             <gedmo:timestampable on="update"/>
         </field>
 
-        <many-to-one field="row" target-entity="Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface" inversed-by="blocks">
+        <many-to-one target-entity="Ekyna\Bundle\CmsBundle\Editor\Model\RowInterface"
+                     field="row" inversed-by="blocks">
             <join-column name="row_id" referenced-column-name="id" on-delete="CASCADE" nullable="true"/>
+            <gedmo:sortable-group/>
         </many-to-one>
 
     </mapped-superclass>
