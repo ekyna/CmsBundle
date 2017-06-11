@@ -49,12 +49,10 @@ class ImageType extends AbstractType
                 ],
                 'required' => true,
                 'select2'  => false,
-                'sizing'   => 'sm',
             ])
             ->add('max_width', Type\TextType::class, [
                 'label'       => 'ekyna_cms.block.field.max_width',
                 'required'    => false,
-                'sizing'      => 'sm',
                 'constraints' => [
                     new Assert\Regex([
                         'pattern' => '/^\d+(px|em|%)$/'
@@ -68,7 +66,6 @@ class ImageType extends AbstractType
                 'placeholder' => 'ekyna_core.value.none',
                 'required'    => false,
                 'select2'     => false,
-                'sizing'      => 'sm',
             ])
             ->add('style', Type\ChoiceType::class, [
                 'label'       => 'ekyna_cms.block.field.style',
@@ -76,7 +73,6 @@ class ImageType extends AbstractType
                 'placeholder' => 'ekyna_core.value.none',
                 'required'    => false,
                 'select2'     => false,
-                'sizing'      => 'sm',
             ])
             ->add('animation', AnimationType::class, [
                 'animations'  => $options['animations'],

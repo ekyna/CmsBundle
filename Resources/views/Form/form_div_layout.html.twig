@@ -58,12 +58,12 @@
         <div class="col-md-8">
             <div class="row">
                 <div class="col-md-6">
-                    {{ form_row(form.theme, {'label_col': 6, 'widget_col': 6}) }}
-                    {{ form_row(form.style, {'label_col': 6, 'widget_col': 6}) }}
+                    {{ form_row(form.theme, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
+                    {{ form_row(form.style, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
                 </div>
                 <div class="col-md-6">
-                    {{ form_row(form.max_width, {'label_col': 6, 'widget_col': 6}) }}
-                    {{ form_row(form.align, {'label_col': 6, 'widget_col': 6}) }}
+                    {{ form_row(form.max_width, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
+                    {{ form_row(form.align, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
                 </div>
             </div>
             <hr>
@@ -80,12 +80,12 @@
     {{ form_errors(form) }}
     <div class="row">
         <div class="col-md-6">
-            {{ form_row(form.name, {'label_col': 6, 'widget_col': 6}) }}
-            {{ form_row(form.offset, {'label_col': 6, 'widget_col': 6}) }}
+            {{ form_row(form.name, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
+            {{ form_row(form.offset, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
         </div>
         <div class="col-md-6">
-            {{ form_row(form.once, {'label_col': 6, 'widget_col': 6}) }}
-            {{ form_row(form.duration, {'label_col': 6, 'widget_col': 6}) }}
+            {{ form_row(form.once, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
+            {{ form_row(form.duration, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
         </div>
     </div>
     {{ form_rest(form) }}

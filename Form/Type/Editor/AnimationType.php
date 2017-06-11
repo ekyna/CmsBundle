@@ -24,23 +24,19 @@ class AnimationType extends AbstractType
                 'label'       => 'ekyna_cms.block.field.animation',
                 'choices'     => array_flip($options['animations']),
                 'placeholder' => 'ekyna_core.value.none',
-                'sizing'      => 'sm',
                 'required'    => false,
                 'select2'     => false,
             ])
             ->add('offset', Type\IntegerType::class, [
                 'label'    => 'ekyna_cms.block.field.offset',
-                'sizing'      => 'sm',
                 'required' => false,
             ])
             ->add('duration', Type\IntegerType::class, [
                 'label'    => 'ekyna_cms.block.field.duration',
-                'sizing'      => 'sm',
                 'required' => false,
             ])
             ->add('once', Type\CheckboxType::class, [
                 'label'    => 'ekyna_cms.block.field.once',
-                'sizing'      => 'sm',
                 'required' => false,
                 'attr'     => [
                     'align_with_widget' => true,
