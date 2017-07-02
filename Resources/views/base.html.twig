@@ -10,8 +10,7 @@
     {% block metas %}{% endblock metas %}
 
     {% block stylesheets -%}
-        {# TODO fontawesome #}
-        {{ ui_content_stylesheets() }}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
         {{ ui_fonts_stylesheets() }}
         {{ ui_forms_stylesheets() }}
     {%- endblock stylesheets %}
@@ -27,7 +26,8 @@
 
         {% block breadcrumb -%}
             <div class="container">
-                {{ cms_flashes() }}
+                {#{{ cms_flashes() }}#}
+                {%- include 'EkynaCoreBundle:Ui:flashes.html.twig' -%}
                 {{ cms_breadcrumb() }}
             </div>
         {%- endblock breadcrumb %}
