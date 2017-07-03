@@ -28,7 +28,6 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('output_dir')->defaultValue('')->cannotBeEmpty()->end()
-                ->booleanNode('esi_flashes')->defaultFalse()->end()
                 ->scalarNode('home_route')->defaultNull()->end()
             ->end()
         ;

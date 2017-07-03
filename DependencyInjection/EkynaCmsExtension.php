@@ -57,7 +57,6 @@ class EkynaCmsExtension extends AbstractExtension
             ->getDefinition('ekyna_cms.twig.cms_extension')
             ->replaceArgument(7, [
                 'home_route'  => $config['home_route'],
-                'esi_flashes' => $config['esi_flashes'],
                 'seo'         => $config['seo'],
                 'page'        => $config['page'],
             ]);

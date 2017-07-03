@@ -1,0 +1,10 @@
+{% spaceless %}
+<?xml version="1.0" encoding="UTF-8"?>
+<response><![CDATA[
+    {% if 'header' == get_setting('cookies.mode') %}
+        {% include "EkynaCmsBundle:Cms/Cookie:header.html.twig" %}
+    {% else %}
+        {% include "EkynaCmsBundle:Cms/Cookie:dialog.html.twig" %}
+    {% endif %}
+]]></response>
+{% endspaceless %}

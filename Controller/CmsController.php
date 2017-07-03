@@ -43,52 +43,31 @@ class CmsController extends Controller
     }
 
     /**
-     * Renders the cms init (xhr only).
+     * Cookie consent action (xhr only).
      *
      * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function initAction(Request $request)
+    public function cookieConsentAction(Request $request)
     {
         if (!$request->isXmlHttpRequest()) {
             throw new NotFoundHttpException();
         }
 
-        $data = [];
+        $enabled = $this
+            ->container
+            ->getParameter('ekyna_cms.page.config')['cookie_consent']['enable'];
 
-        // Does flashes must be rendered ?
-        if ($request->request->get('flashes', false)) {
-            $data['flashes'] = true;
-        } else {
-            $data['flashes'] = false;
+        if (!$enabled) {
+            throw new NotFoundHttpException();
         }
 
-        // Does cookie consent must be rendered ?
-        if ($request->request->get('cookie', false)) {
-            $data['cookie_consent'] = $this
-                ->container
-                ->getParameter('ekyna_cms.page.config')['cookie_consent']['enable'];
-        } else {
-            $data['cookie_consent'] = null;
-        }
+        $response = $this->render('EkynaCmsBundle:Cms/Cookie:response.xml.twig');
 
-        $response = $this->render('EkynaCmsBundle:Cms:init.xml.twig', $data);
         $response->headers->add(['Content-Type' => 'application/xml']);
 
         return $response->setPrivate();
-    }
-
-    /**
-     * Renders the flash.
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function flashesAction()
-    {
-        return $this
-            ->render('EkynaCmsBundle:Cms:flashes.html.twig')
-            ->setPrivate();
     }
 
     /**

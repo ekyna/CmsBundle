@@ -26,7 +26,6 @@
 
         {% block breadcrumb -%}
             <div class="container">
-                {#{{ cms_flashes() }}#}
                 {%- include 'EkynaCoreBundle:Ui:flashes.html.twig' -%}
                 {{ cms_breadcrumb() }}
             </div>
@@ -40,6 +39,8 @@
                 {{ ui_locale_switcher() }}
             </div>
         </div>
+
+        {{ cms_cookie_consent() }}
 
     {% endblock body %}
 

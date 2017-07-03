@@ -1,0 +1,12 @@
+<div style="position:fixed;width:100%;background-color:rgb(238, 238, 238);margin:0;left:0;bottom:0;padding:4px;z-index:1050;text-align:center;">
+    <span class="cookies-consent-content">
+        {{ get_setting('cookies.header_text')|raw }}
+    </span>
+    <a class="cookies-consent-info" target="_blank" style="margin-left:16px;"
+       href="{{ path('cookies_privacy_policy') }}">
+        {{ 'ekyna_cms.settings.cookies.learn'|trans }}
+    </a>
+    <a class="cookies-consent-dismiss" href="javascript:void(0)" style="margin-left:16px;">
+        {{ 'ekyna_cms.settings.cookies.close'|trans }}
+    </a>
+</div>

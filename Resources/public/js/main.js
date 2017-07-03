@@ -1,1 +1,1 @@
-require(["require","jquery","ekyna-cms/user","bootstrap","bootstrap/hover-dropdown"],function(a,b,c){c.init(),b(".dropdown-toggle").dropdownHover();var d=b("form");d.size()>0&&a(["ekyna-form"],function(a){d.each(function(b,c){var d=a.create(c);d.init()})})});
+require(["require","jquery","ekyna-cms/cms","bootstrap","bootstrap/hover-dropdown"],function(a,b,c){c.init(),b(".dropdown-toggle").dropdownHover();var d=b("form");d.size()>0&&a(["ekyna-form"],function(a){d.each(function(b,c){var d=a.create(c);d.init()})})});

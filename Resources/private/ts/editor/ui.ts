@@ -804,6 +804,7 @@ export class Toolbar extends Backbone.Model {
  * ToolbarView
  */
 export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
+    model: T;
     private subViews: Array<ControlGroupView>;
 
     constructor(options?: Backbone.ViewOptions<T>) {

@@ -12,7 +12,6 @@ use Ekyna\Bundle\CmsBundle\Service\Renderer\TagRenderer;
 use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 use Ekyna\Bundle\SettingBundle\Manager\SettingsManagerInterface;
 use Knp\Menu\Twig\Helper;
-use Symfony\Component\HttpKernel\Controller\ControllerReference;
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 
 /**
@@ -124,7 +123,7 @@ class CmsExtension extends \Twig_Extension
             new \Twig_SimpleFunction('cms_title', [$this, 'renderTitle'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_menu', [$this, 'renderMenu'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_breadcrumb', [$this, 'renderBreadcrumb'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_flashes', [$this, 'renderFlashes'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_cookie_consent', [$this, 'renderCookieConsent'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_page_controller', [$this, 'getPageControllerTitle'], ['is_safe' => ['html']]),
         ];
     }
@@ -307,13 +306,13 @@ class CmsExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function renderFlashes()
+    public function renderCookieConsent()
     {
-        if ($this->config['esi_flashes']) {
-            return $this->fragmentHandler->render(new ControllerReference('EkynaCmsBundle:Cms:flashes'), 'esi');
+        if ($this->config['page']['cookie_consent']['enable']) {
+            return '<div id="cookies-consent" style="display:none"></div>';
         }
 
-        return '<div id="cms-flashes"></div>';
+        return '';
     }
 
     /**
@@ -380,9 +379,14 @@ class CmsExtension extends \Twig_Extension
                 'title_append' => null,
             ],
             'page'        => [
-                'controllers' => [],
-            ],
-            'esi_flashes' => false,
+                'cookie_content' => [
+                    'enable' => false,
+                ],
+                'wide_search'    => [
+                    'enable' => false,
+                ],
+                'controllers'    => [],
+            ]
         ];
     }
 }
