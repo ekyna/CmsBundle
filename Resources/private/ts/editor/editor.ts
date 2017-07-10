@@ -19,7 +19,7 @@ interface EditorConfig {
     plugins: PluginRegistryConfig
 }
 
-export class Editor {
+class Editor {
     config:EditorConfig;
     documentManager:DocumentManager;
     mainToolbar:MainToolbarView;
@@ -265,3 +265,5 @@ export class Editor {
         return pageChoice;
     }
 }
+
+export = Editor;
