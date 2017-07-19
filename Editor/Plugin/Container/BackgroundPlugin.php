@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Container;
 
+use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
 use Ekyna\Bundle\CmsBundle\Editor\View\ContainerView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\BackgroundContainerType;
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
@@ -33,7 +34,7 @@ class BackgroundPlugin extends AbstractPlugin
      *
      * @param array           $config
      * @param MediaRepository $mediaRepository
-     * @param Renderer       $renderer
+     * @param Renderer        $renderer
      */
     public function __construct(
         array $config,
@@ -42,6 +43,7 @@ class BackgroundPlugin extends AbstractPlugin
     ) {
         parent::__construct(array_replace([
             'filter'                 => 'cms_container_background',
+            'themes'                 => PropertyDefaults::getDefaultThemeChoices(),
             'default_color'          => '',
             'default_padding_top'    => 0,
             'default_padding_bottom' => 0,
@@ -74,6 +76,7 @@ class BackgroundPlugin extends AbstractPlugin
             'attr'       => [
                 'class' => 'form-horizontal',
             ],
+            'themes'     => $this->config['themes'],
         ]);
 
         $form->handleRequest($request);
@@ -105,6 +108,9 @@ class BackgroundPlugin extends AbstractPlugin
         $data = $container->getData();
         $attributes = $view->getAttributes();
         $attributes->addClass('cms-background');
+        if (isset($data['theme']) && !empty($data['theme'])) {
+            $attributes->addClass($data['theme']);
+        }
 
         // Background color
         $bgColor = array_key_exists('color', $data) ? $data['color'] : $this->config['default_color'];
@@ -148,12 +154,12 @@ class BackgroundPlugin extends AbstractPlugin
                 $attributes->addClass('cms-background-video');
 
                 $view->content = $this->mediaRenderer->renderVideo($video, [
-                    'responsive'   => false,
-                    'autoplay'     => true,
-                    'loop'         => true,
-                    'muted'        => true,
-                    'player'       => false,
-                    'alt_message'  => null,
+                    'responsive'  => false,
+                    'autoplay'    => true,
+                    'loop'        => true,
+                    'muted'       => true,
+                    'player'      => false,
+                    'alt_message' => null,
                 ]);
 
                 /*$view->content = '<video playsinline autoplay muted loop>'; // poster=""

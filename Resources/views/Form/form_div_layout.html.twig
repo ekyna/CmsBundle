@@ -126,6 +126,9 @@
             {{ form_row(form.video_id, {'label_col': 6, 'widget_col': 6}) }}
         </div>
         <div class="col-md-6">
+            {% if form.theme is defined %}
+                {{ form_row(form.theme, {'label_col': 6, 'widget_col': 6}) }}
+            {% endif %}
             {{ form_row(form.color, {'label_col': 6, 'widget_col': 6}) }}
         </div>
     </div>

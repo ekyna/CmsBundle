@@ -17,8 +17,8 @@ final class PropertyDefaults
     static public function getDefaultThemeChoices()
     {
         return [
-            'white' => 'White',
-            'black' => 'Black',
+            'light' => 'Light',
+            'dark'  => 'Dark',
         ];
     }
 

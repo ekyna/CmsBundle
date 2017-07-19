@@ -10,6 +10,7 @@ use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Exception\TransformationFailedException;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -40,6 +41,16 @@ class BackgroundContainerType extends AbstractType
             ->add('color', ColorPickerType::class, [
                 'label' => 'ekyna_core.field.color',
             ]);
+
+        if (!empty($themes = $options['themes'])) {
+            $builder->add('theme', ChoiceType::class, [
+                'label'       => 'ekyna_cms.block.field.theme',
+                'choices'     => array_flip($themes),
+                'placeholder' => 'ekyna_core.value.none',
+                'required'    => false,
+                'select2'     => false,
+            ]);
+        }
 
         $builder->addModelTransformer(new CallbackTransformer(
             // Transform
@@ -90,7 +101,9 @@ class BackgroundContainerType extends AbstractType
     {
         $resolver
             ->setRequired('repository')
-            ->setAllowedTypes('repository', MediaRepository::class);
+            ->setDefault('themes', [])
+            ->setAllowedTypes('repository', MediaRepository::class)
+            ->setAllowedTypes('themes', 'array');
     }
 
     /**
