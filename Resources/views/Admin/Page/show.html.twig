@@ -1,8 +1,4 @@
-{% extends "EkynaAdminBundle:Entity:sided.html.twig" %}
-
-{% block title %}
-<h1>{{ 'ekyna_cms.page.header.show'|trans({'%name%': page})|raw }}</h1>
-{% endblock %}
+{% extends "EkynaAdminBundle:Entity/Default:show.html.twig" %}
 
 {% block actions %}
 {{ admin_resource_btn(page, 'list') }}
@@ -10,7 +6,7 @@
 
 {% block main %}
 <div class="actions">
-    {% if not page.getDynamicPath %}
+    {% if not page.dynamicPath %}
         {{ ui_button('ekyna_core.button.show_front', {'type': 'link', 'icon': 'eye-open', 'path': path(page.route)}, {'target': '_blank'}) }}
     {% endif %}
     {{ admin_resource_btn(page, 'edit') }}

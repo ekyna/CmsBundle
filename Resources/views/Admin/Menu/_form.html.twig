@@ -6,26 +6,26 @@
     {{ bootstrap_set_col_size('md') }}
     {{ form_errors(form) }}
     <div class="tab-content">
-	    <div class="tab-pane active" id="general">
-	        {{ form_row(form.name) }}
+        <div class="tab-pane active" id="general">
+            {{ form_row(form.name) }}
             {{ form_row(form.parent) }}
             {{ form_row(form.enabled) }}
             <hr>
             {{ form_row(form.translations) }}
-	        {{ form_row(form.description) }}
+            {{ form_row(form.description) }}
             {% if form.attributes is defined %}
                 {{ form_row(form.attributes) }}
             {% endif %}
             <hr>
             {% if form.page is defined -%}
-	        {{ form_row(form.page) }}
+            {{ form_row(form.page) }}
             {%- endif %}
-	        {{ form_row(form.path) }}
+            {{ form_row(form.path) }}
             {% if form.route is defined %}
                 {{ form_row(form.route) }}
                 {{ form_row(form.parameters) }}
             {% endif %}
-		</div>
+        </div>
     </div>
     {{ form_rest(form) }}
 </div>
