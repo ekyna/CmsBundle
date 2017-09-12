@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Component\Resource\Model as RM;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 
@@ -58,6 +59,22 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
         $this->priority = 0.5;
         $this->follow = true;
         $this->index = true;
+    }
+
+    /**
+     * Clones the seo.
+     */
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->id = null;
+
+            $translations = $this->translations;
+            $this->translations = new ArrayCollection();
+            foreach ($translations as $translation) {
+                $this->addTranslation(clone $translation);
+            }
+        }
     }
 
     /**

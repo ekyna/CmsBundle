@@ -22,6 +22,7 @@ class Container implements EM\ContainerInterface
         getEntityTag as traitGetEntityTag;
     }
 
+
     /**
      * @var integer
      */
@@ -55,6 +56,23 @@ class Container implements EM\ContainerInterface
     {
         $this->position = 0;
         $this->rows = new ArrayCollection();
+    }
+
+    /**
+     * Clones the container.
+     */
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->id = null;
+            $this->content = null;
+
+            $rows = $this->rows;
+            $this->rows = new ArrayCollection();
+            foreach ($rows as $row) {
+                $this->addRow(clone $row);
+            }
+        }
     }
 
     /**

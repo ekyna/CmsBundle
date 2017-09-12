@@ -83,9 +83,4 @@ class SeoSettingsSchema extends AbstractSchema
     {
         return 'EkynaCmsBundle:Admin/Settings/Seo:form.html.twig';
     }
-
-    public function getName()
-    {
-        return 'ekyna_cms_settings_seo';
-    }
 }

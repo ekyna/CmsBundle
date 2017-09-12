@@ -6,6 +6,7 @@ use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -96,12 +97,31 @@ class KernelEventListener implements EventSubscriberInterface
     }
 
     /**
+     * Kernel response event.
+     *
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        if ($this->editor->isEnabled()) {
+            $event
+                ->getResponse()
+                ->setSharedMaxAge(0)
+                ->setMaxAge(0)
+                ->setExpires(null)
+                ->setLastModified(null)
+                ->setPrivate();
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => ['onKernelRequest', 0],
+            KernelEvents::REQUEST  => ['onKernelRequest', 0],
+            KernelEvents::RESPONSE => ['onKernelResponse', 0],
         ];
     }
 }

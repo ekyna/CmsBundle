@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Settings;
 
+use Ekyna\Bundle\CoreBundle\Form\Type\TinymceType;
 use Ekyna\Bundle\SettingBundle\Schema\AbstractSchema;
 use Ekyna\Bundle\SettingBundle\Schema\SettingsBuilder;
 use Symfony\Component\Form\Extension\Core\Type;
@@ -54,15 +55,12 @@ class CookiesSettingsSchema extends AbstractSchema
                     new Constraints\NotBlank(),
                 ],
             ])
-            ->add('dialog_text', Type\TextareaType::class, [
+            ->add('dialog_text', TinymceType::class, [
                 'label'       => 'ekyna_cms.settings.cookies.dialog_text',
                 'constraints' => [
                     new Constraints\NotBlank(),
                 ],
-                'attr'        => [
-                    'class'      => 'tinymce',
-                    'data-theme' => 'simple',
-                ],
+                'theme' => 'simple',
             ]);
     }
 
@@ -88,13 +86,5 @@ class CookiesSettingsSchema extends AbstractSchema
     public function getFormTemplate()
     {
         return 'EkynaCmsBundle:Admin/Settings/Cookies:form.html.twig';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'ekyna_cms_settings_cookies';
     }
 }

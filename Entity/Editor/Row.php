@@ -21,6 +21,7 @@ class Row implements EM\RowInterface
         getEntityTag as traitGetEntityTag;
     }
 
+
     /**
      * @var integer
      */
@@ -49,6 +50,23 @@ class Row implements EM\RowInterface
     {
         $this->position = 0;
         $this->blocks = new ArrayCollection();
+    }
+
+    /**
+     * Clones the row.
+     */
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->id = null;
+            $this->container = null;
+
+            $blocks = $this->blocks;
+            $this->blocks = new ArrayCollection();
+            foreach ($blocks as $block) {
+                $this->addBlock(clone $block);
+            }
+        }
     }
 
     /**

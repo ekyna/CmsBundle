@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity\Editor;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Component\Resource\Model as RM;
 
@@ -21,6 +22,24 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
 
     use RM\TaggedEntityTrait {
         getEntityTag as traitGetEntityTag;
+    }
+
+
+    /**
+     * Clones the block.
+     */
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->id = null;
+            $this->row = null;
+
+            $translations = $this->translations;
+            $this->translations = new ArrayCollection();
+            foreach ($translations as $translation) {
+                $this->addTranslation(clone $translation);
+            }
+        }
     }
 
     /**

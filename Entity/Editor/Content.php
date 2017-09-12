@@ -41,6 +41,22 @@ class Content implements EM\ContentInterface
     }
 
     /**
+     * Clones the content.
+     */
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->id = null;
+
+            $containers = $this->containers;
+            $this->containers = new ArrayCollection();
+            foreach ($containers as $container) {
+                $this->addContainer(clone $container);
+            }
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public function getId()
