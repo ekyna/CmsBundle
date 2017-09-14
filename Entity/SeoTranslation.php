@@ -34,6 +34,17 @@ class SeoTranslation extends AbstractTranslation implements SeoTranslationInterf
 
 
     /**
+     * Clones the seo translation.
+     */
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->id = null;
+            $this->translatable = null;
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public function getId()

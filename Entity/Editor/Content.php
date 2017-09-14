@@ -48,7 +48,7 @@ class Content implements EM\ContentInterface
         if ($this->id) {
             $this->id = null;
 
-            $containers = $this->containers;
+            $containers = $this->containers->toArray();
             $this->containers = new ArrayCollection();
             foreach ($containers as $container) {
                 $this->addContainer(clone $container);

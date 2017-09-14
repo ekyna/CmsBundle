@@ -69,7 +69,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
         if ($this->id) {
             $this->id = null;
 
-            $translations = $this->translations;
+            $translations = $this->translations->toArray();
             $this->translations = new ArrayCollection();
             foreach ($translations as $translation) {
                 $this->addTranslation(clone $translation);

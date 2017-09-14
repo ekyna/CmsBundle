@@ -67,7 +67,7 @@ class Container implements EM\ContainerInterface
             $this->id = null;
             $this->content = null;
 
-            $rows = $this->rows;
+            $rows = $this->rows->toArray();
             $this->rows = new ArrayCollection();
             foreach ($rows as $row) {
                 $this->addRow(clone $row);

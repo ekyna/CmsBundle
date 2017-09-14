@@ -61,7 +61,7 @@ class Row implements EM\RowInterface
             $this->id = null;
             $this->container = null;
 
-            $blocks = $this->blocks;
+            $blocks = $this->blocks->toArray();
             $this->blocks = new ArrayCollection();
             foreach ($blocks as $block) {
                 $this->addBlock(clone $block);

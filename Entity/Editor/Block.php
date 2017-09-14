@@ -34,7 +34,7 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
             $this->id = null;
             $this->row = null;
 
-            $translations = $this->translations;
+            $translations = $this->translations->toArray();
             $this->translations = new ArrayCollection();
             foreach ($translations as $translation) {
                 $this->addTranslation(clone $translation);

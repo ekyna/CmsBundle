@@ -28,8 +28,8 @@
         </property>
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
             <option name="fields">
-                <value>parent</value>
                 <value>name</value>
+                <value>parent</value>
             </option>
             <option name="message">ekyna_cms.page.unique_name</option>
             <option name="groups">
@@ -108,8 +108,8 @@
     <class name="Ekyna\Bundle\CmsBundle\Entity\Menu">
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
             <option name="fields">
-                <value>root</value>
                 <value>name</value>
+                <value>root</value>
             </option>
             <option name="message">ekyna_cms.menu.unique_name</option>
             <option name="groups">
@@ -246,8 +246,8 @@
         </property>
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
             <option name="fields">
-                <value>locale</value>
                 <value>title</value>
+                <value>locale</value>
             </option>
             <option name="message">ekyna_cms.seo.unique_title</option>
             <option name="groups">
