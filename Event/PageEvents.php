@@ -9,6 +9,14 @@ namespace Ekyna\Bundle\CmsBundle\Event;
  */
 class PageEvents
 {
+    // Persistence
+    const INSERT      = 'ekyna_cms.page.insert';
+    const UPDATE      = 'ekyna_cms.page.update';
+    const DELETE      = 'ekyna_cms.page.delete';
+
+    // Domain
+    const INITIALIZE  = 'ekyna_cms.page.initialize';
+
     const PRE_CREATE  = 'ekyna_cms.page.pre_create';
     const POST_CREATE = 'ekyna_cms.page.post_create';
 

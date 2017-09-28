@@ -9,6 +9,14 @@ namespace Ekyna\Bundle\CmsBundle\Event;
  */
 final class MenuEvents
 {
+    // Persistence
+    const INSERT      = 'ekyna_cms.menu.insert';
+    const UPDATE      = 'ekyna_cms.menu.update';
+    const DELETE      = 'ekyna_cms.menu.delete';
+
+    // Domain
+    const INITIALIZE  = 'ekyna_cms.menu.initialize';
+
     const PRE_CREATE  = 'ekyna_cms.menu.pre_create';
     const POST_CREATE = 'ekyna_cms.menu.post_create';
 
