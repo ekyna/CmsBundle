@@ -421,7 +421,65 @@
             <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
             <tag name="validator.constraint_validator"/>
         </service>
+        <service id="ekyna_cms.slide.validator"
+                 class="Ekyna\Bundle\CmsBundle\Validator\Constraints\SlideValidator">
+            <argument type="service" id="ekyna_cms.slide_show.registry"/>
+            <tag name="validator.constraint_validator"/>
+        </service>
 
+        <!-- Slide type registry -->
+        <service id="ekyna_cms.slide_show.registry"
+                 class="Ekyna\Bundle\CmsBundle\SlideShow\TypeRegistry"/>
+
+        <!-- Slide show renderer -->
+        <service id="ekyna_cms.slide_show.renderer"
+                 class="Ekyna\Bundle\CmsBundle\SlideShow\Renderer">
+            <argument type="service" id="ekyna_cms.slide_show.registry"/>
+        </service>
+
+        <!-- Slide show twig extension -->
+        <service id="ekyna_cms.twig.slide_show_extension"
+                 class="Ekyna\Bundle\CmsBundle\Twig\SlideShowExtension">
+            <argument type="service" id="ekyna_cms.slide_show.renderer"/>
+            <argument type="service" id="ekyna_cms.slide_show.repository"/>
+            <tag name="twig.extension"/>
+        </service>
+
+        <!-- Slide form types -->
+        <service id="ekyna_cms.slide.form_type"
+                 class="Ekyna\Bundle\CmsBundle\Form\Type\SlideType">
+            <argument type="service" id="ekyna_cms.slide_show.registry"/>
+            <argument>%ekyna_cms.slide.class%</argument>
+            <tag name="form.type"/>
+        </service>
+        <service id="ekyna_cms.slide.form_flow"
+                 class="Ekyna\Bundle\CmsBundle\Form\CreateSlideFlow"
+                 parent="craue.form.flow"/>
+        <service id="ekyna_cms.slide.form_type.type"
+                 class="Ekyna\Bundle\CmsBundle\Form\Type\Slide\TypeType">
+            <argument type="service" id="ekyna_cms.slide_show.registry"/>
+            <argument type="service" id="ekyna_cms.slide.repository"/>
+            <tag name="form.type"/>
+            <tag name="form.js" selector=".cms-slide-type" path="ekyna-cms/form/slide-type" />
+        </service>
+        <service id="ekyna_cms.slide.form_type.theme"
+                 class="Ekyna\Bundle\CmsBundle\Form\Type\Slide\ThemeType">
+            <argument>%ekyna_cms.slide_show.themes%</argument>
+            <tag name="form.type"/>
+        </service>
+        <service id="ekyna_cms.slide.form_type.image"
+                 class="Ekyna\Bundle\CmsBundle\Form\Type\Slide\ImageType">
+            <argument type="service" id="ekyna_media.media.repository"/>
+            <tag name="form.type"/>
+        </service>
+        <service id="ekyna_cms.slide_show.type.default"
+                 class="Ekyna\Bundle\CmsBundle\SlideShow\Type\DefaultType">
+        </service>
+        <service id="ekyna_cms.slide_show.type.hero"
+                 class="Ekyna\Bundle\CmsBundle\SlideShow\Type\HeroType">
+            <argument type="service" id="ekyna_media.media.repository"/>
+            <argument type="service" id="ekyna_media.renderer"/>
+        </service>
     </services>
 
 </container>

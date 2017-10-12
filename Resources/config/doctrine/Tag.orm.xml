@@ -9,13 +9,21 @@
             name="Ekyna\Bundle\CmsBundle\Entity\Tag"
             table="cms_tag">
 
+        <indexes>
+            <index columns="name"/>
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint columns="name"/>
+        </unique-constraints>
+
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO" />
         </id>
 
-        <field name="name" type="text" column="name" length="32" />
-        <field name="icon" type="text" column="icon" length="16" nullable="true" />
-        <field name="theme" type="text" column="theme" length="16" />
+        <field name="name" type="string" column="name" length="32" />
+        <field name="icon" type="string" column="icon" length="16" nullable="true" />
+        <field name="theme" type="string" column="theme" length="16" />
 
     </mapped-superclass>
 

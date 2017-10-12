@@ -150,14 +150,14 @@ export class ViewportView extends Backbone.View<ViewportModel> {
     private resize(): void {
         let viewport:HTMLElement = <HTMLElement>window.document.querySelector('#editor-viewport'),
             width: number = viewport.offsetWidth,
-            height: number = viewport.offsetHeight,
+            //height: number = viewport.offsetHeight,
             size: SizeInterface = this.model.get('size'),
             origin: OffsetInterface = {top: 50, left: 0};
 
         this.$el.removeAttr('style');
 
         if (size) {
-            this.$el.removeClass('auto').css(size);
+            this.$el.removeClass('auto').css({width: size.width, height: size.height});
             if (size.width > width - 25) {
                 origin.left = 25;
             } else {

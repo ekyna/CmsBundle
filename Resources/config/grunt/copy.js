@@ -50,7 +50,7 @@ module.exports = function (grunt, options) {
                 {
                     expand: true,
                     cwd: 'src/Ekyna/Bundle/CmsBundle/Resources/private/js',
-                    src: ['*.js'],
+                    src: ['**'],
                     dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/js'
                 }
             ]

@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\DependencyInjection;
 use Ekyna\Bundle\CmsBundle\Editor\Adapter\Bootstrap3Adapter;
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
+use Ekyna\Bundle\CmsBundle\SlideShow\Type\AbstractType;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -36,6 +37,7 @@ class Configuration implements ConfigurationInterface
         $this->addPageSection($rootNode);
         $this->addMenuSection($rootNode);
         $this->addEditorSection($rootNode);
+        $this->addSlideShowSection($rootNode);
         $this->addPoolsSection($rootNode);
 
         return $treeBuilder;
@@ -132,6 +134,46 @@ class Configuration implements ConfigurationInterface
                                 ->children()
                                     ->scalarNode('title')->isRequired()->cannotBeEmpty()->end()
                                     ->scalarNode('description')->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * Adds `slide show` section.
+     *
+     * @param ArrayNodeDefinition $node
+     */
+    private function addSlideShowSection(ArrayNodeDefinition $node)
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $node
+            ->children()
+                ->arrayNode('slide_show')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('static')
+                            ->defaultValue([])
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('themes')
+                            ->defaultValue(AbstractType::getDefaultThemeChoices())
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('types')
+                            ->defaultValue([])
+                            ->useAttributeAsKey('name')
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('class')->isRequired()->cannotBeEmpty()->end()
+                                    ->scalarNode('js_path')->isRequired()->cannotBeEmpty()->end()
+                                    ->scalarNode('label')->isRequired()->cannotBeEmpty()->end()
+                                    ->variableNode('config')->end()
                                 ->end()
                             ->end()
                         ->end()
@@ -419,6 +461,61 @@ class Configuration implements ConfigurationInterface
                                         ->arrayNode('fields')
                                             ->prototype('scalar')->end()
                                             ->defaultValue(['title', 'path'])
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('slide_show')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->variableNode('templates')->defaultValue([
+                                    '_form.html' => 'EkynaCmsBundle:Admin/SlideShow:_form.html',
+                                    'show.html'  => 'EkynaCmsBundle:Admin/SlideShow:show.html',
+                                ])->end()
+                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\SlideShow')->end()
+                                ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\SlideShowController')->end()
+                                ->scalarNode('repository')->end()
+                                ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\SlideShowType')->end()
+                                ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\SlideShowType')->end()
+                                ->scalarNode('parent')->end()
+                                ->scalarNode('event')->end()
+                                /*->arrayNode('translation')
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\MenuTranslation')->end()
+                                        ->arrayNode('fields')
+                                            ->prototype('scalar')->end()
+                                            ->defaultValue(['title', 'path'])
+                                        ->end()
+                                    ->end()
+                                ->end()*/
+                            ->end()
+                        ->end()
+                        ->arrayNode('slide')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->variableNode('templates')->defaultValue([
+                                    '_form.html'  => 'EkynaCmsBundle:Admin/Slide:_form.html',
+                                    'show.html'   => 'EkynaCmsBundle:Admin/Slide:show.html',
+                                    'new.html'    => 'EkynaCmsBundle:Admin/Slide:new.html',
+                                    'edit.html'   => 'EkynaCmsBundle:Admin/Slide:edit.html',
+                                    'remove.html' => 'EkynaCmsBundle:Admin/Slide:remove.html',
+                                ])->end()
+                                ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\Slide')->end()
+                                ->scalarNode('controller')->defaultValue('Ekyna\Bundle\CmsBundle\Controller\Admin\SlideController')->end()
+                                ->scalarNode('repository')->end()
+                                ->scalarNode('form')->defaultValue('Ekyna\Bundle\CmsBundle\Form\Type\SlideType')->end()
+                                ->scalarNode('table')->defaultValue('Ekyna\Bundle\CmsBundle\Table\Type\SlideType')->end()
+                                ->scalarNode('parent')->defaultValue('ekyna_cms.slide_show')->end()
+                                ->scalarNode('event')->end()
+                                ->arrayNode('translation')
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->scalarNode('entity')->defaultValue('Ekyna\Bundle\CmsBundle\Entity\SlideTranslation')->end()
+                                        ->arrayNode('fields')
+                                            ->prototype('scalar')->end()
+                                            ->defaultValue(['data'])
                                         ->end()
                                     ->end()
                                 ->end()

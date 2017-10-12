@@ -65,6 +65,51 @@ ekyna_cms:
         alert:
             no_item: Aucun menu configuré
             cant_enable_as_disabled_page: Ce menu ne peut être activé car la page ciblée est inactive.
+    slide_show:
+        label:
+            singular: Carousel
+            plural: Carousels
+        header:
+            list: Carousels <small>Liste des carousels</small>
+            show: Détail du carousel <small>%name%</small>
+            new: Créer un nouveau carousel
+            edit: Modifier le carousel <small>%name%</small>
+            remove: Supprimer le carousel <small>%name%</small>
+        button:
+            list: Liste des carousels
+            show: Détail du carousel
+            new: Nouveau carousel
+            edit: Modifier le carousel
+            remove: Supprimer le carousel
+        field:
+            render: Rendu
+        alert:
+            no_item: Aucun carousel configuré
+    slide:
+        label:
+            singular: Scène
+            plural: Scènes
+        header:
+            list: Scènes <small>Liste des scènes</small>
+            show: Détail de la scène <small>%name%</small>
+            new: Créer une nouvelle scène
+            edit: Modifier la scène <small>%name%</small>
+            remove: Supprimer la scène <small>%name%</small>
+        button:
+            list: Liste des scènes
+            show: Détail de la scène
+            new: Nouvelle scène
+            edit: Modifier la scène
+            remove: Supprimer la scène
+        type:
+            default:
+                label: Défaut
+                button_url: Lien bouton
+                button_label: Libellé bouton
+            hero:
+                label: Héro
+        alert:
+            no_item: Aucune scène configuré
     tag:
         label:
             singular: Tag

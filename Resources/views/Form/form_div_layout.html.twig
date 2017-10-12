@@ -135,3 +135,18 @@
     {{ form_rest(form) }}
 {% endspaceless %}
 {% endblock ekyna_cms_container_background_widget %}
+
+
+{% block ekyna_cms_slide_type_widget %}
+{% spaceless %}
+    {{ form_widget(form) }}
+    {% if form.vars.slide_show is defined %}
+        {{ slide_show_render(form.vars.slide_show, {
+            'id': 'slide-show-type',
+            'auto': false,
+            'ui': false,
+            'javascript': false
+        }) }}
+    {% endif %}
+{% endspaceless %}
+{% endblock ekyna_cms_slide_type_widget %}

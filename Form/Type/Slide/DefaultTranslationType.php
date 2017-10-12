@@ -1,0 +1,46 @@
+<?php
+
+namespace Ekyna\Bundle\CmsBundle\Form\Type\Slide;
+
+use Ekyna\Bundle\CmsBundle\Entity\SlideTranslation;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+/**
+ * Class DefaultTranslationType
+ * @package Ekyna\Bundle\CmsBundle\Form\Type\Slide
+ * @author  Etienne Dauvergne <contact@ekyna.com>
+ */
+class DefaultTranslationType extends AbstractType
+{
+    /**
+     * @inheritDoc
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('title', TextType::class, [
+                'label'         => 'ekyna_core.field.title',
+                'property_path' => 'data[title]',
+            ])
+            ->add('content', TextareaType::class, [
+                'label'         => 'ekyna_core.field.content',
+                'property_path' => 'data[content]',
+            ])
+            ->add('button_label', TextType::class, [
+                'label'         => 'ekyna_cms.slide.type.default.button_label',
+                'property_path' => 'data[button_label]',
+            ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefault('data_class', SlideTranslation::class);
+    }
+}

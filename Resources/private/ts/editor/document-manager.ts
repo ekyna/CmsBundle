@@ -135,7 +135,7 @@ export class BaseManager {
     static setContentDocument($doc: JQuery): void {
         this.$contentDocument = $doc;
 
-        let data: DocumentData = $doc.find('html').data('cms-editor-document');
+        let data: DocumentData = <DocumentData>$doc.find('html').data('cms-editor-document');
         if (!data) {
             throw "Undefined document data.\n" +
             "Did you forget to use the cms_document_data() twig function in your template ?";
@@ -1501,7 +1501,7 @@ export class DocumentManager {
         // Fix forms actions or intercept submit
         $doc.find('form').each((i: number, element: Element) => {
             let $form = $(element),
-                action = $form.attr('action'),
+                action = <string>$form.attr('action'),
                 anchor: HTMLAnchorElement = document.createElement('a');
 
             anchor.href = action;
@@ -1587,7 +1587,7 @@ export class DocumentManager {
 
         let $element: JQuery = $target.closest('.cms-widget, .cms-block, .cms-row, .cms-container');
         if (1 == $element.length) {
-            if ($element.attr('id') != this.selectionId) {
+            if (this.selectionId != <string>$element.attr('id')) {
                 this.clickEvent.$element = $element;
                 this.clickEvent.$target = $target;
             }
@@ -1630,7 +1630,7 @@ export class DocumentManager {
             return;
         }
 
-        this.selectionId = e.$element.addClass('selected').attr('id');
+        this.selectionId = <string>e.$element.addClass('selected').attr('id');
 
         this.createToolbar(e);
     }

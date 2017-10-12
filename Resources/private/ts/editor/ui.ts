@@ -4,14 +4,12 @@ import * as $ from 'jquery';
 import * as Backbone from 'backbone';
 import * as _ from 'underscore';
 import * as Bootstrap from 'bootstrap';
-import * as Select2 from 'select2';
+import 'select2';
 
 $.fn.select2.defaults.set('theme', 'bootstrap');
 
 //noinspection JSUnusedLocalSymbols
 let bs = Bootstrap;
-//noinspection JSUnusedLocalSymbols
-let s2 = Select2;
 
 import Dispatcher from './dispatcher';
 import SliderUIParams = JQueryUI.SliderUIParams;
@@ -454,7 +452,7 @@ export class SliderView extends ControlView<Slider> {
     onInputChange(e: JQueryEventObject): void {
         e.preventDefault();
 
-        this.model.setValue(this.$('input').val(), true);
+        this.model.setValue(<string>this.$('input').val(), true);
     }
 
     render(): SliderView {
@@ -610,7 +608,7 @@ export class SelectView extends ControlView<Select> {
     onSelectChange(e: JQueryEventObject): void {
         e.preventDefault();
 
-        this.model.setValue(this.$('select').val(), true);
+        this.model.setValue(<string>this.$('select').val(), true);
     }
 
     render(): SelectView {

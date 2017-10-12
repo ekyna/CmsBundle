@@ -2,7 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Install\Generator;
 
-use Ekyna\Bundle\CmsBundle\Entity\Menu;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -21,7 +20,7 @@ class MenuGenerator
     /**
      * @var \Ekyna\Component\Resource\Operator\ResourceOperatorInterface
      */
-    private $menuOperator;
+    private $operator;
 
     /**
      * @var \Ekyna\Bundle\CmsBundle\Entity\MenuRepository
@@ -38,6 +37,7 @@ class MenuGenerator
      */
     private $locales;
 
+
     /**
      * Constructor.
      *
@@ -48,7 +48,7 @@ class MenuGenerator
     {
         $this->output = $output;
 
-        $this->menuOperator = $container->get('ekyna_cms.menu.operator');
+        $this->operator = $container->get('ekyna_cms.menu.operator');
         $this->repository = $container->get('ekyna_cms.menu.repository');
         $this->config = $container->getParameter('ekyna_cms.menu.config');
         $this->locales = $container->getParameter('locales');
@@ -84,18 +84,18 @@ class MenuGenerator
                     ->setTitle($config['title']);
             }
 
-            $this->menuOperator->persist($menu);
+            $this->operator->persist($menu);
 
             $this->output->writeln('created.');
         }
     }
 
     /**
-     * Finds a menu by his name.
+     * Finds the menu by its name.
      *
-     * @param $name
+     * @param string $name
      *
-     * @return Menu|null
+     * @return \Ekyna\Bundle\CmsBundle\Entity\Menu|null
      */
     public function findMenuByName($name)
     {

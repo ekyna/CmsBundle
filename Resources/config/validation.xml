@@ -314,4 +314,69 @@
         <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Block"/>
     </class>
 
+    <class name="Ekyna\Bundle\CmsBundle\Entity\SlideShow">
+        <property name="name">
+            <constraint name="NotBlank"/>
+            <constraint name="Length">
+                <option name="min">2</option>
+                <option name="max">255</option>
+            </constraint>
+        </property>
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>name</value>
+            </option>
+        </constraint>
+    </class>
+
+    <class name="Ekyna\Bundle\CmsBundle\Entity\SlideShow">
+        <property name="name">
+            <constraint name="NotBlank"/>
+            <constraint name="Length">
+                <option name="min">2</option>
+                <option name="max">255</option>
+            </constraint>
+        </property>
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>name</value>
+            </option>
+        </constraint>
+    </class>
+
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Slide">
+        <property name="name">
+            <constraint name="NotBlank"/>
+            <constraint name="Length">
+                <option name="min">2</option>
+                <option name="max">255</option>
+            </constraint>
+        </property>
+        <property name="type">
+            <constraint name="NotBlank"/>
+            <!-- TODO validate type (SlideTypeRegistryInterface) -->
+        </property>
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>name</value>
+                <value>slideShow</value>
+            </option>
+        </constraint>
+    </class>
+
+    <class name="Ekyna\Bundle\CmsBundle\Entity\Tag">
+        <property name="name">
+            <constraint name="NotBlank"/>
+            <constraint name="Length">
+                <option name="min">2</option>
+                <option name="max">32</option>
+            </constraint>
+        </property>
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>name</value>
+            </option>
+        </constraint>
+    </class>
+
 </constraint-mapping>

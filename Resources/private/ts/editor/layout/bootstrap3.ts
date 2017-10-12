@@ -1,5 +1,4 @@
 /// <reference path="../../../../../../../../typings/index.d.ts" />
-///<reference path="../../../../../../../../../typings/globals/backbone-global/index.d.ts"/>
 
 import 'jquery';
 import {AdapterInterface, LayoutDataInterface} from '../document-manager';
@@ -33,7 +32,7 @@ export class Bootstrap3Adapter implements AdapterInterface {
         }
 
         let map: Array<Device> = JSON.parse(JSON.stringify(Bootstrap3Adapter.devicesMap)).reverse(),
-            classes = this.$element.attr('class').split(' '),
+            classes = (<string>this.$element.attr('class')).split(' '),
             bsData:any, previousBsData:any, key, device:Device, matches;
 
         previousBsData = {size: 12, offset: 0};
@@ -120,7 +119,7 @@ export class Bootstrap3Adapter implements AdapterInterface {
             return;
         }
 
-        this.$element.attr('class').split(' ').forEach((value) => {
+        (<string>this.$element.attr('class')).split(' ').forEach((value) => {
             // Remove current device size class
             let matches = new RegExp('col-' + this.device + '-(\\d+)').exec(value);
             if (matches) {

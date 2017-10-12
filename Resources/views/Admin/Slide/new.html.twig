@@ -1,0 +1,34 @@
+{% extends "EkynaAdminBundle:Entity/Default:new.html.twig" %}
+
+{% block actions %}
+
+{% endblock %}
+
+
+{% block main %}
+    {{ form_start(form) }}
+
+    <div class="form-body">
+        {{ bootstrap_set_style('horizontal') }}
+        {{ bootstrap_set_col_size('md') }}
+
+        {{ form_errors(form) }}
+
+        {{ form_row(form.name) }}
+        {{ form_row(form.type) }}
+
+        {% if flow.getCurrentStepNumber() > 1 %}<hr>{% endif %}
+
+        {{ form_rest(form) }}
+
+        {% include 'EkynaAdminBundle:Form:form_flow_buttons.html.twig' %}
+    </div>
+
+    {{ form_end(form) }}
+{% endblock main %}
+
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/ekynacms/css/slide-show.css') }}" rel="stylesheet" type="text/css" />
+{% endblock stylesheets %}

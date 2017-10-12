@@ -13,6 +13,10 @@ ekyna_cms_cookie_consent:
     options:
         expose: true
 
+ekyna_cms_slide_types:
+    path: /js/slide-show-types.json
+    defaults: { _controller: "EkynaCmsBundle:SlideShow:types" }
+
 ekyna_cms_routing:
     resource: .
     type: cms

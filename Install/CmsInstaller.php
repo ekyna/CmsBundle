@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Install;
 
 use Ekyna\Bundle\CmsBundle\Install\Generator\MenuGenerator;
 use Ekyna\Bundle\CmsBundle\Install\Generator\PageGenerator;
+use Ekyna\Bundle\CmsBundle\Install\Generator\SlideShowGenerator;
 use Ekyna\Bundle\InstallBundle\Install\AbstractInstaller;
 use Ekyna\Bundle\InstallBundle\Install\OrderedInstallerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -11,7 +12,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class CmsInstaller
@@ -35,6 +35,11 @@ class CmsInstaller extends AbstractInstaller implements OrderedInstallerInterfac
         $output->writeln('<info>[CMS] Generating pages based on routing configuration:</info>');
         $pageGenerator = new PageGenerator($this->container, $output);
         $pageGenerator->generatePages();
+        $output->writeln('');
+
+        $output->writeln('<info>[CMS] Generating slide shows based on routing configuration:</info>');
+        $pageGenerator = new SlideShowGenerator($this->container, $output);
+        $pageGenerator->generateSlideShows();
         $output->writeln('');
     }
 
