@@ -472,14 +472,6 @@
             <argument type="service" id="ekyna_media.media.repository"/>
             <tag name="form.type"/>
         </service>
-        <service id="ekyna_cms.slide_show.type.default"
-                 class="Ekyna\Bundle\CmsBundle\SlideShow\Type\DefaultType">
-        </service>
-        <service id="ekyna_cms.slide_show.type.hero"
-                 class="Ekyna\Bundle\CmsBundle\SlideShow\Type\HeroType">
-            <argument type="service" id="ekyna_media.media.repository"/>
-            <argument type="service" id="ekyna_media.renderer"/>
-        </service>
     </services>
 
 </container>

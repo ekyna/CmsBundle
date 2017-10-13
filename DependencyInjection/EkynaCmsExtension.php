@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\DependencyInjection;
 
+use Ekyna\Bundle\CmsBundle\SlideShow\Type;
 use Ekyna\Bundle\ResourceBundle\DependencyInjection\AbstractExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -81,7 +82,7 @@ class EkynaCmsExtension extends AbstractExtension
 
         if (!isset($types['default'])) {
             $types['default'] = [
-                'class'   => 'ekyna_cms.slide_show.type.default',
+                'class'   => Type\DefaultType::class,
                 'js_path' => 'ekyna-cms/slide-show/type/default',
                 'label'   => 'ekyna_cms.slide.type.default.label',
                 'config'  => [],
@@ -89,7 +90,7 @@ class EkynaCmsExtension extends AbstractExtension
         }
         if (!isset($types['hero'])) {
             $types['hero'] = [
-                'class'   => 'ekyna_cms.slide_show.type.hero',
+                'class'   => Type\HeroType::class,
                 'js_path' => 'ekyna-cms/slide-show/type/hero',
                 'label'   => 'ekyna_cms.slide.type.hero.label',
                 'config'  => [],
@@ -100,13 +101,19 @@ class EkynaCmsExtension extends AbstractExtension
             $class = $c['class'];
             if (class_exists($class)) {
                 $id = "ekyna_cms.slide_show.type.{$name}";
-                $definition = new Definition($class);
+                $definition = new Definition($class, []);
                 $container->setDefinition($id, $definition);
             } elseif ($container->hasDefinition($class)) {
                 $id = $class;
                 $definition = $container->getDefinition($class);
+                $class = $definition->getClass();
             } else {
                 throw new \InvalidArgumentException("Unexpected slide show type '$class'.");
+            }
+
+            if (is_subclass_of($class, Type\AbstractType::class)) {
+                $definition->addMethodCall('setMediaRepository', [new Reference('ekyna_media.media.repository')]);
+                $definition->addMethodCall('setMediaGenerator', [new Reference('ekyna_media.generator')]);
             }
 
             $definition->addMethodCall('configure', [

@@ -51,15 +51,17 @@ class Slide {
     }
 
     show(): void {
-        this.timeline.seek(0, true);
-        this.timeline.play();
+        this.timeline.play(0, false);
     }
 
     hide(hard: boolean = false): void {
         if (hard) {
-            this.timeline.seek(0, true);
             this.timeline.pause();
         } else {
+            let onReverse:Function;
+            if (onReverse = this.timeline.eventCallback('onReverse')) {
+                onReverse();
+            }
             this.timeline.reverse();
         }
     }

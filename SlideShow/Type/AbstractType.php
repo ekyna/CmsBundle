@@ -2,6 +2,11 @@
 
 namespace Ekyna\Bundle\CmsBundle\SlideShow\Type;
 
+use Ekyna\Bundle\CmsBundle\Entity\Slide;
+use Ekyna\Bundle\CmsBundle\SlideShow\DOMUtil;
+use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
+use Ekyna\Bundle\MediaBundle\Service\Generator;
+
 /**
  * Class AbstractType
  * @package Ekyna\Bundle\CmsBundle\SlideShow\Type
@@ -21,6 +26,16 @@ abstract class AbstractType implements TypeInterface
             'dark'  => 'Dark',
         ];
     }
+
+    /**
+     * @var MediaRepository
+     */
+    protected $mediaRepository;
+
+    /**
+     * @var Generator
+     */
+    protected $mediaGenerator;
 
     /**
      * @var string
@@ -44,12 +59,23 @@ abstract class AbstractType implements TypeInterface
 
 
     /**
-     * Constructor.
-     *
-     * @param string $name
-     * @param string $label
-     * @param string $jsPath
-     * @param array  $config
+     * @inheritdoc
+     */
+    public function setMediaRepository(MediaRepository $repository)
+    {
+        $this->mediaRepository = $repository;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setMediaGenerator(Generator $generator)
+    {
+        $this->mediaGenerator = $generator;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function configure($name, $label, $jsPath, array $config = [])
     {
@@ -60,9 +86,7 @@ abstract class AbstractType implements TypeInterface
     }
 
     /**
-     * Returns the name.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getName()
     {
@@ -70,9 +94,7 @@ abstract class AbstractType implements TypeInterface
     }
 
     /**
-     * Returns the label.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getLabel()
     {
@@ -80,9 +102,7 @@ abstract class AbstractType implements TypeInterface
     }
 
     /**
-     * Returns the jsPath.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getJsPath()
     {
@@ -90,9 +110,7 @@ abstract class AbstractType implements TypeInterface
     }
 
     /**
-     * Returns the config.
-     *
-     * @return array
+     * @inheritdoc
      */
     public function getConfig()
     {
@@ -100,14 +118,51 @@ abstract class AbstractType implements TypeInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function render(Slide $slide, \DOMElement $element, \DOMDocument $dom)
+    {
+        $data = $slide->getData();
+
+        // Theme
+        if (isset($data['theme']) && !empty($theme = $data['theme'])) {
+            DOMUtil::addClass($element, 'cms-slide-' . $theme);
+        }
+
+        // Background color
+        if (isset($data['background_color']) && !empty($color = $data['background_color'])) {
+            DOMUtil::addStyle($element, 'background-color', $color);
+        }
+
+        // Background image
+        $path = null;
+        if (isset($data['background_id']) && 0 < $id = intval($data['background_id'])) {
+            /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $media */
+            if (null !== $media = $this->mediaRepository->find($id)) {
+                $path = $this->mediaGenerator->generateFrontUrl($media, $this->config['background_filter']);
+
+            }
+        }
+        if (null === $path && isset($data['background'])) {
+            $path = $data['background'];
+        }
+        if (!empty($path)) {
+            $background = $dom->createElement('div');
+            $background->setAttribute('class', 'background');
+            $background->setAttribute('style', "background-image:url('$path')");
+            $element->appendChild($background);
+        }
+    }
+
+    /**
      * Appends a wrapper to the element.
      *
-     * @param \DOMElement $element
+     * @param \DOMElement  $element
      * @param \DOMDocument $dom
      *
      * @return \DOMElement
      */
-    public function appendWrapper(\DOMElement $element, \DOMDocument $dom)
+    protected function appendWrapper(\DOMElement $element, \DOMDocument $dom)
     {
         $wrapper = $dom->createElement('div');
         $wrapper->setAttribute('class', 'cms-slide-wrapper');
@@ -125,44 +180,5 @@ abstract class AbstractType implements TypeInterface
     protected function getConfigDefaults()
     {
         return [];
-    }
-
-    /**
-     * Explodes the style attribute.
-     *
-     * @param string $style
-     *
-     * @return array
-     */
-    protected function explodeStyle($style)
-    {
-        $data = [];
-
-        $couples = explode(';', $style);
-
-        foreach ($couples as $couple) {
-            list($key, $value) = explode(':', $couple);
-            $data[$key] = $value;
-        }
-
-        return $data;
-    }
-
-    /**
-     * Implodes the style attribute.
-     *
-     * @param array $style
-     *
-     * @return string
-     */
-    protected function implodeStyle(array $style)
-    {
-        $couples = [];
-
-        foreach ($style as $key => $value) {
-            $couples[] = "$key:$value";
-        }
-
-        return implode(';', $couples);
     }
 }

@@ -3,8 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Slide;
 
 use Ekyna\Bundle\CmsBundle\Entity\SlideTranslation;
+use Ekyna\Bundle\CoreBundle\Form\Type\TinymceType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,9 +26,10 @@ class DefaultTranslationType extends AbstractType
                 'label'         => 'ekyna_core.field.title',
                 'property_path' => 'data[title]',
             ])
-            ->add('content', TextareaType::class, [
+            ->add('content', TinymceType::class, [
                 'label'         => 'ekyna_core.field.content',
                 'property_path' => 'data[content]',
+                'theme'         => 'front',
             ])
             ->add('button_label', TextType::class, [
                 'label'         => 'ekyna_cms.slide.type.default.button_label',

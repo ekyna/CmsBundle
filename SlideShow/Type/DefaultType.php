@@ -5,7 +5,10 @@ namespace Ekyna\Bundle\CmsBundle\SlideShow\Type;
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
 use Ekyna\Bundle\CmsBundle\Entity\Slide;
 use Ekyna\Bundle\CmsBundle\Form\Type\Slide\DefaultTranslationType;
+use Ekyna\Bundle\CmsBundle\Form\Type\Slide\ImageType;
 use Ekyna\Bundle\CmsBundle\Form\Type\Slide\ThemeType;
+use Ekyna\Bundle\CoreBundle\Form\Type\ColorPickerType;
+use Ekyna\Bundle\CoreBundle\Validator\Constraints\Color;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -27,6 +30,16 @@ class DefaultType extends AbstractType
                 'property_path' => 'data[theme]',
                 'constraints'   => [
                     new Assert\NotNull(),
+                ],
+            ])
+            ->add('background', ImageType::class, [
+                'property_path' => 'data[background_id]',
+            ])
+            ->add('backgroundColor', ColorPickerType::class, [
+                'property_path' => 'data[background_color]',
+                'required'      => false,
+                'constraints'   => [
+                    new Color(),
                 ],
             ])
             ->add('button_url', TextType::class, [
@@ -53,40 +66,31 @@ class DefaultType extends AbstractType
      */
     public function render(Slide $slide, \DOMElement $element, \DOMDocument $dom)
     {
+        parent::render($slide, $element, $dom);
+
         $wrapper = $this->appendWrapper($element, $dom);
 
         $data = $slide->getData();
         $transData = $slide->translate()->getData();
 
-        // Theme
-        if (isset($data['theme']) && !empty($theme = $data['theme'])) {
-            $classes = $element->hasAttribute('class') ? explode(' ', $element->getAttribute('class')) : [];
-            $classes[] = 'cms-slide-' . $theme;
-            $element->setAttribute('class', implode(' ', $classes));
-        }
-
-        $styles = $element->hasAttribute('style') ? $this->explodeStyle($element->getAttribute('style')) : [];
-
-        // Background
-        $path = null;
-        if (isset($data['background_color']) && !empty($color = $data['background_color'])) {
-            $styles['background-color'] = $color;
-        }
-        if (!empty($styles)) {
-            $element->setAttribute('style', $this->implodeStyle($styles));
-        }
+        // Wrapper
+        $inner = $dom->createElement('div');
+        $inner->setAttribute('class', 'inner');
+        $wrapper->appendChild($inner);
 
         // Title
         $title = $dom->createElement('h2');
-        $title->setAttribute('class', 'h1'); // TODO Config
+        $title->setAttribute('class', 'title h1'); // TODO Config
         $title->textContent = $transData['title'];
-        $wrapper->appendChild($title);
+        $inner->appendChild($title);
 
         // Content
-        $content = $dom->createElement('p');
-        $content->setAttribute('class', 'lead'); // TODO Config
-        $content->textContent = $transData['content'];
-        $wrapper->appendChild($content);
+        $content = $dom->createElement('div');
+        $content->setAttribute('class', 'content'); // TODO Config
+        $c = $dom->createDocumentFragment();
+        $c->appendXML($transData['content']);
+        $content->appendChild($c);
+        $inner->appendChild($content);
 
         // Button
         $button = $dom->createElement('p');
@@ -96,7 +100,7 @@ class DefaultType extends AbstractType
         $a->setAttribute('class', 'btn btn-lg btn-primary'); // TODO Config
         $a->textContent = $transData['button_label'];
         $button->appendChild($a);
-        $wrapper->appendChild($button);
+        $inner->appendChild($button);
     }
 
     /**
@@ -115,8 +119,19 @@ class DefaultType extends AbstractType
             ->translate()
             ->setData([
                 'title'        => '[Title] Lorem ipsum dolor sit amet',
-                'content'      => '[Content] Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'content'      => '<p>[Content] Lorem ipsum <strong>dolor sit amet</strong>.</p><p>Consectetur adipiscing elit.</p>',
                 'button_label' => '[Button label]',
             ]);
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    protected function getConfigDefaults()
+    {
+        return [
+            'background_filter' => 'cms_container_background',
+        ];
     }
 }

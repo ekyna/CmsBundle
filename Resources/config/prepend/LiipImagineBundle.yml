@@ -30,6 +30,6 @@ liip_imagine:
             cache: local_media
             data_loader: local_media
             filters:
-                thumbnail: { size: [600, 400], mode: outbound }
+                relative_resize: { widen: 570 }
             post_processors:
                 jpegoptim: {}

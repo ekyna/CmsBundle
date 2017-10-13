@@ -3,6 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\SlideShow\Type;
 
 use Ekyna\Bundle\CmsBundle\Entity\Slide;
+use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
+use Ekyna\Bundle\MediaBundle\Service\Generator;
 use Symfony\Component\Form\FormInterface;
 
 /**
@@ -12,6 +14,30 @@ use Symfony\Component\Form\FormInterface;
  */
 interface TypeInterface
 {
+    /**
+     * Sets the media repository.
+     *
+     * @param MediaRepository $repository
+     */
+    public function setMediaRepository(MediaRepository $repository);
+
+    /**
+     * Sets the media generator.
+     *
+     * @param Generator $generator
+     */
+    public function setMediaGenerator(Generator $generator);
+
+    /**
+     * Configures the type.
+     *
+     * @param string $name
+     * @param string $label
+     * @param string $jsPath
+     * @param array  $config
+     */
+    public function configure($name, $label, $jsPath, array $config = []);
+
     /**
      * Builds the slide form.
      *

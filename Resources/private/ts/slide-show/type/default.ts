@@ -6,19 +6,18 @@ class DefaultType extends BaseType {
     build(element: HTMLDivElement, dispatcher: Dispatcher): gsap.TimelineLite {
         let tl = super.build(element, dispatcher);
 
-        let title: HTMLElement = <HTMLElement>element.querySelector('h2'),
-            paragraph: HTMLElement = <HTMLElement>element.querySelector('p.lead'),
+        let title: HTMLElement = <HTMLElement>element.querySelector('.title'),
+            content: HTMLElement = <HTMLElement>element.querySelector('div.content'),
             button: HTMLElement = <HTMLElement>element.querySelector('p.button');
 
-        if (title && paragraph && button) {
-            let offset:number = 0;
-            if (element.style.backgroundColor && element.style.backgroundColor != 'transparent') {
-                tl.from(element, .3, {backgroundColor: 'transparent'}, 0);
-                offset = .15;
-            }
+        if (title && content && button) {
+            let offset = 0 == tl.getChildren(false).length ? 0 : .15;
+
             tl.fromTo(title, .3, {y: 40, opacity: 0, scale: .8}, {y: 0, opacity: 1, scale: 1}, offset);
-            tl.fromTo(paragraph, .3, {y: 40, opacity: 0, scale: .8}, {y: 0, opacity: 1, scale: 1}, offset + .15);
+            tl.fromTo(content, .3, {y: 40, opacity: 0, scale: .8}, {y: 0, opacity: 1, scale: 1}, offset + .15);
             tl.fromTo(button, .3, {y: 40, opacity: 0, scale: .8}, {y: 0, opacity: 1, scale: 1}, offset + .3);
+        } else {
+            console.log('[Hero type] Missing children');
         }
 
         return tl;
