@@ -1,4 +1,4 @@
-@ui-color: #808080;
+@ui-color: #404040;
 
 .cms-slide-show {
     height: 400px;
@@ -20,28 +20,66 @@
             list-style: none;
             display: inline-block;
             text-align: center;
+            height: 20px;
 
             > li {
                 display: inline-block;
-                margin-right: 30px;
+                height: 20px;
+                line-height: 20px;
+                margin-left: 30px;
+                vertical-align: middle;
 
-                &:last-child {
-                    margin-right: 0;
+                &:first-child {
+                    margin-left: 0;
                 }
 
                 > a {
-                    -webkit-border-radius: 10px;
-                    -moz-border-radius: 10px;
-                    border: 2px solid @ui-color;
-                    background-color: rgba(255, 255, 255, .5);
-                    border-radius: 10px;
-                    box-shadow: 0 2px 7px rgba(0, 0, 0, .33);
                     display: inline-block;
                     height: 20px;
-                    font-size: 0;
                     opacity: .33;
                     transition: opacity .3s;
                     width: 20px;
+                    text-decoration: none;
+                    vertical-align: middle;
+
+                    &.slide {
+                        -webkit-border-radius: 10px;
+                        -moz-border-radius: 10px;
+                        border: 2px solid @ui-color;
+                        background-color: rgba(255, 255, 255, .5);
+                        border-radius: 10px;
+                        box-shadow: 0 2px 7px rgba(0, 0, 0, .33);
+                    }
+
+                    &.play {
+                        font-family: Helvetica, Arial, sans-serif;
+                        color: @ui-color;
+                        text-shadow: 0 2px 7px rgba(0, 0, 0, .33);
+
+                        &:before, &before {
+                            vertical-align: middle;
+                        }
+
+                        &:before {
+                            font-size: 32px;
+                            display: none;
+                            content: "⏵"; // Play
+                        }
+                        &:after {
+                            font-size: 28px;
+                            display: inline;
+                            content: "⏸"; // Pause
+                        }
+
+                        &.pause {
+                            &:before {
+                                display: inline;
+                            }
+                            &:after {
+                                display: none;
+                            }
+                        }
+                    }
 
                     &:hover {
                         opacity: 1;
@@ -55,6 +93,16 @@
                 }
             }
         }
+    }
+
+    > .cms-slide-show-timer {
+        background-color: @ui-color;
+        bottom: 0;
+        height: 3px;
+        left: 0;
+        opacity: .33;
+        position: absolute;
+        width: 0;
     }
 
     > .cms-slide-show-prev, > .cms-slide-show-next {
@@ -125,16 +173,8 @@
             overflow: hidden;
 
             > div.background {
-                //-ms-interpolation-mode: nearest-neighbor; // IE 7+ (non-standard property)
-                //image-rendering: -webkit-optimize-contrast; // Safari 6, UC Browser 9.9
-                //image-rendering: -webkit-crisp-edges; // Safari 7+
-                //image-rendering: -moz-crisp-edges; // Firefox 3.6+
-                //image-rendering: -o-crisp-edges; // Opera 12
-                //image-rendering: pixelated; // Chrome 41+ and Opera 26+
-
                 background: transparent no-repeat center center scroll;
                 background-size: cover;
-
                 height: 100%;
                 position: absolute;
                 left: 50%;
@@ -157,7 +197,7 @@
                 color: #333;
 
                 .title, .content {
-                    text-shadow: 2px 2px 1px rgba(255, 255, 255, .4);
+                    text-shadow: -1px 2px 1px rgba(255, 255, 255, .4);
                 }
             }
 
@@ -165,7 +205,7 @@
                 color: #f0f0f0;
 
                 .title, .content {
-                    text-shadow: -2px 2px 1px rgba(0, 0, 0, .4);
+                    text-shadow: -1px 2px 1px rgba(0, 0, 0, .4);
                 }
             }
 

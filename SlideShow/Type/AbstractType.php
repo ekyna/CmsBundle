@@ -3,9 +3,15 @@
 namespace Ekyna\Bundle\CmsBundle\SlideShow\Type;
 
 use Ekyna\Bundle\CmsBundle\Entity\Slide;
+use Ekyna\Bundle\CmsBundle\Form\Type\Slide\ImageType;
+use Ekyna\Bundle\CmsBundle\Form\Type\Slide\ThemeType;
 use Ekyna\Bundle\CmsBundle\SlideShow\DOMUtil;
+use Ekyna\Bundle\CoreBundle\Form\Type\ColorPickerType;
+use Ekyna\Bundle\CoreBundle\Validator\Constraints\Color;
 use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
 use Ekyna\Bundle\MediaBundle\Service\Generator;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class AbstractType
@@ -115,6 +121,33 @@ abstract class AbstractType implements TypeInterface
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buildForm(FormInterface $form)
+    {
+        $form
+            ->add('theme', ThemeType::class, [
+                'property_path' => 'data[theme]',
+                'constraints'   => [
+                    new Assert\NotNull(),
+                ],
+            ])
+            ->add('background', ImageType::class, [
+                'label'         => 'ekyna_cms.slide.field.background_image',
+                'property_path' => 'data[background_id]',
+            ])
+            ->add('backgroundColor', ColorPickerType::class, [
+                'label'         => 'ekyna_cms.slide.field.background_color',
+                'property_path' => 'data[background_color]',
+                'required'      => false,
+                'constraints'   => [
+                    new Color(),
+                ],
+            ]);
+
     }
 
     /**

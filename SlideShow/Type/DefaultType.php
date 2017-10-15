@@ -5,10 +5,6 @@ namespace Ekyna\Bundle\CmsBundle\SlideShow\Type;
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
 use Ekyna\Bundle\CmsBundle\Entity\Slide;
 use Ekyna\Bundle\CmsBundle\Form\Type\Slide\DefaultTranslationType;
-use Ekyna\Bundle\CmsBundle\Form\Type\Slide\ImageType;
-use Ekyna\Bundle\CmsBundle\Form\Type\Slide\ThemeType;
-use Ekyna\Bundle\CoreBundle\Form\Type\ColorPickerType;
-use Ekyna\Bundle\CoreBundle\Validator\Constraints\Color;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -25,23 +21,9 @@ class DefaultType extends AbstractType
      */
     public function buildForm(FormInterface $form)
     {
+        parent::buildForm($form);
+
         $form
-            ->add('theme', ThemeType::class, [
-                'property_path' => 'data[theme]',
-                'constraints'   => [
-                    new Assert\NotNull(),
-                ],
-            ])
-            ->add('background', ImageType::class, [
-                'property_path' => 'data[background_id]',
-            ])
-            ->add('backgroundColor', ColorPickerType::class, [
-                'property_path' => 'data[background_color]',
-                'required'      => false,
-                'constraints'   => [
-                    new Color(),
-                ],
-            ])
             ->add('button_url', TextType::class, [
                 'label' => 'ekyna_cms.slide.type.default.button_url',
                 'property_path' => 'data[button_url]',

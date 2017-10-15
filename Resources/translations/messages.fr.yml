@@ -101,6 +101,9 @@ ekyna_cms:
             new: Nouvelle scène
             edit: Modifier la scène
             remove: Supprimer la scène
+        field:
+            background_image: Image de fond
+            background_color: Couleur de fond
         type:
             default:
                 label: Défaut
