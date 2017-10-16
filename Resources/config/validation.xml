@@ -296,18 +296,6 @@
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\Editor\Block">
-        <property name="position">
-            <constraint name="Range">
-                <option name="min">0</option>
-                <option name="max">11</option>
-            </constraint>
-        </property>
-        <!--<property name="size">
-            <constraint name="Range">
-                <option name="min">1</option>
-                <option name="max">12</option>
-            </constraint>
-        </property>-->
         <property name="type">
             <constraint name="NotBlank"/>
         </property>

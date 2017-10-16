@@ -52,10 +52,23 @@ class BlockValidator extends ConstraintValidator
 
         // Checks that Content or Name is set, but not both.
         if ((null === $row && 0 === strlen($name)) || (null !== $row && 0 < strlen($name))) {
-            $this->context->addViolation($constraint->rowOrNameButNotBoth);
+            $this
+                ->context
+                ->buildViolation($constraint->row_or_name_but_not_both)
+                ->atPath('row')
+                ->addViolation();
         }
 
-        // TODO layout validation ?
+        // Layout validation
+        if (null !== $row) {
+            if (0 > $block->getPosition() || $block->getPosition() > 11) {
+                $this
+                    ->context
+                    ->buildViolation($constraint->invalid_position)
+                    ->atPath('position')
+                    ->addViolation();
+            }
+        }
 
         // Plugin validation
         $plugin = $this->pluginRegistry->getBlockPlugin($block->getType());

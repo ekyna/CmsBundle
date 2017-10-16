@@ -11,17 +11,10 @@ use Symfony\Component\Validator\Constraint;
  */
 class Block extends Constraint
 {
-    public $rowOrNameButNotBoth = 'ekyna_cms.block.row_or_name_but_not_both';
+    public $row_or_name_but_not_both = 'ekyna_cms.block.row_or_name_but_not_both';
 
-    public $tooSmallBlock       = 'ekyna_cms.block.too_small_block';
+    public $invalid_position         = 'ekyna_cms.block.invalid_position';
 
-    /**
-     * @inheritdoc
-     */
-    /*public function validatedBy()
-    {
-        return BlockValidator::class;
-    }*/
 
     /**
      * @inheritdoc

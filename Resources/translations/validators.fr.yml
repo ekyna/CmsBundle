@@ -23,5 +23,5 @@ ekyna_cms:
         too_small_row: La ligne est trop petite.
     block:
         row_or_name_but_not_both: Un bloc doit être lié à une ligne ou avoir un nom mais pas les deux.
-        too_small_block: Ce bloc est trop petit.
+        invalid_position: La position de ce block n'est pas valide.
         invalid_data: Données non valides.
