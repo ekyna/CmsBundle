@@ -26,9 +26,11 @@ class SlideShowController extends ResourceController
         /** @var SlideShow $slideShow */
         $slideShow = $context->getResource();
 
+        $type = $this->get('ekyna_cms.slide.configuration')->getTableType();
+
         $table = $this
             ->getTableFactory()
-            ->createTable('slides', SlideType::class, [
+            ->createTable('slides', $type, [
                 'source' => $slideShow->getSlides()->toArray(),
             ]);
 
