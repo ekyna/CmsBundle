@@ -49,6 +49,12 @@ class Editor {
     init(config:EditorConfig) {
         this.config = config;
 
+        $(document).off('ajaxError', function(event: JQueryEventObject, jqXHR: JQueryXHR) {
+            if (403 === jqXHR.status) {
+                alert('You have been disconnected. Please proceed to login.');
+            }
+        });
+
         // Plugin manager
         PluginManager.load(config.plugins);
 

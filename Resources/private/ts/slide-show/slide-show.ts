@@ -68,10 +68,11 @@ class Slide {
     }
 }
 
-interface SlideShowOptions {
+interface SlideShowConfig {
     id: string
     types: { [name: string]: string }
     ui: boolean
+    uiHover: boolean
     uiSpeed: number,
     auto: boolean
     autoDelay: number
@@ -82,6 +83,7 @@ let DEFAULT_OPTIONS = {
     id: null,
     types: {},
     ui: true,
+    uiHover: false,
     uiSpeed: .2,
     auto: true,
     autoDelay: 7,
@@ -89,13 +91,13 @@ let DEFAULT_OPTIONS = {
 };
 
 class SlideShow extends Dispatcher {
-    static create(options: SlideShowOptions) {
+    static create(options: SlideShowConfig) {
         let slideShow = new SlideShow();
         slideShow.init(options);
         return slideShow;
     }
 
-    options: SlideShowOptions;
+    config: SlideShowConfig;
     root: HTMLElement;
     nav: HTMLUListElement;
     slides: Array<Slide>;
@@ -110,9 +112,9 @@ class SlideShow extends Dispatcher {
     /**
      * Initializes the slide show.
      *
-     * @param {SlideShowOptions} options
+     * @param {SlideShowConfig} options
      */
-    init(options: SlideShowOptions) {
+    init(options: SlideShowConfig) {
         this.initialized = false;
         this.root = document.getElementById(options.id);
         if (!this.root) {
@@ -125,7 +127,7 @@ class SlideShow extends Dispatcher {
             config = JSON.parse(this.root.getAttribute('data-config'));
         }
 
-        this.options = _.defaults({}, options, config, DEFAULT_OPTIONS);
+        this.config = _.defaults({}, options, config, DEFAULT_OPTIONS);
         this.slides = [];
         this.busy = false;
         this.autoPlaying = true;
@@ -169,7 +171,7 @@ class SlideShow extends Dispatcher {
 
     public autoNext()
     {
-        if (!this.options.auto) {
+        if (!this.config.auto) {
             return;
         }
 
@@ -287,7 +289,7 @@ class SlideShow extends Dispatcher {
 
         this.current.show();
 
-        if (this.options.ui) {
+        if (this.config.ui) {
             for (let i: number = 0; i < this.nav.children.length; i++) {
                 let li: Element = this.nav.children.item(i);
                 li.classList.remove('active');
@@ -301,11 +303,13 @@ class SlideShow extends Dispatcher {
      * Builds the slide show UI
      */
     private buildUi() {
-        if (!this.options.ui || 1 >= this.slides.length) {
+        if (!this.config.ui || 1 >= this.slides.length) {
             return;
         }
 
-        this.uiTimeline = new TimelineLite();
+        if (this.config.uiHover) {
+            this.uiTimeline = new TimelineLite();
+        }
 
         this.nav = document.createElement('ul');
 
@@ -328,11 +332,13 @@ class SlideShow extends Dispatcher {
             li.appendChild(a);
             this.nav.appendChild(li);
 
-            this.uiTimeline.from(li, this.options.uiSpeed, {y: 20, opacity: 0, ease: Back.easeOut}, offset * i);
+            if (this.config.uiHover) {
+                this.uiTimeline.from(li, this.config.uiSpeed, {y: 20, opacity: 0, ease: Back.easeOut}, offset * i);
+            }
         }
 
         // Play / pause button
-        if (this.options.auto) {
+        if (this.config.auto) {
             let li: HTMLLIElement = document.createElement('li'),
                 a: HTMLAnchorElement = document.createElement('a');
             a.href = 'javascript: void(0)';
@@ -354,7 +360,13 @@ class SlideShow extends Dispatcher {
             li.appendChild(a);
             this.nav.appendChild(li);
 
-            this.uiTimeline.from(li, this.options.uiSpeed, {y: 20, opacity: 0, ease: Back.easeOut}, offset * this.slides.length);
+            if (this.config.uiHover) {
+                this.uiTimeline.from(li, this.config.uiSpeed, {
+                    y: 20,
+                    opacity: 0,
+                    ease: Back.easeOut
+                }, offset * this.slides.length);
+            }
         }
 
         let nav: HTMLDivElement = document.createElement('div');
@@ -369,7 +381,7 @@ class SlideShow extends Dispatcher {
         this.root.appendChild(timer);
 
         this.timerTimeline = new TimelineLite();
-        this.timerTimeline.to(timer, this.options.autoDelay, {width: '100%', ease: Power0.easeNone, onComplete: () => {
+        this.timerTimeline.to(timer, this.config.autoDelay, {width: '100%', ease: Power0.easeNone, onComplete: () => {
             this.trigger('ekyna_cms.slide.timeout');
         }});
         this.timerTimeline.to(timer, .15, {opacity: 0});
@@ -387,7 +399,6 @@ class SlideShow extends Dispatcher {
             this.prevSlide();
         });
         this.root.appendChild(prev);
-        this.uiTimeline.from(prev, this.options.uiSpeed, {x: '-100% 0'}, 0);
 
         next.classList.add('cms-slide-show-next');
         next.href = 'javascript: void(0)';
@@ -396,16 +407,20 @@ class SlideShow extends Dispatcher {
             this.nextSlide();
         });
         this.root.appendChild(next);
-        this.uiTimeline.from(next, this.options.uiSpeed, {x: '100% 0'}, 0);
 
-        this.uiTimeline.pause();
+        if (this.config.uiHover) {
+            this.uiTimeline.from(prev, this.config.uiSpeed, {x: '-100% 0'}, 0);
+            this.uiTimeline.from(next, this.config.uiSpeed, {x: '100% 0'}, 0);
 
-        this.root.addEventListener('mouseenter', () => {
-            this.uiTimeline.play();
-        });
-        this.root.addEventListener('mouseleave', () => {
-            this.uiTimeline.reverse();
-        });
+            this.uiTimeline.pause();
+
+            this.root.addEventListener('mouseenter', () => {
+                this.uiTimeline.play();
+            });
+            this.root.addEventListener('mouseleave', () => {
+                this.uiTimeline.reverse();
+            });
+        }
     }
 
     /**
@@ -414,7 +429,7 @@ class SlideShow extends Dispatcher {
      * @param message
      */
     private log(message) {
-        if (this.options.debug) {
+        if (this.config.debug) {
             console.log('[SlideShow]', message);
         }
     }
