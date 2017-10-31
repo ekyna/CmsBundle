@@ -10,12 +10,16 @@
     {{ admin_resource_btn(menu, 'remove') }}
 </div>
 <div class="show show-with-tabs">
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="#general" data-toggle="tab">{{ 'ekyna_core.field.general'|trans }}</a></li>
+    <ul class="nav nav-tabs" data-tab-key="{{ resource_id }}">
+        <li class="active">
+            <a href="#menu-general" id="toggle-general" data-toggle="tab">
+                {{- 'ekyna_core.field.general'|trans -}}
+            </a>
+        </li>
     </ul>
     <div class="show-body">
         <div class="tab-content">
-            <div class="tab-pane active" id="general">
+            <div class="tab-pane active" id="menu-general">
                 {{ show_row(menu.name, 'text', 'ekyna_core.field.name') }}
                 <hr>
                 {{ show_row(menu.title, 'text', 'ekyna_core.field.title') }}

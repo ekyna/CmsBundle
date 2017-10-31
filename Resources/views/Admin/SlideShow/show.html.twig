@@ -10,21 +10,21 @@
     {{ admin_resource_btn(slideShow, 'remove') }}
 </div>
 <div class="show show-with-tabs">
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs" data-tab-key="{{ resource_id }}">
         <li class="active">
-            <a href="#general" data-toggle="tab">
+            <a href="#slideshow-general" id="toggle-general" data-toggle="tab">
                 {{ 'ekyna_core.field.general'|trans }}
             </a>
         </li>
         <li>
-            <a href="#render" data-toggle="tab">
+            <a href="#slideshow-render" id="toggle-render" data-toggle="tab">
                 {{ 'ekyna_cms.slide_show.field.render'|trans }}
             </a>
         </li>
     </ul>
     <div class="show-body">
         <div class="tab-content">
-            <div class="tab-pane active" id="general">
+            <div class="tab-pane active" id="slideshow-general">
                 {{ show_row(slideShow.name, 'text', 'ekyna_core.field.name') }}
                 <div class="actions">
                     {{ admin_resource_btn('ekyna_cms.slide', 'new', {
@@ -36,7 +36,7 @@
                 </div>
                 {{ ekyna_table_render(slides) }}
             </div>
-            <div class="tab-pane" id="render">
+            <div class="tab-pane" id="slideshow-render">
                 {{ slide_show_render(slideShow) }}
             </div>
         </div>

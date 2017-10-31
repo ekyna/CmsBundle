@@ -1,13 +1,22 @@
-<ul class="nav nav-tabs">
-    <li class="active"><a href="#general" data-toggle="tab">{{ 'ekyna_core.field.general'|trans }}</a></li>
-    <li><a href="#seo" data-toggle="tab">{{ 'ekyna_core.field.seo'|trans }}</a></li>
+{% spaceless %}
+<ul class="nav nav-tabs" data-tab-key="{{ resource_id }}">
+    <li class="active">
+        <a href="#page-general" id="toggle-general" data-toggle="tab">
+            {{- 'ekyna_core.field.general'|trans -}}
+        </a>
+    </li>
+    <li>
+        <a href="#page-seo" id="toggle-seo" data-toggle="tab">
+            {{- 'ekyna_core.field.seo'|trans -}}
+        </a>
+    </li>
 </ul>
 <div class="panel-body form-body">
     {{ bootstrap_set_style('horizontal') }}
     {{ bootstrap_set_col_size('md') }}
     {{ form_errors(form) }}
     <div class="tab-content">
-        <div class="tab-pane active" id="general">
+        <div class="tab-pane active" id="page-general">
             {{ form_row(form.name) }}
             {{ form_row(form.parent) }}
             {{ form_row(form.enabled) }}
@@ -16,9 +25,10 @@
             {% endif %}
             {{ form_row(form.translations) }}
         </div>
-        <div class="tab-pane" id="seo">
+        <div class="tab-pane" id="page-seo">
             {{ form_row(form.seo) }}
         </div>
     </div>
     {{ form_rest(form) }}
 </div>
+{% endspaceless %}
