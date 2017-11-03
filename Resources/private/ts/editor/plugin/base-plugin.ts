@@ -94,6 +94,8 @@ export class BasePlugin {
                     let event:SelectionEvent = new SelectionEvent();
                     event.$element = this.$element;
                     Dispatcher.trigger('document_manager.select', event);
+
+                    e.modal.close();
                 }
 
                 if (callback) {

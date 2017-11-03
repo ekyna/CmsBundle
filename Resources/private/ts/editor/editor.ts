@@ -221,6 +221,8 @@ class Editor {
                 let data:{id:string} = e.content;
                 this.loadPagesList(this.mainToolbar.getLocaleSelect().getValue())
                     .then(() => this.updateDocumentControls(data.id));
+
+                e.modal.close();
             }
         });
     }
@@ -242,6 +244,8 @@ class Editor {
                 let data:{id:string} = e.content;
                 this.loadPagesList(this.mainToolbar.getLocaleSelect().getValue())
                     .then(() => this.updateDocumentControls(data.id));
+
+                e.modal.close();
             }
         });
     }

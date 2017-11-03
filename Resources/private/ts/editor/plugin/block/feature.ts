@@ -17,6 +17,7 @@ class FeaturePlugin extends BasePlugin {
             (e:Ekyna.ModalResponseEvent) => {
                 if (e.contentType == 'json') {
                     AOS.refresh();
+                    e.modal.close();
                 }
             }
         );

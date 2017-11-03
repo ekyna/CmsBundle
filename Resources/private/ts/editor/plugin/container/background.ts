@@ -20,6 +20,7 @@ class BackgroundPlugin extends BasePlugin {
                         videos.item(i).play();
                     }
 
+                    e.modal.close();
                 }
             }
         );
