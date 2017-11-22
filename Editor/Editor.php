@@ -169,7 +169,7 @@ class Editor
     public function getRowManager()
     {
         if (null === $this->rowManager) {
-            $this->rowManager = new Manager\RowManager($this);
+            $this->rowManager = new Manager\RowManager();
             $this->rowManager->setEditor($this);
         }
 
@@ -201,7 +201,7 @@ class Editor
     public function getContentManager()
     {
         if (null === $this->contentManager) {
-            $this->contentManager = new Manager\ContentManager($this);
+            $this->contentManager = new Manager\ContentManager();
             $this->contentManager->setEditor($this);
         }
 
@@ -311,7 +311,7 @@ class Editor
     /**
      * Returns the content locale.
      *
-     * @return string
+     * @return array
      */
     public function getContentData()
     {

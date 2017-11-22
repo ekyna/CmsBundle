@@ -4,7 +4,6 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
-use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Editor\EditorAwareInterface;
 use Ekyna\Bundle\CmsBundle\Editor\EditorAwareTrait;
 use Ekyna\Component\Resource\Model\SortableInterface;

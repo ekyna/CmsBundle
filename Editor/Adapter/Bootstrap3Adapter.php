@@ -268,13 +268,13 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     protected function validateLayoutStyles(array $layout)
     {
         if (isset($layout[static::PADDING_TOP])
-            && (0 > $layout[static::PADDING_TOP] || 100 < $layout[static::PADDING_TOP])
+            && (0 > $layout[static::PADDING_TOP] || 300 < $layout[static::PADDING_TOP])
         ) {
             throw new InvalidArgumentException('Invalid layout padding top');
         }
 
         if (isset($layout[static::PADDING_BOTTOM])
-            && (0 > $layout[static::PADDING_BOTTOM] || 100 < $layout[static::PADDING_BOTTOM])
+            && (0 > $layout[static::PADDING_BOTTOM] || 300 < $layout[static::PADDING_BOTTOM])
         ) {
             throw new InvalidArgumentException('Invalid layout padding bottom');
         }

@@ -24,8 +24,9 @@ class ContentManager extends AbstractManager
     public function create($subjectOrName)
     {
         // Check if container or name is defined
-        if (!$subjectOrName instanceof ContentSubjectInterface
-            || (is_string($subjectOrName) && 0 == strlen($subjectOrName))
+        if (
+            !$subjectOrName instanceof ContentSubjectInterface &&
+            !(is_string($subjectOrName) && 0 < strlen($subjectOrName))
         ) {
             throw new InvalidOperationException("Excepted instance of ContentSubjectInterface or string.");
         }
