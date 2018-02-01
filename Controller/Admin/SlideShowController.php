@@ -5,7 +5,6 @@ namespace Ekyna\Bundle\CmsBundle\Controller\Admin;
 use Ekyna\Bundle\AdminBundle\Controller\Context;
 use Ekyna\Bundle\AdminBundle\Controller\ResourceController;
 use Ekyna\Bundle\CmsBundle\Entity\SlideShow;
-use Ekyna\Bundle\CmsBundle\Table\Type\SlideType;
 
 /**
  * Class SlideShowController
