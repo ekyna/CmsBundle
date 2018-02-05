@@ -45,12 +45,18 @@
                  class="Ekyna\Bundle\CmsBundle\Form\Type\TagChoiceType">
             <argument>%ekyna_cms.tag.class%</argument>
             <tag name="form.type"/>
-            <tag name="form.js" selector=".cms-tag-choice" path="ekyna-cms/form/tag-choice" />
+            <tag name="form.js" selector=".cms-tag-choice" path="ekyna-cms/form/tag-choice"/>
+        </service>
+
+        <!-- Show types -->
+        <service id="ekyna_cms.show.seo_type"
+                 class="Ekyna\Bundle\CmsBundle\Show\Type\SeoType">
+            <tag name="ekyna_admin.show.type" alias="seo"/>
         </service>
 
         <!-- Table types -->
         <service id="ekyna_cms.table.column.tags_type" class="Ekyna\Bundle\CmsBundle\Table\Column\TagsType">
-            <tag name="table.column_type" />
+            <tag name="table.column_type"/>
         </service>
 
         <!-- Event listeners -->
@@ -240,7 +246,7 @@
                  lazy="true" public="false"/>
         <service id="ekyna_cms.editor.editor"
                  class="Ekyna\Bundle\CmsBundle\Editor\Editor"
-                 lazy="true" >
+                 lazy="true">
             <argument type="service" id="ekyna_cms.editor.repository"/>
             <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
             <argument type="service" id="validator"/>
@@ -401,7 +407,7 @@
         <!-- Validators -->
         <service id="ekyna_cms.page.validator"
                  class="Ekyna\Bundle\CmsBundle\Validator\Constraints\PageValidator">
-            <argument type="service" id="router" />
+            <argument type="service" id="router"/>
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%locales%</argument>
             <tag name="validator.constraint_validator"/>
@@ -460,7 +466,7 @@
             <argument type="service" id="ekyna_cms.slide_show.registry"/>
             <argument type="service" id="ekyna_cms.slide.repository"/>
             <tag name="form.type"/>
-            <tag name="form.js" selector=".cms-slide-type" path="ekyna-cms/form/slide-type" />
+            <tag name="form.js" selector=".cms-slide-type" path="ekyna-cms/form/slide-type"/>
         </service>
         <service id="ekyna_cms.slide.form_type.theme"
                  class="Ekyna\Bundle\CmsBundle\Form\Type\Slide\ThemeType">

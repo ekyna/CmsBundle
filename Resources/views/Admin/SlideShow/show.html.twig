@@ -25,7 +25,9 @@
     <div class="show-body">
         <div class="tab-content">
             <div class="tab-pane active" id="slideshow-general">
-                {{ show_row(slideShow.name, 'text', 'ekyna_core.field.name') }}
+                {{ show_row(slideShow.name, 'text', {
+                    'label': 'ekyna_core.field.name'
+                }) }}
                 <div class="actions">
                     {{ admin_resource_btn('ekyna_cms.slide', 'new', {
                         'label': 'ekyna_cms.slide.button.new',

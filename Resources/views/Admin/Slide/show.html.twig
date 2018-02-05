@@ -11,7 +11,9 @@
 </div>
 <div class="show">
     <div class="show-body">
-        {{ show_row(slide.name, 'text', 'ekyna_core.field.name') }}
+        {{ show_row(slide.name, 'text', {
+            'label': 'ekyna_core.field.name'
+        }) }}
     </div>
 </div>
 {% endblock %}

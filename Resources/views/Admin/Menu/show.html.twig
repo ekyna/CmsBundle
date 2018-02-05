@@ -20,19 +20,35 @@
     <div class="show-body">
         <div class="tab-content">
             <div class="tab-pane active" id="menu-general">
-                {{ show_row(menu.name, 'text', 'ekyna_core.field.name') }}
+                {{ show_row(menu.name, 'text', {
+                    'label': 'ekyna_core.field.name'
+                }) }}
+                {# TODO parent (entity) #}
                 <hr>
-                {{ show_row(menu.title, 'text', 'ekyna_core.field.title') }}
-                {{ show_row(menu.description, 'textarea', 'ekyna_core.field.description') }}
-                {% if is_granted('ROLE_SUPER_ADMIN') %}
-                {{ show_row(menu.attributes, 'key_value_collection', 'ekyna_core.field.attributes') }}
-                {% endif %}
+                {# TODO title (translations) #}
+                {{ show_row(menu.title, 'text', {
+                    'label': 'ekyna_core.field.title'
+                }) }}
+                {{ show_row(menu.description, 'textarea', {
+                    'label': 'ekyna_core.field.description'
+                }) }}
+                {% if is_granted('ROLE_SUPER_ADMIN') -%}
+                {{ show_row(menu.attributes, 'map', {
+                    'label': 'ekyna_core.field.attributes'
+                }) }}
+                {%- endif %}
                 <hr>
-                {{ show_row(menu.path, 'text', 'ekyna_core.field.url') }}
-                {% if is_granted('ROLE_SUPER_ADMIN') %}
-                    {{ show_row(menu.route, 'text', 'ekyna_core.field.route') }}
-                    {{ show_row(menu.parameters, 'key_value_collection', 'ekyna_core.field.parameters') }}
-                {% endif %}
+                {{ show_row(menu.path, 'text', {
+                    'label': 'ekyna_core.field.url'
+                }) }}
+                {% if is_granted('ROLE_SUPER_ADMIN') -%}
+                    {{ show_row(menu.route, 'text', {
+                        'label':'ekyna_core.field.route'
+                    }) }}
+                    {{ show_row(menu.parameters, 'map', {
+                        'label': 'ekyna_core.field.parameters'
+                    }) }}
+                {%- endif %}
             </div>
         </div>
     </div>

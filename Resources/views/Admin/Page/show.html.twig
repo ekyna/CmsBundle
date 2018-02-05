@@ -28,24 +28,35 @@
     <div class="show-body">
         <div class="tab-content">
             <div class="tab-pane active" id="page-general">
-                {{ show_row(page.name, 'text', 'ekyna_core.field.name') }}
-                {{ show_row(page.parent, 'entity', 'ekyna_core.field.parent', {'field': 'name', 'route': 'ekyna_cms_page_admin_show', 'route_params_map': {'pageId': 'id'}}) }}
-                {{ show_row(page.enabled, 'checkbox', 'ekyna_core.field.enabled') }}
+                {{ show_row(page.name, 'text', {
+                    'label': 'ekyna_core.field.name'
+                }) }}
+                {{ show_row(page.parent, 'entity', {
+                    'label': 'ekyna_core.field.parent',
+                    'field': 'name',
+                    'route': 'ekyna_cms_page_admin_show',
+                    'route_parameters_map': {'pageId': 'id'}
+                }) }}
+                {{ show_row(page.enabled, 'boolean', {
+                    'label': 'ekyna_core.field.enabled'
+                }) }}
 
-                {% if not page.static %}
-                    {{ show_row(cms_page_controller(page.controller), 'text', 'ekyna_cms.page.field.controller') }}
-                {% endif %}
+                {% if not page.static -%}
+                    {{ show_row(cms_page_controller(page.controller), 'text', {
+                        'label': 'ekyna_cms.page.field.controller'
+                    }) }}
+                {%- endif %}
 
-                {% if page.advanced %}
-                    {{ show_translations_row(page.translations, {
+                {% if page.advanced -%}
+                    {{ show_row(page.translations, 'translations', {
                         'fields': {
                             'title': {'label': 'ekyna_core.field.title'},
                             'breadcrumb': {'label': 'ekyna_core.field.breadcrumb'},
                             'path': {'label': 'ekyna_core.field.url'}
                         }
                     }) }}
-                {% else %}
-                    {{ show_translations_row(page.translations, {
+                {%- else -%}
+                    {{ show_row(page.translations, 'translations', {
                         'fields': {
                             'title': {'label': 'ekyna_core.field.title'},
                             'breadcrumb': {'label': 'ekyna_core.field.breadcrumb'},
@@ -53,11 +64,11 @@
                             'html': {
                                 'label': 'ekyna_core.field.content',
                                 'type': 'tinymce',
-                                'content': path('ekyna_cms_page_admin_tinymce', identifiers|merge({'pageId': page.id})),
+                                'value': path('ekyna_cms_page_admin_tinymce', identifiers|merge({'pageId': page.id})),
                             }
                         }
                     }) }}
-                {% endif %}
+                {%- endif %}
             </div>
             <div class="tab-pane" id="page-seo">
                 {{ show_row(page.seo, 'seo') }}

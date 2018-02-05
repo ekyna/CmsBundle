@@ -1,3 +1,12 @@
-{{ show_row(settings.seo.title, 'text', 'ekyna_core.field.title', {'label_nb_col': 3}) }}
-{{ show_row(settings.seo.description, 'text', 'ekyna_core.field.description', {'label_nb_col': 3}) }}
-{{ show_row(settings.seo.locale, 'text', 'ekyna_core.field.locale', {'label_nb_col': 3}) }}
+{{ show_row(settings.seo.title, 'text', {
+    'label': 'ekyna_core.field.title',
+    'label_col': 3
+}) }}
+{{ show_row(settings.seo.description, 'text', {
+    'label': 'ekyna_core.field.description',
+    'label_col': 3
+}) }}
+{{ show_row(settings.seo.locale, 'text', {
+    'label': 'ekyna_core.field.locale',
+    'label_col': 3
+}) }}

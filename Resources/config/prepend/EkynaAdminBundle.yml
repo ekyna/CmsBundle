@@ -13,3 +13,6 @@ ekyna_admin:
                 icon: sitemap
                 target: _blank
                 position: 100
+    show:
+        templates:
+            - EkynaCmsBundle:Show:show_div_layout.html.twig
