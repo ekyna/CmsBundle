@@ -42,6 +42,7 @@ class PageType extends ResourceTableType
                 'position'              => 20,
             ])
             ->addColumn('actions', BType\Column\NestedActionsType::class, [
+                'roots'                 => true,
                 'disable_property_path' => 'locked',
                 'new_child_route'       => 'ekyna_cms_page_admin_new_child',
                 'move_up_route'         => 'ekyna_cms_page_admin_move_up',

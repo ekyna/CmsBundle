@@ -46,6 +46,7 @@ class MenuType extends ResourceTableType
                 'position'              => 30,
             ])
             ->addColumn('actions', BType\Column\NestedActionsType::class, [
+                'roots'                 => true,
                 'disable_property_path' => 'locked',
                 'new_child_route'       => 'ekyna_cms_menu_admin_new_child',
                 'move_up_route'         => 'ekyna_cms_menu_admin_move_up',
