@@ -37,6 +37,18 @@ class EditorController extends BaseController
      */
     public function pagesListAction(Request $request)
     {
+        $repository = $this->get('ekyna_cms.page.repository');
+
+        $lastModifiedAt = $repository->getLastUpdatedAt();
+
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setLastModified($lastModifiedAt);
+
+        if ($response->isNotModified($request)) {
+            return $response;
+        }
+
         $documentLocale = $request->query->get('document_locale', $request->getLocale());
         $list = [];
 
@@ -49,11 +61,7 @@ class EditorController extends BaseController
             $list[] = $this->pageToArray($page, $documentLocale);
         }
 
-        $response = new Response(json_encode($list));
-        $response->headers->set('Content-Type', 'application/json');
-        $response->setMaxAge(3600);
-
-        return $response;
+        return $response->setContent(json_encode($list));
     }
 
     /**
@@ -66,11 +74,15 @@ class EditorController extends BaseController
      */
     private function pageToArray(PageInterface $page, $locale)
     {
+        $tabs = '';
+        for ($l=0; $l<$page->getLevel();$l++) {
+            $tabs .= ' • ';
+        }
+
         return [
-            'value'    => $page->getId(),
-            'title'    => $page->translate($locale)->getTitle(),
-            'disabled' => $page->isDynamicPath(),
-            'data'     => [
+            'value' => $page->getId(),
+            'title' => $tabs . $page->translate($locale)->getTitle(),
+            'data'  => [
                 'locked' => $page->isLocked(),
                 'path'   => $this->generateUrl($page->getRoute(), ['_locale' => $locale]),
             ],

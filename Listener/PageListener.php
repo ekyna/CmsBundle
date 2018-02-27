@@ -9,6 +9,7 @@ use Ekyna\Bundle\SettingBundle\Event\BuildRedirectionEvent;
 use Ekyna\Bundle\SettingBundle\Event\DiscardRedirectionEvent;
 use Ekyna\Bundle\SettingBundle\Event\RedirectionEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class PageListener
@@ -25,6 +26,11 @@ class PageListener
     private $dispatcher;
 
     /**
+     * @var RouterInterface|\JMS\I18nRoutingBundle\Router\I18nRouter
+     */
+    private $router;
+
+    /**
      * @var array
      */
     private $pageConfig;
@@ -34,17 +40,28 @@ class PageListener
      */
     private $locales;
 
+    /**
+     * @var \Symfony\Component\Routing\RouteCollection
+     */
+    private $routes;
+
 
     /**
      * Constructor.
      *
      * @param EventDispatcherInterface $dispatcher
+     * @param RouterInterface          $router
      * @param array                    $pageConfig
      * @param array                    $locales
      */
-    public function __construct(EventDispatcherInterface $dispatcher, array $pageConfig, array $locales)
-    {
+    public function __construct(
+        EventDispatcherInterface $dispatcher,
+        RouterInterface $router,
+        array $pageConfig,
+        array $locales
+    ) {
         $this->dispatcher = $dispatcher;
+        $this->router = $router;
         $this->pageConfig = $pageConfig;
         $this->locales = $locales;
     }
@@ -152,13 +169,46 @@ class PageListener
      */
     private function hasDynamicPath(PageInterface $page)
     {
-        foreach ($this->locales as $locale) {
-            if (0 < preg_match('~\{.*\}~', $page->translate($locale)->getPath())) {
-                return true;
+        if (empty($route = $page->getRoute())) {
+            return false;
+        }
+
+        if (null === $route = $this->findRoute($route)) {
+            return false;
+        }
+
+        if (preg_match_all('~\{([^\}]+)\}~', $route->getPath(), $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                // If route parameter does not have a default value
+                if (!array_key_exists($match[1], $route->getDefaults())) {
+                    return true;
+                }
             }
         }
 
+
         return false;
+    }
+
+    /**
+     * Finds the route for the given name.
+     *
+     * @param string $name
+     *
+     * @return \Symfony\Component\Routing\Route|null
+     */
+    private function findRoute($name)
+    {
+        if (null === $this->routes) {
+            $i18nRouterClass = 'JMS\I18nRoutingBundle\Router\I18nRouterInterface';
+            if (interface_exists($i18nRouterClass) && $this->router instanceof $i18nRouterClass) {
+                $this->routes = $this->router->getOriginalRouteCollection();
+            } else {
+                $this->routes = $this->router->getRouteCollection();
+            }
+        }
+
+        return $this->routes->get($name);
     }
 
     /**

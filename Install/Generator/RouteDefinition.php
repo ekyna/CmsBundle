@@ -40,6 +40,11 @@ class RouteDefinition
     protected $advanced;
 
     /**
+     * @var boolean
+     */
+    protected $dynamic;
+
+    /**
      * @var integer
      */
     protected $position = 0;
@@ -59,6 +64,7 @@ class RouteDefinition
      */
     protected $children;
 
+
     /**
      * Constructor
      *
@@ -77,6 +83,7 @@ class RouteDefinition
         $this->path     = '/'.trim($options['path'], '/');
         $this->locked   = $options['locked'];
         $this->advanced = $options['advanced'];
+        $this->dynamic  = $options['dynamic'];
         $this->position = $options['position'];
         $this->seo      = $options['seo'];
         $this->menus    = $options['menus'];
@@ -164,6 +171,30 @@ class RouteDefinition
     public function setAdvanced($advanced)
     {
         $this->advanced = (bool)$advanced;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether page has a dynamic path (with parameters).
+     *
+     * @return bool
+     */
+    public function isDynamic()
+    {
+        return $this->dynamic;
+    }
+
+    /**
+     * Sets whether page has a dynamic path (with parameters).
+     *
+     * @param bool $dynamic
+     *
+     * @return RouteDefinition
+     */
+    public function setDynamic($dynamic)
+    {
+        $this->dynamic = (bool)$dynamic;
 
         return $this;
     }

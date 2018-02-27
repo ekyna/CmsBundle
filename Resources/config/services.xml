@@ -115,6 +115,7 @@
                  class="Ekyna\Bundle\CmsBundle\Listener\PageListener"
                  public="false">
             <argument id="event_dispatcher" type="service"/>
+            <argument id="router" type="service"/>
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%locales%</argument>
             <tag name="doctrine.orm.entity_listener"/>

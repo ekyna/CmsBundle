@@ -848,6 +848,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
             left: origin.left + this.model.get('origin').left,
         });
 
+        // noinspection TypeScriptValidateTypes
         return this;
     }
 
@@ -871,6 +872,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
         this.$('.dropdown-toggle').dropdown();
         this.$('select').select2({width: "resolve"});
 
+        // noinspection TypeScriptValidateTypes
         return this;
     }
 
@@ -879,6 +881,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
 
         super.remove();
 
+        // noinspection TypeScriptValidateTypes
         return this;
     }
 }

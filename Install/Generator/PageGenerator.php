@@ -135,7 +135,6 @@ class PageGenerator
          * Seo options
          */
         $seoOptionResolver = new OptionsResolver();
-        /** @noinspection PhpUnusedParameterInspection */
         $seoOptionResolver
             ->setDefaults([
                 'changefreq' => 'monthly',
@@ -177,7 +176,6 @@ class PageGenerator
          * Page options
          */
         $this->optionsResolver = new OptionsResolver();
-        /** @noinspection PhpUnusedParameterInspection */
         $this->optionsResolver
             ->setDefaults([
                 'name'     => null,
@@ -185,6 +183,7 @@ class PageGenerator
                 'parent'   => null,
                 'locked'   => true,
                 'advanced' => false,
+                'dynamic' => false,
                 'position' => 0,
                 'seo'      => null,
                 'menus'    => [],
@@ -195,6 +194,7 @@ class PageGenerator
             ->setAllowedTypes('parent', ['string', 'null'])
             ->setAllowedTypes('locked', 'bool')
             ->setAllowedTypes('advanced', 'bool')
+            ->setAllowedTypes('dynamic', 'bool')
             ->setAllowedTypes('position', 'int')
             ->setAllowedTypes('seo', ['null', 'array'])
             ->setAllowedTypes('menus', 'array')
@@ -221,6 +221,7 @@ class PageGenerator
                         }
                     }
                 }
+
                 return $normalized;
             })
             ->setNormalizer('seo', function (Options $options, $value) use ($seoOptionResolver) {
@@ -243,7 +244,23 @@ class PageGenerator
             throw new \InvalidArgumentException(sprintf('Route "%s" does not have "_cms" defaults attributes.', $routeName));
         }
 
-        return $this->optionsResolver->resolve(array_merge($cmsOptions, ['path' => $route->getPath()]));
+        $path = $route->getPath();
+
+        $dynamic = false;
+        if (preg_match_all('~\{([^\}]+)\}~', $path, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                // If route parameter does not have a default value
+                if (!array_key_exists($match[1], $route->getDefaults())) {
+                    $dynamic = true;
+                    break;
+                }
+            }
+        }
+
+        return $this->optionsResolver->resolve(array_merge($cmsOptions, [
+            'path'    => $path,
+            'dynamic' => $dynamic,
+        ]));
     }
 
     /**
@@ -369,9 +386,12 @@ class PageGenerator
                 $page->setAdvanced($definition->isAdvanced());
                 $updated = true;
             }
+            if ($page->isDynamicPath() !== $definition->isDynamic()) {
+                $page->setDynamicPath($definition->isDynamic());
+                $updated = true;
+            }
 
             // Watch for paths update
-            $dynamic = false;
             foreach ($this->locales as $locale) {
                 if ($routeName === $path = $this->translator->trans(
                         $routeName, [], $this->routesTranslationDomain, $locale
@@ -385,15 +405,6 @@ class PageGenerator
                     $pageTranslation->setPath($path);
                     $updated = true;
                 }
-
-                if (0 < preg_match('~\{.*\}~', $path)) {
-                    $dynamic = true;
-                }
-            }
-
-            if ($dynamic != $page->isDynamicPath()) {
-                $page->setDynamicPath($dynamic);
-                $updated = true;
             }
 
             if ($updated) {
@@ -519,10 +530,10 @@ class PageGenerator
                         ->setRoute($name);
 
                     if (isset($config['options'])) {
-                        $menu->setOptions((array) $config['options']);
+                        $menu->setOptions((array)$config['options']);
                     }
                     if (isset($config['attributes'])) {
-                        $menu->setAttributes((array) $config['attributes']);
+                        $menu->setAttributes((array)$config['attributes']);
                     }
 
                     foreach ($this->locales as $locale) {

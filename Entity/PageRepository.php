@@ -19,6 +19,29 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
 
 
     /**
+     * Returns the last updated at date time.
+     *
+     * @return \DateTime|null
+     */
+    public function getLastUpdatedAt()
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $date = $qb
+            ->select('p.updatedAt')
+            ->addOrderBy('p.updatedAt', 'DESC')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getSingleScalarResult();
+
+        if (null !== $date) {
+            return new \DateTime($date);
+        }
+
+        return null;
+    }
+
+    /**
      * Finds a page by request.
      *
      * @param string $routeName
