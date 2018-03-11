@@ -87,6 +87,9 @@ class PageElasticaSubscriber implements EventSubscriber
     private function handleEntity($entity)
     {
         if (null !== $page = $this->findRelatedPage($entity)) {
+            if (null === $page->getId()) {
+                return;
+            }
             if (!$this->pages->contains($page)) {
                 $this->pages->add($page);
             }
@@ -107,24 +110,25 @@ class PageElasticaSubscriber implements EventSubscriber
         }
 
         // By Seo
-        if ($entity instanceof Cms\SeoTranslationInterface) {
+        if ($entity instanceof Cms\SeoTranslationInterface && null !== $entity->getId()) {
             return $this->manager
-                ->createQuery(sprintf('SELECT p FROM %s p WHERE p.seo = :seo', $this->pageClass))
+                ->createQuery("SELECT p FROM {$this->pageClass} p WHERE p.seo = :seo")
                 ->setMaxResults(1)
                 ->setParameter('seo', $entity->getTranslatable())
                 ->getOneOrNullResult();
         }
 
         // By Content
+        /** @var \Ekyna\Bundle\CmsBundle\Editor\Model\ContentInterface $content */
         $content = null;
 //       TODO if ($entity instanceof Cms\BlockTranslationInterface) {
 //            /** @var Cms\BlockInterface $block */
 //            $block = $entity->getTranslatable();
 //            $content = $block->getContent();
 //        }
-        if (null !== $content) {
+        if (null !== $content && null !== $content->getId()) {
             return $this->manager
-                ->createQuery(sprintf('SELECT p FROM %s p WHERE p.content = :content', $this->pageClass))
+                ->createQuery("SELECT p FROM {$this->pageClass} p WHERE p.content = :content")
                 ->setMaxResults(1)
                 ->setParameter('content', $content)
                 ->getOneOrNullResult();
