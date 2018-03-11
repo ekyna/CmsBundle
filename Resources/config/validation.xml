@@ -360,6 +360,15 @@
                 <option name="max">32</option>
             </constraint>
         </property>
+        <!--<property name="icon">
+            <constraint name="Length">
+                <option name="max">32</option>
+            </constraint>
+            <constraint name="Callback">
+                <value>Ekyna\Bundle\CoreBundle\Model\FAIcons</value>
+                <value>isValid</value>
+            </constraint>
+        </property>-->
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
             <option name="fields">
                 <value>name</value>

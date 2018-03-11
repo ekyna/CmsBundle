@@ -22,7 +22,7 @@
         </id>
 
         <field name="name" type="string" column="name" length="32" />
-        <field name="icon" type="string" column="icon" length="16" nullable="true" />
+        <field name="icon" type="string" column="icon" length="32" nullable="true" />
         <field name="theme" type="string" column="theme" length="16" />
 
     </mapped-superclass>
