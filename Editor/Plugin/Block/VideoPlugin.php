@@ -179,12 +179,4 @@ class VideoPlugin extends AbstractPlugin
     {
         return static::NAME;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function getJavascriptFilePath()
-    {
-        return 'ekyna-cms/editor/plugin/block/video';
-    }
 }

@@ -33,6 +33,15 @@
 {% endblock ekyna_cms_block_feature_widget %}
 
 
+{% block ekyna_cms_block_template_widget %}
+{% spaceless %}
+    {{ form_errors(form) }}
+    {{ form_row(form.content, {'label_col': 3, 'widget_col': 9}) }}
+    {{ form_rest(form) }}
+{% endspaceless %}
+{% endblock ekyna_cms_block_template_widget %}
+
+
 {% block ekyna_cms_block_image_widget %}
 {% spaceless %}
     {{ form_errors(form) }}

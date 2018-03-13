@@ -107,7 +107,6 @@ class TinymcePlugin extends AbstractPlugin
         return $view;
     }
 
-
     /**
      * @inheritdoc
      */

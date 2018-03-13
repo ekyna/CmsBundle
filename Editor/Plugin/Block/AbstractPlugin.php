@@ -106,4 +106,12 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
     {
         return $block->getType() === $this->getName();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getJavascriptFilePath()
+    {
+        return 'ekyna-cms/editor/plugin/block/default';
+    }
 }

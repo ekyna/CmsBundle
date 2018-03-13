@@ -4,9 +4,9 @@ import {BasePlugin} from '../base-plugin';
 import {BlockManager} from '../../document-manager';
 
 /**
- * VideoPlugin
+ * DefaultPlugin
  */
-class VideoPlugin extends BasePlugin {
+class DefaultPlugin extends BasePlugin {
     edit() {
         super.edit();
 
@@ -14,5 +14,5 @@ class VideoPlugin extends BasePlugin {
     }
 }
 
-export = VideoPlugin;
+export = DefaultPlugin;
 

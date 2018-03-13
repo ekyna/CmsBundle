@@ -257,7 +257,9 @@
         </service>
 
         <!-- Web Editor block plugins -->
-        <service id="ekyna_cms.editor.block_plugin.abstract" abstract="true">
+        <service id="ekyna_cms.editor.block_plugin.abstract"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\AbstractPlugin"
+                 abstract="true">
             <call method="setUrlGenerator">
                 <argument type="service" id="router"/>
             </call>
@@ -300,9 +302,19 @@
             <argument>%ekyna_cms.editor.block_plugin.feature.config%</argument>
             <tag name="ekyna_cms.editor.block_plugin"/>
         </service>
+        <service id="ekyna_cms.editor.block_plugin.template"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\TemplatePlugin"
+                 parent="ekyna_cms.editor.block_plugin.abstract"
+                 public="false">
+            <argument type="service" id="templating"/>
+            <argument>%ekyna_cms.editor.block_plugin.template.config%</argument>
+            <tag name="ekyna_cms.editor.block_plugin"/>
+        </service>
 
         <!-- Web Editor container plugins -->
-        <service id="ekyna_cms.editor.container_plugin.abstract" abstract="true">
+        <service id="ekyna_cms.editor.container_plugin.abstract"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Container\AbstractPlugin"
+                 abstract="true">
             <call method="setUrlGenerator">
                 <argument type="service" id="router"/>
             </call>
