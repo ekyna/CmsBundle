@@ -38,6 +38,7 @@ class Configuration implements ConfigurationInterface
         $this->addMenuSection($rootNode);
         $this->addEditorSection($rootNode);
         $this->addSlideShowSection($rootNode);
+        $this->addSchemaOrgSection($rootNode);
         $this->addPoolsSection($rootNode);
 
         return $treeBuilder;
@@ -176,6 +177,29 @@ class Configuration implements ConfigurationInterface
                                     ->variableNode('config')->end()
                                 ->end()
                             ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * Adds `schema.org` section.
+     *
+     * @param ArrayNodeDefinition $node
+     */
+    private function addSchemaOrgSection(ArrayNodeDefinition $node)
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $node
+            ->children()
+                ->arrayNode('schema_org')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('provider')
+                            ->defaultValue([])
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')->end()
                         ->end()
                     ->end()
                 ->end()

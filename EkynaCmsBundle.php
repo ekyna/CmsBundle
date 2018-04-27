@@ -25,6 +25,7 @@ class EkynaCmsBundle extends AbstractBundle
         $container->addCompilerPass(new Pass\AdminMenuPass());
         $container->addCompilerPass(new Pass\EditorPluginPass());
         $container->addCompilerPass(new Pass\WideSearchProviderPass());
+        $container->addCompilerPass(new Pass\SchemaOrgProviderPass());
     }
 
     /**
@@ -45,3 +46,4 @@ class EkynaCmsBundle extends AbstractBundle
         ];
     }
 }
+

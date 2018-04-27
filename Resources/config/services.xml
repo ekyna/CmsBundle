@@ -394,27 +394,17 @@
             <tag name="serializer.denormalizer"/>
         </service>
 
-        <!-- Twig extensions -->
-        <service id="ekyna_cms.twig.cms_extension"
-                 class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
-            <argument type="service" id="ekyna_setting.manager"/>
-            <argument type="service" id="ekyna_cms.menu.menu_provider"/>
-            <argument type="service" id="knp_menu.helper"/>
-            <argument type="service" id="ekyna_cms.helper.page"/>
-            <argument type="service" id="ekyna_cms.seo.repository"/>
-            <argument type="service" id="ekyna_core.cache.tag_manager"/>
-            <argument type="service" id="fragment.handler"/>
-            <argument type="collection"/>
-            <tag name="twig.extension"/>
+        <!-- Schema.org provider registry -->
+        <service id="ekyna_cms.schema_org.provider_registry"
+                 class="Ekyna\Bundle\CmsBundle\Service\SchemaOrg\Registry"
+                 lazy="true">
+            <argument type="collection"/><!-- Replaced by di extension -->
         </service>
-        <service id="ekyna_cms.twig.editor_extension"
-                 class="Ekyna\Bundle\CmsBundle\Twig\EditorExtension">
-            <argument type="service" id="doctrine.orm.default_entity_manager"/>
-            <argument type="service" id="ekyna_cms.editor.editor"/>
-            <argument type="service" id="ekyna_cms.helper.page"/>
-            <argument type="service" id="ekyna_core.cache.tag_manager"/>
-            <argument type="collection"/>
-            <tag name="twig.extension"/>
+
+        <!-- Schema.org builder -->
+        <service id="ekyna_cms.schema_org.builder"
+                 class="Ekyna\Bundle\CmsBundle\Service\SchemaOrg\Builder">
+            <argument type="service" id="ekyna_cms.schema_org.provider_registry"/>
         </service>
 
         <!-- Validators -->
@@ -456,14 +446,6 @@
             <argument type="service" id="ekyna_cms.slide_show.registry"/>
         </service>
 
-        <!-- Slide show twig extension -->
-        <service id="ekyna_cms.twig.slide_show_extension"
-                 class="Ekyna\Bundle\CmsBundle\Twig\SlideShowExtension">
-            <argument type="service" id="ekyna_cms.slide_show.renderer"/>
-            <argument type="service" id="ekyna_cms.slide_show.repository"/>
-            <tag name="twig.extension"/>
-        </service>
-
         <!-- Slide form types -->
         <service id="ekyna_cms.slide.form_type"
                  class="Ekyna\Bundle\CmsBundle\Form\Type\SlideType">
@@ -490,6 +472,40 @@
                  class="Ekyna\Bundle\CmsBundle\Form\Type\Slide\ImageType">
             <argument type="service" id="ekyna_media.media.repository"/>
             <tag name="form.type"/>
+        </service>
+
+        <!-- Twig extensions -->
+        <service id="ekyna_cms.twig.cms_extension"
+                 class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
+            <argument type="service" id="ekyna_setting.manager"/>
+            <argument type="service" id="ekyna_cms.menu.menu_provider"/>
+            <argument type="service" id="knp_menu.helper"/>
+            <argument type="service" id="ekyna_cms.helper.page"/>
+            <argument type="service" id="ekyna_cms.seo.repository"/>
+            <argument type="service" id="ekyna_core.cache.tag_manager"/>
+            <argument type="service" id="fragment.handler"/>
+            <argument type="collection"/>
+            <tag name="twig.extension"/>
+        </service>
+        <service id="ekyna_cms.twig.editor_extension"
+                 class="Ekyna\Bundle\CmsBundle\Twig\EditorExtension">
+            <argument type="service" id="doctrine.orm.default_entity_manager"/>
+            <argument type="service" id="ekyna_cms.editor.editor"/>
+            <argument type="service" id="ekyna_cms.helper.page"/>
+            <argument type="service" id="ekyna_core.cache.tag_manager"/>
+            <argument type="collection"/>
+            <tag name="twig.extension"/>
+        </service>
+        <service id="ekyna_cms.twig.slide_show_extension"
+                 class="Ekyna\Bundle\CmsBundle\Twig\SlideShowExtension">
+            <argument type="service" id="ekyna_cms.slide_show.renderer"/>
+            <argument type="service" id="ekyna_cms.slide_show.repository"/>
+            <tag name="twig.extension"/>
+        </service>
+        <service id="ekyna_cms.twig.schema_extension"
+                 class="Ekyna\Bundle\CmsBundle\Twig\SchemaOrgExtension">
+            <argument type="service" id="ekyna_cms.schema_org.builder"/>
+            <tag name="twig.extension"/>
         </service>
     </services>
 

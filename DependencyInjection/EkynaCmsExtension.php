@@ -62,6 +62,12 @@ class EkynaCmsExtension extends AbstractExtension
                 'page'       => $config['page'],
             ]);
 
+        // SchemaOrg provider classes config
+        $providerClasses = $config['schema_org']['provider'];
+        $container
+            ->getDefinition('ekyna_cms.schema_org.provider_registry')
+            ->addMethodCall('registerClass', [$providerClasses]);
+
         // Social buttons bundle bridge
         $bundles = $container->getParameter('kernel.bundles');
         if (array_key_exists('EkynaSocialButtonsBundle', $bundles)) {
