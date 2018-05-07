@@ -25,8 +25,8 @@ class SlideShowController extends Controller
         $response = new JsonResponse($config);
         $response
             ->setPublic()
-            ->setMaxAge(3600 * 6)
-            ->setSharedMaxAge(3600 * 6);
+            ->setMaxAge(3600 * 24 * 30)
+            ->setSharedMaxAge(3600 * 24 * 30);
 
         return $response;
     }

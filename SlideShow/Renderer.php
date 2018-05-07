@@ -45,9 +45,9 @@ class Renderer implements RendererInterface
         $dom = new \DOMDocument();
 
         $options = array_replace([
-            'javascript' => true,
             'ui'         => true,
             'auto'       => true,
+            'javascript' => false,
             'debug'      => false,
         ], $options);
 
@@ -88,19 +88,19 @@ class Renderer implements RendererInterface
             return in_array($key, ['ui', 'auto', 'debug']);
         }, ARRAY_FILTER_USE_KEY);
 
+        $config['id'] = $id;
+
+        $jsonConfig = json_encode($config, JSON_FORCE_OBJECT);
+
         if (!$options['javascript']) {
-            $global->setAttribute('data-config', json_encode($config, JSON_FORCE_OBJECT));
+            $global->setAttribute('data-config', $jsonConfig);
         }
 
         $html = $dom->saveHTML();
 
         if ($options['javascript']) {
-            $config['id'] = $id;
-            $jsonConfig = json_encode($config, JSON_FORCE_OBJECT);
-
             $html .= <<<EOT
-<script type="text/javascript">
-    require(['ekyna-cms/slide-show'], function (SlideShow) {
+<script type="text/javascript">require(['ekyna-cms/slide-show'], function (SlideShow) {
         SlideShow.create($jsonConfig);
     });
 </script>
