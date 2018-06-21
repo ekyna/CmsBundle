@@ -23,6 +23,9 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
 
     const NAME = 'ekyna_block_feature';
 
+    const DEFAULT_HTML_MAX_WIDTH = '150px';
+    const DEFAULT_HTML_MARGIN_TOP = '20px';
+
 
     /**
      * Constructor.
@@ -46,7 +49,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
         parent::create($block, $data);
 
         $this->getImagePlugin()->create($block, array_merge($data, [
-            'max_width' => '150px',
+            'max_width' => static::DEFAULT_HTML_MAX_WIDTH,
         ]));
         $this->getHtmlPlugin()->create($block, $data);
 
@@ -56,7 +59,8 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             'duration' => 400,
             'once'     => false,
         ]);
-        $block->setData('html_max_width', '150px');
+        $block->setData('html_max_width', static::DEFAULT_HTML_MAX_WIDTH);
+        $block->setData('html_margin_top', static::DEFAULT_HTML_MARGIN_TOP);
     }
 
     /**
@@ -178,6 +182,13 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
         $overrideAttributes($widget->getAttributes(), 'html');
         if (isset($data['html_max_width'])) {
             $widget->getAttributes()->addStyle('max-width', $data['html_max_width']);
+        } else {
+            $widget->getAttributes()->addStyle('max-width', static::DEFAULT_HTML_MAX_WIDTH);
+        }
+        if (isset($data['html_margin_top'])) {
+            $widget->getAttributes()->addStyle('margin-top', $data['html_margin_top']);
+        } else {
+            $widget->getAttributes()->addStyle('margin-top', static::DEFAULT_HTML_MARGIN_TOP);
         }
         $view->widgets[] = $widget;
     }

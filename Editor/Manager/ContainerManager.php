@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Manager;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
 use Ekyna\Bundle\CmsBundle\Editor\Model;
+use Ekyna\Bundle\CmsBundle\Editor\Plugin\Container\CopyPlugin;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -60,12 +61,13 @@ class ContainerManager extends AbstractManager
         $container->setType($type);
 
         // Plugin creation
-        $this->editor
-            ->getContainerPlugin($type)
-            ->create($container, $data);
+        $plugin = $this->editor->getContainerPlugin($type);
+        $plugin->create($container, $data);
 
         // Create default row
-        $this->editor->getRowManager()->create($container);
+        if (!$plugin instanceof CopyPlugin) {
+            $this->editor->getRowManager()->create($container);
+        }
 
         // Add to container if available
         if ($contentOrName instanceof Model\ContentInterface) {
@@ -86,7 +88,6 @@ class ContainerManager extends AbstractManager
      * @param Request                  $request
      *
      * @return \Symfony\Component\HttpFoundation\Response|null
-     * @throws InvalidOperationException
      */
     public function update(Model\ContainerInterface $container, Request $request)
     {
@@ -103,32 +104,58 @@ class ContainerManager extends AbstractManager
      * @param string                   $type      The container new type
      * @param array                    $data      The container new data
      *
+     * @return string[] The removed elements
+     *
      * @throws InvalidOperationException
      */
     public function changeType(Model\ContainerInterface $container, $type, array $data = [])
     {
         if ($type === $container->getType()) {
-            return;
+            return [];
         }
 
-        if ($container->isNamed()) {
+        if ($container->isNamed() || $container->isTitled()) {
             throw new InvalidOperationException(
                 "The type of this container can't be changed."
             );
         }
 
+        $viewBuilder = $this->editor->getViewBuilder();
+
+        $removed = [];
+
+        $fromPlugin = $this->editor->getContainerPlugin($container->getType());
+        $toPlugin = $this->editor->getContainerPlugin($type);
+
+        // If we switch from Copy plugin and a copied container is set
+        if ($fromPlugin instanceof CopyPlugin && null !== $copy = $container->getCopy()) {
+            // Fake copied's inner container
+            $removed[] = $viewBuilder->buildContainer($copy)->getInnerAttributes()->getId();
+        }
+
         // Plugin removal
-        $this->editor
-            ->getContainerPlugin($container->getType())
-            ->remove($container);
+        $fromPlugin->remove($container);
 
         // Sets the new type
         $container->setType($type);
 
+        // If we are switching to Copy plugin
+        if ($toPlugin instanceof CopyPlugin) {
+            // Remove previous rows (as we'll display the copied container's ones)
+            foreach ($container->getRows() as $row) {
+                $removed[] = $viewBuilder->buildRow($row)->getAttributes()->getId();
+                $this->editor->getRowManager()->delete($row, true);
+            }
+        }
+        // Create default row and block if switching to any but 'any' plugin
+        elseif (0 == $container->getRows()->count()) {
+            $this->editor->getRowManager()->create($container);
+        }
+
         // Plugin creation
-        $this->editor
-            ->getContainerPlugin($container->getType())
-            ->create($container, $data);
+        $toPlugin->create($container, $data);
+
+        return $removed;
     }
 
     /**
@@ -142,7 +169,7 @@ class ContainerManager extends AbstractManager
     public function delete(Model\ContainerInterface $container)
     {
         // Ensure not named / alone
-        if ($container->isAlone() || $container->isNamed()) {
+        if ($container->isAlone() || $container->isNamed() || $container->isTitled()) {
             throw new InvalidOperationException(
                 "The container can't be removed because it is named or the parent content does not have enough children."
             );

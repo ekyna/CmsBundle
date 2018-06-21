@@ -58,6 +58,9 @@ class ViewBuilder implements EditorAwareInterface
      */
     public function buildContainer(Model\ContainerInterface $container)
     {
+        // Rendering source (for copy containers)
+        $source = is_null($container->getCopy()) ? $container : $container->getCopy();
+
         $view = new ContainerView();
         $attributes = $view->getAttributes()->addClass('cms-container');
         $innerAttributes = $view->getInnerAttributes()->addClass('cms-inner-container');
@@ -73,10 +76,10 @@ class ViewBuilder implements EditorAwareInterface
                     'position' => $container->getPosition(),
                     'type'     => $container->getType(),
                     'actions'  => [
-                        'add'         => null !== $content,
+                        'add'         => !is_null($content),
                         'edit'        => true,
-                        'layout'      => true,
-                        'change_type' => !$container->isNamed(),
+                        'layout'      => is_null($container->getCopy()),
+                        'change_type' => !$container->isNamed() && !$container->isTitled(),
                         'move_up'     => !$container->isFirst(),
                         'move_down'   => !$container->isLast(),
                         'remove'      => !$container->isAlone(),
@@ -84,18 +87,22 @@ class ViewBuilder implements EditorAwareInterface
                 ]);
 
             // Inner container
-            $innerAttributes->setId('cms-inner-container-' . $container->getId());
+            $innerAttributes
+                ->setId('cms-inner-container-' . $source->getId())
+                ->setData([
+                    'id' => $source->getId(),
+                ]);
         }
 
         // Layout
-        $this->editor->getLayoutAdapter()->buildContainer($container, $view);
+        $this->editor->getLayoutAdapter()->buildContainer($source, $view);
 
         // Plugin
-        $this->editor->getContainerPlugin($container->getType())->render($container, $view);
+        $this->editor->getContainerPlugin($source->getType())->render($source, $view);
 
         // Don't build rows if the plugin did generate a content
         if (0 == strlen($view->innerContent)) {
-            foreach ($container->getRows() as $row) {
+            foreach ($source->getRows() as $row) {
                 $view->rows[] = $this->buildRow($row);
             }
         }
@@ -124,7 +131,7 @@ class ViewBuilder implements EditorAwareInterface
                     'id'       => $row->getId(),
                     'position' => $row->getPosition(),
                     'actions'  => [
-                        'add'       => null !== $container,
+                        'add'       => !is_null($container),
                         //'edit'         => true,
                         'layout'    => true,
                         //'change_type'  => !$row->isNamed(),
@@ -169,7 +176,7 @@ class ViewBuilder implements EditorAwareInterface
                     'type'     => $block->getType(),
                     'position' => $block->getPosition(),
                     'actions'  => [
-                        'add'         => null !== $row,
+                        'add'         => !is_null($row),
                         'edit'        => false,
                         'layout'      => true,
                         'change_type' => !$block->isNamed(),

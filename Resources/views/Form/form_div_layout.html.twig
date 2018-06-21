@@ -26,6 +26,7 @@
 {% spaceless %}
     {{ form_errors(form) }}
     {{ form_row(form.html_max_width, {'label_col': 3, 'widget_col': 9}) }}
+    {{ form_row(form.html_margin_top, {'label_col': 3, 'widget_col': 9}) }}
     <hr>
     {{ form_row(form.animation, {'widget_col': 12}) }}
     {{ form_rest(form) }}

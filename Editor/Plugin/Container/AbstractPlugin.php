@@ -81,4 +81,12 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
 
         return $modal;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getJavascriptFilePath()
+    {
+        return 'ekyna-cms/editor/plugin/container/default';
+    }
 }

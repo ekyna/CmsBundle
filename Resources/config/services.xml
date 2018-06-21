@@ -322,6 +322,13 @@
                 <argument type="service" id="form.factory"/>
             </call>
         </service>
+        <service id="ekyna_cms.editor.container_plugin.copy"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Container\CopyPlugin"
+                 parent="ekyna_cms.editor.container_plugin.abstract"
+                 public="false">
+            <argument type="collection"/><!-- No need for config -->
+            <tag name="ekyna_cms.editor.container_plugin"/>
+        </service>
         <service id="ekyna_cms.editor.container_plugin.background"
                  class="Ekyna\Bundle\CmsBundle\Editor\Plugin\Container\BackgroundPlugin"
                  parent="ekyna_cms.editor.container_plugin.abstract"
@@ -330,6 +337,18 @@
             <argument type="service" id="ekyna_media.media.repository"/>
             <argument type="service" id="ekyna_media.renderer"/>
             <tag name="ekyna_cms.editor.container_plugin"/>
+        </service>
+
+        <!-- Web editor form types -->
+        <service id="ekyna_cms.editor.container.base.form_type"
+                 class="Ekyna\Bundle\CmsBundle\Form\Type\Editor\BaseContainerType">
+            <argument>%ekyna_cms.container.class%</argument>
+            <tag name="form.type"/>
+        </service>
+        <service id="ekyna_cms.editor.container.copy.form_type"
+                 class="Ekyna\Bundle\CmsBundle\Form\Type\Editor\CopyContainerType">
+            <argument>%ekyna_cms.container.class%</argument>
+            <tag name="form.type"/>
         </service>
 
         <!-- Menus -->
@@ -428,6 +447,7 @@
         <service id="ekyna_cms.container.validator"
                  class="Ekyna\Bundle\CmsBundle\Validator\Constraints\ContainerValidator">
             <argument type="service" id="ekyna_cms.editor.plugin_registry"/>
+            <argument type="service" id="ekyna_cms.container.repository"/>
             <tag name="validator.constraint_validator"/>
         </service>
         <service id="ekyna_cms.slide.validator"

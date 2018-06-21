@@ -34,6 +34,22 @@ interface ContainerInterface
     public function getContent();
 
     /**
+     * Sets the copied container.
+     *
+     * @param ContainerInterface $copy
+     *
+     * @return ContainerInterface
+     */
+    public function setCopy(ContainerInterface $copy = null);
+
+    /**
+     * Returns the copied container.
+     *
+     * @return ContainerInterface
+     */
+    public function getCopy();
+
+    /**
      * Sets the name.
      *
      * @param string $name
@@ -48,6 +64,22 @@ interface ContainerInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * Sets the title.
+     *
+     * @param string $title
+     *
+     * @return ContainerInterface|$this
+     */
+    public function setTitle($title);
+
+    /**
+     * Returns the title.
+     *
+     * @return string
+     */
+    public function getTitle();
 
     /**
      * Sets the type.
@@ -126,4 +158,11 @@ interface ContainerInterface
      * @return boolean
      */
     public function isNamed();
+
+    /**
+     * Returns whether or not the container is titled.
+     *
+     * @return boolean
+     */
+    public function isTitled();
 }

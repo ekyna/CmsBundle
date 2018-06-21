@@ -83,7 +83,7 @@ interface ContainerData {
     attributes: ElementAttributes
     inner_attributes: ElementAttributes
     content: string
-    innerContent: string
+    inner_content: string
     rows: Array<RowData>
 }
 interface ContentData {
@@ -223,9 +223,9 @@ export class BaseManager {
     }
 
     static generateUrl(route: string, params?: RouteParams) {
-        return Router.generate(route, _.extend({}, params || {}, {
+        return Router.generate(route, _.extend({}, {
             _document_locale: BaseManager.getDocumentLocale()
-        }));
+        }, params || {}));
     }
 
     static request(settings: JQueryAjaxSettings): JQueryXHR {
@@ -327,9 +327,9 @@ export class ContentManager {
         if (!id) {
             throw 'Invalid id';
         }
-        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
+        return BaseManager.generateUrl(route, _.extend({}, {
             contentId: id
-        }));
+        }, params || {}));
     }
 
     static request($container: JQuery, route: string, params?: RouteParams, settings?: JQueryAjaxSettings): JQueryXHR {
@@ -360,17 +360,24 @@ export class ContainerManager {
                 $container.html(content).append($innerContainer);
             }
 
+            $innerContainer = $container.find('> .cms-inner-container');
             if (container.hasOwnProperty('inner_attributes')) {
+                $innerContainer.each(function(index: number, element: Element) {
+                    if ($(element).attr('id') !== container.inner_attributes['id']) {
+                        $(element).remove();
+                    }
+                });
+
                 $innerContainer = BaseManager.findOrCreateElement(container.inner_attributes['id'], $container);
                 BaseManager.setElementAttributes($innerContainer, container.inner_attributes);
-            } else {
-                $innerContainer = $container.find('> .cms-inner-container');
             }
 
-            let innerContent: string = container.hasOwnProperty('innerContent') ? container.innerContent : null;
+            let innerContent: string = container.hasOwnProperty('inner_content') ? container.inner_content : null;
             if (innerContent && 0 < innerContent.length) {
                 $innerContainer.html(innerContent);
             } else {
+                $innerContainer.empty();
+
                 // Parse children (if no inner content)
                 if (container.hasOwnProperty('rows')) {
                     RowManager.parse(container.rows, $innerContainer);
@@ -392,9 +399,9 @@ export class ContainerManager {
         if (!id) {
             throw 'Invalid id';
         }
-        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
+        return BaseManager.generateUrl(route, _.extend({}, {
             containerId: id
-        }));
+        }, params || {}));
     }
 
     static request($container: JQuery, route: string, params?: RouteParams, settings?: JQueryAjaxSettings): JQueryXHR {
@@ -464,9 +471,9 @@ export class RowManager {
         if (!id) {
             throw 'Invalid id';
         }
-        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
+        return BaseManager.generateUrl(route, _.extend({}, {
             rowId: id
-        }));
+        }, params || {}));
     }
 
     static request($row: JQuery, route: string, params?: RouteParams, settings?: JQueryAjaxSettings): JQueryXHR {
@@ -528,10 +535,10 @@ export class BlockManager {
         if (!data.id) {
             throw 'Invalid id';
         }
-        return BaseManager.generateUrl(route, _.extend({}, params || {}, {
+        return BaseManager.generateUrl(route, _.extend({}, {
             blockId: data.id,
             widgetType: data.type,
-        }));
+        }, params || {}));
     }
 
     static request($block: JQuery, route: string, params?: RouteParams, settings?: JQueryAjaxSettings): JQueryXHR {

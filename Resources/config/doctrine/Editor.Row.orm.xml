@@ -22,7 +22,7 @@
             <generator strategy="AUTO"/>
         </id>
 
-        <field name="name" type="string" column="name" nullable="true"/>
+        <field name="name" type="string" column="name" length="32" nullable="true"/>
         <field name="layout" type="object" column="layout"/>
 
         <field name="position" type="integer" column="position">

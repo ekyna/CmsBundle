@@ -34,9 +34,19 @@ class Container implements EM\ContainerInterface
     protected $content;
 
     /**
+     * @var EM\ContainerInterface
+     */
+    protected $copy;
+
+    /**
      * @var string
      */
     protected $name;
+
+    /**
+     * @var string
+     */
+    protected $title;
 
     /**
      * @var string
@@ -104,6 +114,24 @@ class Container implements EM\ContainerInterface
     /**
      * @inheritDoc
      */
+    public function setCopy(EM\ContainerInterface $copy = null)
+    {
+        $this->copy = $copy;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCopy()
+    {
+        return $this->copy;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setName($name)
     {
         $this->name = $name;
@@ -117,6 +145,24 @@ class Container implements EM\ContainerInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTitle()
+    {
+        return $this->title;
     }
 
     /**
@@ -217,6 +263,14 @@ class Container implements EM\ContainerInterface
     public function isNamed()
     {
         return 0 < strlen($this->name);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isTitled()
+    {
+        return 0 < strlen($this->title);
     }
 
     /**

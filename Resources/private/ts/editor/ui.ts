@@ -257,6 +257,10 @@ export class ButtonView extends ControlView<Button> {
     onClick(e: JQueryEventObject): void {
         e.preventDefault();
 
+        if (this.model.get('disabled')) {
+            return;
+        }
+
         let dispatch = () => {
                 Dispatcher.trigger(this.model.get('event'), this.model, e);
             },
@@ -318,6 +322,10 @@ export class ButtonDropdownView extends ControlView<Button> {
 
     onClick(e: JQueryEventObject): void {
         e.preventDefault();
+
+        if (this.model.get('disabled')) {
+            return;
+        }
 
         let $target = $(e.target).closest('a');
 

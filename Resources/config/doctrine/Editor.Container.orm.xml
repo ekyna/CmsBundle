@@ -16,13 +16,15 @@
 
         <unique-constraints>
             <unique-constraint columns="name" name="unique_cms_container_name"/>
+            <unique-constraint columns="title" name="unique_cms_container_title"/>
         </unique-constraints>
 
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>
 
-        <field name="name" type="string" column="name" nullable="true"/>
+        <field name="name" type="string" column="name" length="32" nullable="true"/>
+        <field name="title" type="string" column="title" length="128" nullable="true"/>
 
         <field name="position" type="integer" column="position">
             <gedmo:sortable-position/>
@@ -53,6 +55,10 @@
                      field="content" inversed-by="containers">
             <join-column name="content_id" referenced-column-name="id" on-delete="CASCADE" nullable="true"/>
             <gedmo:sortable-group/>
+        </many-to-one>
+
+        <many-to-one target-entity="Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface" field="copy">
+            <join-column name="copy_id" referenced-column-name="id" on-delete="RESTRICT" nullable="true"/>
         </many-to-one>
 
     </mapped-superclass>

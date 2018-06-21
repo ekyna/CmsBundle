@@ -270,19 +270,28 @@
             </constraint>
             <constraint name="Valid"/>
         </property>
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>name</value>
+            </option>
+        </constraint>
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\Editor\Container">
-        <property name="rows">
-            <constraint name="Count">
-                <option name="min">1</option>
-            </constraint>
-            <constraint name="Valid"/>
-        </property>
         <property name="type">
             <constraint name="NotBlank"/>
         </property>
         <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Container"/>
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>name</value>
+            </option>
+        </constraint>
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>title</value>
+            </option>
+        </constraint>
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\Editor\Row">
@@ -293,6 +302,11 @@
             <constraint name="Valid"/>
         </property>
         <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Row"/>
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>name</value>
+            </option>
+        </constraint>
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\Editor\Block">
@@ -300,6 +314,11 @@
             <constraint name="NotBlank"/>
         </property>
         <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Block"/>
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>name</value>
+            </option>
+        </constraint>
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\SlideShow">

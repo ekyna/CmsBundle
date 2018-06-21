@@ -145,7 +145,7 @@ class BlockController extends BaseController
 
         $data = [
             'removed' => [$removedId],
-            'rows'    => [$this->getViewBuilder()->buildRow($row)],
+            //'rows'    => [$this->getViewBuilder()->buildRow($row)],
         ];
 
         return $this->buildResponse($data, self::SERIALIZE_LAYOUT);

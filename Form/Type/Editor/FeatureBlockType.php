@@ -33,6 +33,16 @@ class FeatureBlockType extends AbstractType
                         // TODO message translation
                     ]),
                 ],
+            ])
+            ->add('html_margin_top', Type\TextType::class, [
+                'label'       => 'ekyna_cms.block.field.margin_top',
+                'required'    => false,
+                'constraints' => [
+                    new Assert\Regex([
+                        'pattern' => '/^\d+px$/'
+                        // TODO message translation
+                    ]),
+                ],
             ]);
     }
 

@@ -113,7 +113,7 @@ class RowController extends BaseController
 
         $data = [
             'removed'    => [$removedId],
-            'containers' => [$this->getViewBuilder()->buildContainer($container)],
+            //'containers' => [$this->getViewBuilder()->buildContainer($container)],
         ];
 
         return $this->buildResponse($data, self::SERIALIZE_LAYOUT);

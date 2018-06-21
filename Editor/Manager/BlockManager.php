@@ -87,7 +87,6 @@ class BlockManager extends AbstractManager
      * @param Request              $request
      *
      * @return \Symfony\Component\HttpFoundation\Response|null
-     * @throws InvalidOperationException
      */
     public function update(Model\BlockInterface $block, Request $request)
     {

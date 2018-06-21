@@ -26,14 +26,16 @@ class ContainerController extends BaseController
     {
         $container = $this->findContainer(intval($request->attributes->get('containerId')));
 
+        $target = is_null($container->getCopy()) ? $container : $container->getCopy();
+
         try {
-            $row = $this->getEditor()->createDefaultRow([], $container);
+            $row = $this->getEditor()->createDefaultRow([], $target);
         } catch (EditorExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
-        $this->validate($container);
-        $this->persist($container);
+        $this->validate($target);
+        $this->persist($target);
 
         $viewBuilder = $this->getViewBuilder();
 
@@ -75,7 +77,7 @@ class ContainerController extends BaseController
             'containers' => [$this->getViewBuilder()->buildContainer($container)],
         ];
 
-        return $this->buildResponse($data, self::SERIALIZE_CONTENT);
+        return $this->buildResponse($data, self::SERIALIZE_FULL);
     }
 
     /**
@@ -120,24 +122,26 @@ class ContainerController extends BaseController
 
         $type = $request->request->get('type', null);
 
+        $data = [];
+
         if ($type != $container->getType()) {
             try {
-                $this->getEditor()->getContainerManager()->changeType($container, $type);
+                $removed = $this->getEditor()->getContainerManager()->changeType($container, $type);
             } catch (EditorExceptionInterface $e) {
                 throw new BadRequestHttpException($e->getMessage());
+            }
+
+            if (!empty($removed)) {
+                $data['removed'] = $removed;
             }
 
             $this->validate($container);
             $this->persist($container);
         }
 
-        $data = [
-            'containers'  => [
-                $this->getViewBuilder()->buildContainer($container),
-            ],
-        ];
+        $data['containers'] = [$this->getViewBuilder()->buildContainer($container)];
 
-        return $this->buildResponse($data, self::SERIALIZE_CONTENT);
+        return $this->buildResponse($data, self::SERIALIZE_FULL);
     }
 
     /**
@@ -166,7 +170,7 @@ class ContainerController extends BaseController
 
         $data = [
             'removed'  => [$removedId],
-            'contents' => [$this->getViewBuilder()->buildContent($content)],
+            //'contents' => [$this->getViewBuilder()->buildContent($content)],
         ];
 
         return $this->buildResponse($data, self::SERIALIZE_LAYOUT);

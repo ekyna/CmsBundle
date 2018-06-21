@@ -54,24 +54,30 @@ class RowManager extends AbstractManager
      * Deletes the row.
      *
      * @param Model\RowInterface $row
+     * @param bool               $force
      *
      * @return Model\RowInterface The removed row.
      * @throws InvalidOperationException
      */
-    public function delete(Model\RowInterface $row)
+    public function delete(Model\RowInterface $row, $force = false)
     {
-        // Ensure not named / alone
-        if ($row->isAlone() || $row->isNamed()) {
-            throw new InvalidOperationException(
-                "The row can't be removed because it is named or the parent container does not have enough children."
-            );
-        }
+        $container = $row->getContainer();
 
-        // Check if the row is not the only container row (a container must have at least one row).
-        if (null === $container = $row->getContainer()) {
-            throw new InvalidOperationException(
-                "The row does not belong to a container and therefore can't be removed."
-            );
+        // Skip checks if forced
+        if (!$force) {
+            // Don't remove container's only row or named row
+            if ($row->isAlone() || $row->isNamed()) {
+                throw new InvalidOperationException(
+                    "The row can't be removed because it is named or the parent container does not have enough children."
+                );
+            }
+
+            // Don't remove standalone row
+            if (null === $container) {
+                throw new InvalidOperationException(
+                    "The row does not belong to a container and therefore can't be removed."
+                );
+            }
         }
 
         $container->removeRow($row);

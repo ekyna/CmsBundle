@@ -26,7 +26,7 @@ class AdminMenuPass implements CompilerPassInterface
         $pool->addMethodCall('createGroup', [[
             'name'     => 'content',
             'label'    => 'ekyna_core.field.content',
-            'icon'     => 'file',
+            'icon'     => 'paragraph',
             'position' => 20,
         ]]);
         $pool->addMethodCall('createEntry', ['content', [

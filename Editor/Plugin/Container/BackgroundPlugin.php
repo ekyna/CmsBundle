@@ -6,6 +6,7 @@ use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
 use Ekyna\Bundle\CmsBundle\Editor\View\ContainerView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\BackgroundContainerType;
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
+use Ekyna\Bundle\CmsBundle\Form\Type\Editor\BaseContainerType;
 use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
 use Ekyna\Bundle\MediaBundle\Service\Renderer;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,26 +67,31 @@ class BackgroundPlugin extends AbstractPlugin
      */
     public function update(ContainerInterface $container, Request $request)
     {
-        $form = $this->formFactory->create(BackgroundContainerType::class, $container->getData(), [
-            'repository' => $this->mediaRepository,
-            'action'     => $this->urlGenerator->generate(
-                'ekyna_cms_editor_container_edit',
-                ['containerId' => $container->getId()]
-            ),
-            'method'     => 'post',
-            'attr'       => [
-                'class' => 'form-horizontal',
-            ],
-            'themes'     => $this->config['themes'],
-        ]);
+        $form = $this
+            ->formFactory
+            ->create(BaseContainerType::class, $container, [
+                'action' => $this->urlGenerator->generate(
+                    'ekyna_cms_editor_container_edit',
+                    ['containerId' => $container->getId()]
+                ),
+                'method' => 'post',
+                'attr'   => [
+                    'class' => 'form-horizontal',
+                ],
+            ])
+            ->add('data', BackgroundContainerType::class, [
+                'label'      => false,
+                'repository' => $this->mediaRepository,
+                'themes'     => $this->config['themes'],
+                'attr'       => [
+                    'label_col'  => 0,
+                    'widget_col' => 12,
+                ],
+            ]);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-
-            $container->setData($data);
-
             return null;
         }
 
@@ -167,8 +173,6 @@ class BackgroundPlugin extends AbstractPlugin
                 $view->content .= '</video>';*/
             }
         }
-
-
     }
 
     /**

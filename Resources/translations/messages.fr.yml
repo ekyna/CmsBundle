@@ -161,6 +161,7 @@ ekyna_cms:
             hover: Survol
             align: Alignement
             max_width: Larg. max. (px/%)
+            margin_top: Marge haut (px)
             poster: Poster
             muted: Sans son
             autoplay: Autoplay

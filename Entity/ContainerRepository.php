@@ -2,6 +2,8 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use Doctrine\ORM\Query;
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
 
 /**
@@ -57,6 +59,25 @@ class ContainerRepository extends ResourceRepository
             // TODO ->useResultCache(true, 3600, Container::getEntityTagPrefix() . '[id:'.$id.']')
             ->setParameter('id', $id)
             ->getOneOrNullResult();
+    }
+
+    /**
+     * Returns the numbers of containers that copies the given one.
+     *
+     * @param ContainerInterface $container
+     *
+     * @return int
+     */
+    public function getCopyCount(ContainerInterface $container)
+    {
+        $query = $this->getEntityManager()->createQuery(
+            "SELECT COUNT(c.id) FROM {$this->getClassName()} c WHERE c.copy = :copied"
+        );
+
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $query
+            ->setParameter('copied', $container)
+            ->getSingleResult(Query::HYDRATE_SINGLE_SCALAR);
     }
 
     /**

@@ -15,6 +15,8 @@ ekyna_cms:
         unique_name: Veuillez saisir un nom unique.
     container:
         content_or_name_but_not_both: Un conteneur doit être lié à un contenu ou avoir un nom mais pas les deux.
+        title_must_be_empty: Le titre doit être vide.
+        title_must_be_filled: Le titre doit être renseigné.
         invalid_data: Données non valides.
     row:
         container_or_name_but_not_both: Une ligne doit être lié à un conteneur ou avoir un nom mais pas les deux.
