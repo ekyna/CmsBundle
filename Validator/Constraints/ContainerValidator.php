@@ -88,7 +88,7 @@ class ContainerValidator extends ConstraintValidator
         }
 
         // Title must be filled if this container as been copied
-        if (empty($container->getTitle())) {
+        if (empty($container->getTitle()) && 0 < $container->getId()) {
             if (0 < $count = $this->containerRepository->getCopyCount($container)) {
                 $this
                     ->context
