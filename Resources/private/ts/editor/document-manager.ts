@@ -376,7 +376,7 @@ export class ContainerManager {
             if (innerContent && 0 < innerContent.length) {
                 $innerContainer.html(innerContent);
             } else {
-                $innerContainer.empty();
+                $innerContainer.children().not('.cms-row').remove();
 
                 // Parse children (if no inner content)
                 if (container.hasOwnProperty('rows')) {

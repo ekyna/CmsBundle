@@ -58,7 +58,6 @@ class Editor {
         // Plugin manager
         PluginManager.load(config.plugins);
 
-
         // Document manager
         this.documentManager = new DocumentManager({
             hostname: config.hostname,
@@ -254,14 +253,18 @@ class Editor {
 
         let newButton:Button = this.mainToolbar.getNewPageButton(),
             editButton:Button = this.mainToolbar.getEditPageButton(),
-            pageSelect:Select = this.mainToolbar.getPageSelect();
+            pageSelect:Select = this.mainToolbar.getPageSelect(),
+            pageChoice: SelectChoiceConfig = null;
 
         newButton.disable();
         editButton.disable();
 
-        pageSelect.select(pageId);
+        try {
+            pageSelect.select(pageId);
+            pageChoice = pageSelect.getActiveChoice();
+        } catch(e) {
+        }
 
-        let pageChoice:SelectChoiceConfig = pageSelect.getActiveChoice();
         if (pageChoice) {
             editButton.enable();
             if (!pageChoice.data.locked) {
@@ -270,6 +273,9 @@ class Editor {
             if (reload) {
                 this.viewport.load(pageChoice.data.path);
             }
+        } else {
+            newButton.disable();
+            editButton.disable();
         }
 
         return pageChoice;

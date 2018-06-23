@@ -55,7 +55,7 @@ class ImageType extends AbstractType
                 'required'    => false,
                 'constraints' => [
                     new Assert\Regex([
-                        'pattern' => '/^\d+(px|em|%)$/'
+                        'pattern' => '/^\d+(px|%)$/'
                         // TODO message translation
                     ]),
                 ],

@@ -114,7 +114,11 @@ class EditorController extends BaseController
         $config['locales'] = $locales;
 
         $config['hostname'] = $request->getHost();
-        $config['path'] = $this->generateUrl($this->getParameter('ekyna_cms.home_route'));
+        if (!empty($path = $request->query->get('path'))) {
+            $config['path'] = $path;
+        } else {
+            $config['path'] = $this->generateUrl($this->getParameter('ekyna_cms.home_route'));
+        }
         $config['plugins'] = $editor->getPluginsConfig();
 
         return $config;
