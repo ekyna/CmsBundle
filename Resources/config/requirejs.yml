@@ -9,14 +9,14 @@ config:
             location: 'bundles/ekynacms/js/slide-show'
             main: 'slide-show'
     paths:
+        'ekyna-cms': 'bundles/ekynacms/js/cms'
         'ekyna-cms/form/slide-type': 'bundles/ekynacms/js/form/slide-type'
         'ekyna-cms/form/tag-choice': 'bundles/ekynacms/js/form/tag-choice'
-        'ekyna-cms/cms': 'bundles/ekynacms/js/cms'
         'ekyna-cms/slide-types':
             route: ekyna_cms_slide_types
             params: []
 build:
     include:
-        - 'ekyna-cms/cms'
+        - 'ekyna-cms'
     paths:
         'ekyna-cms/slide-types': 'empty:'

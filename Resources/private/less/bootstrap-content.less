@@ -4,6 +4,29 @@
     background: no-repeat center center;
     -webkit-background-size: cover;
     background-size: cover;
+
+    > .cms-container-anchor {
+        display: none;
+        position: absolute;
+        z-index: 9999;
+        top: 10px;
+        right: 10px;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUhJREFUeNqclIGRgyAQRZlUQAmWQAleB5ZgCZZAB5ZACZagHXgdcB1gB5v9HJshGVHIzmwiII/PX1CphiAizenoPTynVa3Bkwxn2PedxnEkrTV1XUfWWgohAOy+ggGErjyNMQK1X8FE2TRNrz60sf1mWKYG3gVAZRHE4wrGfyun3rZN9X2vGKbWdVUM/+X+H84/fo7vH8dxryzK8J6gMAs0IGeHUijDlGEY4uDlNrE9MR5bdi6emCAwGcdYWtQ1VVN8KsCwkL4twLIsxL7FKmLsAmaqqpl7iOcaGK6TP4Mhz7ZehCWgK5yz+IPqffpYhCXgaxJeTjA5Gv8NBszzHL1McQ4T4Of1yc8ZPgRSkFuYAMVoXKM0wVdVswD0UCAeAYq23IAmWAKOuZrqat5AHaBQBjDUwTucu2ZYBp1SQXLz3dt1qoinAAMAQAelhOxVZQIAAAAASUVORK5CYII=')
+    }
+
+    &:hover {
+        > .cms-container-anchor {
+            display: block;
+            opacity: .3;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
 }
 
 .cms-block {

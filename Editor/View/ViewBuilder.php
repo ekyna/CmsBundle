@@ -63,6 +63,8 @@ class ViewBuilder implements EditorAwareInterface
 
         $view = new ContainerView();
         $attributes = $view->getAttributes()->addClass('cms-container');
+        $attributes->setId('cms-container-' . $container->getId());
+
         $innerAttributes = $view->getInnerAttributes()->addClass('cms-inner-container');
 
         if ($this->editor->isEnabled()) {
@@ -70,7 +72,6 @@ class ViewBuilder implements EditorAwareInterface
 
             // Container
             $attributes
-                ->setId('cms-container-' . $container->getId())
                 ->setData([
                     'id'       => $container->getId(),
                     'position' => $container->getPosition(),
@@ -96,6 +97,8 @@ class ViewBuilder implements EditorAwareInterface
 
         // Layout
         $this->editor->getLayoutAdapter()->buildContainer($source, $view);
+        $view->content = '<span class="cms-container-anchor">&nbsp;</span>' . $view->content;
+
 
         // Plugin
         $this->editor->getContainerPlugin($source->getType())->render($source, $view);

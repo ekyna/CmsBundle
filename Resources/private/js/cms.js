@@ -1,35 +1,21 @@
-(function(root, factory) {
+define(['require', 'jquery', 'routing', 'js-cookie', 'bootstrap'], function (require, $, Router, Cookies) {
     "use strict";
 
-    if (typeof module !== 'undefined' && module.exports) {
-        module.exports = factory(require('jquery'), require('routing'), require('js-cookie'));
-    }
-    else if (typeof define === 'function' && define.amd) {
-        define(['jquery', 'routing', 'js-cookie'], function($, Router, Cookies) {
-            return factory($, Router, Cookies);
-        });
-    } else {
-        root.EkynaCms = factory(root.jQuery, root.Routing, root.Cookies);
-    }
-
-}(this, function($, Router, Cookies) {
-    "use strict";
-
-    var CookieConsent = function($element) {
+    var CookieConsent = function ($element) {
         this.$element = $element;
         this.name = 'cookie-consent';
     };
 
     CookieConsent.prototype = {
-        _consentRequired: function() {
+        _consentRequired: function () {
             return undefined === Cookies.get(this.name);
         },
 
-        _saveUserPreference: function() {
+        _saveUserPreference: function () {
             Cookies.set(this.name, 'y', {expires: 365});
         },
 
-        init: function() {
+        init: function () {
             var that = this;
 
             if (this._consentRequired()) {
@@ -38,42 +24,89 @@
                     dataType: 'xml',
                     type: 'GET'
                 })
-                .done(function (xml) {
-                    var $xml = $(xml);
+                    .done(function (xml) {
+                        var $xml = $(xml);
 
-                    // Cookie consent
-                    var $response = $xml.find('response');
-                    if (1 === $response.size()) {
-                        that.$element.html($response.text()).show();
+                        // Cookie consent
+                        var $response = $xml.find('response');
+                        if (1 === $response.size()) {
+                            that.$element.html($response.text()).show();
 
-                        that.$element.on('click', '.cookies-consent-dismiss', function(e) {
-                            e.preventDefault();
-                            e.stopPropagation();
+                            that.$element.on('click', '.cookies-consent-dismiss', function (e) {
+                                e.preventDefault();
+                                e.stopPropagation();
 
-                            that._saveUserPreference();
-                            that.$element.hide();
+                                that._saveUserPreference();
+                                that.$element.hide();
 
-                            return false;
-                        });
-                    }
-                });
+                                return false;
+                            });
+                        }
+                    });
             }
         }
     };
 
 
-    var EkynaCms = function() {};
+    var EkynaCms = function () {
+    };
 
-    EkynaCms.prototype = {
-        init: function() {
-            var $cookieConsent = $('#cookies-consent');
-            if (1 === $cookieConsent.size()) {
-                var cookieConsent = new CookieConsent($cookieConsent);
-                cookieConsent.init();
-            }
+    EkynaCms.prototype.init = function () {
+        var $cookieConsent = $('#cookies-consent');
+        if (1 === $cookieConsent.size()) {
+            var cookieConsent = new CookieConsent($cookieConsent);
+            cookieConsent.init();
         }
+
+        // Slide shows
+        var $slideShow = $('.cms-slide-show');
+        if (0 < $slideShow.length) {
+            require(['ekyna-cms/slide-show'], function (SlideShow) {
+                $slideShow.each(function (i, s) {
+                    SlideShow.create($(s).data('config'));
+                });
+            });
+        }
+
+        $(document).on('click', '.cms-container-anchor', function (e) {
+            if (typeof window['ontouchstart'] !== 'undefined') {
+                return true;
+            }
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            var element = e.currentTarget;
+            element.addEventListener('copy', function (event) {
+                event.preventDefault();
+                if (event.clipboardData) {
+                    var url = window.location.protocol + '//'
+                        + window.location.host
+                        + window.location.pathname + '#'
+                        + $(element).closest('.cms-container').attr('id');
+
+                    event.clipboardData.setData("text/plain", url);
+
+                    $(element)
+                        .tooltip({
+                            title: 'Copied to clipboard',
+                            placement: 'left',
+                            trigger: 'manual',
+                            container: 'body'
+                        })
+                        .tooltip('show');
+
+                    setTimeout(function () {
+                        $(element).tooltip('hide');
+                    }, 1500);
+                }
+            });
+
+            document.execCommand("Copy");
+
+            return false;
+        });
     };
 
     return new EkynaCms;
-
-}));
+});

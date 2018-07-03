@@ -348,19 +348,19 @@ export class ContainerManager {
                 throw 'Unexpected container data';
             }
 
-            // Inner container
-            let $innerContainer: JQuery;
             let $container: JQuery = BaseManager.findOrCreateElement(container.attributes['id'], $content);
             BaseManager.setElementAttributes($container, container.attributes);
+
+            // Inner container
+            let $innerContainer: JQuery = $container.find('> .cms-inner-container');
 
             // Parse content
             let content: string = container.hasOwnProperty('content') ? container.content : null;
             if (content && 0 < content.length) {
-                let $innerContainer = $container.find('> .cms-inner-container').detach();
+                $innerContainer.detach();
                 $container.html(content).append($innerContainer);
             }
 
-            $innerContainer = $container.find('> .cms-inner-container');
             if (container.hasOwnProperty('inner_attributes')) {
                 $innerContainer.each(function(index: number, element: Element) {
                     if ($(element).attr('id') !== container.inner_attributes['id']) {
