@@ -2,34 +2,35 @@
 liip_imagine:
     filter_sets:
         cms_container_background:
-            quality: 50
             cache: local_media
             data_loader: local_media
+            format: png
             filters:
                 relative_resize: { widen: 1200 }
             post_processors:
-                jpegoptim: {}
+                jpegoptim: {strip_all: true, max: "%image.jpeg_quality%", progressive: true}
+                pngquant: {quality: "%image.png_quality%"}
         cms_block_image:
-            quality: 70
             cache: local_media
             data_loader: local_media
             filters:
                 relative_resize: { widen: 1140 }
             post_processors:
-                jpegoptim: {}
+                jpegoptim: {strip_all: true, max: "%image.jpeg_quality%", progressive: true}
+                pngquant: {quality: "%image.png_quality%"}
         cms_block_feature:
-            quality: 70
             cache: local_media
             data_loader: local_media
             filters:
                 thumbnail: { size: [600, 600], mode: outbound }
             post_processors:
-                jpegoptim: {}
+                jpegoptim: {strip_all: true, max: "%image.jpeg_quality%", progressive: true}
+                pngquant: {quality: "%image.png_quality%"}
         cms_slideshow_hero:
-            quality: 70
             cache: local_media
             data_loader: local_media
             filters:
                 relative_resize: { widen: 570 }
             post_processors:
-                jpegoptim: {}
+                jpegoptim: {strip_all: true, max: "%image.jpeg_quality%", progressive: true}
+                pngquant: {quality: "%image.png_quality%"}

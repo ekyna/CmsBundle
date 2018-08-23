@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
+use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginInterface as BaseInterface;
 use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Editor\View\WidgetView;
@@ -53,22 +54,24 @@ interface PluginInterface extends BaseInterface
     /**
      * Returns the block content.
      *
-     * @param BlockInterface $block
-     * @param BlockView      $view
-     * @param array          $options
+     * @param BlockInterface   $block
+     * @param BlockView        $view
+     * @param AdapterInterface $adapter
+     * @param array            $options
      */
-    public function render(BlockInterface $block, BlockView $view, array $options);
+    public function render(BlockInterface $block, BlockView $view, AdapterInterface $adapter, array $options);
 
     /**
      * Creates the widget view.
      *
-     * @param BlockInterface $block
-     * @param array          $options
-     * @param int            $position
+     * @param BlockInterface   $block
+     * @param AdapterInterface $adapter
+     * @param array            $options
+     * @param int              $position
      *
      * @return WidgetView
      */
-    public function createWidget(BlockInterface $block, array $options, $position = 0);
+    public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0);
 
     /**
      * Returns whether the block is supported.

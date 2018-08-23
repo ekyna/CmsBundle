@@ -124,4 +124,13 @@ interface AdapterInterface extends EditorAwareInterface
      * @param Model\BlockInterface $block
      */
     public function offsetRightBlock(Model\BlockInterface $block);
+
+    /**
+     * Returns the block's image responsive map.
+     *
+     * @param Model\BlockInterface $block
+     *
+     * @return array
+     */
+    public function getImageResponsiveMap(Model\BlockInterface $block);
 }

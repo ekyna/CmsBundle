@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
+use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\TemplateBlockType;
 use Symfony\Component\HttpFoundation\Request;
@@ -93,9 +94,9 @@ class TemplatePlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function createWidget(BlockInterface $block, array $options, $position = 0)
+    public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0)
     {
-        $view = parent::createWidget($block, $options, $position);
+        $view = parent::createWidget($block, $adapter, $options, $position);
 
         $data = $block->getData();
 

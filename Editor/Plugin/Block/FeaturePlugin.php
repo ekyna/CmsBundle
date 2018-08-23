@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
+use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistryAwareInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistryAwareTrait;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
@@ -129,7 +130,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
     /**
      * @inheritdoc
      */
-    public function render(BlockInterface $block, BlockView $view, array $options)
+    public function render(BlockInterface $block, BlockView $view, AdapterInterface $adapter, array $options)
     {
         $options = array_replace([
             'editable' => false,
@@ -168,7 +169,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
         // Image widget view
         $widget = $this
             ->getImagePlugin()
-            ->createWidget($block, array_replace($options, [
+            ->createWidget($block, $adapter, array_replace($options, [
                 'filter'    => $this->config['image_filter'],
                 'animation' => !$hasAnim,
             ]), 0);
@@ -178,7 +179,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
         // Html widget view
         $widget = $this
             ->getHtmlPlugin()
-            ->createWidget($block, $options, 1);
+            ->createWidget($block, $adapter, $options, 1);
         $overrideAttributes($widget->getAttributes(), 'html');
         if (isset($data['html_max_width'])) {
             $widget->getAttributes()->addStyle('max-width', $data['html_max_width']);

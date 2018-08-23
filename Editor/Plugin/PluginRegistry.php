@@ -9,7 +9,7 @@ use Ekyna\Bundle\CmsBundle\Editor\Plugin\Container\PluginInterface as ContainerP
 /**
  * Class PluginRegistry
  * @package Ekyna\Bundle\CmsBundle\Editor\Plugin
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class PluginRegistry
 {
@@ -81,6 +81,7 @@ class PluginRegistry
         if (!$this->hasBlockPlugin($name)) {
             throw new PluginException(sprintf('Block plugin "%s" is not registered.', $name));
         }
+
         return $this->blockPlugins[$name];
     }
 
@@ -143,6 +144,7 @@ class PluginRegistry
         if (!$this->hasContainerPlugin($name)) {
             throw new PluginException(sprintf('Container plugin "%s" is not registered.', $name));
         }
+
         return $this->containerPlugins[$name];
     }
 

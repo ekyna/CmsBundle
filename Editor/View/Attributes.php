@@ -95,7 +95,7 @@ class Attributes implements AttributesInterface
             $this->data = array_replace_recursive($this->data, $key);
         } elseif (is_array($value) && $this->hasData($key) && is_array($current = $this->getData($key))) {
             $this->data[$key] = array_replace_recursive($current, $value);
-        } elseif(is_string($key)) {
+        } elseif (is_string($key)) {
             $this->data[$key] = $value;
         }
 
@@ -161,10 +161,15 @@ class Attributes implements AttributesInterface
      */
     public function addClass($class)
     {
+        if (!is_array($class)) {
+            $class = $this->parseClass($class);
+        }
+
         if (is_array($class)) {
             foreach ($class as $c) {
                 $this->addClass($c);
             }
+
             return $this;
         }
 
@@ -184,7 +189,19 @@ class Attributes implements AttributesInterface
      */
     public function removeClass($class)
     {
-        $this->classes = array_filter($this->classes, function($c) use ($class) {
+        if (!is_array($class)) {
+            $class = $this->parseClass($class);
+        }
+
+        if (is_array($class)) {
+            foreach ($class as $c) {
+                $this->removeClass($c);
+            }
+
+            return $this;
+        }
+
+        $this->classes = array_filter($this->classes, function ($c) use ($class) {
             return $c != $class;
         });
 
@@ -247,7 +264,7 @@ class Attributes implements AttributesInterface
             $result['class'] = implode(' ', $this->classes);
         }
         if (!empty($this->styles)) {
-            $result['style'] = implode(';', array_map(function($key, $value) {
+            $result['style'] = implode(';', array_map(function ($key, $value) {
                 return "$key:$value";
             }, array_keys($this->styles), array_values($this->styles)));
         }
@@ -261,5 +278,23 @@ class Attributes implements AttributesInterface
         }
 
         return $result;
+    }
+
+    /**
+     * Parses the given class(es).
+     *
+     * @param string $class
+     *
+     * @return array|string
+     */
+    private function parseClass($class)
+    {
+        $class = trim($class);
+
+        if (false !== strpos($class, ' ')) {
+            $class = explode(' ', $class);
+        }
+
+        return $class;
     }
 }

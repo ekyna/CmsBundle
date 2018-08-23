@@ -2,7 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
-use Ekyna\Bundle\CoreBundle\Model as Core;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -67,20 +66,6 @@ interface BlockInterface
      * @return string
      */
     public function getType();
-
-    /**
-     * Sets the layout.
-     *
-     * @param array $layout
-     */
-    public function setLayout(array $layout);
-
-    /**
-     * Returns the layout.
-     *
-     * @return array
-     */
-    public function getLayout();
 
     /**
      * Returns whether or not the block is the first of the row.

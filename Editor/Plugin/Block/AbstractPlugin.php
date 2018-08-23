@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
+use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\AbstractPlugin as BasePlugin;
 use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Editor\View\WidgetView;
@@ -66,15 +67,15 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
-    public function render(BlockInterface $block, BlockView $view, array $options)
+    public function render(BlockInterface $block, BlockView $view, AdapterInterface $adapter, array $options)
     {
-        $view->widgets[] = $this->createWidget($block, $options);
+        $view->widgets[] = $this->createWidget($block, $adapter, $options);
     }
 
     /**
      * @inheritdoc
      */
-    public function createWidget(BlockInterface $block, array $options, $position = 0)
+    public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0)
     {
         $options = array_replace([
             'editable' => false,

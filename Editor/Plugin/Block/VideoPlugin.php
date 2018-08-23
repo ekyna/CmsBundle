@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
+use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\VideoBlockType;
 use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
@@ -124,11 +125,11 @@ class VideoPlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function createWidget(BlockInterface $block, array $options, $position = 0)
+    public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0)
     {
         $data = $block->getData();
 
-        $view = parent::createWidget($block, $options, $position);
+        $view = parent::createWidget($block, $adapter, $options, $position);
         $view->getAttributes()->addClass('cms-video');
 
 

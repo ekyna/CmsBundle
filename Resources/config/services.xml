@@ -522,6 +522,11 @@
             <argument type="service" id="ekyna_cms.slide_show.repository"/>
             <tag name="twig.extension"/>
         </service>
+        <service id="ekyna_cms.twig.media_extension"
+                 class="Ekyna\Bundle\CmsBundle\Twig\MediaExtension">
+            <argument type="service" id="liip_imagine.cache.manager"/>
+            <tag name="twig.extension"/>
+        </service>
         <service id="ekyna_cms.twig.schema_extension"
                  class="Ekyna\Bundle\CmsBundle\Twig\SchemaOrgExtension">
             <argument type="service" id="ekyna_cms.schema_org.builder"/>

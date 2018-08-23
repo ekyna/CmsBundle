@@ -192,15 +192,15 @@ class ViewBuilder implements EditorAwareInterface
                 ]);
         }
 
+        $adapter = $this->editor->getLayoutAdapter();
+
         // Layout
-        $this->editor
-            ->getLayoutAdapter()
-            ->buildBlock($block, $view);
+        $adapter->buildBlock($block, $view);
 
         // Plugin
         $this->editor
             ->getBlockPlugin($block->getType())
-            ->render($block, $view, [
+            ->render($block, $view, $adapter, [
                 'editable' => $editable,
             ]);
 

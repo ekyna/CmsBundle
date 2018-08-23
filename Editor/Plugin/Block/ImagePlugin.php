@@ -2,10 +2,12 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
+use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\ImageBlockType;
 use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
+use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
 use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
 use Ekyna\Bundle\MediaBundle\Service\Generator;
 use Symfony\Component\HttpFoundation\Request;
@@ -167,14 +169,31 @@ class ImagePlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function createWidget(BlockInterface $block, array $options, $position = 0)
+    public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0)
     {
         $data = $block->getData();
 
-        $view = parent::createWidget($block, $options, $position);
+        $view = parent::createWidget($block, $adapter, $options, $position);
         $view->getAttributes()->addClass('cms-image');
 
         $options = array_replace($this->config, ['animation' => true], $options);
+
+        $buildResponsiveImg = function(MediaInterface $media, \DOMElement $img) use ($block, $adapter) {
+            $map = $adapter->getImageResponsiveMap($block);
+
+            $srcSet = [];
+            $sizes = [];
+
+            foreach ($map as $filter => $config) {
+                $srcSet[] = $this->mediaGenerator->generateFrontUrl($media, $filter) . ' ' . $config['width'] . 'w';
+                $sizes[] = trim(
+                    ($config['max'] ? '(max-width:' . $config['max'] . 'px)' : '') . ' ' . $config['width'] . 'px'
+                );
+            }
+
+            $img->setAttribute('srcset', implode(', ', $srcSet));
+            $img->setAttribute('sizes', implode(', ', $sizes));
+        };
 
         $dom = new \DOMDocument();
 
@@ -201,8 +220,9 @@ class ImagePlugin extends AbstractPlugin
                     }
                     if (!$image) {
                         $image = $dom->createElement('img');
-                        $src = $this->mediaGenerator->generateFrontUrl($imageMedia, $options['filter']);
-                        $image->setAttribute('src', $src);
+                        //$src = $this->mediaGenerator->generateFrontUrl($imageMedia, $options['filter']);
+                        //$image->setAttribute('src', $src);
+                        $buildResponsiveImg($imageMedia, $image);
                         $image->setAttribute('alt', $imageMedia->getTitle());
                     }
                 }
@@ -247,8 +267,9 @@ class ImagePlugin extends AbstractPlugin
                     if (!$hover) {
                         $hover = $dom->createElement('img');
                         // Src and Alt
-                        $src = $this->mediaGenerator->generateFrontUrl($hoverMedia, $options['filter']);
-                        $hover->setAttribute('src', $src);
+                        //$src = $this->mediaGenerator->generateFrontUrl($hoverMedia, $options['filter']);
+                        //$hover->setAttribute('src', $src);
+                        $buildResponsiveImg($hoverMedia, $hover);
                         $hover->setAttribute('alt', $hoverMedia->getTitle());
                     }
 
@@ -333,6 +354,17 @@ class ImagePlugin extends AbstractPlugin
 
         return $view;
     }
+
+    private function buildImage(array $data)
+    {
+        // TODO refactor
+    }
+
+    private function buildWrapper(array $data)
+    {
+        // TODO refactor
+    }
+
 
     /**
      * @inheritdoc

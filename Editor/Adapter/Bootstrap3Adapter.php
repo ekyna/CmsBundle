@@ -147,174 +147,6 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * Validates the block layout.
-     *
-     * @param array $data
-     *
-     * @throws InvalidArgumentException
-     */
-    protected function validateBlockLayout(array $data)
-    {
-        foreach (array_keys(static::getDevicesWidths()) as $device) {
-            // If layout set for this device
-            if (!isset($data[$device])) {
-                continue;
-            }
-
-            $size = isset($data[$device][static::SIZE]) ? $data[$device][static::SIZE] : 12;
-            $offset = isset($data[$device][static::OFFSET]) ? $data[$device][static::OFFSET] : 0;
-
-            // Validate size
-            if (1 > $size || $size > 12) {
-                throw new InvalidArgumentException('Invalid layout size');
-            }
-
-            // Validate offset
-            if (0 > $offset || $offset > 11) {
-                throw new InvalidArgumentException('Invalid layout offset');
-            }
-
-            // Validate sum
-            if (12 < ($size + $offset)) {
-                throw new InvalidArgumentException('Invalid block layout size/offset');
-            }
-        }
-    }
-
-    /**
-     * Cleans up the block layout.
-     *
-     * @param Model\BlockInterface $block
-     * @param array                $data
-     *
-     * @return array
-     */
-    protected function cleanUpBlockLayout(Model\BlockInterface $block, array $data)
-    {
-        $clean = [];
-
-        // TODO responsive padding
-        if (isset($data[static::PADDING_TOP])) {
-            $clean[static::PADDING_TOP] = $data[static::PADDING_TOP];
-        }
-        if (isset($data[static::PADDING_BOTTOM])) {
-            $clean[static::PADDING_BOTTOM] = $data[static::PADDING_BOTTOM];
-        }
-
-        $hasPreviousSize = $hasPreviousOffset = false;
-        $previousSize = $previousOffset = null;
-
-        /** @var Model\BlockInterface[] $blocks */
-        $blocks = [];
-        if (null !== $row = $block->getRow()) {
-            $blocks = $row->getBlocks()->filter(function(Model\BlockInterface $b) use ($block) {
-                return $b !== $block;
-            });
-        }
-
-        $devices = array_reverse(array_keys(static::getDevicesWidths()));
-
-        foreach ($devices as $device) {
-            // Do we need to clear the previous block layout (which size is lower than 12)
-            $clear = false;
-            foreach ($blocks as $b) {
-                $d = $b->getLayout();
-                if (isset($d[$device][static::SIZE]) && 12 > $d[$device][static::SIZE]) {
-                    $clear = true;
-                    break;
-                }
-            }
-
-            // If layout is set for this device
-            if (!$clear && !isset($data[$device])) {
-                continue;
-            }
-
-            $size = isset($data[$device][static::SIZE]) ? $data[$device][static::SIZE] : $previousSize;
-            $offset = isset($data[$device][static::OFFSET]) ? $data[$device][static::OFFSET] : $previousOffset;
-
-            $cleanDevice = [];
-
-            if ($clear || ($hasPreviousSize && $previousSize != $size) || (!$hasPreviousSize && 12 > $size)) {
-                $cleanDevice[static::SIZE] = $size;
-            }
-            if (($hasPreviousOffset && $previousOffset != $offset) || (!$hasPreviousSize && 0 < $offset)) {
-                $cleanDevice[static::OFFSET] = $offset;
-            }
-
-            if (!$hasPreviousSize && 12 > $size) {
-                $hasPreviousSize = true;
-            }
-            if (!$hasPreviousOffset && 0 < $offset) {
-                $hasPreviousOffset = true;
-            }
-
-            $previousSize = $size;
-            $previousOffset = $offset;
-
-            if (!empty($cleanDevice)) {
-                $clean[$device] = $cleanDevice;
-            }
-        }
-
-        return $clean;
-    }
-
-    /**
-     * Validates the layout styles.
-     *
-     * @param array $layout
-     */
-    protected function validateLayoutStyles(array $layout)
-    {
-        if (isset($layout[static::PADDING_TOP])
-            && (0 > $layout[static::PADDING_TOP] || 300 < $layout[static::PADDING_TOP])
-        ) {
-            throw new InvalidArgumentException('Invalid layout padding top');
-        }
-
-        if (isset($layout[static::PADDING_BOTTOM])
-            && (0 > $layout[static::PADDING_BOTTOM] || 300 < $layout[static::PADDING_BOTTOM])
-        ) {
-            throw new InvalidArgumentException('Invalid layout padding bottom');
-        }
-    }
-
-    /**
-     * Adds the css styles regarding to the layout data.
-     *
-     * @param View\AttributesInterface $attributes
-     * @param array                    $layout
-     */
-    protected function applyLayoutStyles(View\AttributesInterface $attributes, array $layout)
-    {
-        foreach ([static::PADDING_TOP => '%spx', static::PADDING_BOTTOM => '%spx'] as $property => $template) {
-            if (isset($layout[$property]) && 0 < $layout[$property]) {
-                $attributes->addStyle(
-                    str_replace('_', '-', $property),
-                    sprintf($template, $layout[$property])
-                );
-            }
-        }
-    }
-
-    /**
-     * Creates the initial block layout regarding to given data.
-     *
-     * $data = [
-     *   'layout' => [
-     *      'size'   => (int),
-     *      'order'  => (int),
-     *      'offset' => (int),
-     *   ]
-     * ]
-     */
-    /*public function createBlock(Model\BlockInterface $block, array $data)
-    {
-
-    }*/
-
-    /**
      * @inheritdoc
      */
     public function pullBlock(Model\BlockInterface $block)
@@ -395,6 +227,180 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function getImageResponsiveMap(Model\BlockInterface $block)
+    {
+        $map = [];
+
+        $layout = $block->getLayout();
+        $col = 12;
+
+        foreach (array_reverse(static::getDevices(), true) as $d => $config) {
+            $col = isset($layout[$d]) && isset($layout[$d][static::SIZE]) ? $layout[$d][static::SIZE] : $col;
+            $count = 12 / $col;
+            $map[sprintf('col_%s_%d', $d, $col)] = [
+                'max'   => $config['max'],
+                'width' => intval(($config['width'] - ($count - 1) * 30) / $count),
+            ];
+        }
+
+        return $map;
+    }
+
+    /**
+     * Validates the block layout.
+     *
+     * @param array $data
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function validateBlockLayout(array $data)
+    {
+        foreach (array_keys(static::getDevices()) as $device) {
+            // If layout set for this device
+            if (!isset($data[$device])) {
+                continue;
+            }
+
+            $size = isset($data[$device][static::SIZE]) ? $data[$device][static::SIZE] : 12;
+            $offset = isset($data[$device][static::OFFSET]) ? $data[$device][static::OFFSET] : 0;
+
+            // Validate size
+            if (1 > $size || $size > 12) {
+                throw new InvalidArgumentException('Invalid layout size');
+            }
+
+            // Validate offset
+            if (0 > $offset || $offset > 11) {
+                throw new InvalidArgumentException('Invalid layout offset');
+            }
+
+            // Validate sum
+            if (12 < ($size + $offset)) {
+                throw new InvalidArgumentException('Invalid block layout size/offset');
+            }
+        }
+    }
+
+    /**
+     * Cleans up the block layout.
+     *
+     * @param Model\BlockInterface $block
+     * @param array                $data
+     *
+     * @return array
+     */
+    protected function cleanUpBlockLayout(Model\BlockInterface $block, array $data)
+    {
+        $clean = [];
+
+        // TODO responsive padding
+        if (isset($data[static::PADDING_TOP]) && 0 < $data[static::PADDING_TOP]) {
+            $clean[static::PADDING_TOP] = $data[static::PADDING_TOP];
+        }
+        if (isset($data[static::PADDING_BOTTOM]) && 0 < $data[static::PADDING_BOTTOM]) {
+            $clean[static::PADDING_BOTTOM] = $data[static::PADDING_BOTTOM];
+        }
+
+        $hasPreviousSize = $hasPreviousOffset = false;
+        $previousSize = $previousOffset = null;
+
+        /** @var Model\BlockInterface[] $blocks */
+        $blocks = [];
+        if (null !== $row = $block->getRow()) {
+            $blocks = $row->getBlocks()->filter(function (Model\BlockInterface $b) use ($block) {
+                return $b !== $block;
+            });
+        }
+
+        $devices = array_reverse(array_keys(static::getDevices()));
+
+        foreach ($devices as $device) {
+            // Do we need to clear the previous block layout (which size is lower than 12)
+            $clear = false;
+            foreach ($blocks as $b) {
+                $d = $b->getLayout();
+                if (isset($d[$device][static::SIZE]) && 12 > $d[$device][static::SIZE]) {
+                    $clear = true;
+                    break;
+                }
+            }
+
+            // If layout is set for this device
+            if (!$clear && !isset($data[$device])) {
+                continue;
+            }
+
+            $size = isset($data[$device][static::SIZE]) ? $data[$device][static::SIZE] : $previousSize;
+            $offset = isset($data[$device][static::OFFSET]) ? $data[$device][static::OFFSET] : $previousOffset;
+
+            $cleanDevice = [];
+
+            if ($clear || ($hasPreviousSize && $previousSize != $size) || (!$hasPreviousSize && 12 > $size)) {
+                $cleanDevice[static::SIZE] = $size;
+            }
+            if (($hasPreviousOffset && $previousOffset != $offset) || (!$previousOffset && 0 < $offset)) {
+                $cleanDevice[static::OFFSET] = $offset;
+            }
+
+            if (!$hasPreviousSize && 12 > $size) {
+                $hasPreviousSize = true;
+            }
+            if (!$hasPreviousOffset && 0 < $offset) {
+                $hasPreviousOffset = true;
+            }
+
+            $previousSize = $size;
+            $previousOffset = $offset;
+
+            if (!empty($cleanDevice)) {
+                $clean[$device] = $cleanDevice;
+            }
+        }
+
+        return $clean;
+    }
+
+    /**
+     * Validates the layout styles.
+     *
+     * @param array $layout
+     */
+    protected function validateLayoutStyles(array $layout)
+    {
+        if (isset($layout[static::PADDING_TOP])
+            && (0 > $layout[static::PADDING_TOP] || 300 < $layout[static::PADDING_TOP])
+        ) {
+            throw new InvalidArgumentException('Invalid layout padding top');
+        }
+
+        if (isset($layout[static::PADDING_BOTTOM])
+            && (0 > $layout[static::PADDING_BOTTOM] || 300 < $layout[static::PADDING_BOTTOM])
+        ) {
+            throw new InvalidArgumentException('Invalid layout padding bottom');
+        }
+    }
+
+    /**
+     * Adds the css styles regarding to the layout data.
+     *
+     * @param View\AttributesInterface $attributes
+     * @param array                    $layout
+     */
+    protected function applyLayoutStyles(View\AttributesInterface $attributes, array $layout)
+    {
+        foreach ([static::PADDING_TOP => '%spx', static::PADDING_BOTTOM => '%spx'] as $property => $template) {
+            if (isset($layout[$property]) && 0 < $layout[$property]) {
+                $attributes->addStyle(
+                    str_replace('_', '-', $property),
+                    sprintf($template, $layout[$property])
+                );
+            }
+        }
+    }
+
+    /**
      * Returns the current block layout property.
      *
      * @param Model\BlockInterface $block
@@ -403,7 +409,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      *
      * @return int
      */
-    public function getCurrentBlockProperty(Model\BlockInterface $block, $property, $default)
+    protected function getCurrentBlockProperty(Model\BlockInterface $block, $property, $default)
     {
         $layout = $block->getLayout();
         $currentSize = $default;
@@ -425,7 +431,7 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
      * @param string               $property
      * @param int                  $current
      */
-    public function setCurrentBlockProperty(Model\BlockInterface $block, $property, $current)
+    protected function setCurrentBlockProperty(Model\BlockInterface $block, $property, $current)
     {
         $layout = $block->getLayout();
 
@@ -459,8 +465,8 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
             throw new RuntimeException('Unexpected editor viewport width.');
         }
 
-        foreach ($this->getDevicesWidths() as $device => $deviceWidth) {
-            if ($deviceWidth <= $viewportWidth) {
+        foreach (static::getDevices() as $device => $config) {
+            if ($viewportWidth >= $config['max']) {
                 return $device;
             }
         }
@@ -482,13 +488,13 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
 
         $devices = [];
 
-        foreach ($this->getDevicesWidths() as $device => $deviceWidth) {
-            if ($viewportWidth >= $deviceWidth) {
+        foreach (static::getDevices() as $device => $config) {
+            if ($viewportWidth >= $config['max']) {
                 $devices[] = $device;
             }
         }
 
-        if (empty($devices)) {
+        if (empty($devices)) { // TODO may be useless
             $devices[] = static::XS;
         }
 
@@ -509,8 +515,12 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
 
         $devices = [];
 
-        foreach ($this->getDevicesWidths() as $device => $deviceWidth) {
-            if ($viewportWidth < $deviceWidth) {
+        foreach (static::getDevices() as $device => $config) {
+            if ($device === static::XS) {
+                continue;
+            }
+
+            if ($viewportWidth < $config['max']) {
                 $devices[] = $device;
             }
         }
@@ -519,17 +529,33 @@ class Bootstrap3Adapter extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * Returns the devices min widths.
+     * Returns the devices configurations.
      *
      * @return array
      */
-    private function getDevicesWidths()
+    public static function getDevices()
     {
         return [
-            static::LG => 1200,
-            static::MD => 992,
-            static::SM => 768,
-            static::XS => 0,
+            static::LG => [
+                'min'   => 1200,
+                'max'   => null,
+                'width' => 1140,
+            ],
+            static::MD => [
+                'min'   => 992,
+                'max'   => 1199,
+                'width' => 940,
+            ],
+            static::SM => [
+                'min'   => 768,
+                'max'   => 991,
+                'width' => 720,
+            ],
+            static::XS => [
+                'min'   => null,
+                'max'   => 479,
+                'width' => 450,
+            ],
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block;
 
+use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Exception\InvalidOperationException;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -93,9 +94,9 @@ class TinymcePlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function createWidget(BlockInterface $block, array $options, $position = 0)
+    public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0)
     {
-        $view = parent::createWidget($block, $options, $position);
+        $view = parent::createWidget($block, $adapter, $options, $position);
 
         $translationData = $block->translate($this->localeProvider->getCurrentLocale())->getData();
         if (array_key_exists('content', $translationData)) {
