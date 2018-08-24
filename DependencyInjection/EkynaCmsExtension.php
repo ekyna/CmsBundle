@@ -168,12 +168,10 @@ class EkynaCmsExtension extends AbstractExtension
             'xs' => 480,
         ];
 
-        $columns = [1, 2, 3, 4, 6, 8, 10, 12];
-
         $filterSets = [];
 
         foreach ($medias as $size => $width) {
-            foreach ($columns as $column) {
+            for ($column = 1; $column <= 12; $column++) {
                 $number = 12 / $column;
 
                 $filterSets[sprintf('col_%s_%d', $size, $column)] = [
