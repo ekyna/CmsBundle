@@ -220,10 +220,14 @@ class ImagePlugin extends AbstractPlugin
                     }
                     if (!$image) {
                         $image = $dom->createElement('img');
-                        //$src = $this->mediaGenerator->generateFrontUrl($imageMedia, $options['filter']);
-                        //$image->setAttribute('src', $src);
-                        $buildResponsiveImg($imageMedia, $image);
                         $image->setAttribute('alt', $imageMedia->getTitle());
+                        if ($imageMedia->getType() === MediaTypes::SVG) {
+                            $image->setAttribute('src',
+                                $this->mediaGenerator->generateFrontUrl($imageMedia, $options['filter'])
+                            );
+                        } else {
+                            $buildResponsiveImg($imageMedia, $image);
+                        }
                     }
                 }
             }
@@ -266,11 +270,15 @@ class ImagePlugin extends AbstractPlugin
                     }
                     if (!$hover) {
                         $hover = $dom->createElement('img');
-                        // Src and Alt
-                        //$src = $this->mediaGenerator->generateFrontUrl($hoverMedia, $options['filter']);
-                        //$hover->setAttribute('src', $src);
-                        $buildResponsiveImg($hoverMedia, $hover);
                         $hover->setAttribute('alt', $hoverMedia->getTitle());
+                        if ($imageMedia->getType() === MediaTypes::SVG) {
+                            // Src and Alt
+                            $hover->setAttribute('src',
+                                $this->mediaGenerator->generateFrontUrl($hoverMedia, $options['filter'])
+                            );
+                        } else {
+                            $buildResponsiveImg($hoverMedia, $hover);
+                        }
                     }
 
                     if (!empty($classes)) {
