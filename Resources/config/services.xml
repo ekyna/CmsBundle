@@ -218,6 +218,15 @@
             <tag name="routing.loader"/>
         </service>
 
+        <!-- Locale switcher -->
+        <service id="ekyna_cms.locale_switcher"
+                 class="Ekyna\Bundle\CmsBundle\Service\LocaleSwitcher">
+            <argument type="service" id="ekyna_admin.helper.resource_helper"/>
+            <argument type="service" id="router"/>
+            <argument type="service" id="request_stack"/>
+            <argument>%locales%</argument>
+        </service>
+
         <!-- Page Helper -->
         <service id="ekyna_cms.helper.page"
                  class="Ekyna\Bundle\CmsBundle\Helper\PageHelper">
@@ -503,7 +512,8 @@
             <argument type="service" id="ekyna_cms.helper.page"/>
             <argument type="service" id="ekyna_cms.seo.repository"/>
             <argument type="service" id="ekyna_core.cache.tag_manager"/>
-            <argument type="service" id="fragment.handler"/>
+            <argument type="service" id="ekyna_cms.locale_switcher"/>
+            <argument type="service" id="ekyna_resource.locale.request_provider"/>
             <argument type="collection"/>
             <tag name="twig.extension"/>
         </service>

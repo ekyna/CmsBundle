@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Class PageHelper
  * @package Ekyna\Bundle\CmsBundle\Helper
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class PageHelper
 {
@@ -42,21 +42,22 @@ class PageHelper
     /**
      * Constructor.
      *
-     * @param PageRepository           $pageRepository
-     * @param string                   $homeRoute
+     * @param PageRepository $pageRepository
+     * @param string         $homeRoute
      */
     public function __construct(
-        PageRepository           $pageRepository,
+        PageRepository $pageRepository,
         $homeRoute
     ) {
-        $this->pageRepository  = $pageRepository;
-        $this->homeRoute       = $homeRoute;
+        $this->pageRepository = $pageRepository;
+        $this->homeRoute = $homeRoute;
     }
 
     /**
      * Initializes the helper.
      *
      * @param Request $request
+     *
      * @return PageInterface|null
      */
     public function init(Request $request)
@@ -70,6 +71,7 @@ class PageHelper
      * Finds the page by route.
      *
      * @param Request $request
+     *
      * @return PageInterface|null
      */
     public function findByRequest(Request $request)
@@ -77,6 +79,7 @@ class PageHelper
         if (null !== $route = $request->attributes->get('_route', null)) {
             return $this->findByRoute($route);
         }
+
         return null;
     }
 
@@ -84,6 +87,7 @@ class PageHelper
      * Finds the page by route.
      *
      * @param string $route
+     *
      * @return PageInterface|null
      */
     public function findByRoute($route)
@@ -104,6 +108,7 @@ class PageHelper
             }
             $this->currentPage = $this->findByRequest($this->request);
         }
+
         return $this->currentPage;
     }
 
@@ -117,6 +122,7 @@ class PageHelper
         if (false === $this->homePage) {
             $this->homePage = $this->findByRoute($this->homeRoute);
         }
+
         return $this->homePage;
     }
 

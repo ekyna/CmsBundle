@@ -56,7 +56,7 @@ class EkynaCmsExtension extends AbstractExtension
         // Cms twig extension config
         $container
             ->getDefinition('ekyna_cms.twig.cms_extension')
-            ->replaceArgument(7, [
+            ->replaceArgument(8, [
                 'home_route' => $config['home_route'],
                 'seo'        => $config['seo'],
                 'page'       => $config['page'],

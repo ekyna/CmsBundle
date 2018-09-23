@@ -8,11 +8,12 @@ use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Menu\MenuProvider;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
+use Ekyna\Bundle\CmsBundle\Service\LocaleSwitcher;
 use Ekyna\Bundle\CmsBundle\Service\Renderer\TagRenderer;
 use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 use Ekyna\Bundle\SettingBundle\Manager\SettingsManagerInterface;
+use Ekyna\Component\Resource\Locale\LocaleProviderInterface;
 use Knp\Menu\Twig\Helper;
-use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 
 /**
  * Class CmsExtension
@@ -52,14 +53,19 @@ class CmsExtension extends \Twig_Extension
     protected $tagManager;
 
     /**
-     * @var FragmentHandler
-     */
-    protected $fragmentHandler;
-
-    /**
      * @var TagRenderer
      */
     protected $tagRenderer;
+
+    /**
+     * @var LocaleSwitcher
+     */
+    protected $localeSwitcher;
+
+    /**
+     * @var LocaleProviderInterface
+     */
+    protected $localeProvider;
 
     /**
      * @var array
@@ -76,7 +82,8 @@ class CmsExtension extends \Twig_Extension
      * @param PageHelper               $pageHelper
      * @param SeoRepository            $seoRepository
      * @param TagManager               $tagManager
-     * @param FragmentHandler          $fragmentHandler
+     * @param LocaleSwitcher $localeSwitcher
+     * @param LocaleProviderInterface  $localeProvider
      * @param array                    $config
      */
     public function __construct(
@@ -86,7 +93,8 @@ class CmsExtension extends \Twig_Extension
         PageHelper $pageHelper,
         SeoRepository $seoRepository,
         TagManager $tagManager,
-        FragmentHandler $fragmentHandler,
+        LocaleSwitcher $localeSwitcher,
+        LocaleProviderInterface $localeProvider,
         array $config
     ) {
         $this->settings = $settings;
@@ -95,7 +103,8 @@ class CmsExtension extends \Twig_Extension
         $this->pageHelper = $pageHelper;
         $this->tagManager = $tagManager;
         $this->seoRepository = $seoRepository;
-        $this->fragmentHandler = $fragmentHandler;
+        $this->localeSwitcher = $localeSwitcher;
+        $this->localeProvider = $localeProvider;
 
         $this->config = array_merge($this->getDefaultConfig(), $config);
     }
@@ -116,7 +125,6 @@ class CmsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('cms_page', [$this, 'getPage']),
             new \Twig_SimpleFunction('cms_metas', [$this, 'renderMetas'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_seo', [$this, 'renderSeo'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_meta', [$this, 'renderMeta'], ['is_safe' => ['html']]),
@@ -124,18 +132,10 @@ class CmsExtension extends \Twig_Extension
             new \Twig_SimpleFunction('cms_menu', [$this, 'renderMenu'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_breadcrumb', [$this, 'renderBreadcrumb'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('cms_cookie_consent', [$this, 'renderCookieConsent'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_page_controller', [$this, 'getPageControllerTitle'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_locale_switcher', [$this, 'renderLocaleSwitcher'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('cms_page', [$this, 'getPage']),
+            new \Twig_SimpleFunction('cms_page_controller', [$this, 'getPageControllerTitle']),
         ];
-    }
-
-    /**
-     * Returns the current page.
-     *
-     * @return \Ekyna\Bundle\CmsBundle\Model\PageInterface|null
-     */
-    public function getPage()
-    {
-        return $this->pageHelper->getCurrent();
     }
 
     /**
@@ -316,6 +316,65 @@ class CmsExtension extends \Twig_Extension
     }
 
     /**
+     * Renders the locale switcher.
+     *
+     * @param array $attributes
+     *
+     * @return string
+     */
+    public function renderLocaleSwitcher(array $attributes = [])
+    {
+        if (!$this->localeSwitcher->hasResource()) {
+            $this->localeSwitcher->setResource($this->getPage());
+        }
+
+        $locales = $this->localeProvider->getAvailableLocales();
+
+        if (empty($urls = $this->localeSwitcher->getUrls($locales))) {
+            return '';
+        }
+
+        $current = $this->localeProvider->getCurrentLocale();
+        $list = '';
+
+        foreach ($urls as $locale => $url) {
+            $classes = ['locale-' . strtolower($locale)];
+
+            if ($current == $locale) {
+                $classes[] = 'current';
+            }
+
+            $list .= sprintf(
+                '<li class="locale-%s"><a href="%s">%s</a></li>',
+                implode(' ', $classes),
+                $url,
+                \Locale::getDisplayLanguage($locale, $current)
+            );
+        }
+
+        if (!isset($attributes['class'])) {
+            $attributes['class'] = 'locale-switcher';
+        }
+
+        $attr = [];
+        foreach ($attributes as $key => $value) {
+            $attr[] = sprintf(' %s="%s"', $key, $value);
+        }
+
+        return '<ul ' .implode(' ', $attr). '>' . $list . '</ul>';
+    }
+
+    /**
+     * Returns the current page.
+     *
+     * @return \Ekyna\Bundle\CmsBundle\Model\PageInterface|null
+     */
+    public function getPage()
+    {
+        return $this->pageHelper->getCurrent();
+    }
+
+    /**
      * Returns the page controller title.
      *
      * @param string $name
@@ -372,13 +431,13 @@ class CmsExtension extends \Twig_Extension
     private function getDefaultConfig()
     {
         return [
-            'home_route'  => 'home',
-            'seo'         => [
+            'home_route' => 'home',
+            'seo'        => [
                 'no_follow'    => true,
                 'no_index'     => true,
                 'title_append' => null,
             ],
-            'page'        => [
+            'page'       => [
                 'cookie_content' => [
                     'enable' => false,
                 ],
@@ -386,7 +445,7 @@ class CmsExtension extends \Twig_Extension
                     'enable' => false,
                 ],
                 'controllers'    => [],
-            ]
+            ],
         ];
     }
 }
