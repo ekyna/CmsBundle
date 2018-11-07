@@ -67,10 +67,12 @@ class MediaExtension extends \Twig_Extension
             ];
         }
 
+        $url = null;
         $srcSet = [];
         $sizes = [];
         foreach ($map as $filter => $config) {
-            $srcSet[] = $this->manager->getBrowserPath($image->getPath(), $filter) . ' ' . $config['width'] . 'w';
+            $url = $this->manager->getBrowserPath($image->getPath(), $filter);
+            $srcSet[] = $url . ' ' . $config['width'] . 'w';
             $sizes[] = trim(
                 ($config['max'] ? '(max-width:' . $config['max'] . 'px)' : '') . ' ' . $config['width'] . 'px'
             );
@@ -80,6 +82,7 @@ class MediaExtension extends \Twig_Extension
             $attr['alt'] = $image->getTitle();
         }
 
+        $attr['src'] = $url;
         $attr['srcset'] = implode(', ', $srcSet);
         $attr['sizes'] = implode(', ', $sizes);
 

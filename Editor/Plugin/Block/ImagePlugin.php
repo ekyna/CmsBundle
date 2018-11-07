@@ -181,16 +181,18 @@ class ImagePlugin extends AbstractPlugin
         $buildResponsiveImg = function(MediaInterface $media, \DOMElement $img) use ($block, $adapter) {
             $map = $adapter->getImageResponsiveMap($block);
 
+            $url = null;
             $srcSet = [];
             $sizes = [];
 
             foreach ($map as $filter => $config) {
-                $srcSet[] = $this->mediaGenerator->generateFrontUrl($media, $filter) . ' ' . $config['width'] . 'w';
+                $url = $this->mediaGenerator->generateFrontUrl($media, $filter);
+                $srcSet[] = $url . ' ' . $config['width'] . 'w';
                 $sizes[] = trim(
                     ($config['max'] ? '(max-width:' . $config['max'] . 'px)' : '') . ' ' . $config['width'] . 'px'
                 );
             }
-
+            $img->setAttribute('src', $url);
             $img->setAttribute('srcset', implode(', ', $srcSet));
             $img->setAttribute('sizes', implode(', ', $sizes));
         };
