@@ -86,6 +86,12 @@
             <tag name="resource.event_subscriber"/>
         </service>
 
+        <!-- (Page) public url event subscriber -->
+        <service id="ekyna_cms.event_subscriber.public_url"
+                 class="Ekyna\Bundle\CmsBundle\EventListener\PublicUrlEventSubscriber">
+            <tag name="resource.event_subscriber"/>
+        </service>
+
         <!-- Doctrine subscribers/listeners -->
         <!-- TODO merge metadata subscriber -->
         <service id="ekyna_cms.content.subject_subscriber"

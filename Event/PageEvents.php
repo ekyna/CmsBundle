@@ -25,4 +25,6 @@ class PageEvents
 
     const PRE_DELETE  = 'ekyna_cms.page.pre_delete';
     const POST_DELETE = 'ekyna_cms.page.post_delete';
+
+    const PUBLIC_URL  = 'ekyna_cms.page.public_url';
 }

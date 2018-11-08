@@ -319,16 +319,17 @@ class CmsExtension extends \Twig_Extension
      * Renders the locale switcher.
      *
      * @param array $attributes
+     * @param array $locales
      *
      * @return string
      */
-    public function renderLocaleSwitcher(array $attributes = [])
+    public function renderLocaleSwitcher(array $attributes = [], array $locales = [])
     {
         if (!$this->localeSwitcher->hasResource()) {
             $this->localeSwitcher->setResource($this->getPage());
         }
 
-        $locales = $this->localeProvider->getAvailableLocales();
+        $locales = empty($locales) ? $this->localeProvider->getAvailableLocales() : $locales;
 
         if (empty($urls = $this->localeSwitcher->getUrls($locales))) {
             return '';
@@ -348,7 +349,7 @@ class CmsExtension extends \Twig_Extension
                 '<li class="locale-%s"><a href="%s">%s</a></li>',
                 implode(' ', $classes),
                 $url,
-                \Locale::getDisplayLanguage($locale, $current)
+                mb_convert_case(\Locale::getDisplayLanguage($locale, $current), MB_CASE_TITLE)
             );
         }
 
