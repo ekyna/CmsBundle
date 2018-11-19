@@ -1,0 +1,29 @@
+ekyna_cms:
+    seo:
+        required: Please fill SEO fields.
+        unique_title: A page already exists with this title.
+    page:
+        invalid_parent: The selected parent page is not valid.
+        invalid_path: The page's path (URI) is not valid.
+        title_is_mandatory: You must specify all the "Title" fields of the page translations.
+        controller_is_mandatory: Please select a template.
+        invalid_controller: This template is not valid.
+        unique_name: Please enter a unique name.
+        unique_path: Please enter a unique URL.
+    menu:
+        invalid_routing: You must specify on an only one of the fields "Page" or "Route", or all the "Url" translations fields.
+        unique_name: Please enter a unique name.
+    container:
+        content_or_name_but_not_both: A container must be linked to one content or being named but not both.
+        title_must_be_empty: Title must be empty.
+        title_must_be_filled: Title must be filled.
+        invalid_data: Invalid data.
+    row:
+        container_or_name_but_not_both: A line must be linked to a container or being named but not both.
+        bad_column_index: Bad columns indexation.
+        too_large_row: The line is too large.
+        too_small_row: The line is too small.
+    block:
+        row_or_name_but_not_both: A block must be linked to a line or being named but not both.
+        invalid_position: Block's position is not valid.
+        invalid_data: Invalid data.
