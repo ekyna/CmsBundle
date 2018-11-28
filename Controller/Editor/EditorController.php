@@ -23,7 +23,7 @@ class EditorController extends BaseController
      */
     public function indexAction(Request $request)
     {
-        return $this->render('EkynaCmsBundle:Editor:index.html.twig', [
+        return $this->render('@EkynaCms/Editor/index.html.twig', [
             'config' => $this->buildConfig($request),
         ]);
     }

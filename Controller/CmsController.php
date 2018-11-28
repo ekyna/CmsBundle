@@ -20,7 +20,7 @@ class CmsController extends Controller
      */
     public function defaultAction()
     {
-        return $this->configureSharedCache($this->render('EkynaCmsBundle:Cms:default.html.twig'));
+        return $this->configureSharedCache($this->render('@EkynaCms/Cms/default.html.twig'));
     }
 
     /**
@@ -36,7 +36,7 @@ class CmsController extends Controller
 
         $results = $this->get('ekyna_cms.wide_search')->search($expression);
 
-        return $this->render('EkynaCmsBundle:Cms:search.html.twig', array(
+        return $this->render('@EkynaCms/Cms/search.html.twig', array(
             'expression' => $expression,
             'results'    => $results,
         ))->setPrivate();
@@ -63,7 +63,7 @@ class CmsController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $response = $this->render('EkynaCmsBundle:Cms/Cookie:response.xml.twig');
+        $response = $this->render('@EkynaCms/Cms/Cookie/response.xml.twig');
 
         $response->headers->add(['Content-Type' => 'application/xml']);
 
@@ -82,7 +82,7 @@ class CmsController extends Controller
         $this->get('request_stack')->getCurrentRequest()->setLocale($locale);
 
         return $this
-            ->render('EkynaCmsBundle:Cms/Fragment:footer.html.twig')
+            ->render('@EkynaCms/Cms/Fragment/footer.html.twig')
             ->setSharedMaxAge(3600);
     }
 }

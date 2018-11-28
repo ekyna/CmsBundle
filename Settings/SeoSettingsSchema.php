@@ -73,7 +73,7 @@ class SeoSettingsSchema extends AbstractSchema
      */
     public function getShowTemplate()
     {
-        return 'EkynaCmsBundle:Admin/Settings/Seo:show.html.twig';
+        return '@EkynaCms/Admin/Settings/Seo/show.html.twig';
     }
 
     /**
@@ -81,6 +81,6 @@ class SeoSettingsSchema extends AbstractSchema
      */
     public function getFormTemplate()
     {
-        return 'EkynaCmsBundle:Admin/Settings/Seo:form.html.twig';
+        return '@EkynaCms/Admin/Settings/Seo/form.html.twig';
     }
 }

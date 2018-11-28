@@ -15,18 +15,18 @@
         {{ ui_forms_stylesheets() }}
     {%- endblock stylesheets %}
 
-    {% include 'EkynaCoreBundle:Ui:ie-fix.html.twig' %}
+    {% include '@EkynaCore/Ui/ie-fix.html.twig' %}
 
     {{ require_js(not app.debug) }}
 </head>
 <body>
     {% block body %}
 
-        {% include 'EkynaCmsBundle:Cms/Fragment:navbar.html.twig' %}
+        {% include '@EkynaCms/Cms/Fragment/navbar.html.twig' %}
 
         {% block breadcrumb -%}
             <div class="container">
-                {%- include 'EkynaCoreBundle:Ui:flashes.html.twig' -%}
+                {%- include '@EkynaCore/Ui/flashes.html.twig' -%}
                 {{ cms_breadcrumb() }}
             </div>
         {%- endblock breadcrumb %}

@@ -151,7 +151,10 @@ class MenuProvider implements MenuProviderInterface
             }
         }
 
-        $item = $this->factory->createItem($data['name'], $options);
+        $item = $this
+            ->factory
+            ->createItem($data['name'], $options)
+            ->setExtra('translation_domain', false);
 
         // Children items
         foreach ($this->menus as $menu) {

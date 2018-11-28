@@ -77,7 +77,7 @@ class CookiesSettingsSchema extends AbstractSchema
      */
     public function getShowTemplate()
     {
-        return 'EkynaCmsBundle:Admin/Settings/Cookies:show.html.twig';
+        return '@EkynaCms/Admin/Settings/Cookies/show.html.twig';
     }
 
     /**
@@ -85,6 +85,6 @@ class CookiesSettingsSchema extends AbstractSchema
      */
     public function getFormTemplate()
     {
-        return 'EkynaCmsBundle:Admin/Settings/Cookies:form.html.twig';
+        return '@EkynaCms/Admin/Settings/Cookies/form.html.twig';
     }
 }

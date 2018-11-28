@@ -270,6 +270,15 @@
             <argument type="service" id="ekyna_cms.helper.page"/>
             <argument type="collection"/>
         </service>
+        <service id="ekyna_cms.editor.renderer"
+                 class="Ekyna\Bundle\CmsBundle\Editor\Renderer\Renderer">
+            <argument type="service" id="ekyna_cms.editor.editor"/>
+            <argument type="service" id="ekyna_cms.helper.page"/>
+            <argument type="service" id="ekyna_core.cache.tag_manager"/>
+            <argument type="service" id="twig"/>
+            <argument type="service" id="doctrine.orm.default_entity_manager"/>
+            <argument type="collection"/>
+        </service>
 
         <!-- Web Editor block plugins -->
         <service id="ekyna_cms.editor.block_plugin.abstract"
@@ -525,11 +534,7 @@
         </service>
         <service id="ekyna_cms.twig.editor_extension"
                  class="Ekyna\Bundle\CmsBundle\Twig\EditorExtension">
-            <argument type="service" id="doctrine.orm.default_entity_manager"/>
-            <argument type="service" id="ekyna_cms.editor.editor"/>
-            <argument type="service" id="ekyna_cms.helper.page"/>
-            <argument type="service" id="ekyna_core.cache.tag_manager"/>
-            <argument type="collection"/>
+            <argument type="service" id="ekyna_cms.editor.renderer"/>
             <tag name="twig.extension"/>
         </service>
         <service id="ekyna_cms.twig.slide_show_extension"

@@ -278,7 +278,7 @@ class CmsExtension extends \Twig_Extension
     public function renderBreadcrumb(array $options = [])
     {
         return $this->menuHelper->render('breadcrumb', array_merge([
-            'template' => 'EkynaCmsBundle:Cms:breadcrumb.html.twig',
+            'template' => '@EkynaCms/Cms/breadcrumb.html.twig',
             //'currentAsLink' => false,
             'depth'    => 1,
         ], $options));
@@ -390,14 +390,6 @@ class CmsExtension extends \Twig_Extension
         }
 
         return $this->config['page']['controllers'][$name]['title'];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return 'ekyna_cms';
     }
 
     /**

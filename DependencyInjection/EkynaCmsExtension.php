@@ -39,10 +39,10 @@ class EkynaCmsExtension extends AbstractExtension
                 'default_container_plugin' => $config['editor']['plugins']['container']['default'],
             ]);
 
-        // Editor twig extension config
+        // Editor renderer config
         $container
-            ->getDefinition('ekyna_cms.twig.editor_extension')
-            ->replaceArgument(4, [
+            ->getDefinition('ekyna_cms.editor.renderer')
+            ->replaceArgument(5, [
                 'template' => $config['editor']['template'],
             ]);
 
