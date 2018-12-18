@@ -121,7 +121,7 @@ class Renderer
                     } elseif (0 < strlen($html = $page->getHtml())) {
                         return $html;
                     } else {
-                        return $this->config['default_config'];
+                        return $this->config['default_content'];
                     }
                 }
             } else {
