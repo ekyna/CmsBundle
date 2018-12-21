@@ -1,7 +1,7 @@
 /// <reference path="../../../../../../../typings/index.d.ts" />
 
 import * as $ from 'jquery';
-import 'jquery-ui/slider';
+import 'jquery-ui/widgets/slider';
 import * as _ from 'underscore';
 import * as es6Promise from 'es6-promise';
 import * as Router from 'routing';
