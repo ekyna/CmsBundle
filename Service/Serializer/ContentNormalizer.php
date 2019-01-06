@@ -14,16 +14,14 @@ class ContentNormalizer extends AbstractTranslatableNormalizer
 {
     /**
      * @inheritdoc
+     *
+     * @param ContentInterface $content
      */
     public function normalize($content, $format = null, array $context = [])
     {
         $data = parent::normalize($content, $format, $context);
 
-        /** @var ContentInterface $content */
-
-        $groups = isset($context['groups']) ? (array)$context['groups'] : [];
-
-        if (in_array('Search', $groups)) {
+        if ($this->contextHasGroup(['Search', 'Content'], $context)) {
             // TODO localized block's text
             // $data[$locale] = ...
         }
@@ -36,7 +34,7 @@ class ContentNormalizer extends AbstractTranslatableNormalizer
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        $resource = parent::denormalize($data, $class, $format, $context);
+        //$resource = parent::denormalize($data, $class, $format, $context);
 
         throw new \Exception('Not yet implemented');
     }

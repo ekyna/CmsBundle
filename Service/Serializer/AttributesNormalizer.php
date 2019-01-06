@@ -14,36 +14,12 @@ class AttributesNormalizer extends AbstractTranslatableNormalizer
 {
     /**
      * @inheritdoc
+     *
+     * @param AttributesInterface $attributes
      */
     public function normalize($attributes, $format = null, array $context = [])
     {
-        /** @var AttributesInterface $attributes */
-
         return $attributes->toArray();
-
-        /*$result = [];
-
-        if (null !== $id = $attributes->getId()) {
-            $result['id'] = $id;
-        }
-        if (!empty($classes = $attributes->getClasses())) {
-            $result['class'] = implode(' ', $classes);
-        }
-        if (!empty($styles = $attributes->getClasses())) {
-            $result['style'] = implode(';', array_map(function($key, $value) {
-                return "$key:$value";
-            }, array_keys($styles), array_values($styles)));
-        }
-        if (!empty($data = $attributes->getData())) {
-            $result['data-cms'] = json_encode($data);
-        }
-        if (!empty($extra = $attributes->getExtra())) {
-            foreach ($extra as $key => $value) {
-                $result[$key] = $value;
-            }
-        }
-
-        return $result;*/
     }
 
     /**
@@ -51,7 +27,7 @@ class AttributesNormalizer extends AbstractTranslatableNormalizer
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        $resource = parent::denormalize($data, $class, $format, $context);
+        //$resource = parent::denormalize($data, $class, $format, $context);
 
         throw new \Exception('Not yet implemented');
     }

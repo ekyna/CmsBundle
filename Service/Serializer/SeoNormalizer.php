@@ -14,11 +14,11 @@ class SeoNormalizer extends AbstractTranslatableNormalizer
 {
     /**
      * @inheritdoc
+     *
+     * @param Model\SeoInterface $resource
      */
     public function normalize($resource, $format = null, array $context = [])
     {
-        /** @var Model\SeoInterface $resource */
-
         return array_replace(
             ['id' => $resource->getId()],
             $this->normalizeTranslations($resource, $format, $context)
@@ -30,7 +30,7 @@ class SeoNormalizer extends AbstractTranslatableNormalizer
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        $resource = parent::denormalize($data, $class, $format, $context);
+        //$resource = parent::denormalize($data, $class, $format, $context);
 
         throw new \Exception('Not yet implemented');
     }

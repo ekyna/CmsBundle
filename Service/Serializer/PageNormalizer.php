@@ -14,21 +14,19 @@ class PageNormalizer extends AbstractTranslatableNormalizer
 {
     /**
      * @inheritdoc
+     *
+     * @param Model\PageInterface $page
      */
     public function normalize($page, $format = null, array $context = [])
     {
         $data = parent::normalize($page, $format, $context);
 
-        /** @var Model\PageInterface $page */
-
-        $groups = isset($context['groups']) ? (array)$context['groups'] : [];
-
-        if (in_array('Default', $groups)) {
+        if ($this->contextHasGroup(['Default', 'Page'], $context)) {
             // Seo
             if (null !== $seo = $page->getSeo()) {
                 $data['seo'] = $seo->getId();
             }
-        } elseif (in_array('Search', $groups)) {
+        } elseif ($this->contextHasGroup('Search', $context)) {
             // Seo
             if (null !== $seo = $page->getSeo()) {
                 $data['seo'] = $this->normalizeObject($seo, $format, $context);
@@ -45,7 +43,7 @@ class PageNormalizer extends AbstractTranslatableNormalizer
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        $resource = parent::denormalize($data, $class, $format, $context);
+        //$resource = parent::denormalize($data, $class, $format, $context);
 
         throw new \Exception('Not yet implemented');
     }
