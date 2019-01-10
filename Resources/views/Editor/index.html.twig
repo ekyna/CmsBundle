@@ -49,7 +49,7 @@
 
     {% block javascripts -%}
         <script type="text/javascript">
-            require(['ekyna-cms/editor'], function (Editor) {
+            require(['ekyna-cms/editor/editor'], function (Editor) {
                 var config = {{ config|json_encode|raw }},
                     editor = new Editor();
                 editor.init(config);

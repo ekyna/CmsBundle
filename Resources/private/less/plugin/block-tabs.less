@@ -1,0 +1,117 @@
+.cms-tabs {
+    .title {
+        font-size: 32px;
+    }
+
+    .content {
+        font-size: 14px;
+    }
+
+    .cms-tabs-main {
+
+    }
+
+    .cms-tabs-side {
+
+    }
+
+    .cms-tabs-content {
+        padding: 15px 0;
+
+    }
+
+    .cms-tabs-menu {
+        padding: 15px 0;
+
+        > ul > li > a {
+            transition: background-color .5s, color .5s;
+        }
+    }
+
+    @media (min-width: 768px) { // SM
+        .cms-tabs-content {
+            padding: 15px;
+        }
+
+        .cms-tabs-menu {
+            padding: 15px;
+        }
+    }
+
+    @media (min-width: 992px) { // MD
+        .cms-tabs-main {
+            width: 720px;
+            min-height: 405px;
+        }
+
+        &.center {
+            text-align: center;
+
+            > .wrapper {
+                max-width: 720px;
+                margin: auto;
+            }
+
+            .cms-tabs-side {
+                position: relative;
+            }
+
+            .cms-tabs-content {
+                text-align: right;
+                width: 60%;
+            }
+
+            .cms-tabs-menu {
+                text-align: left;
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 40%;
+
+            }
+        }
+
+        &.left {
+            .cms-tabs-side {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 10;
+                width: 36.84210526%;
+            }
+        }
+
+        &.right {
+            text-align: right;
+
+            .cms-tabs-main {
+                display: inline-block;
+            }
+
+            .cms-tabs-side {
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                z-index: 10;
+                width: 36.84210526%;
+            }
+        }
+    }
+
+    @media (min-width: 1200px) { // LG
+        .title {
+            font-size: 40px;
+        }
+
+        .content {
+            font-size: 18px;
+        }
+
+        .cms-tabs-content {
+
+        }
+    }
+}
+

@@ -1,0 +1,104 @@
+{% block center %}
+<div class="wrapper">
+    <p class="title">{{ tabs.title }}</p>
+    <div class="cms-tabs-main">
+        {{- block('main') -}}
+    </div>
+    <div class="cms-tabs-side">
+        <div class="cms-tabs-content">
+            {{- block('content') -}}
+        </div>
+        <div class="cms-tabs-menu">
+            {{- block('menu') -}}
+        </div>
+    </div>
+</div>
+{% endblock center %}
+
+
+{% block left %}
+<div class="cms-tabs-main">
+    {{- block('main') -}}
+</div>
+<div class="cms-tabs-side">
+    <div class="cms-tabs-content">
+        <p class="title">{{ tabs.title }}</p>
+        {{- block('content') -}}
+    </div>
+    <div class="cms-tabs-menu">
+        {{- block('menu') -}}
+    </div>
+</div>
+{% endblock left %}
+
+
+{% block right %}
+<div class="cms-tabs-side">
+    <div class="cms-tabs-content">
+        <p class="title">{{ tabs.title }}</p>
+        {{- block('content') -}}
+    </div>
+    <div class="cms-tabs-menu">
+        {{- block('menu') -}}
+    </div>
+</div>
+<div class="cms-tabs-main">
+    {{- block('main') -}}
+</div>
+{% endblock right %}
+
+
+{%- block content -%}
+<div class="content">{{ tabs.content|raw }}</div>
+{%- if tabs.buttonLabel is not empty and tabs.buttonUrl is not empty -%}
+<p>
+    <a href="{{ tabs.buttonUrl }}" class="btn btn-default">{{ tabs.buttonLabel }}</a>
+</p>
+{%- endif -%}
+{%- endblock content -%}
+
+
+{%- block menu -%}
+<ul class="nav nav-pills nav-stacked">
+    {%- for tab in tabs.tabs -%}
+    <li{% if loop.first %} class="active"{% endif %}>
+        <a href="{% if tab.anchor is not empty %}#{{ tab.anchor }}{% else %}javascript: void(0){% endif %}"
+           {%- if tab.media is not null %} data-target="cms_tabs_{{ block_id }}_{{ loop.index0 }}"{% endif %}>
+            {{- tab.title -}}
+        </a>
+    </li>
+    {%- endfor -%}
+</ul>
+{%- endblock menu -%}
+
+
+{%- block main -%}
+{%- if tabs.media is not null -%}
+    <div class="cms-tabs-media">
+        {{- tabs.media|media({
+            'responsive': false,
+            'autoplay': false,
+            'loop': true,
+            'muted': true,
+            'player': false,
+            'attr': {'class': 'embed-responsive-item'}
+        }) -}}{# TODO filter #}
+    </div>
+{%- else -%}
+    {%- for tab in tabs.tabs -%}
+    {%- if tab.media is not null -%}
+    <div class="cms-tabs-media" id="cms_tabs_{{ block_id }}_{{ loop.index0 }}"
+            {%- if not loop.first %} style="display: none;"{% endif %}>
+        {{- tab.media|media({
+            'responsive': false,
+            'autoplay': false,
+            'loop': true,
+            'muted': true,
+            'player': false,
+            'attr': {'class': 'embed-responsive-item'}
+        }) -}}{# TODO filter #}
+    </div>
+    {%- endif -%}
+    {%- endfor -%}
+{%- endif -%}
+{%- endblock main -%}

@@ -36,19 +36,19 @@ class VideoPlugin extends AbstractPlugin
      *
      * @param array           $config
      * @param MediaRepository $mediaRepository
-     * @param Renderer        $mediaRenderer
+     * @param Renderer        $renderer
      */
     public function __construct(
         array $config,
         MediaRepository $mediaRepository,
-        Renderer $mediaRenderer
+        Renderer $renderer
     ) {
         parent::__construct(array_replace([
             'default_poster' => '/bundles/ekynacms/img/default-image.gif',
         ], $config));
 
         $this->mediaRepository = $mediaRepository;
-        $this->mediaRenderer = $mediaRenderer;
+        $this->mediaRenderer = $renderer;
     }
 
     /**

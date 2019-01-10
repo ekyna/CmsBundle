@@ -43,6 +43,42 @@
 {% endblock ekyna_cms_block_template_widget %}
 
 
+{% block ekyna_cms_block_tab_widget %}
+{% spaceless %}
+    {{ form_errors(form) }}
+    {{ form_row(form.translations, {'label_col': 0, 'widget_col': 12}) }}
+    <div class="row">
+        <div class="col-md-4">
+            {{ form_widget(form.media, {'label_col': 6, 'widget_col': 6}) }}
+        </div>
+        <div class="col-md-8">
+            {{ form_row(form.anchor, {'label_col': 6, 'widget_col': 6}) }}
+        </div>
+    </div>
+    {{ form_rest(form) }}
+{% endspaceless %}
+{% endblock ekyna_cms_block_tab_widget %}
+
+
+{% block ekyna_cms_block_tabs_widget %}
+{% spaceless %}
+    {{ form_errors(form) }}
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_row(form.media, {'label_col': 6, 'widget_col': 6}) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.align, {'label_col': 6, 'widget_col': 6}) }}
+            {{ form_row(form.theme, {'label_col': 6, 'widget_col': 6}) }}
+        </div>
+    </div>
+    {{ form_row(form.translations, {'label_col': 0, 'widget_col': 12}) }}
+    {{ form_row(form.tabs, {'label_col': 2, 'widget_col': 10}) }}
+    {{ form_rest(form) }}
+{% endspaceless %}
+{% endblock ekyna_cms_block_tabs_widget %}
+
+
 {% block ekyna_cms_block_image_widget %}
 {% spaceless %}
     {{ form_errors(form) }}

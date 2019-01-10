@@ -48,8 +48,7 @@ define(['require', 'jquery', 'routing', 'js-cookie', 'bootstrap'], function (req
     };
 
 
-    var EkynaCms = function () {
-    };
+    var EkynaCms = function () {};
 
     EkynaCms.prototype.init = function () {
         var $cookieConsent = $('#cookies-consent');
@@ -58,12 +57,20 @@ define(['require', 'jquery', 'routing', 'js-cookie', 'bootstrap'], function (req
             cookieConsent.init();
         }
 
+        // Editor tabs widgets
+        var $tabsWidget = $('.cms-tabs');
+        if (0 < $tabsWidget.length) {
+            require(['ekyna-cms/cms/tabs'], function (Tabs) {
+                Tabs.init($tabsWidget);
+            });
+        }
+
         // Slide shows
         var $slideShow = $('.cms-slide-show');
         if (0 < $slideShow.length) {
-            require(['ekyna-cms/slide-show'], function (SlideShow) {
-                $slideShow.each(function (i, s) {
-                    SlideShow.create($(s).data('config'));
+            require(['ekyna-cms/slide-show/slide-show'], function (SlideShow) {
+                $slideShow.each(function () {
+                    SlideShow.create($(this).data('config'));
                 });
             });
         }

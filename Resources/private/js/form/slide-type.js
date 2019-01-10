@@ -1,4 +1,4 @@
-define(['jquery', 'ekyna-cms/slide-show'], function($, SlideShow) {
+define(['jquery', 'ekyna-cms/slide-show/slide-show'], function($, SlideShow) {
     "use strict";
 
     return {
