@@ -48,7 +48,8 @@ class TagsType extends AbstractColumnType
     public function buildCellView(CellView $view, ColumnInterface $column, RowInterface $row, array $options)
     {
         $view->vars['value'] = static::$renderer->renderTags($view->vars['value'], [
-            'text'  => false,
+            'text'  => $options['text'],
+            'badge' => $options['badge'],
         ]);
         $view->vars['block_prefix'] = 'text';
     }
@@ -58,7 +59,11 @@ class TagsType extends AbstractColumnType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('label', 'ekyna_cms.tag.label.plural');
+        $resolver->setDefaults([
+            'label' => 'ekyna_cms.tag.label.plural',
+            'text'  => false,
+            'badge' => false,
+        ]);
     }
 
     /**

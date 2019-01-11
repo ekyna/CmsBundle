@@ -72,14 +72,14 @@ class TagRenderer
             if ($options['badge']) {
                 return function (TagInterface $tag) {
                     return sprintf(
-                        '<span class="label label-%s"><span class="fa fa-%s"></span> %s</span>',
+                        '<span class="label label-%s"><i class="fa fa-%s"></i> %s</span>',
                         $tag->getTheme(), $tag->getIcon(), $tag->getName()
                     );
                 };
             } else {
                 return function (TagInterface $tag) {
                     return sprintf(
-                        '<span class="text-%s"><span class="fa fa-%s"></span> %s</span>',
+                        '<span class="text-%s"><i class="fa fa-%s"></i> %s</span>',
                         $tag->getTheme(), $tag->getIcon(), $tag->getName()
                     );
                 };
@@ -88,14 +88,14 @@ class TagRenderer
             if ($options['badge']) {
                 return function (TagInterface $tag) {
                     return sprintf(
-                        '<span class="label label-%s" title="%s"><span class="fa fa-%s"></span></span>',
+                        '<span class="label label-%s" title="%s"><i class="fa fa-%s"></i></span>',
                         $tag->getTheme(), $tag->getName(), $tag->getIcon()
                     );
                 };
             } else {
                 return function (TagInterface $tag) {
                     return sprintf(
-                        '<span class="text-%s fa fa-%s" title="%s"></span>',
+                        '<i class="text-%s fa fa-%s" title="%s"></i>',
                         $tag->getTheme(), $tag->getIcon(), $tag->getName()
                     );
                 };
