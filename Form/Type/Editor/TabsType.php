@@ -5,8 +5,6 @@ namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\Tabs;
 use Ekyna\Bundle\CoreBundle\Form\Type\CollectionType;
-use Ekyna\Bundle\MediaBundle\Form\Type\MediaChoiceType;
-use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -29,7 +27,7 @@ class TabsType extends AbstractType
                 'label'       => 'ekyna_cms.block.field.theme',
                 'choices'     => array_flip($options['themes']),
                 'placeholder' => 'ekyna_core.value.none',
-                'required'    => false,
+                'required'    => true,
                 'select2'     => false,
             ])
             ->add('align', Type\ChoiceType::class, [
@@ -40,13 +38,8 @@ class TabsType extends AbstractType
                     'Center' => 'center',
                 ],
                 'placeholder' => 'ekyna_core.value.none',
-                'required'    => false,
+                'required'    => true,
                 'select2'     => false,
-            ])
-            ->add('media', MediaChoiceType::class, [
-                'label'    => 'ekyna_core.field.media',
-                'types'    => [MediaTypes::VIDEO, MediaTypes::IMAGE, MediaTypes::SVG],
-                'required' => false,
             ])
             ->add('translations', TranslationsFormsType::class, [
                 'form_type'      => TabsTranslationType::class,

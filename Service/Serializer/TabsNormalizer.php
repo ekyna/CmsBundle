@@ -41,7 +41,7 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * @param Model\Tabs $tabs
      */
@@ -50,7 +50,6 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
         $data = [
             'theme'        => $tabs->getTheme(),
             'align'        => $tabs->getAlign(),
-            'media'        => $tabs->getMedia() ? $tabs->getMedia()->getId() : null,
             'translations' => [],
             'tabs'         => [],
         ];
@@ -61,15 +60,21 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
                 'locale'       => $translation->getLocale(),
                 'title'        => $translation->getTitle(),
                 'content'      => $translation->getContent(),
+                'media'        => $translation->getMedia() ? $translation->getMedia()->getId() : null,
                 'button_label' => $translation->getButtonLabel(),
                 'button_url'   => $translation->getButtonUrl(),
             ];
         }
 
-        foreach ($tabs->getTabs() as $tab) {
+        $list = $tabs->getTabs()->toArray();
+        usort($list, function (Model\Tab $a, Model\Tab $b) {
+            return $a->getPosition() - $b->getPosition();
+        });
+
+        /** @var Model\Tab $tab */
+        foreach ($list as $tab) {
             $datum = [
                 'position'     => $tab->getPosition(),
-                'media'        => $tab->getMedia() ? $tab->getMedia()->getId() : null,
                 'anchor'       => $tab->getAnchor(),
                 'translations' => [],
             ];
@@ -77,8 +82,11 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
             /** @var Model\TabTranslation $translation */
             foreach ($tab->getTranslations() as $translation) {
                 $datum['translations'][$translation->getLocale()] = [
-                    'locale' => $translation->getLocale(),
-                    'title'  => $translation->getTitle(),
+                    'locale'       => $translation->getLocale(),
+                    'title'        => $translation->getTitle(),
+                    'media'        => $translation->getMedia() ? $translation->getMedia()->getId() : null,
+                    'button_label' => $translation->getButtonLabel(),
+                    'button_url'   => $translation->getButtonUrl(),
                 ];
             }
 
@@ -89,7 +97,7 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
@@ -100,9 +108,6 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
             ->setCurrentLocale($this->localeProvider->getCurrentLocale())
             ->setFallbackLocale($this->localeProvider->getFallbackLocale());
 
-        if (isset($data['media'])) {
-            $tabs->setMedia($this->mediaRepository->find($data['media']));
-        }
 
         foreach ($data['translations'] as $trans) {
             $translation = new Model\TabsTranslation();
@@ -112,6 +117,10 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
                 ->setContent($trans['content'])
                 ->setButtonLabel($trans['button_label'])
                 ->setButtonUrl($trans['button_url']);
+
+            if (isset($trans['media'])) {
+                $translation->setMedia($this->mediaRepository->find($trans['media']));
+            }
 
             $tabs->addTranslation($translation);
         }
@@ -124,15 +133,17 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
                 ->setAnchor($datum['anchor'])
                 ->setPosition($datum['position']);
 
-            if (isset($datum['media'])) {
-                $tab->setMedia($this->mediaRepository->find($datum['media']));
-            }
-
             foreach ($datum['translations'] as $trans) {
                 $translation = new Model\TabTranslation();
                 $translation
                     ->setLocale($trans['locale'])
-                    ->setTitle($trans['title']);
+                    ->setTitle($trans['title'])
+                    ->setButtonLabel(isset($trans['button_label']) ? $trans['button_label'] : null) // TODO TMP isset
+                    ->setButtonUrl(isset($trans['button_url']) ? $trans['button_url'] : null); // TODO TMP isset
+
+                if (isset($trans['media'])) {
+                    $translation->setMedia($this->mediaRepository->find($trans['media']));
+                }
 
                 $tab->addTranslation($translation);
             }
@@ -144,7 +155,7 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function supportsNormalization($data, $format = null)
     {
@@ -152,7 +163,7 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function supportsDenormalization($data, $type, $format = null)
     {

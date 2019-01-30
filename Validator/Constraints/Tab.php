@@ -12,4 +12,13 @@ use Symfony\Component\Validator\Constraint;
 class Tab extends Constraint
 {
     public $media_or_anchor_but_not_both = 'ekyna_cms.block.tab.media_or_anchor_but_not_both';
+
+
+    /**
+     * @inheritdoc
+     */
+    public function getTargets()
+    {
+        return self::CLASS_CONSTRAINT;
+    }
 }

@@ -50,9 +50,11 @@
 
 {%- block content -%}
 <div class="content">{{ tabs.content|raw }}</div>
-{%- if tabs.buttonLabel is not empty and tabs.buttonUrl is not empty -%}
+{%- if tabs.hasButton() -%}
 <p>
-    <a href="{{ tabs.buttonUrl }}" class="btn btn-default">{{ tabs.buttonLabel }}</a>
+    <a href="{{ tabs.buttonUrl }}" class="btn btn-default" data-label="{{ tabs.buttonLabel }}" data-url="{{ tabs.buttonUrl }}">
+        {{- tabs.buttonLabel -}}
+    </a>
 </p>
 {%- endif -%}
 {%- endblock content -%}
@@ -63,7 +65,8 @@
     {%- for tab in tabs.tabs -%}
     <li{% if loop.first %} class="active"{% endif %}>
         <a href="{% if tab.anchor is not empty %}#{{ tab.anchor }}{% else %}javascript: void(0){% endif %}"
-           {%- if tab.media is not null %} data-target="cms_tabs_{{ block_id }}_{{ loop.index0 }}"{% endif %}>
+           {%- if tab.media is not null %} data-target="cms_tabs_{{ block_id }}_{{ loop.index0 }}"{% endif %}
+           {%- if tab.buttonLabel is not empty %} data-label="{{ tab.buttonLabel }}" data-url="{{ tab.buttonUrl }}"{% endif %}>
             {{- tab.title -}}
         </a>
     </li>

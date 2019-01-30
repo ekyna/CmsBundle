@@ -12,4 +12,13 @@ use Symfony\Component\Validator\Constraint;
 class TabsTranslation extends Constraint
 {
     public $label_and_url_but_not_both = 'ekyna_cms.block.tab.label_and_url_but_not_both';
+
+
+    /**
+     * @inheritdoc
+     */
+    public function getTargets()
+    {
+        return self::CLASS_CONSTRAINT;
+    }
 }

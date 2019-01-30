@@ -2,17 +2,17 @@
 
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
-use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\TabsTranslation as Model;
+use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\TabTranslation as Model;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
- * Class TabsTranslationValidator
+ * Class TabTranslationValidator
  * @package Ekyna\Bundle\CmsBundle\Validator\Constraints
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class TabsTranslationValidator extends ConstraintValidator
+class TabTranslationValidator extends ConstraintValidator
 {
     /**
      * @inheritDoc
@@ -23,7 +23,7 @@ class TabsTranslationValidator extends ConstraintValidator
             throw new UnexpectedTypeException($translation, Model::class);
         }
         if (!$constraint instanceof TabsTranslation) {
-            throw new UnexpectedTypeException($constraint, TabsTranslation::class);
+            throw new UnexpectedTypeException($constraint, TabTranslation::class);
         }
 
         if (empty($translation->getButtonLabel()) xor empty($translation->getButtonUrl())) {

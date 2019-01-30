@@ -48,11 +48,8 @@
     {{ form_errors(form) }}
     {{ form_row(form.translations, {'label_col': 0, 'widget_col': 12}) }}
     <div class="row">
-        <div class="col-md-4">
-            {{ form_widget(form.media, {'label_col': 6, 'widget_col': 6}) }}
-        </div>
-        <div class="col-md-8">
-            {{ form_row(form.anchor, {'label_col': 6, 'widget_col': 6}) }}
+        <div class="col-md-6">
+            {{ form_row(form.anchor, {'label_col': 4, 'widget_col': 8}) }}
         </div>
     </div>
     {{ form_rest(form) }}
@@ -60,16 +57,33 @@
 {% endblock ekyna_cms_block_tab_widget %}
 
 
+{% block ekyna_cms_block_tab_translation_widget %}
+{% spaceless %}
+    {{ form_errors(form) }}
+    <div class="row">
+        <div class="col-md-3">
+            {{ form_widget(form.media) }}
+        </div>
+        <div class="col-md-9">
+            {{ form_row(form.title, {'label_col': 3, 'widget_col': 9}) }}
+            {{ form_row(form.buttonLabel, {'label_col': 3, 'widget_col': 9}) }}
+            {{ form_row(form.buttonUrl, {'label_col': 3, 'widget_col': 9}) }}
+        </div>
+    </div>
+    {{ form_rest(form) }}
+{% endspaceless %}
+{% endblock ekyna_cms_block_tab_translation_widget %}
+
+
 {% block ekyna_cms_block_tabs_widget %}
 {% spaceless %}
     {{ form_errors(form) }}
     <div class="row">
         <div class="col-md-6">
-            {{ form_row(form.media, {'label_col': 6, 'widget_col': 6}) }}
+            {{ form_row(form.align, {'label_col': 4, 'widget_col': 8}) }}
         </div>
         <div class="col-md-6">
-            {{ form_row(form.align, {'label_col': 6, 'widget_col': 6}) }}
-            {{ form_row(form.theme, {'label_col': 6, 'widget_col': 6}) }}
+            {{ form_row(form.theme, {'label_col': 4, 'widget_col': 8}) }}
         </div>
     </div>
     {{ form_row(form.translations, {'label_col': 0, 'widget_col': 12}) }}
@@ -77,6 +91,25 @@
     {{ form_rest(form) }}
 {% endspaceless %}
 {% endblock ekyna_cms_block_tabs_widget %}
+
+
+{% block ekyna_cms_block_tabs_translation_widget %}
+{% spaceless %}
+    {{ form_errors(form) }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.content) }}
+    <div class="row">
+        <div class="col-md-2 col-md-offset-2">
+            {{ form_widget(form.media) }}
+        </div>
+        <div class="col-md-8">
+            {{ form_row(form.buttonLabel, {'label_col': 3, 'widget_col': 9}) }}
+            {{ form_row(form.buttonUrl, {'label_col': 3, 'widget_col': 9}) }}
+        </div>
+    </div>
+    {{ form_rest(form) }}
+{% endspaceless %}
+{% endblock ekyna_cms_block_tabs_translation_widget %}
 
 
 {% block ekyna_cms_block_image_widget %}

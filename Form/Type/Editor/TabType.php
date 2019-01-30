@@ -5,8 +5,6 @@ namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\Tab;
 use Ekyna\Bundle\CoreBundle\Form\Type\CollectionPositionType;
-use Ekyna\Bundle\MediaBundle\Form\Type\MediaChoiceType;
-use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,7 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TabType extends AbstractType
 {
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -30,11 +28,6 @@ class TabType extends AbstractType
                 'label'          => false,
                 'error_bubbling' => false,
             ])
-            ->add('media', MediaChoiceType::class, [
-                'label'    => 'ekyna_core.field.media',
-                'types'    => [MediaTypes::VIDEO, MediaTypes::IMAGE, MediaTypes::SVG],
-                'required' => false,
-            ])
             ->add('anchor', TextType::class, [
                 'label'    => 'Anchor', // TODO
                 'required' => false,
@@ -43,7 +36,7 @@ class TabType extends AbstractType
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function configureOptions(OptionsResolver $resolver)
     {

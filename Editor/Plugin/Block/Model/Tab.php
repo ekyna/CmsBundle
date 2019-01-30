@@ -2,7 +2,6 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model;
 
-use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
 use Ekyna\Component\Resource\Model\SortableInterface;
 use Ekyna\Component\Resource\Model\SortableTrait;
 use Ekyna\Component\Resource\Model\TranslatableInterface;
@@ -14,16 +13,12 @@ use Ekyna\Component\Resource\Model\TranslatableTrait;
  * @author  Etienne Dauvergne <contact@ekyna.com>
  *
  * @method TabTranslation translate($locale = null, $create = false)
+ * @method TabTranslation[] getTranslations()
  */
 class Tab implements TranslatableInterface, SortableInterface
 {
     use TranslatableTrait,
         SortableTrait;
-
-    /**
-     * @var MediaInterface
-     */
-    private $media;
 
     /**
      * @var string
@@ -37,30 +32,6 @@ class Tab implements TranslatableInterface, SortableInterface
     public function getId()
     {
         return null;
-    }
-
-    /**
-     * Returns the media.
-     *
-     * @return MediaInterface
-     */
-    public function getMedia()
-    {
-        return $this->media;
-    }
-
-    /**
-     * Sets the media.
-     *
-     * @param MediaInterface $media
-     *
-     * @return Tab
-     */
-    public function setMedia(MediaInterface $media = null)
-    {
-        $this->media = $media;
-
-        return $this;
     }
 
     /**
@@ -93,5 +64,29 @@ class Tab implements TranslatableInterface, SortableInterface
     public function getTitle()
     {
         return $this->translate()->getTitle();
+    }
+
+    /**
+     * @return \Ekyna\Bundle\MediaBundle\Model\MediaInterface
+     */
+    public function getMedia()
+    {
+        return $this->translate()->getMedia();
+    }
+
+    /**
+     * @return string
+     */
+    public function getButtonLabel()
+    {
+        return $this->translate()->getButtonLabel();
+    }
+
+    /**
+     * @return string
+     */
+    public function getButtonUrl()
+    {
+        return $this->translate()->getButtonUrl();
     }
 }

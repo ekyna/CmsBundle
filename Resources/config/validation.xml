@@ -321,23 +321,14 @@
         </constraint>
     </class>
 
-    <class name="Ekyna\Bundle\CmsBundle\Entity\Editor\Block\Model\Tabs">
-        <property name="media">
-            <constraint name="Ekyna\Bundle\MediaBundle\Validator\Constraints\MediaTypes">
-                <option name="types">
-                    <value>image</value>
-                    <value>svg</value>
-                    <value>video</value>
-                </option>
-            </constraint>
-        </property>
+    <class name="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\Tabs">
         <property name="translations">
             <constraint name="Valid"/>
         </property>
         <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Tabs"/>
     </class>
 
-    <class name="Ekyna\Bundle\CmsBundle\Entity\Editor\Block\Model\TabsTranslation">
+    <class name="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\TabsTranslation">
         <property name="locale">
             <constraint name="NotBlank"/>
         </property>
@@ -347,10 +338,6 @@
         <property name="content">
             <constraint name="NotBlank"/>
         </property>
-        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\TabsTranslation"/>
-    </class>
-
-    <class name="Ekyna\Bundle\CmsBundle\Entity\Editor\Block\Model\Tab">
         <property name="media">
             <constraint name="Ekyna\Bundle\MediaBundle\Validator\Constraints\MediaTypes">
                 <option name="types">
@@ -360,19 +347,33 @@
                 </option>
             </constraint>
         </property>
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\TabsTranslation"/>
+    </class>
+
+    <class name="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\Tab">
         <property name="translations">
             <constraint name="Valid"/>
         </property>
         <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\Tab"/>
     </class>
 
-    <class name="Ekyna\Bundle\CmsBundle\Entity\Editor\Block\Model\TabTranslation">
+    <class name="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\TabTranslation">
         <property name="locale">
             <constraint name="NotBlank"/>
         </property>
         <property name="title">
             <constraint name="NotBlank"/>
         </property>
+        <property name="media">
+            <constraint name="Ekyna\Bundle\MediaBundle\Validator\Constraints\MediaTypes">
+                <option name="types">
+                    <value>image</value>
+                    <value>svg</value>
+                    <value>video</value>
+                </option>
+            </constraint>
+        </property>
+        <constraint name="Ekyna\Bundle\CmsBundle\Validator\Constraints\TabTranslation"/>
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Entity\SlideShow">

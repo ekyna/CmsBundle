@@ -27,3 +27,8 @@ ekyna_cms:
         row_or_name_but_not_both: A block must be linked to a line or being named but not both.
         invalid_position: Block's position is not valid.
         invalid_data: Invalid data.
+        tab:
+            media_must_be_null: Do not pick media if some are configured below.
+            locales_miss_match: You must define translations for the same languages.
+            media_or_anchor_but_not_both: Select a media or define an anchor but not both.
+            label_and_url_but_not_both: Define both button label and url or none.

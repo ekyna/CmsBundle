@@ -23,8 +23,12 @@
     .cms-tabs-menu {
         padding: 15px 0;
 
-        > ul > li > a {
-            transition: background-color .5s, color .5s;
+        > ul {
+            display: inline-block;
+
+            > li > a {
+                transition: background-color .5s, color .5s;
+            }
         }
     }
 
@@ -40,7 +44,7 @@
 
     @media (min-width: 992px) { // MD
         .cms-tabs-main {
-            width: 720px;
+            width: 72%;
             min-height: 405px;
         }
 
@@ -48,8 +52,12 @@
             text-align: center;
 
             > .wrapper {
-                max-width: 720px;
+                width: 960px;
                 margin: auto;
+            }
+
+            .cms-tabs-main {
+                width: 100%;
             }
 
             .cms-tabs-side {
@@ -67,7 +75,6 @@
                 top: 0;
                 right: 0;
                 width: 40%;
-
             }
         }
 
@@ -78,7 +85,7 @@
                 right: 0;
                 bottom: 0;
                 z-index: 10;
-                width: 36.84210526%;
+                width: 28%;
             }
         }
 
@@ -95,7 +102,7 @@
                 left: 0;
                 bottom: 0;
                 z-index: 10;
-                width: 36.84210526%;
+                width: 28%;
             }
         }
     }

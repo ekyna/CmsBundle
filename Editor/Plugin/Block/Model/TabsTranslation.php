@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model;
 
+use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
 use Ekyna\Component\Resource\Model\TranslationInterface;
 use Ekyna\Component\Resource\Model\TranslationTrait;
 
@@ -23,6 +24,11 @@ class TabsTranslation implements TranslationInterface
      * @var string
      */
     private $content;
+
+    /**
+     * @var MediaInterface
+     */
+    private $media;
 
     /**
      * @var string
@@ -89,6 +95,30 @@ class TabsTranslation implements TranslationInterface
     public function setContent(string $content)
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * Returns the media.
+     *
+     * @return MediaInterface
+     */
+    public function getMedia()
+    {
+        return $this->media;
+    }
+
+    /**
+     * Sets the media.
+     *
+     * @param MediaInterface $media
+     *
+     * @return TabsTranslation
+     */
+    public function setMedia(MediaInterface $media = null)
+    {
+        $this->media = $media;
 
         return $this;
     }

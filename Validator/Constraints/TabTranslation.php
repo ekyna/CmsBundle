@@ -5,14 +5,13 @@ namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * Class Tabs
+ * Class TabTranslation
  * @package Ekyna\Bundle\CmsBundle\Validator\Constraints
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class Tabs extends Constraint
+class TabTranslation extends Constraint
 {
-    public $media_must_be_null = 'ekyna_cms.block.tab.media_must_be_null';
-    public $locales_miss_match = 'ekyna_cms.block.tab.locales_miss_match';
+    public $label_and_url_but_not_both = 'ekyna_cms.block.tab.label_and_url_but_not_both';
 
 
     /**

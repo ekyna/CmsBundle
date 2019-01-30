@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
-use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\Tabs as Model;
+use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -17,29 +17,46 @@ class TabsValidator extends ConstraintValidator
     /**
      * @inheritDoc
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($tabs, Constraint $constraint)
     {
-        if (!$value instanceof Model) {
-            throw new UnexpectedTypeException($value, Model::class);
+        if (!$tabs instanceof Model\Tabs) {
+            throw new UnexpectedTypeException($tabs, Model\Tabs::class);
         }
         if (!$constraint instanceof Tabs) {
             throw new UnexpectedTypeException($constraint, Tabs::class);
         }
 
-        if (null !== $value->getMedia()) {
-            foreach ($value->getTabs() as $tab) {
-                if (null !== $tab->getMedia()) {
+        $locales = array_keys($tabs->getTranslations()->toArray());
+
+        foreach ($tabs->getTabs() as $index => $tab) {
+            /** @var Model\TabTranslation[] $translations */
+            $translations = $tab->getTranslations()->toArray();
+
+            $l = array_keys($translations);
+            if (!empty(array_diff($locales, $l)) or !empty(array_diff($l, $locales))) {
+                $this
+                    ->context
+                    ->buildViolation($constraint->media_must_be_null)
+                    ->atPath("tabs[$index].translations")
+                    ->addViolation();
+            }
+
+            $hasMedia = null;
+            foreach ($translations as $locale => $translation) {
+                if (is_null($hasMedia)) {
+                    $hasMedia = !is_null($translation->getMedia());
+
+                    continue;
+                }
+
+                if ($hasMedia xor is_null($tab->getMedia())) {
                     $this
                         ->context
                         ->buildViolation($constraint->media_must_be_null)
-                        ->atPath('media')
+                        ->atPath("tabs[$index].translations[$locale].media")
                         ->addViolation();
-
-                    break;
                 }
             }
         }
-
-        // TODO Tabs translations and each tab's translations must use the same locales.
     }
 }

@@ -3,7 +3,6 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
 use Ekyna\Component\Resource\Model\TranslatableInterface;
 use Ekyna\Component\Resource\Model\TranslatableTrait;
 
@@ -27,11 +26,6 @@ class Tabs implements TranslatableInterface
      * @var string
      */
     private $align;
-
-    /**
-     * @var MediaInterface
-     */
-    private $media;
 
     /**
      * @var ArrayCollection|Tab[]
@@ -108,30 +102,6 @@ class Tabs implements TranslatableInterface
     }
 
     /**
-     * Returns the media.
-     *
-     * @return MediaInterface
-     */
-    public function getMedia()
-    {
-        return $this->media;
-    }
-
-    /**
-     * Sets the media.
-     *
-     * @param MediaInterface $media
-     *
-     * @return Tabs
-     */
-    public function setMedia(MediaInterface $media = null)
-    {
-        $this->media = $media;
-
-        return $this;
-    }
-
-    /**
      * Sets the tabs.
      *
      * @param array|ArrayCollection $tabs
@@ -187,7 +157,7 @@ class Tabs implements TranslatableInterface
     /**
      * Returns the tabs.
      *
-     * @return Tab[]
+     * @return ArrayCollection|Tab[]
      */
     public function getTabs()
     {
@@ -200,6 +170,14 @@ class Tabs implements TranslatableInterface
     public function getTitle()
     {
         return $this->translate()->getTitle();
+    }
+
+    /**
+     * @return \Ekyna\Bundle\MediaBundle\Model\MediaInterface
+     */
+    public function getMedia()
+    {
+        return $this->translate()->getMedia();
     }
 
     /**
@@ -224,5 +202,25 @@ class Tabs implements TranslatableInterface
     public function getButtonUrl()
     {
         return $this->translate()->getButtonUrl();
+    }
+
+    /**
+     * Returns whether the tabs needs a button.
+     *
+     * @return bool
+     */
+    public function hasButton()
+    {
+        if (!empty($this->getButtonLabel())) {
+            return true;
+        }
+
+        foreach ($this->tabs as $tab) {
+            if (!empty($tab->getButtonLabel())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

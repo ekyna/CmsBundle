@@ -3,6 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\TabTranslation;
+use Ekyna\Bundle\MediaBundle\Form\Type\MediaChoiceType;
+use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,20 +18,42 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TabTranslationType extends AbstractType
 {
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('title', TextType::class, [
-            'label' => 'ekyna_core.field.title',
-        ]);
+        $builder
+            ->add('title', TextType::class, [
+                'label' => 'ekyna_core.field.title',
+            ])
+            ->add('media', MediaChoiceType::class, [
+                'label'    => 'ekyna_core.field.media',
+                'types'    => [MediaTypes::VIDEO, MediaTypes::IMAGE, MediaTypes::SVG],
+                'required' => false,
+            ])
+            ->add('buttonLabel', TextType::class, [
+                'label'    => 'Button label', // TODO
+                'required' => false,
+            ])
+            ->add('buttonUrl', TextType::class, [
+                'label'    => 'Button url', // TODO
+                'required' => false,
+            ]);
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('data_class', TabTranslation::class);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBlockPrefix()
+    {
+        return 'ekyna_cms_block_tab_translation';
     }
 }

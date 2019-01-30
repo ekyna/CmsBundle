@@ -28,6 +28,7 @@ ekyna_cms:
         invalid_position: La position de ce block n'est pas valide.
         invalid_data: Données non valides.
         tab:
-            media_should_be_null: Doit être nul si des médias sont configurés plus bas.
+            media_must_be_null: Doit être nul si des médias sont configurés plus bas.
+            locales_miss_match: Veuillez définir des traductions pour les mêmes langues.
             media_or_anchor_but_not_both: Sélectionnez un média ou une ancre mais pas les deux.
             label_and_url_but_not_both: Saisissez un libellé et une url pour le bouton ou laissez ces 2 champs vides.
