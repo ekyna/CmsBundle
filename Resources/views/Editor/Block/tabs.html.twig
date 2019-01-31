@@ -63,7 +63,7 @@
 {%- block menu -%}
 <ul class="nav nav-pills nav-stacked">
     {%- for tab in tabs.tabs -%}
-    <li{% if loop.first %} class="active"{% endif %}>
+    <li class="{% if tab.anchor is not empty %}anchor{% else %}media{% if loop.first %} active{% endif %}{% endif %}">
         <a href="{% if tab.anchor is not empty %}#{{ tab.anchor }}{% else %}javascript: void(0){% endif %}"
            {%- if tab.media is not null %} data-target="cms_tabs_{{ block_id }}_{{ loop.index0 }}"{% endif %}
            {%- if tab.buttonLabel is not empty %} data-label="{{ tab.buttonLabel }}" data-url="{{ tab.buttonUrl }}"{% endif %}>

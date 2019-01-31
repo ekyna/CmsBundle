@@ -322,6 +322,11 @@
     </class>
 
     <class name="Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model\Tabs">
+        <property name="tabs">
+            <constraint name="Count">
+                <option name="min">1</option>
+            </constraint>
+        </property>
         <property name="translations">
             <constraint name="Valid"/>
         </property>

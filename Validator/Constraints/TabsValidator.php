@@ -36,7 +36,7 @@ class TabsValidator extends ConstraintValidator
             if (!empty(array_diff($locales, $l)) or !empty(array_diff($l, $locales))) {
                 $this
                     ->context
-                    ->buildViolation($constraint->media_must_be_null)
+                    ->buildViolation($constraint->locales_miss_match)
                     ->atPath("tabs[$index].translations")
                     ->addViolation();
             }

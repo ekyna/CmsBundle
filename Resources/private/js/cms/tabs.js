@@ -42,11 +42,16 @@ define(['jquery'], function ($) {
                 $target = $($link.attr('href'));
                 if (1 === $target.length) {
                     that.$element.find('.cms-tabs-menu > ul > li').removeClass('active');
-                    $link.closest('li').addClass('active');
+                    $link.closest('li.media').addClass('active');
 
                     $('html, body').animate({
                         scrollTop: $target.offset().top
-                    }, 300);
+                    }, {
+                        duration: 300,
+                        complete: function() {
+                            $link.blur();
+                        }
+                    });
                 }
 
                 return false;
@@ -78,6 +83,14 @@ define(['jquery'], function ($) {
             }
 
             return false;
+        });
+
+        this.$element.find('video').on('click', function() {
+            if (this.paused) {
+                this.play();
+            } else {
+                this.pause();
+            }
         });
     };
 

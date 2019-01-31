@@ -12,6 +12,7 @@ use Ekyna\Component\Resource\Model\TranslatableTrait;
  * @author  Etienne Dauvergne <contact@ekyna.com>
  *
  * @method TabsTranslation translate($locale = null, $create = false)
+ * @method ArrayCollection|TabsTranslation[] getTranslations()
  */
 class Tabs implements TranslatableInterface
 {
@@ -217,6 +218,22 @@ class Tabs implements TranslatableInterface
 
         foreach ($this->tabs as $tab) {
             if (!empty($tab->getButtonLabel())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns whether the tabs
+     *
+     * @return bool
+     */
+    public function isAnchorMode()
+    {
+        foreach ($this->tabs as $tab) {
+            if (!empty($tab->getAnchor())) {
                 return true;
             }
         }

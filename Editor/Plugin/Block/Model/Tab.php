@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Ekyna\Component\Resource\Model\SortableInterface;
 use Ekyna\Component\Resource\Model\SortableTrait;
 use Ekyna\Component\Resource\Model\TranslatableInterface;
@@ -13,7 +14,7 @@ use Ekyna\Component\Resource\Model\TranslatableTrait;
  * @author  Etienne Dauvergne <contact@ekyna.com>
  *
  * @method TabTranslation translate($locale = null, $create = false)
- * @method TabTranslation[] getTranslations()
+ * @method ArrayCollection|TabTranslation[] getTranslations()
  */
 class Tab implements TranslatableInterface, SortableInterface
 {
