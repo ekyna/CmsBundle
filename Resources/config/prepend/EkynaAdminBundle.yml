@@ -15,4 +15,4 @@ ekyna_admin:
                 position: 100
     show:
         templates:
-            - EkynaCmsBundle:Show:show_div_layout.html.twig
+            - '@EkynaCms/Show/show_div_layout.html.twig'

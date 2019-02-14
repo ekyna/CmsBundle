@@ -47,11 +47,12 @@ class TagsType extends AbstractColumnType
      */
     public function buildCellView(CellView $view, ColumnInterface $column, RowInterface $row, array $options)
     {
+        $view->vars['attr']['class'] = 'flags-icons';
+        $view->vars['block_prefix'] = 'text';
         $view->vars['value'] = static::$renderer->renderTags($view->vars['value'], [
             'text'  => $options['text'],
             'badge' => $options['badge'],
         ]);
-        $view->vars['block_prefix'] = 'text';
     }
 
     /**
