@@ -49,7 +49,7 @@ class TabsValidator extends ConstraintValidator
                     continue;
                 }
 
-                if ($hasMedia xor is_null($tab->getMedia())) {
+                if ($hasMedia xor !is_null($tab->getMedia())) {
                     $this
                         ->context
                         ->buildViolation($constraint->media_must_be_null)
