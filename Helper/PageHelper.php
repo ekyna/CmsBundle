@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\Helper;
 
 use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -13,20 +14,32 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PageHelper
 {
-    /**
-     * @var Request
-     */
-    private $request;
+    private const PAGES_ROUTES_CACHE_KEY = 'cms_pages_routes';
 
     /**
      * @var PageRepository
      */
-    private $pageRepository;
+    protected $repository;
+
+    /**
+     * @var AdapterInterface
+     */
+    protected $cache;
 
     /**
      * @var string
      */
     private $homeRoute;
+
+    /**
+     * @var array
+     */
+    private $routes;
+
+    /**
+     * @var Request
+     */
+    private $request;
 
     /**
      * @var PageInterface
@@ -42,14 +55,14 @@ class PageHelper
     /**
      * Constructor.
      *
-     * @param PageRepository $pageRepository
-     * @param string         $homeRoute
+     * @param PageRepository   $repository
+     * @param AdapterInterface $cache
+     * @param string           $homeRoute
      */
-    public function __construct(
-        PageRepository $pageRepository,
-        $homeRoute
-    ) {
-        $this->pageRepository = $pageRepository;
+    public function __construct(PageRepository $repository, AdapterInterface $cache, string $homeRoute)
+    {
+        $this->repository = $repository;
+        $this->cache = $cache;
         $this->homeRoute = $homeRoute;
     }
 
@@ -60,7 +73,7 @@ class PageHelper
      *
      * @return PageInterface|null
      */
-    public function init(Request $request)
+    public function init(Request $request): ?PageInterface
     {
         $this->request = $request;
 
@@ -74,7 +87,7 @@ class PageHelper
      *
      * @return PageInterface|null
      */
-    public function findByRequest(Request $request)
+    public function findByRequest(Request $request): ?PageInterface
     {
         if (null !== $route = $request->attributes->get('_route', null)) {
             return $this->findByRoute($route);
@@ -90,9 +103,13 @@ class PageHelper
      *
      * @return PageInterface|null
      */
-    public function findByRoute($route)
+    public function findByRoute(string $route): ?PageInterface
     {
-        return $this->pageRepository->findOneByRoute($route);
+        if (!in_array($route, $this->getCmsRoutes(), true)) {
+            return null;
+        }
+
+        return $this->repository->findOneByRoute($route);
     }
 
     /**
@@ -100,7 +117,7 @@ class PageHelper
      *
      * @return PageInterface|null
      */
-    public function getCurrent()
+    public function getCurrent(): ?PageInterface
     {
         if (false === $this->currentPage) {
             if (null === $this->request) {
@@ -117,7 +134,7 @@ class PageHelper
      *
      * @return PageInterface|null
      */
-    public function getHomePage()
+    public function getHomePage(): ?PageInterface
     {
         if (false === $this->homePage) {
             $this->homePage = $this->findByRoute($this->homeRoute);
@@ -131,7 +148,7 @@ class PageHelper
      *
      * @return Request
      */
-    public function getRequest()
+    public function getRequest(): Request
     {
         return $this->request;
     }
@@ -141,8 +158,33 @@ class PageHelper
      *
      * @return PageRepository
      */
-    public function getPageRepository()
+    public function getPageRepository(): PageRepository
     {
-        return $this->pageRepository;
+        return $this->repository;
+    }
+
+    /**
+     * Returns the cms routes list.
+     *
+     * @return array
+     */
+    private function getCmsRoutes(): array
+    {
+        if ($this->routes) {
+            return $this->routes;
+        }
+
+        $item = $this->cache->getItem(self::PAGES_ROUTES_CACHE_KEY);
+
+        if ($item->isHit()) {
+            return $this->routes = $item->get();
+        }
+
+        $routes = $this->repository->getPagesRoutes();
+
+        $item->set($routes);
+        $this->cache->save($item);
+
+        return $this->routes = $routes;
     }
 }

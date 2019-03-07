@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\EventListener;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
+use Ekyna\Bundle\CmsBundle\Exception\RuntimeException;
 use Ekyna\Component\Resource\Event\ResourceEventInterface;
 use Ekyna\Component\Resource\Event\ResourceMessage;
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
@@ -85,6 +86,11 @@ class PageEventListener implements EventSubscriberInterface
     public function onPreCreate(ResourceEventInterface $event)
     {
         $page = $this->getPageFromEvent($event);
+
+        $parent = $page->getParent();
+        if ($parent && $parent->isLocked()) {
+            throw new RuntimeException("Cannot create child page under a locked parent page.");
+        }
 
         // Generate random route name.
         if (null === $page->getRoute()) {

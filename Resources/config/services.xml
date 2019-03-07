@@ -233,10 +233,16 @@
             <argument>%locales%</argument>
         </service>
 
+        <!-- Cache -->
+        <service id="ekyna_cms.cache" parent="cache.app" public="false">
+            <tag name="cache.pool" clearer="cache.default_clearer"/>
+        </service>
+
         <!-- Page Helper -->
         <service id="ekyna_cms.helper.page"
                  class="Ekyna\Bundle\CmsBundle\Helper\PageHelper">
             <argument id="ekyna_cms.page.repository" type="service"/>
+            <argument id="ekyna_cms.cache" type="service"/>
             <argument>%ekyna_cms.home_route%</argument>
         </service>
 

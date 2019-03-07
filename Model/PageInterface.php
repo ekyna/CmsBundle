@@ -7,7 +7,7 @@ use Ekyna\Component\Resource\Model as RM;
 /**
  * Class PageInterface
  * @package Ekyna\Bundle\CmsBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  *
  * @method PageTranslationInterface translate($locale = null, $create = false)
  */
@@ -22,6 +22,7 @@ interface PageInterface extends
      * Set parent
      *
      * @param PageInterface $parent
+     *
      * @return PageInterface|$this
      */
     public function setParent(PageInterface $parent = null);
@@ -29,7 +30,7 @@ interface PageInterface extends
     /**
      * Get parent
      *
-     * @return PageInterface|$this
+     * @return PageInterface|null
      */
     public function getParent();
 
@@ -37,6 +38,7 @@ interface PageInterface extends
      * Set left
      *
      * @param integer $left
+     *
      * @return PageInterface|$this
      */
     public function setLeft($left);
@@ -52,6 +54,7 @@ interface PageInterface extends
      * Set right
      *
      * @param integer $right
+     *
      * @return PageInterface|$this
      */
     public function setRight($right);
@@ -67,6 +70,7 @@ interface PageInterface extends
      * Set root
      *
      * @param integer $root
+     *
      * @return PageInterface|$this
      */
     public function setRoot($root = null);
@@ -82,6 +86,7 @@ interface PageInterface extends
      * Set level
      *
      * @param integer $level
+     *
      * @return PageInterface|$this
      */
     public function setLevel($level);
@@ -97,6 +102,7 @@ interface PageInterface extends
      * Returns whether the page has the child or not.
      *
      * @param PageInterface $child
+     *
      * @return bool
      */
     public function hasChild(PageInterface $child);
@@ -105,6 +111,7 @@ interface PageInterface extends
      * Add children
      *
      * @param PageInterface $child
+     *
      * @return PageInterface|$this
      */
     public function addChild(PageInterface $child);
@@ -113,6 +120,7 @@ interface PageInterface extends
      * Remove children
      *
      * @param PageInterface $child
+     *
      * @return PageInterface|$this
      */
     public function removeChild(PageInterface $child);
@@ -135,6 +143,7 @@ interface PageInterface extends
      * Set name
      *
      * @param string $name
+     *
      * @return PageInterface|$this
      */
     public function setName($name);
@@ -150,6 +159,7 @@ interface PageInterface extends
      * Set title
      *
      * @param string $title
+     *
      * @return PageInterface|$this
      */
     public function setTitle($title);
@@ -165,6 +175,7 @@ interface PageInterface extends
      * Set breadcrumb
      *
      * @param string $breadcrumb
+     *
      * @return PageInterface|$this
      */
     public function setBreadcrumb($breadcrumb);
@@ -196,6 +207,7 @@ interface PageInterface extends
      * Set path
      *
      * @param string $path
+     *
      * @return PageInterface|$this
      */
     public function setPath($path);
@@ -211,6 +223,7 @@ interface PageInterface extends
      * Set route
      *
      * @param string $route
+     *
      * @return PageInterface|$this
      */
     public function setRoute($route = null);
@@ -226,6 +239,7 @@ interface PageInterface extends
      * Set static
      *
      * @param boolean $static
+     *
      * @return PageInterface|$this
      */
     public function setStatic($static);
@@ -241,6 +255,7 @@ interface PageInterface extends
      * Set locked
      *
      * @param boolean $locked
+     *
      * @return PageInterface|$this
      */
     public function setLocked($locked);
@@ -256,6 +271,7 @@ interface PageInterface extends
      * Set controller
      *
      * @param string $controller
+     *
      * @return PageInterface|$this
      */
     public function setController($controller = null);
@@ -271,6 +287,7 @@ interface PageInterface extends
      * Set advanced
      *
      * @param boolean $advanced
+     *
      * @return PageInterface|$this
      */
     public function setAdvanced($advanced);
@@ -286,6 +303,7 @@ interface PageInterface extends
      * Sets the dynamicPath.
      *
      * @param boolean $dynamicPath
+     *
      * @return PageInterface|$this
      */
     public function setDynamicPath($dynamicPath);
@@ -301,6 +319,7 @@ interface PageInterface extends
      * Sets the enabled.
      *
      * @param boolean $enabled
+     *
      * @return PageInterface|$this
      */
     public function setEnabled($enabled);

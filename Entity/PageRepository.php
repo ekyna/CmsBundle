@@ -50,14 +50,13 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
      */
     public function findOneByRoute($routeName)
     {
-        $alias = $this->getAlias();
-        $qb = $this->getQueryBuilder();
+        $qb = $this->getQueryBuilder('p');
 
         return $qb
-            ->leftJoin($alias . '.seo', 's')
+            ->leftJoin('p.seo', 's')
             ->leftJoin('s.translations', 's_t', Expr\Join::WITH, $this->getLocaleCondition('s_t'))
             ->addSelect('s', 's_t')
-            ->andWhere($qb->expr()->eq($alias . '.route', ':route_name'))
+            ->andWhere($qb->expr()->eq('p.route', ':route_name'))
             ->getQuery()
             ->setParameter('route_name', $routeName)
             ->useQueryCache(true)
@@ -74,16 +73,15 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
      */
     public function findParentsForBreadcrumb(PageInterface $current)
     {
-        $qb = $this->createQueryBuilder();
-        $alias = $this->getAlias();
+        $qb = $this->createQueryBuilder('p');
 
         return $qb
-            ->select([$alias . '.id', $alias . '.route', $alias . '.dynamicPath', 't.breadcrumb'])
-            ->leftJoin($alias . '.translations', 't', Expr\Join::WITH, $this->getLocaleCondition('t'))
-            ->andWhere($qb->expr()->lte($alias . '.left', ':left'))
-            ->andWhere($qb->expr()->gte($alias . '.right', ':right'))
-            ->addOrderBy($alias . '.left', 'asc')
-            ->addGroupBy($alias . '.id')
+            ->select(['p.id', 'p.route', 'p.dynamicPath', 't.breadcrumb'])
+            ->leftJoin('p.translations', 't', Expr\Join::WITH, $this->getLocaleCondition('t'))
+            ->andWhere($qb->expr()->lte('p.left', ':left'))
+            ->andWhere($qb->expr()->gte('p.right', ':right'))
+            ->addOrderBy('p.left', 'asc')
+            ->addGroupBy('p.id')
             ->getQuery()
             ->setParameters([
                 'left'  => $current->getLeft(),
@@ -92,6 +90,23 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
             ->useQueryCache(true)
             // TODO ->useResultCache(true, 3600, $this->getCachePrefix())
             ->getArrayResult();
+    }
+
+    /**
+     * Returns the pages routes.
+     *
+     * @return array
+     */
+    public function getPagesRoutes()
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $results = $qb
+            ->select('p.route')
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_column($results, 'route');
     }
 
     /**

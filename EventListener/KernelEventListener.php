@@ -81,7 +81,6 @@ class KernelEventListener implements EventSubscriberInterface
             $this->editor->setViewportWidth($width);
         }
 
-        // TODO This is greedy
         if (null !== $page = $this->pageHelper->init($request)) {
             if (!$page->isEnabled()) {
                 if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
