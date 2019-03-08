@@ -79,11 +79,11 @@ class PageEventListener implements EventSubscriberInterface
     }
 
     /**
-     * Pre create event handler.
+     * Initialize event handler.
      *
      * @param ResourceEventInterface $event
      */
-    public function onPreCreate(ResourceEventInterface $event)
+    public function onInitialize(ResourceEventInterface $event)
     {
         $page = $this->getPageFromEvent($event);
 
@@ -91,6 +91,16 @@ class PageEventListener implements EventSubscriberInterface
         if ($parent && $parent->isLocked()) {
             throw new RuntimeException("Cannot create child page under a locked parent page.");
         }
+    }
+
+    /**
+     * Pre create event handler.
+     *
+     * @param ResourceEventInterface $event
+     */
+    public function onPreCreate(ResourceEventInterface $event)
+    {
+        $page = $this->getPageFromEvent($event);
 
         // Generate random route name.
         if (null === $page->getRoute()) {
@@ -308,6 +318,7 @@ class PageEventListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
+            PageEvents::INITIALIZE  => array('onInitialize', 1024),
             PageEvents::PRE_CREATE  => array('onPreCreate', -1024),
             PageEvents::PRE_UPDATE  => array('onPreUpdate', -1024),
             PageEvents::POST_UPDATE => array('onPostUpdate', -1024),
