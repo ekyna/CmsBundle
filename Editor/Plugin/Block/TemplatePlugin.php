@@ -50,14 +50,14 @@ class TemplatePlugin extends AbstractPlugin
         }
 
         // Feature update modal
-        $form = $this->formFactory->create(TemplateBlockType::class, $block->getData(), [
-            'action'  => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
+        $form = $this->formFactory->create(TemplateBlockType::class, $block, [
+            'action'    => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
                 'blockId'         => $block->getId(),
                 'widgetType'      => $request->get('widgetType', $block->getType()),
                 '_content_locale' => $this->localeProvider->getCurrentLocale(),
             ]),
-            'method'  => 'post',
-            'attr'    => [
+            'method'    => 'post',
+            'attr'      => [
                 'class' => 'form-horizontal',
             ],
             'templates' => $choices,
@@ -66,10 +66,6 @@ class TemplatePlugin extends AbstractPlugin
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-
-            $block->setData($data);
-
             return null;
         }
 

@@ -24,7 +24,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
 
     const NAME = 'ekyna_block_feature';
 
-    const DEFAULT_HTML_MAX_WIDTH = '150px';
+    const DEFAULT_HTML_MAX_WIDTH  = '150px';
     const DEFAULT_HTML_MARGIN_TOP = '20px';
 
 
@@ -79,7 +79,7 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
         }
 
         // Feature update modal
-        $form = $this->formFactory->create(FeatureBlockType::class, $block->getData(), [
+        $form = $this->formFactory->create(FeatureBlockType::class, $block, [
             'action'     => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
                 'blockId'         => $block->getId(),
                 'widgetType'      => $request->get('widgetType', $block->getType()),
@@ -95,10 +95,6 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-
-            $block->setData($data);
-
             return null;
         }
 
@@ -121,8 +117,6 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
      */
     public function validate(BlockInterface $block, ExecutionContextInterface $context)
     {
-        // TODO removed undefined data indexes
-
         $this->getImagePlugin()->validate($block, $context);
         $this->getHtmlPlugin()->validate($block, $context);
     }

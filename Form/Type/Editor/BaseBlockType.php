@@ -3,16 +3,15 @@
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class BaseContainerType
+ * Class BaseBlockType
  * @package Ekyna\Bundle\CmsBundle\Form\Type\Editor
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class BaseContainerType extends AbstractType
+class BaseBlockType extends AbstractType
 {
     /**
      * @var string
@@ -31,30 +30,23 @@ class BaseContainerType extends AbstractType
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('title', TextType::class, [
-                'label'    => 'ekyna_core.field.title',
-                'required' => false,
+        $builder->add(
+            $builder->create('data', null, [
+                'label'    => false,
+                'compound' => true,
             ])
-            ->add(
-                $builder->create('data', null, [
-                    'label'    => false,
-                    'compound' => true,
-                ])
-            );
+        );
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => $this->dataClass,
-        ]);
+        $resolver->setDefault('data_class', $this->dataClass);
     }
 }

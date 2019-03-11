@@ -19,11 +19,13 @@ class TemplateBlockType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('content', ChoiceType::class, [
-            'label'   => 'ekyna_core.field.content',
-            'choices' => $options['templates'],
-            'select2' => false,
-        ]);
+        $builder
+            ->get('data')
+            ->add('content', ChoiceType::class, [
+                'label'   => 'ekyna_core.field.content',
+                'choices' => $options['templates'],
+                'select2' => false,
+            ]);
     }
 
     /**
@@ -42,5 +44,13 @@ class TemplateBlockType extends AbstractType
     public function getBlockPrefix()
     {
         return 'ekyna_cms_block_template';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getParent()
+    {
+        return BaseBlockType::class;
     }
 }

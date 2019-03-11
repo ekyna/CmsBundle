@@ -16,40 +16,44 @@ use Symfony\Component\Validator\Constraints\NotNull;
 class CopyContainerType extends AbstractType
 {
     /**
-     * @var string
-     */
-    private $containerClass;
-
-
-    /**
-     * Constructor.
-     *
-     * @param string $class
-     */
-    public function __construct(string $class)
-    {
-        $this->containerClass = $class;
-    }
-
-    /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('copy', EntityType::class, [
-            'label' => 'Copier',
-            'class' => $this->containerClass,
-            'query_builder' => function(EntityRepository $er) {
-                $qb = $er->createQueryBuilder('c');
-                return $qb
-                    ->andWhere($qb->expr()->isNotNull('c.title'))
-                    ->orderBy('c.title', 'ASC');
-            },
-            'choice_value' => 'id',
-            'choice_label' => 'title',
-            'constraints' => [
-                new NotNull(),
-            ]
-        ]);
+        $builder
+            ->remove('title')
+            ->remove('data')
+            ->add('copy', EntityType::class, [
+                'label'         => 'Copier',
+                'class'         => $options['data_class'],
+                'query_builder' => function (EntityRepository $er) {
+                    $qb = $er->createQueryBuilder('c');
+
+                    return $qb
+                        ->andWhere($qb->expr()->isNotNull('c.title'))
+                        ->orderBy('c.title', 'ASC');
+                },
+                'choice_value'  => 'id',
+                'choice_label'  => 'title',
+                'constraints'   => [
+                    new NotNull(),
+                ],
+            ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBlockPrefix()
+    {
+        return 'ekyna_cms_container_copy';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getParent()
+    {
+        return BaseContainerType::class;
     }
 }

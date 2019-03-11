@@ -356,8 +356,6 @@ class Configuration implements ConfigurationInterface
                                             ->children()
                                                 ->scalarNode('filter')->defaultValue('cms_container_background')->end()
                                                 ->scalarNode('default_color')->defaultValue('')->end()
-                                                ->integerNode('default_padding_top')->defaultValue(0)->end()
-                                                ->integerNode('default_padding_bottom')->defaultValue(0)->end()
                                                 ->arrayNode('themes')
                                                     ->useAttributeAsKey('name')
                                                     ->prototype('scalar')->end()

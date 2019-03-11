@@ -21,6 +21,7 @@ class FeatureBlockType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->get('data')
             ->add('animation', AnimationType::class, [
                 'animations'  => $options['animations'],
             ])
@@ -62,5 +63,13 @@ class FeatureBlockType extends AbstractType
     public function getBlockPrefix()
     {
         return 'ekyna_cms_block_feature';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getParent()
+    {
+        return BaseBlockType::class;
     }
 }

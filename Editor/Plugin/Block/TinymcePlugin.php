@@ -37,8 +37,6 @@ class TinymcePlugin extends AbstractPlugin
     {
         parent::create($block, $data);
 
-        //$block->setData([]);
-
         $block
             ->translate($this->localeProvider->getCurrentLocale(), true)
             ->setData('content', $this->config['default_content']);
@@ -80,11 +78,6 @@ class TinymcePlugin extends AbstractPlugin
      */
     public function validate(BlockInterface $block, ExecutionContextInterface $context)
     {
-        /*$data = $block->getData();
-        if (0 < count($data)) {
-            $context->addViolation(self::INVALID_DATA);
-        }*/
-
         $translationData = $block->translate($this->localeProvider->getCurrentLocale())->getData();
         if (!array_key_exists('content', $translationData) || 0 == strlen($translationData['content'])) {
             $context->addViolation(self::INVALID_DATA);

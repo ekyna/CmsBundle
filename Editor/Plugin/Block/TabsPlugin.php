@@ -9,7 +9,6 @@ use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\TabsType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class TabsPlugin
@@ -122,22 +121,6 @@ class TabsPlugin extends AbstractPlugin
         }
 
         return $this->createModal('Modifier le bloc tabs.', $form->createView());
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function remove(BlockInterface $block)
-    {
-        parent::remove($block);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function validate(BlockInterface $block, ExecutionContextInterface $context)
-    {
-        // TODO removed undefined data indexes
     }
 
     /**

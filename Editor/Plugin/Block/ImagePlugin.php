@@ -11,7 +11,6 @@ use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
 use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
 use Ekyna\Bundle\MediaBundle\Service\Generator;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class ImagePlugin
@@ -22,6 +21,42 @@ class ImagePlugin extends AbstractPlugin
 {
     const NAME = 'ekyna_block_image';
 
+    private const DEFAULT_DATA = [
+        'url'   => null,
+        'image' => [
+            'theme'     => null,
+            'style'     => null,
+            'align'     => null,
+            'animation' => [
+                'name'     => null,
+                'offset'   => 120,
+                'duration' => 400,
+                'once'     => false,
+            ],
+            'max_width' => null,
+        ],
+        'hover' => [
+            'theme'     => null,
+            'style'     => null,
+            'align'     => null,
+            'animation' => [
+                'name'     => null,
+                'offset'   => 120,
+                'duration' => 400,
+                'once'     => false,
+            ],
+            'max_width' => null,
+        ],
+    ];
+
+    private const DEFAULT_TRANSLATION_DATA = [
+        'image' => [
+            'media' => null,
+        ],
+        'hover' => [
+            'media' => null,
+        ],
+    ];
 
     /**
      * @var MediaRepository
@@ -66,37 +101,10 @@ class ImagePlugin extends AbstractPlugin
     {
         parent::create($block, $data);
 
-        $defaultData = [
-            'url'   => null,
-            'image' => [
-                'media'     => null,
-                'theme'     => null,
-                'style'     => null,
-                'align'     => null,
-                'animation' => [
-                    'name'     => null,
-                    'offset'   => 120,
-                    'duration' => 400,
-                    'once'     => false,
-                ],
-                'max_width' => null,
-            ],
-            'hover' => [
-                'media'     => null,
-                'theme'     => null,
-                'style'     => null,
-                'align'     => null,
-                'animation' => [
-                    'name'     => null,
-                    'offset'   => 120,
-                    'duration' => 400,
-                    'once'     => false,
-                ],
-                'max_width' => null,
-            ],
-        ];
-
-        $block->setData(array_merge($defaultData, $data));
+        $block
+            ->setData(array_merge(self::DEFAULT_DATA, $data))
+            ->translate($this->localeProvider->getCurrentLocale(), true)
+            ->setData(self::DEFAULT_TRANSLATION_DATA);
     }
 
     /**
@@ -104,8 +112,9 @@ class ImagePlugin extends AbstractPlugin
      */
     public function update(BlockInterface $block, Request $request, array $options = [])
     {
+        $this->upgrade($block);
+
         $options = array_replace([
-            'repository' => $this->mediaRepository,
             'action'     => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
                 'blockId'         => $block->getId(),
                 'widgetType'      => $request->get('widgetType', $block->getType()),
@@ -120,13 +129,11 @@ class ImagePlugin extends AbstractPlugin
             'animations' => $this->config['animations'],
         ], $options);
 
-        $form = $this->formFactory->create(ImageBlockType::class, $block->getData(), $options);
+        $form = $this->formFactory->create(ImageBlockType::class, $block, $options);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $block->setData($form->getData());
-
             return null;
         }
 
@@ -134,51 +141,25 @@ class ImagePlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
-     */
-    public function remove(BlockInterface $block)
-    {
-        parent::remove($block);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function validate(BlockInterface $block, ExecutionContextInterface $context)
-    {
-        // TODO removed undefined data indexes
-
-        /* TODO $data = $block->getData();
-
-        if (!array_key_exists('media_id', $data)) {
-            $context->addViolation(self::INVALID_DATA);
-        }
-        if (!array_key_exists('hover_id', $data)) {
-            $context->addViolation(self::INVALID_DATA);
-        }*/
-
-        /*foreach ($block->getTranslations() as $blockTranslation) {
-            $translationData = $blockTranslation->getData();
-
-            if (0 < count($translationData)) {
-                $context->addViolation(self::INVALID_DATA);
-            }
-        }*/
-    }
-
-    /**
      * @inheritDoc
      */
     public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0)
     {
-        $data = $block->getData();
+        $this->upgrade($block);
+
+        $data = array_replace_recursive(
+            $block->getData(),
+            $block->translate($this->localeProvider->getCurrentLocale())->getData()
+        );
 
         $view = parent::createWidget($block, $adapter, $options, $position);
         $view->getAttributes()->addClass('cms-image');
 
         $options = array_replace($this->config, ['animation' => true], $options);
 
-        $buildResponsiveImg = function(MediaInterface $media, \DOMElement $img) use ($block, $adapter) {
+        // TODO Refactor XMl build
+
+        $buildResponsiveImg = function (MediaInterface $media, \DOMElement $img) use ($block, $adapter) {
             $map = $adapter->getImageResponsiveMap($block);
 
             $url = null;
@@ -217,7 +198,8 @@ class ImagePlugin extends AbstractPlugin
                 if (null !== $imageMedia = $this->mediaRepository->find($mediaId)) {
                     if ($hasTheme && $imageMedia->getType() === MediaTypes::SVG) {
                         $import = new \DOMDocument();
-                        $import->loadXML($this->mediaGenerator->getContent($imageMedia), LIBXML_NOBLANKS | LIBXML_NOERROR);
+                        $import->loadXML($this->mediaGenerator->getContent($imageMedia),
+                            LIBXML_NOBLANKS | LIBXML_NOERROR);
                         $image = $dom->importNode($import->documentElement, true);
                     }
                     if (!$image) {
@@ -267,7 +249,8 @@ class ImagePlugin extends AbstractPlugin
                     $hover = null;
                     if ($hasTheme && $hoverMedia->getType() === MediaTypes::SVG) {
                         $import = new \DOMDocument();
-                        $import->loadXML($this->mediaGenerator->getContent($hoverMedia), LIBXML_NOBLANKS | LIBXML_NOERROR);
+                        $import->loadXML($this->mediaGenerator->getContent($hoverMedia),
+                            LIBXML_NOBLANKS | LIBXML_NOERROR);
                         $hover = $dom->importNode($import->documentElement, true);
                     }
                     if (!$hover) {
@@ -365,16 +348,33 @@ class ImagePlugin extends AbstractPlugin
         return $view;
     }
 
-    private function buildImage(array $data)
+    /**
+     * Changes the block and translation data to follow the 2019-03-11 changes (poster and video per translation).
+     *
+     * @param BlockInterface $block
+     */
+    private function upgrade(BlockInterface $block)
     {
-        // TODO refactor
-    }
+        $data = array_replace(self::DEFAULT_DATA, $block->getData());
 
-    private function buildWrapper(array $data)
-    {
-        // TODO refactor
-    }
+        $translation = $block->translate($this->localeProvider->getFallbackLocale());
 
+        $translationData = array_replace(self::DEFAULT_TRANSLATION_DATA, $translation->getData());
+
+        if (isset($data['url'])) {
+            $translationData['url'] = $data['url'];
+            unset($data['url']);
+        }
+        foreach (['image', 'hover'] as $key) {
+            if (isset($data[$key]) && isset($data[$key]['media'])) {
+                $translationData[$key]['media'] = $data[$key]['media'];
+                unset($data[$key]['media']);
+            }
+        }
+
+        $block->setData($data);
+        $translation->setData($translationData);
+    }
 
     /**
      * @inheritdoc

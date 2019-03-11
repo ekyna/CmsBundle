@@ -51,19 +51,6 @@ class CopyPlugin extends AbstractPlugin
     /**
      * @inheritDoc
      */
-    public function validate(ContainerInterface $container, ExecutionContextInterface $context)
-    {
-        /*if (null === $container->getCopy()) {
-            $context
-                ->buildViolation('Please select a container to copy.')
-                ->atPath('copy')
-                ->addViolation();
-        }*/
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function render(ContainerInterface $container, ContainerView $view, $editable = false)
     {
         if (is_null($container->getCopy())) {

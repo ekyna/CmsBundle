@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Container;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\AbstractPlugin as BasePlugin;
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Ekyna\Bundle\CoreBundle\Modal\Modal;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class AbstractPlugin
@@ -30,6 +31,14 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
     public function remove(ContainerInterface $container)
     {
         $container->unsetData();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function validate(ContainerInterface $container, ExecutionContextInterface $context)
+    {
+
     }
 
     /**
@@ -83,7 +92,7 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function getJavascriptFilePath()
     {

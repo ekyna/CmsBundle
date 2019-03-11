@@ -2,17 +2,10 @@
 
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
-use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
-use Ekyna\Bundle\MediaBundle\Form\Type\MediaChoiceType;
-use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
-use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
-use Ekyna\Bundle\MediaBundle\Validator\Constraints\MediaTypes as AssertTypes;
+use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
-use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class VideoBlockType
@@ -26,60 +19,11 @@ class VideoBlockType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var MediaRepository $repository */
-        $repository = $options['repository'];
-
-        $mediaTransformer = new CallbackTransformer(
-            function (array $data) use ($repository) {
-                if (!array_key_exists('media', $data)) {
-                    $data['media'] = null;
-                }
-                if (0 < $mediaId = intval($data['media'])) {
-                    $data['media'] = $repository->find($mediaId);
-                }
-
-                return $data;
-            },
-            function (array $data) {
-                if (null !== $media = $data['media']) {
-                    if ($media instanceof MediaInterface) {
-                        $data['media'] = $media->getId();
-                    } else {
-                        throw new TransformationFailedException('Failed to reverse transform image block data.');
-                    }
-                }
-
-                return $data;
-            }
-        );
-
-        // Poster form
-        $poster = $builder
-            ->create('poster', null, [
-                'label' => false,
-                'compound' => true,
-            ])
-            ->add('media', MediaChoiceType::class, [
-                'label'       => 'ekyna_core.field.image',
-                'types'       => [MediaTypes::IMAGE],
-                'constraints' => new AssertTypes([
-                    'types' => [MediaTypes::IMAGE],
-                ]),
-            ])
-            ->addModelTransformer($mediaTransformer);
-
         // Video form
         $video = $builder
             ->create('video', null, [
-                'label' => false,
+                'label'    => false,
                 'compound' => true,
-            ])
-            ->add('media', MediaChoiceType::class, [
-                'label'       => 'ekyna_core.field.video',
-                'types'       => [MediaTypes::VIDEO],
-                'constraints' => new AssertTypes([
-                    'types' => [MediaTypes::VIDEO],
-                ]),
             ])
             ->add('autoplay', Type\CheckboxType::class, [
                 'label'    => 'ekyna_cms.block.field.autoplay',
@@ -96,22 +40,32 @@ class VideoBlockType extends AbstractType
             ->add('player', Type\CheckboxType::class, [
                 'label'    => 'ekyna_cms.block.field.player',
                 'required' => false,
+            ]);
+
+        // Data form
+        $data = $builder
+            ->create('data', null, [
+                'label'    => false,
+                'compound' => true,
             ])
-            ->addModelTransformer($mediaTransformer);
+            ->add($video);
 
         $builder
-            ->add($poster)
-            ->add($video);
+            ->add($data)
+            ->add('translations', TranslationsFormsType::class, [
+                'form_type'      => VideoBlockTranslationType::class,
+                'label'          => false,
+                'error_bubbling' => false,
+            ]);
+
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function getParent()
     {
-        $resolver
-            ->setRequired('repository')
-            ->setAllowedTypes('repository', MediaRepository::class);
+        return BaseBlockType::class;
     }
 
     /**

@@ -6,11 +6,9 @@ use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
 use Ekyna\Bundle\CmsBundle\Editor\View\ContainerView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\BackgroundContainerType;
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
-use Ekyna\Bundle\CmsBundle\Form\Type\Editor\BaseContainerType;
 use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
 use Ekyna\Bundle\MediaBundle\Service\Renderer;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class BackgroundPlugin
@@ -19,6 +17,17 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class BackgroundPlugin extends AbstractPlugin
 {
+    private const DEFAULT_DATA = [
+        'image' => [
+            'media' => null,
+        ],
+        'video' => [
+            'media' => null,
+        ],
+        'color' => null,
+        'theme' => null,
+    ];
+
     /**
      * @var MediaRepository
      */
@@ -46,8 +55,6 @@ class BackgroundPlugin extends AbstractPlugin
             'filter'                 => 'cms_container_background',
             'themes'                 => PropertyDefaults::getDefaultThemeChoices(),
             'default_color'          => '',
-            'default_padding_top'    => 0,
-            'default_padding_bottom' => 0,
         ], $config));
 
         $this->mediaRepository = $mediaRepository;
@@ -57,35 +64,33 @@ class BackgroundPlugin extends AbstractPlugin
     /**
      * @inheritdoc
      */
-    /*public function create(ContainerInterface $container, array $data = [])
+    public function create(ContainerInterface $container, array $data = [])
     {
-        parent::create($container, $data);
-    }*/
+        //parent::create($container, $data);
+
+        $container->setData(array_merge(self::DEFAULT_DATA, [
+            'color' => $this->config['default_color'],
+        ], $data));
+    }
 
     /**
      * @inheritdoc
      */
     public function update(ContainerInterface $container, Request $request)
     {
+        $this->upgrade($container);
+
         $form = $this
             ->formFactory
-            ->create(BaseContainerType::class, $container, [
+            ->create(BackgroundContainerType::class, $container, [
                 'action' => $this->urlGenerator->generate(
                     'ekyna_cms_editor_container_edit',
                     ['containerId' => $container->getId()]
                 ),
                 'method' => 'post',
+                'themes' => $this->config['themes'],
                 'attr'   => [
                     'class' => 'form-horizontal',
-                ],
-            ])
-            ->add('data', BackgroundContainerType::class, [
-                'label'      => false,
-                'repository' => $this->mediaRepository,
-                'themes'     => $this->config['themes'],
-                'attr'       => [
-                    'label_col'  => 0,
-                    'widget_col' => 12,
                 ],
             ]);
 
@@ -99,11 +104,27 @@ class BackgroundPlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
+     * Changes the container data to follow the 2019-03-11 changes.
+     *
+     * @param ContainerInterface $container
      */
-    public function validate(ContainerInterface $container, ExecutionContextInterface $context)
+    private function upgrade(ContainerInterface $container)
     {
+        $data = array_replace(self::DEFAULT_DATA, $container->getData());
 
+        if (isset($data['media_id'])) {
+            $data['image']['media'] = $data['media_id'];
+            unset($data['media_id']);
+        }
+        if (isset($data['video_id'])) {
+            $data['video']['media'] = $data['video_id'];
+            unset($data['video_id']);
+        }
+
+        unset($data['padding_top']);
+        unset($data['padding_bottom']);
+
+        $container->setData($data);
     }
 
     /**
@@ -111,9 +132,13 @@ class BackgroundPlugin extends AbstractPlugin
      */
     public function render(ContainerInterface $container, ContainerView $view, $editable = false)
     {
+        $this->upgrade($container);
+
         $data = $container->getData();
+
         $attributes = $view->getAttributes();
         $attributes->addClass('cms-background');
+
         if (isset($data['theme']) && !empty($data['theme'])) {
             $attributes->addClass($data['theme']);
         }
@@ -124,39 +149,23 @@ class BackgroundPlugin extends AbstractPlugin
             $attributes->addStyle('background-color', $bgColor);
         }
 
-        // Padding top
-        $paddingTop = array_key_exists('padding_top', $data)
-            ? intval($data['padding_top'])
-            : $this->config['default_padding_top'];
-        if (0 < $paddingTop) {
-            $attributes->addStyle('padding-top', $paddingTop . 'px');
-        }
-
-        // Padding bottom
-        $paddingBottom = array_key_exists('padding_bottom', $data)
-            ? intval($data['padding_bottom'])
-            : $this->config['default_padding_bottom'];
-        if (0 < $paddingBottom) {
-            $attributes->addStyle('padding-bottom', $paddingBottom . 'px');
-        }
-
         // Background image
-        if (array_key_exists('media_id', $data) && 0 < $mediaId = intval($data['media_id'])) {
-            /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $media */
-            if (null !== $media = $this->mediaRepository->find($mediaId)) {
+        if (0 < $id = intval($data['image']['media'])) {
+            /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $image */
+            if (null !== $image = $this->mediaRepository->find($id)) {
                 $path = $this
                     ->mediaRenderer
                     ->getGenerator()
-                    ->generateFrontUrl($media, $this->config['filter']);
+                    ->generateFrontUrl($image, $this->config['filter']);
 
                 $attributes->addStyle('background-image', 'url(' . $path . ')');
             }
         }
 
         // Background video
-        if (array_key_exists('video_id', $data) && 0 < $videoId = intval($data['video_id'])) {
+        if (0 < $id = intval($data['video']['media'])) {
             /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $video */
-            if (null !== $video = $this->mediaRepository->find($videoId)) {
+            if (null !== $video = $this->mediaRepository->find($id)) {
                 $attributes->addClass('cms-background-video');
 
                 $view->content = $this->mediaRenderer->renderVideo($video, [
@@ -167,10 +176,6 @@ class BackgroundPlugin extends AbstractPlugin
                     'player'      => false,
                     'alt_message' => null,
                 ]);
-
-                /*$view->content = '<video playsinline autoplay muted loop>'; // poster=""
-                $view->content .= '<source src="' . $path . '" type="' . $mimeType . '">';
-                $view->content .= '</video>';*/
             }
         }
     }

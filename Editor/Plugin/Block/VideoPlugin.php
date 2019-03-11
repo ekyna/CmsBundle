@@ -8,7 +8,6 @@ use Ekyna\Bundle\CmsBundle\Form\Type\Editor\VideoBlockType;
 use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
 use Ekyna\Bundle\MediaBundle\Service\Renderer;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class VideoPlugin
@@ -19,6 +18,24 @@ class VideoPlugin extends AbstractPlugin
 {
     const NAME = 'ekyna_block_video';
 
+    private const DEFAULT_DATA = [
+        'video' => [
+            'responsive' => true,
+            'autoplay'   => false,
+            'loop'       => false,
+            'muted'      => false,
+            'player'     => false,
+        ],
+    ];
+
+    private const DEFAULT_TRANSLATION_DATA = [
+        'poster' => [
+            'media' => null,
+        ],
+        'video'  => [
+            'media' => null,
+        ],
+    ];
 
     /**
      * @var MediaRepository
@@ -58,21 +75,10 @@ class VideoPlugin extends AbstractPlugin
     {
         parent::create($block, $data);
 
-        $defaultData = [
-            'poster' => [
-                'media' => null,
-            ],
-            'video'  => [
-                'media'      => null,
-                'responsive' => true,
-                'autoplay'   => false,
-                'loop'       => false,
-                'muted'      => false,
-                'player'     => false,
-            ],
-        ];
-
-        $block->setData(array_merge($defaultData, $data));
+        $block
+            ->setData(array_merge(self::DEFAULT_DATA, $data))
+            ->translate($this->localeProvider->getCurrentLocale(), true)
+            ->setData(self::DEFAULT_TRANSLATION_DATA);
     }
 
     /**
@@ -80,8 +86,9 @@ class VideoPlugin extends AbstractPlugin
      */
     public function update(BlockInterface $block, Request $request, array $options = [])
     {
+        $this->upgrade($block);
+
         $options = array_replace([
-            'repository' => $this->mediaRepository,
             'action'     => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
                 'blockId'         => $block->getId(),
                 'widgetType'      => $request->get('widgetType', $block->getType()),
@@ -93,13 +100,11 @@ class VideoPlugin extends AbstractPlugin
             ],
         ], $options);
 
-        $form = $this->formFactory->create(VideoBlockType::class, $block->getData(), $options);
+        $form = $this->formFactory->create(VideoBlockType::class, $block, $options);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $block->setData($form->getData());
-
             return null;
         }
 
@@ -107,27 +112,16 @@ class VideoPlugin extends AbstractPlugin
     }
 
     /**
-     * @inheritdoc
-     */
-    public function remove(BlockInterface $block)
-    {
-        parent::remove($block);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function validate(BlockInterface $block, ExecutionContextInterface $context)
-    {
-        // TODO removed undefined data indexes
-    }
-
-    /**
      * @inheritDoc
      */
     public function createWidget(BlockInterface $block, AdapterInterface $adapter, array $options, $position = 0)
     {
-        $data = $block->getData();
+        $this->upgrade($block);
+
+        $data = array_replace_recursive(
+            $block->getData(),
+            $block->translate($this->localeProvider->getCurrentLocale())->getData()
+        );
 
         $view = parent::createWidget($block, $adapter, $options, $position);
         $view->getAttributes()->addClass('cms-video');
@@ -163,6 +157,34 @@ class VideoPlugin extends AbstractPlugin
         }
 
         return $view;
+    }
+
+    /**
+     * Changes the block and translation data to follow the 2019-03-11 changes (poster and video per translation).
+     *
+     * @param BlockInterface $block
+     */
+    private function upgrade(BlockInterface $block)
+    {
+        $data = array_replace(self::DEFAULT_DATA, $block->getData());
+
+        $translation = $block->translate($this->localeProvider->getFallbackLocale());
+
+        $translationData = array_replace(self::DEFAULT_TRANSLATION_DATA, $translation->getData());
+
+        if (isset($data['poster'])) {
+            if (isset($data['poster']['media'])) {
+                $translationData['poster']['media'] = $data['poster']['media'];
+            }
+            unset($data['poster']);
+        }
+        if (isset($data['video']) && isset($data['video']['media'])) {
+            $translationData['video']['media'] = $data['video']['media'];
+            unset($data['video']['media']);
+        }
+
+        $block->setData($data);
+        $translation->setData($translationData);
     }
 
     /**

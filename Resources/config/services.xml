@@ -379,14 +379,24 @@
         </service>
 
         <!-- Web editor form types -->
+        <service id="ekyna_cms.editor.block.base.form_type"
+                 class="Ekyna\Bundle\CmsBundle\Form\Type\Editor\BaseBlockType">
+            <argument>%ekyna_cms.block.class%</argument>
+            <tag name="form.type"/>
+        </service>
+        <service id="ekyna_cms.editor.block_translation.base.form_type"
+                 class="Ekyna\Bundle\CmsBundle\Form\Type\Editor\BaseBlockTranslationType">
+            <argument>%ekyna_cms.block_translation.class%</argument>
+            <tag name="form.type"/>
+        </service>
         <service id="ekyna_cms.editor.container.base.form_type"
                  class="Ekyna\Bundle\CmsBundle\Form\Type\Editor\BaseContainerType">
             <argument>%ekyna_cms.container.class%</argument>
             <tag name="form.type"/>
         </service>
-        <service id="ekyna_cms.editor.container.copy.form_type"
-                 class="Ekyna\Bundle\CmsBundle\Form\Type\Editor\CopyContainerType">
-            <argument>%ekyna_cms.container.class%</argument>
+        <service id="ekyna_cms.editor.media_choice.form_type"
+                 class="Ekyna\Bundle\CmsBundle\Form\Type\Editor\MediaChoiceType">
+            <argument type="service" id="ekyna_media.media.repository"/>
             <tag name="form.type"/>
         </service>
 

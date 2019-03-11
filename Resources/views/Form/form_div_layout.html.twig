@@ -1,11 +1,10 @@
-{% extends '@EkynaAdmin/Form/form_div_layout.html.twig' %}
+{%- extends '@EkynaAdmin/Form/form_div_layout.html.twig' -%}
 
 
-{% block ekyna_cms_seo_widget %}
-{% spaceless %}
-    {{ form_errors(form) }}
-    {{ form_row(form.translations, {'label_col': 0, 'widget_col': 12}) }}
-    {% if form.vars.advanced %}
+{%- block ekyna_cms_seo_widget -%}
+    {{- form_errors(form) -}}
+    {{ form_row(form.translations, {'label_col': 0, 'widget_col': 12}) -}}
+    {%- if form.vars.advanced -%}
     {# TODO toggleable wrapper #}
     <div class="row">
         <div class="col-md-6">{{ form_row(form.changefreq, {'label_col': 4, 'widget_col': 8}) }}</div>
@@ -15,217 +14,226 @@
         <div class="col-md-6">{{ form_row(form.follow, {'label_col': 4, 'widget_col': 8}) }}</div>
         <div class="col-md-6">{{ form_row(form.index, {'label_col': 4, 'widget_col': 8}) }}</div>
     </div>
-    {{ form_row(form.canonical) }}
-    {% endif %}
-    {{ form_rest(form) }}
-{% endspaceless %}
-{% endblock ekyna_cms_seo_widget %}
+    {{- form_row(form.canonical) -}}
+    {%- endif -%}
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_seo_widget -%}
 
 
-{% block ekyna_cms_block_feature_widget %}
-{% spaceless %}
-    {{ form_errors(form) }}
-    {{ form_row(form.html_max_width, {'label_col': 3, 'widget_col': 9}) }}
-    {{ form_row(form.html_margin_top, {'label_col': 3, 'widget_col': 9}) }}
-    <hr>
-    {{ form_row(form.animation, {'widget_col': 12}) }}
-    {{ form_rest(form) }}
-{% endspaceless %}
-{% endblock ekyna_cms_block_feature_widget %}
-
-
-{% block ekyna_cms_block_template_widget %}
-{% spaceless %}
-    {{ form_errors(form) }}
-    {{ form_row(form.content, {'label_col': 3, 'widget_col': 9}) }}
-    {{ form_rest(form) }}
-{% endspaceless %}
-{% endblock ekyna_cms_block_template_widget %}
-
-
-{% block ekyna_cms_block_tab_widget %}
-{% spaceless %}
-    {{ form_errors(form) }}
-    {{ form_row(form.translations, {'label_col': 0, 'widget_col': 12}) }}
+{%- block ekyna_cms_block_feature_widget -%}
+    {{- form_errors(form) -}}
     <div class="row">
         <div class="col-md-6">
-            {{ form_row(form.anchor, {'label_col': 4, 'widget_col': 8}) }}
+            {{- form_row(form.data.html_max_width, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+        </div>
+        <div class="col-md-6">
+            {{- form_row(form.data.html_margin_top, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
         </div>
     </div>
-    {{ form_rest(form) }}
-{% endspaceless %}
-{% endblock ekyna_cms_block_tab_widget %}
+    <hr>
+    {{- form_row(form.data.animation, {'widget_col': 12}) -}}
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_block_feature_widget -%}
 
 
-{% block ekyna_cms_block_tab_translation_widget %}
-{% spaceless %}
-    {{ form_errors(form) }}
+{%- block ekyna_cms_block_template_widget -%}
+    {{- form_errors(form) -}}
+    {{- form_row(form.data.content, {'label_col': 3, 'widget_col': 9}) -}}
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_block_template_widget -%}
+
+
+{%- block ekyna_cms_block_tab_widget -%}
+    {{- form_errors(form) -}}
+    {{- form_row(form.translations, {'label_col': 0, 'widget_col': 12}) -}}
+    <div class="row">
+        <div class="col-md-6">
+            {{- form_row(form.anchor, {'label_col': 4, 'widget_col': 8}) -}}
+        </div>
+    </div>
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_block_tab_widget -%}
+
+
+{%- block ekyna_cms_block_tab_translation_widget -%}
+    {{- form_errors(form) -}}
     <div class="row">
         <div class="col-md-3">
-            {{ form_widget(form.media) }}
+            {{- form_widget(form.media) -}}
         </div>
         <div class="col-md-9">
-            {{ form_row(form.title, {'label_col': 3, 'widget_col': 9}) }}
-            {{ form_row(form.buttonLabel, {'label_col': 3, 'widget_col': 9}) }}
-            {{ form_row(form.buttonUrl, {'label_col': 3, 'widget_col': 9}) }}
+            {{- form_row(form.title, {'label_col': 3, 'widget_col': 9}) -}}
+            {{- form_row(form.buttonLabel, {'label_col': 3, 'widget_col': 9}) -}}
+            {{- form_row(form.buttonUrl, {'label_col': 3, 'widget_col': 9}) -}}
         </div>
     </div>
-    {{ form_rest(form) }}
-{% endspaceless %}
-{% endblock ekyna_cms_block_tab_translation_widget %}
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_block_tab_translation_widget -%}
 
 
-{% block ekyna_cms_block_tabs_widget %}
-{% spaceless %}
-    {{ form_errors(form) }}
+{%- block ekyna_cms_block_tabs_widget -%}
+    {{- form_errors(form) -}}
     <div class="row">
         <div class="col-md-6">
-            {{ form_row(form.align, {'label_col': 4, 'widget_col': 8}) }}
+            {{- form_row(form.align, {'label_col': 4, 'widget_col': 8}) -}}
         </div>
         <div class="col-md-6">
-            {{ form_row(form.theme, {'label_col': 4, 'widget_col': 8}) }}
+            {{- form_row(form.theme, {'label_col': 4, 'widget_col': 8}) -}}
         </div>
     </div>
-    {{ form_row(form.translations, {'label_col': 0, 'widget_col': 12}) }}
-    {{ form_row(form.tabs, {'label_col': 2, 'widget_col': 10}) }}
-    {{ form_rest(form) }}
-{% endspaceless %}
-{% endblock ekyna_cms_block_tabs_widget %}
+    {{- form_row(form.translations, {'label_col': 0, 'widget_col': 12}) -}}
+    {{- form_row(form.tabs, {'label_col': 2, 'widget_col': 10}) -}}
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_block_tabs_widget -%}
 
 
-{% block ekyna_cms_block_tabs_translation_widget %}
-{% spaceless %}
-    {{ form_errors(form) }}
-    {{ form_row(form.title) }}
-    {{ form_row(form.content) }}
+{%- block ekyna_cms_block_tabs_translation_widget -%}
+    {{- form_errors(form) -}}
+    {{- form_row(form.title) -}}
+    {{- form_row(form.content) -}}
     <div class="row">
         <div class="col-md-2 col-md-offset-2">
-            {{ form_widget(form.media) }}
+            {{- form_widget(form.media) -}}
         </div>
         <div class="col-md-8">
-            {{ form_row(form.buttonLabel, {'label_col': 3, 'widget_col': 9}) }}
-            {{ form_row(form.buttonUrl, {'label_col': 3, 'widget_col': 9}) }}
+            {{- form_row(form.buttonLabel, {'label_col': 3, 'widget_col': 9}) -}}
+            {{- form_row(form.buttonUrl, {'label_col': 3, 'widget_col': 9}) -}}
         </div>
     </div>
-    {{ form_rest(form) }}
-{% endspaceless %}
-{% endblock ekyna_cms_block_tabs_translation_widget %}
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_block_tabs_translation_widget -%}
 
 
-{% block ekyna_cms_block_image_widget %}
-{% spaceless %}
-    {{ form_errors(form) }}
-    {{ form_row(form.url, {'label_col': 3, 'widget_col': 9}) }}
-    <hr>
-    {{ form_row(form.image, {'widget_col': 12}) }}
-    {% if form.hover is defined %}
-        <hr>
-        {{ form_row(form.hover, {'widget_col': 12}) }}
-    {% endif %}
-    {{ form_rest(form) }}
-{% endspaceless %}
-{% endblock ekyna_cms_block_image_widget %}
-
-
-{% block ekyna_cms_image_widget %}
-{% spaceless %}
-    {{ form_errors(form) }}
+{%- block ekyna_cms_block_image_widget -%}
+    {{- form_errors(form) -}}
+    {{- form_row(form.translations, {'widget_col': 12}) -}}
     <div class="row">
-        <div class="col-md-4">
-            {{ form_row(form.media, {'label_col': 6, 'widget_col': 6}) }}
-        </div>
-        <div class="col-md-8">
-            <div class="row">
-                <div class="col-md-6">
-                    {{ form_row(form.theme, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
-                    {{ form_row(form.style, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
-                </div>
-                <div class="col-md-6">
-                    {{ form_row(form.max_width, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
-                    {{ form_row(form.align, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
-                </div>
-            </div>
+        <div class="col-md-6">
+            {{- form_row(form.data.image.theme, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.image.style, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.image.max_width, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.image.align, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
             <hr>
-            {{ form_row(form.animation, {'widget_col': 12}) }}
+            {{- form_row(form.data.image.animation.name, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.image.animation.offset, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.image.animation.once, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.image.animation.duration, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
         </div>
+        {%- if form.data.hover is defined -%}
+        <div class="col-md-6">
+            {{- form_row(form.data.hover.theme, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.hover.style, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.hover.max_width, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.hover.align, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            <hr>
+            {{- form_row(form.data.hover.animation.name, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.hover.animation.offset, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.hover.animation.once, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.hover.animation.duration, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+        </div>
+        {%- endif -%}
     </div>
-    {{ form_rest(form) }}
-{% endspaceless %}
-{% endblock ekyna_cms_image_widget %}
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_block_image_widget -%}
 
 
-{% block ekyna_cms_animation_widget %}
-{% spaceless %}
-    {{ form_errors(form) }}
+{%- block ekyna_cms_block_image_translation_widget -%}
+    {{- form_errors(form) -}}
+    {{- form_row(form.data.url, {'label_col': 3, 'widget_col': 9}) -}}
     <div class="row">
         <div class="col-md-6">
-            {{ form_row(form.name, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
-            {{ form_row(form.offset, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
+            {{- form_row(form.data.image, {'label_col': 6, 'widget_col': 6}) -}}
+        </div>
+        {%- if form.data.hover is defined -%}
+        <div class="col-md-6">
+            {{- form_row(form.data.hover, {'label_col': 6, 'widget_col': 6}) -}}
+        </div>
+        {%- endif -%}
+    </div>
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_block_image_translation_widget -%}
+
+
+{%- block ekyna_cms_animation_widget -%}
+    {{- form_errors(form) -}}
+    <div class="row">
+        <div class="col-md-6">
+            {{- form_row(form.name, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.offset, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
         </div>
         <div class="col-md-6">
-            {{ form_row(form.once, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
-            {{ form_row(form.duration, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) }}
+            {{- form_row(form.once, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.duration, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
         </div>
     </div>
-    {{ form_rest(form) }}
-{% endspaceless %}
-{% endblock ekyna_cms_animation_widget %}
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_animation_widget -%}
 
 
-{% block ekyna_cms_block_video_widget %}
-{% spaceless %}
-    {{ form_errors(form) }}
+{%- block ekyna_cms_block_video_widget -%}
+    {{- form_errors(form) -}}
     <div class="row">
-        <div class="col-md-4">
-            {{ form_row(form.poster.media, {'label_col': 4, 'widget_col': 8}) }}
+        <div class="col-md-8">
+            {{- form_row(form.translations, {'label_col': 0, 'widget_col': 12}) -}}
         </div>
         <div class="col-md-4">
-            {{ form_row(form.video.media, {'label_col': 4, 'widget_col': 8}) }}
-        </div>
-        <div class="col-md-4">
-            {{ form_row(form.video.autoplay) }}
-            {{ form_row(form.video.loop) }}
-            {{ form_row(form.video.muted) }}
-            {{ form_row(form.video.player) }}
+            {{- form_row(form.data.video.autoplay) -}}
+            {{- form_row(form.data.video.loop) -}}
+            {{- form_row(form.data.video.muted) -}}
+            {{- form_row(form.data.video.player) -}}
         </div>
     </div>
-    {{ form_rest(form) }}
-{% endspaceless %}
-{% endblock ekyna_cms_block_video_widget %}
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_block_video_widget -%}
 
 
-{% block ekyna_cms_container_background_widget %}
-{% spaceless %}
-    {{ form_errors(form) }}
+{%- block ekyna_cms_block_video_translation_widget -%}
+    {{- form_errors(form) -}}
     <div class="row">
-        <div class="col-md-3">
-            {{ form_row(form.media_id, {'label_col': 6, 'widget_col': 6}) }}
-        </div>
-        <div class="col-md-3">
-            {{ form_row(form.video_id, {'label_col': 6, 'widget_col': 6}) }}
+        <div class="col-md-6">
+            {{- form_row(form.data.poster, {'label_col': 6, 'widget_col': 6}) -}}
         </div>
         <div class="col-md-6">
-            {% if form.theme is defined %}
-                {{ form_row(form.theme, {'label_col': 6, 'widget_col': 6}) }}
-            {% endif %}
-            {{ form_row(form.color, {'label_col': 6, 'widget_col': 6}) }}
+            {{- form_row(form.data.video, {'label_col': 6, 'widget_col': 6}) -}}
         </div>
     </div>
-    {{ form_rest(form) }}
-{% endspaceless %}
-{% endblock ekyna_cms_container_background_widget %}
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_block_video_translation_widget -%}
 
 
-{% block ekyna_cms_slide_type_widget %}
-{% spaceless %}
-    {{ form_widget(form) }}
-    {% if form.vars.slide_show is defined %}
-        {{ slide_show_render(form.vars.slide_show, {
+{%- block ekyna_cms_container_background_widget -%}
+    {{- form_errors(form) -}}
+    {{- form_row(form.title, {'label_col': 3, 'widget_col': 9}) -}}
+    <div class="row">
+        {%- if form.data.theme is defined -%}
+        <div class="col-md-6">
+            {{- form_row(form.data.theme, {'label_col': 6, 'widget_col': 6}) -}}
+        </div>
+        {%- endif -%}
+        <div class="col-md-6">
+            {{- form_row(form.data.color, {'label_col': 6, 'widget_col': 6}) -}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            {{- form_row(form.data.image, {'label_col': 6, 'widget_col': 6}) -}}
+        </div>
+        <div class="col-md-6">
+            {{- form_row(form.data.video, {'label_col': 6, 'widget_col': 6}) -}}
+        </div>
+    </div>
+    {{- form_rest(form) -}}
+{%- endblock ekyna_cms_container_background_widget -%}
+
+
+{%- block ekyna_cms_slide_type_widget -%}
+    {{- form_widget(form) -}}
+    {%- if form.vars.slide_show is defined -%}
+        {{- slide_show_render(form.vars.slide_show, {
             'id': 'slide-show-type',
             'auto': false,
             'ui': false,
             'javascript': false
-        }) }}
-    {% endif %}
-{% endspaceless %}
-{% endblock ekyna_cms_slide_type_widget %}
+        }) -}}
+    {%- endif -%}
+{%- endblock ekyna_cms_slide_type_widget -%}

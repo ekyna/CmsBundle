@@ -8,6 +8,7 @@ use Ekyna\Bundle\CmsBundle\Editor\View\BlockView;
 use Ekyna\Bundle\CmsBundle\Editor\View\WidgetView;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Component\Resource\Locale\LocaleProviderInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class AbstractPlugin
@@ -62,6 +63,14 @@ abstract class AbstractPlugin extends BasePlugin implements PluginInterface
         foreach ($block->getTranslations() as $blockTranslation) {
             $blockTranslation->unsetData();
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function validate(BlockInterface $block, ExecutionContextInterface $context)
+    {
+
     }
 
     /**
