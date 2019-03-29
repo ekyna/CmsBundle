@@ -82,7 +82,7 @@ class CmsExtension extends \Twig_Extension
      * @param PageHelper               $pageHelper
      * @param SeoRepository            $seoRepository
      * @param TagManager               $tagManager
-     * @param LocaleSwitcher $localeSwitcher
+     * @param LocaleSwitcher           $localeSwitcher
      * @param LocaleProviderInterface  $localeProvider
      * @param array                    $config
      */
@@ -115,7 +115,11 @@ class CmsExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('cms_tags', [$this, 'renderTags'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter(
+                'cms_tags',
+                [$this, 'renderTags'],
+                ['is_safe' => ['html']]
+            ),
         ];
     }
 
@@ -125,16 +129,54 @@ class CmsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('cms_metas', [$this, 'renderMetas'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_seo', [$this, 'renderSeo'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_meta', [$this, 'renderMeta'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_title', [$this, 'renderTitle'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_menu', [$this, 'renderMenu'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_breadcrumb', [$this, 'renderBreadcrumb'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_cookie_consent', [$this, 'renderCookieConsent'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_locale_switcher', [$this, 'renderLocaleSwitcher'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('cms_page', [$this, 'getPage']),
-            new \Twig_SimpleFunction('cms_page_controller', [$this, 'getPageControllerTitle']),
+            new \Twig_SimpleFunction(
+                'cms_metas',
+                [$this, 'renderMetas'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFunction(
+                'cms_seo',
+                [$this, 'renderSeo'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFunction(
+                'cms_meta',
+                [$this, 'renderMeta'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFunction(
+                'cms_title',
+                [$this, 'renderTitle'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFunction(
+                'cms_menu',
+                [$this, 'renderMenu'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFunction(
+                'cms_breadcrumb',
+                [$this, 'renderBreadcrumb'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFunction(
+                'cms_cookie_consent',
+                [$this, 'renderCookieConsent'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFunction(
+                'cms_locale_switcher',
+                [$this, 'renderLocaleSwitcher'],
+                ['is_safe' => ['html'], 'needs_environment' => true]
+            ),
+            new \Twig_SimpleFunction(
+                'cms_page',
+                [$this, 'getPage']
+            ),
+            new \Twig_SimpleFunction(
+                'cms_page_controller',
+                [$this, 'getPageControllerTitle']
+            ),
         ];
     }
 
@@ -318,51 +360,54 @@ class CmsExtension extends \Twig_Extension
     /**
      * Renders the locale switcher.
      *
-     * @param array $attributes
-     * @param array $locales
+     * @param \Twig_Environment $twig
+     * @param array             $options
      *
      * @return string
      */
-    public function renderLocaleSwitcher(array $attributes = [], array $locales = [])
+    public function renderLocaleSwitcher(\Twig_Environment $twig, array $options = [])
     {
         if (!$this->localeSwitcher->hasResource()) {
             $this->localeSwitcher->setResource($this->getPage());
         }
 
-        $locales = empty($locales) ? $this->localeProvider->getAvailableLocales() : $locales;
+        $options = array_replace([
+            'dropdown' => true,
+            'tag'      => 'div',
+            'attr'     => [],
+            'locales'  => [],
+            'template' => $this->config['locale_switcher_template'],
+        ], $options);
+
+        $locales = empty($options['locales']) ? $this->localeProvider->getAvailableLocales() : $options['locales'];
 
         if (empty($urls = $this->localeSwitcher->getUrls($locales))) {
             return '';
         }
 
         $current = $this->localeProvider->getCurrentLocale();
-        $list = '';
 
+        $entries = [];
         foreach ($urls as $locale => $url) {
-            $classes = ['locale-' . strtolower($locale)];
-
-            if ($current == $locale) {
-                $classes[] = 'current';
-            }
-
-            $list .= sprintf(
-                '<li class="locale-%s"><a href="%s">%s</a></li>',
-                implode(' ', $classes),
-                $url,
-                mb_convert_case(\Locale::getDisplayLanguage($locale, $current), MB_CASE_TITLE)
-            );
+            $entries[$locale] = $url;
         }
 
-        if (!isset($attributes['class'])) {
-            $attributes['class'] = 'locale-switcher';
+        if (!isset($options['attr']['id'])) {
+            $options['attr']['id'] = 'locale-switcher';
+        }
+        if ($options['dropdown']) {
+            $classes = isset($options['attr']['class']) ? $options['attr']['class'] : '';
+            $classes = trim($classes . ' dropdown');
+            $options['attr']['class'] = $classes;
         }
 
-        $attr = [];
-        foreach ($attributes as $key => $value) {
-            $attr[] = sprintf(' %s="%s"', $key, $value);
-        }
-
-        return '<ul ' .implode(' ', $attr). '>' . $list . '</ul>';
+        return $twig->render($options['template'], [
+            'tag'      => $options['tag'],
+            'dropdown' => $options['dropdown'],
+            'attr'     => $options['attr'],
+            'current'  => $current,
+            'locales'  => $entries,
+        ]);
     }
 
     /**
@@ -424,13 +469,13 @@ class CmsExtension extends \Twig_Extension
     private function getDefaultConfig()
     {
         return [
-            'home_route' => 'home',
-            'seo'        => [
+            'home_route'               => 'home',
+            'seo'                      => [
                 'no_follow'    => true,
                 'no_index'     => true,
                 'title_append' => null,
             ],
-            'page'       => [
+            'page'                     => [
                 'cookie_content' => [
                     'enable' => false,
                 ],
@@ -439,6 +484,7 @@ class CmsExtension extends \Twig_Extension
                 ],
                 'controllers'    => [],
             ],
+            'locale_switcher_template' => '@EkynaCms/Widget/locale.html.twig',
         ];
     }
 }

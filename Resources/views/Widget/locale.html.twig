@@ -1,0 +1,24 @@
+<{{ tag }}{% for key, value in attr %} {{ key }}="{{ value }}"{% endfor %}>
+{% if dropdown -%}
+    <a href="javascript:void(0)" title="{{ current|language|capitalize }}" class="dropdown-toggle"
+       data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+        {{- current|capitalize -}}
+    </a>
+    <div class="dropdown-menu dropdown-menu-right">
+        {% for locale, url in locales %}{% if locale != current -%}
+        <a class="btn btn-sm btn-default" href="{{ url }}" title="{{ locale|language|capitalize }}">
+            {{- locale|capitalize -}}
+        </a>
+        {%- endif %}{% endfor %}
+    </div>
+{%- else -%}
+    {% for locale, url in locales -%}
+        {% if tag == 'ul' %}<li{% if current == locale %} class="current"{% endif %}>{% endif %}
+        <a href="{{ url }}" title="{{ locale|language|capitalize }}"
+            {%- if tag != 'ul' and current == locale %} class="current"{% endif %}>
+            {{- locale|language|capitalize -}}
+        </a>
+        {%- if tag == 'ul' %}</li>{% endif %}
+    {%- endfor %}
+{%- endif %}
+</{{ tag }}>
