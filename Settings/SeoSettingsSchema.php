@@ -2,66 +2,75 @@
 
 namespace Ekyna\Bundle\CmsBundle\Settings;
 
+use Ekyna\Bundle\SettingBundle\Form\Type\I18nParameterType;
+use Ekyna\Bundle\SettingBundle\Model\I18nParameter;
 use Ekyna\Bundle\SettingBundle\Schema\AbstractSchema;
+use Ekyna\Bundle\SettingBundle\Schema\LocalizedSchemaInterface;
+use Ekyna\Bundle\SettingBundle\Schema\LocalizedSchemaTrait;
 use Ekyna\Bundle\SettingBundle\Schema\SettingsBuilder;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class SeoSettingsSchema
  * @package Ekyna\Bundle\CmsBundle\Settings
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class SeoSettingsSchema extends AbstractSchema
+class SeoSettingsSchema extends AbstractSchema implements LocalizedSchemaInterface
 {
+    use LocalizedSchemaTrait;
+
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function buildSettings(SettingsBuilder $builder)
     {
         $builder
             ->setDefaults(array_merge([
-                'title'       => 'Page default title',
-                'description' => 'Page default description',
-                'locale'      => 'fr',
+                'title'       => $this->createI18nParameter('Page default title'),
+                'description' => $this->createI18nParameter('Page default description'),
             ], $this->defaults))
-            ->setAllowedTypes('title',        'string')
-            ->setAllowedTypes('description',  'string')
-            ->setAllowedTypes('locale',       'string')
-        ;
+            ->setAllowedTypes('title', I18nParameter::class)
+            ->setAllowedTypes('description', I18nParameter::class);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', Type\TextType::class, [
-                'label'       => 'ekyna_core.field.title',
-                'constraints' => [
-                    new Constraints\NotBlank()
-                ]
+            ->add('title', I18nParameterType::class, [
+                'label'        => 'ekyna_core.field.title',
+                'form_type'    => Type\TextType::class,
+                'form_options' => [
+                    'label'       => false,
+                    'constraints' => [
+                        new Assert\NotBlank(),
+                    ],
+                ],
+                'constraints'  => [
+                    new Assert\Valid(),
+                ],
             ])
-            ->add('description', Type\TextareaType::class, [
-                'label'       => 'ekyna_core.field.description',
-                'constraints' => [
-                    new Constraints\NotBlank()
-                ]
-            ])
-            ->add('locale', Type\LocaleType::class, [
-                'label'       => 'ekyna_core.field.locale',
-                'constraints' => [
-                    new Constraints\NotBlank(),
-                    new Constraints\Locale(),
-                ]
-            ])
-        ;
+            ->add('description', I18nParameterType::class, [
+                'label'        => 'ekyna_core.field.description',
+                'form_type'    => Type\TextType::class,
+                'form_options' => [
+                    'label'       => false,
+                    'constraints' => [
+                        new Assert\NotBlank(),
+                    ],
+                ],
+                'constraints'  => [
+                    new Assert\Valid(),
+                ],
+            ]);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getLabel()
     {
@@ -69,7 +78,7 @@ class SeoSettingsSchema extends AbstractSchema
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getShowTemplate()
     {
@@ -77,7 +86,7 @@ class SeoSettingsSchema extends AbstractSchema
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getFormTemplate()
     {

@@ -2,12 +2,14 @@
     'label': 'ekyna_cms.settings.cookies.mode.label',
     'label_col': 3
 }) }}
-{{ show_row(settings.cookies.header_text, 'text', {
+{{ show_row(settings.cookies.header_text, 'i18n_parameter', {
     'label': 'ekyna_cms.settings.cookies.header_text',
+    'type': 'text',
     'label_col': 3
 }) }}
-{{ show_row(settings.cookies.dialog_text, 'textarea', {
+{{ show_row(settings.cookies.dialog_text, 'i18n_parameter', {
     'label': 'ekyna_cms.settings.cookies.dialog_text',
-    'label_col': 3,
-    'html': true
+    'type': 'textarea',
+    'options': {'html': true},
+    'label_col': 3
 }) }}
