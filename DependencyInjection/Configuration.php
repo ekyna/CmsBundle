@@ -25,11 +25,17 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('ekyna_cms');
 
-        /** @noinspection PhpUndefinedMethodInspection */
         $rootNode
             ->children()
-                ->scalarNode('output_dir')->defaultValue('')->cannotBeEmpty()->end()
-                ->scalarNode('home_route')->defaultNull()->end()
+                ->scalarNode('home_route')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
+                ->arrayNode('public_locales')
+                    ->scalarPrototype()->end()
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
             ->end()
         ;
 

@@ -23,6 +23,7 @@ class EkynaCmsExtension extends AbstractExtension
         $config = $this->configure($configs, 'ekyna_cms', new Configuration(), $container);
 
         $container->setParameter('ekyna_cms.home_route', $config['home_route']);
+        $container->setParameter('ekyna_cms.public_locales', $config['public_locales']);
         $container->setParameter('ekyna_cms.page.config', $config['page']);
         $container->setParameter('ekyna_cms.menu.config', $config['menu']);
 

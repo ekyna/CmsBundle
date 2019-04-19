@@ -379,9 +379,7 @@ class CmsExtension extends \Twig_Extension
             'template' => $this->config['locale_switcher_template'],
         ], $options);
 
-        $locales = empty($options['locales']) ? $this->localeProvider->getAvailableLocales() : $options['locales'];
-
-        if (empty($urls = $this->localeSwitcher->getUrls($locales))) {
+        if (empty($urls = $this->localeSwitcher->getUrls($options['locales']))) {
             return '';
         }
 

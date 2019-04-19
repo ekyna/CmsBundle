@@ -230,7 +230,7 @@
             <argument type="service" id="ekyna_admin.helper.resource_helper"/>
             <argument type="service" id="router"/>
             <argument type="service" id="request_stack"/>
-            <argument>%locales%</argument>
+            <argument>%ekyna_cms.public_locales%</argument>
         </service>
 
         <!-- Cache -->
