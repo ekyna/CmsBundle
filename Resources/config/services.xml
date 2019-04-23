@@ -389,6 +389,11 @@
             <argument>%ekyna_cms.block_translation.class%</argument>
             <tag name="form.type"/>
         </service>
+        <service id="ekyna_cms.editor.block.tab.form_type"
+                 class="Ekyna\Bundle\CmsBundle\Form\Type\Editor\TabType">
+            <argument type="service" id="ekyna_resource.locale_provider"/>
+            <tag name="form.type"/>
+        </service>
         <service id="ekyna_cms.editor.container.base.form_type"
                  class="Ekyna\Bundle\CmsBundle\Form\Type\Editor\BaseContainerType">
             <argument>%ekyna_cms.container.class%</argument>
