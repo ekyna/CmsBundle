@@ -39,7 +39,8 @@ class PageTranslationType extends AbstractType
 
             /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
             $page = $form->getParent()->getParent()->getData();
-            if (null !== $page && !$page->isStatic() && null !== $parent = $page->getParent()) {
+            $parent = $page->getParent();
+            if ($page && !$page->isStatic() && $parent) {
                 $pathOptions = [
                     'label'        => 'ekyna_core.field.url',
                     'admin_helper' => 'CMS_PAGE_PATH',
@@ -63,7 +64,7 @@ class PageTranslationType extends AbstractType
                     'label'        => 'ekyna_core.field.url',
                     'admin_helper' => 'CMS_PAGE_PATH',
                     'required'     => false,
-                    'disabled'     => (null !== $page && $page->isStatic()),
+                    'disabled'     => ($page && $page->isStatic()),
                 ));
             }
 

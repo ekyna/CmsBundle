@@ -55,6 +55,11 @@
         </service>
 
         <!-- Table types -->
+        <service id="ekyna_cms.page.table_type" class="Ekyna\Bundle\CmsBundle\Table\Type\PageType">
+            <argument type="service" id="router"/>
+            <argument>%ekyna_cms.page.class%</argument>
+            <tag name="table.type"/>
+        </service>
         <service id="ekyna_cms.table.column.tags_type" class="Ekyna\Bundle\CmsBundle\Table\Column\TagsType">
             <tag name="table.column_type"/>
         </service>

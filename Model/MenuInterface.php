@@ -11,6 +11,7 @@ use Ekyna\Component\Resource\Model as RM;
  * @author  Étienne Dauvergne <contact@ekyna.com>
  *
  * @method MenuTranslationInterface translate($locale = null, $create = false)
+ * @method MenuTranslationInterface[] getTranslations()
  */
 interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterface
 {

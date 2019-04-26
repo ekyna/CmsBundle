@@ -10,6 +10,7 @@ use Ekyna\Component\Resource\Model as RM;
  * @author  Étienne Dauvergne <contact@ekyna.com>
  *
  * @method PageTranslationInterface translate($locale = null, $create = false)
+ * @method PageTranslationInterface[] getTranslations()
  */
 interface PageInterface extends
     ContentSubjectInterface,

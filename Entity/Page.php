@@ -3,9 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Component\Resource\Model as RM;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
-use Ekyna\Bundle\CoreBundle\Model as Core;
+use Ekyna\Component\Resource\Model as RM;
 
 /**
  * Class Page
@@ -13,6 +12,7 @@ use Ekyna\Bundle\CoreBundle\Model as Core;
  * @author  Étienne Dauvergne <contact@ekyna.com>
  *
  * @method Cms\PageTranslationInterface translate($locale = null, $create = false)
+ * @method Cms\PageTranslationInterface[] getTranslations()
  */
 class Page extends RM\AbstractTranslatable implements Cms\PageInterface
 {

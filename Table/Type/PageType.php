@@ -5,7 +5,9 @@ namespace Ekyna\Bundle\CmsBundle\Table\Type;
 use Ekyna\Bundle\AdminBundle\Table\Type\ResourceTableType;
 use Ekyna\Bundle\TableBundle\Extension\Type as BType;
 use Ekyna\Component\Table\Extension\Core\Type as CType;
+use Ekyna\Component\Table\Source\RowInterface;
 use Ekyna\Component\Table\TableBuilderInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Class PageType
@@ -14,6 +16,25 @@ use Ekyna\Component\Table\TableBuilderInterface;
  */
 class PageType extends ResourceTableType
 {
+    /**
+     * @var UrlGeneratorInterface
+     */
+    private $urlGenerator;
+
+
+    /**
+     * Constructor.
+     *
+     * @param UrlGeneratorInterface $urlGenerator
+     * @param string                $class
+     */
+    public function __construct(UrlGeneratorInterface $urlGenerator, string $class)
+    {
+        parent::__construct($class);
+
+        $this->urlGenerator = $urlGenerator;
+    }
+
     /**
      * @inheritdoc
      */
@@ -51,6 +72,38 @@ class PageType extends ResourceTableType
                     'pageId' => 'id',
                 ],
                 'buttons'               => [
+                    function (RowInterface $row) {
+                        $page = $row->getData();
+
+                        if (!$page->isEnabled() || $page->isDynamicPath()) {
+                            return null;
+                        }
+
+                        return [
+                            'label'  => 'ekyna_admin.resource.button.show_front',
+                            'class'  => 'default',
+                            'icon'   => 'eye-open',
+                            'target' => '_blank',
+                            'path'   => $this->urlGenerator->generate($page->getRoute()),
+                        ];
+                    },
+                    function (RowInterface $row) {
+                        $page = $row->getData();
+
+                        if (!$page->isEnabled() || $page->isDynamicPath()) {
+                            return null;
+                        }
+
+                        return [
+                            'label'  => 'ekyna_admin.resource.button.show_editor',
+                            'class'  => 'default',
+                            'icon'   => 'edit',
+                            'target' => '_blank',
+                            'path'   => $this->urlGenerator->generate('ekyna_cms_editor_index', [
+                                'path' => $this->urlGenerator->generate($page->getRoute()),
+                            ]),
+                        ];
+                    },
                     [
                         'label'                => 'ekyna_core.button.edit',
                         'icon'                 => 'pencil',

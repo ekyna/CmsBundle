@@ -3,8 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ekyna\Component\Resource\Model as RM;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
+use Ekyna\Component\Resource\Model as RM;
 
 /**
  * Class Menu
@@ -12,6 +12,7 @@ use Ekyna\Bundle\CmsBundle\Model as Cms;
  * @author  Étienne Dauvergne <contact@ekyna.com>
  *
  * @method Cms\MenuTranslationInterface translate($locale = null, $create = false)
+ * @method Cms\MenuTranslationInterface[] getTranslations()
  */
 class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
 {

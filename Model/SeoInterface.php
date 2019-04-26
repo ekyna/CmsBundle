@@ -10,6 +10,7 @@ use Ekyna\Component\Resource\Model as RM;
  * @author Étienne Dauvergne <contact@ekyna.com>
  *
  * @method SeoTranslationInterface translate($locale = null, $create = false)
+ * @method SeoTranslationInterface[] getTranslations()
  */
 interface SeoInterface extends RM\TaggedEntityInterface, RM\TranslatableInterface
 {
