@@ -107,6 +107,7 @@ export interface AdapterInterface {
 }
 
 interface ResponseData {
+    error?: string
     created?: string
     removed?: Array<string>
     content?: ContentData
@@ -244,7 +245,7 @@ export class BaseManager {
             // Parse elements
             BaseManager.parse(data);
         });
-        xhr.fail(function () {
+        xhr.fail(function (xhr, text, error) {
             console.log('Editor request failed.');
         });
         xhr.always(function () {
@@ -255,6 +256,13 @@ export class BaseManager {
     }
 
     static parse(data: ResponseData) {
+        // Error handler
+        if (data.hasOwnProperty('error')) {
+            alert(data.error);
+
+            return;
+        }
+
         // Remove elements by id
         if (data.hasOwnProperty('removed')) {
             data.removed.forEach((id: string) => {
@@ -279,6 +287,7 @@ export class BaseManager {
         if (data.hasOwnProperty('created')) {
             event.$element = BaseManager.findElementById(data.created);
         }
+
         Dispatcher.trigger('base_manager.response_parsed', event);
     }
 

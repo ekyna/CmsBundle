@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
+use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
 use Ekyna\Bundle\CoreBundle\Modal\Modal;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,6 +65,24 @@ class BaseController extends Controller
         }
 
         return $modal;
+    }
+
+    /**
+     * Handles editor exception.
+     *
+     * @param EditorExceptionInterface $exception
+     *
+     * @return Response
+     */
+    protected function handleException(EditorExceptionInterface $exception)
+    {
+        if ($this->getParameter('kernel.debug')) {
+            throw $exception;
+        }
+
+        return $this->buildResponse([
+            'error' => $exception->getMessage(),
+        ]);
     }
 
     /**

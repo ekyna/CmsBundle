@@ -6,7 +6,6 @@ use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
 use Ekyna\Bundle\CoreBundle\Modal\Modal;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class ContainerController
@@ -20,7 +19,7 @@ class ContainerController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function createRowAction(Request $request)
     {
@@ -31,7 +30,7 @@ class ContainerController extends BaseController
         try {
             $row = $this->getEditor()->createDefaultRow([], $target);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $this->validate($target);
@@ -52,7 +51,7 @@ class ContainerController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function editAction(Request $request)
     {
@@ -61,7 +60,7 @@ class ContainerController extends BaseController
         try {
             $response = $this->getEditor()->getContainerManager()->update($container, $request);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         if ($response instanceof Modal) {
@@ -85,7 +84,7 @@ class ContainerController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function layoutAction(Request $request)
     {
@@ -96,14 +95,14 @@ class ContainerController extends BaseController
         try {
             $this->getEditor()->getLayoutAdapter()->updateContainerLayout($container, $data);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $this->validate($container);
         $this->persist($container);
 
         $data = [
-            'containers' => [$this->getViewBuilder()->buildContainer($container)]
+            'containers' => [$this->getViewBuilder()->buildContainer($container)],
         ];
 
         return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
@@ -114,7 +113,7 @@ class ContainerController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function changeTypeAction(Request $request)
     {
@@ -128,7 +127,7 @@ class ContainerController extends BaseController
             try {
                 $removed = $this->getEditor()->getContainerManager()->changeType($container, $type);
             } catch (EditorExceptionInterface $e) {
-                throw new BadRequestHttpException($e->getMessage());
+                return $this->handleException($e);
             }
 
             if (!empty($removed)) {
@@ -149,7 +148,7 @@ class ContainerController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function removeAction(Request $request)
     {
@@ -159,7 +158,7 @@ class ContainerController extends BaseController
         try {
             $this->getEditor()->getContainerManager()->delete($container);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         // Stores id for front removal
@@ -169,7 +168,7 @@ class ContainerController extends BaseController
         $this->persist($content);
 
         $data = [
-            'removed'  => [$removedId],
+            'removed' => [$removedId],
             //'contents' => [$this->getViewBuilder()->buildContent($content)],
         ];
 
@@ -181,8 +180,7 @@ class ContainerController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws BadRequestHttpException
+     * @return Response
      */
     public function moveUpAction(Request $request)
     {
@@ -191,7 +189,7 @@ class ContainerController extends BaseController
         try {
             $sibling = $this->getEditor()->getContainerManager()->moveUp($container);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $content = $container->getContent();
@@ -199,10 +197,12 @@ class ContainerController extends BaseController
         $this->validate($content);
         $this->persist($content);
 
-        $data = ['containers' => [
-            $this->getViewBuilder()->buildContainer($container),
-            $this->getViewBuilder()->buildContainer($sibling),
-        ]];
+        $data = [
+            'containers' => [
+                $this->getViewBuilder()->buildContainer($container),
+                $this->getViewBuilder()->buildContainer($sibling),
+            ],
+        ];
 
         return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
     }
@@ -212,8 +212,7 @@ class ContainerController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws BadRequestHttpException
+     * @return Response
      */
     public function moveDownAction(Request $request)
     {
@@ -222,7 +221,7 @@ class ContainerController extends BaseController
         try {
             $sibling = $this->getEditor()->getContainerManager()->moveDown($container);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $content = $container->getContent();
@@ -230,10 +229,12 @@ class ContainerController extends BaseController
         $this->validate($content);
         $this->persist($content);
 
-        $data = ['containers' => [
-            $this->getViewBuilder()->buildContainer($container),
-            $this->getViewBuilder()->buildContainer($sibling),
-        ]];
+        $data = [
+            'containers' => [
+                $this->getViewBuilder()->buildContainer($container),
+                $this->getViewBuilder()->buildContainer($sibling),
+            ],
+        ];
 
         return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
     }

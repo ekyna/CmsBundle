@@ -129,10 +129,12 @@ class VideoPlugin extends AbstractPlugin
 
         /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $poster */
         $posterPath = null;
-        $posterData = $data['poster'];
-        if (array_key_exists('media', $posterData) && 0 < $mediaId = intval($posterData['media'])) {
-            if ($poster = $this->mediaRepository->find($mediaId)) {
-                $posterPath = $this->mediaRenderer->getGenerator()->generateFrontUrl($poster);
+        if (isset($data['poster'])) {
+            $posterData = $data['poster'];
+            if (array_key_exists('media', $posterData) && 0 < $mediaId = intval($posterData['media'])) {
+                if ($poster = $this->mediaRepository->find($mediaId)) {
+                    $posterPath = $this->mediaRenderer->getGenerator()->generateFrontUrl($poster);
+                }
             }
         }
         if (empty($posterPath)) {
@@ -141,9 +143,11 @@ class VideoPlugin extends AbstractPlugin
 
         /** @var \Ekyna\Bundle\MediaBundle\Model\MediaInterface $video */
         $video = null;
-        $videoData = $data['video'];
-        if (array_key_exists('media', $videoData) && 0 < $videoId = intval($videoData['media'])) {
-            $video = $this->mediaRepository->find($videoId);
+        if (isset($data['video'])) {
+            $videoData = $data['video'];
+            if (array_key_exists('media', $videoData) && 0 < $videoId = intval($videoData['media'])) {
+                $video = $this->mediaRepository->find($videoId);
+            }
         }
 
         if ($video) {

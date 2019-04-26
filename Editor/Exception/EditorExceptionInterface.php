@@ -7,7 +7,7 @@ namespace Ekyna\Bundle\CmsBundle\Editor\Exception;
  * @package Ekyna\Bundle\CmsBundle\Editor\Exception
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-interface EditorExceptionInterface
+interface EditorExceptionInterface extends \Throwable
 {
 
 }

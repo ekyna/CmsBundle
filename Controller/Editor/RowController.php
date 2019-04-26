@@ -4,7 +4,6 @@ namespace Ekyna\Bundle\CmsBundle\Controller\Editor;
 
 use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class RowController
@@ -19,7 +18,6 @@ class RowController extends BaseController
      * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\Response
-     * @throws BadRequestHttpException
      */
     public function createBlockAction(Request $request)
     {
@@ -29,7 +27,7 @@ class RowController extends BaseController
         try {
             $block = $this->getEditor()->createDefaultBlock($type, [], $row);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $this->validate($row);
@@ -43,18 +41,6 @@ class RowController extends BaseController
         ];
 
         return $this->buildResponse($data, self::SERIALIZE_FULL);
-    }
-
-    /**
-     * Edit the row.
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function editAction(Request $request)
-    {
-        throw new \Exception('Not yet implemented'); // TODO
     }
 
     /**
@@ -73,14 +59,14 @@ class RowController extends BaseController
         try {
             $this->getEditor()->getLayoutAdapter()->updateRowLayout($row, $data);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $this->validate($row);
         $this->persist($row);
 
         $data = [
-            'rows' => [$this->getViewBuilder()->buildRow($row)]
+            'rows' => [$this->getViewBuilder()->buildRow($row)],
         ];
 
         return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
@@ -92,7 +78,6 @@ class RowController extends BaseController
      * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\Response
-     * @throws BadRequestHttpException
      */
     public function removeAction(Request $request)
     {
@@ -102,7 +87,7 @@ class RowController extends BaseController
         try {
             $this->getEditor()->getRowManager()->delete($row);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         // Stores id for front removal
@@ -112,7 +97,7 @@ class RowController extends BaseController
         $this->persist($container);
 
         $data = [
-            'removed'    => [$removedId],
+            'removed' => [$removedId],
             //'containers' => [$this->getViewBuilder()->buildContainer($container)],
         ];
 
@@ -125,7 +110,6 @@ class RowController extends BaseController
      * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\Response
-     * @throws BadRequestHttpException
      */
     public function moveUpAction(Request $request)
     {
@@ -134,7 +118,7 @@ class RowController extends BaseController
         try {
             $sibling = $this->getEditor()->getRowManager()->moveUp($row);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $container = $row->getContainer();
@@ -142,10 +126,12 @@ class RowController extends BaseController
         $this->validate($container);
         $this->persist($container);
 
-        $data = ['rows' => [
-            $this->getViewBuilder()->buildRow($row),
-            $this->getViewBuilder()->buildRow($sibling),
-        ]];
+        $data = [
+            'rows' => [
+                $this->getViewBuilder()->buildRow($row),
+                $this->getViewBuilder()->buildRow($sibling),
+            ],
+        ];
 
         return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
     }
@@ -156,7 +142,6 @@ class RowController extends BaseController
      * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\Response
-     * @throws BadRequestHttpException
      */
     public function moveDownAction(Request $request)
     {
@@ -165,7 +150,7 @@ class RowController extends BaseController
         try {
             $sibling = $this->getEditor()->getRowManager()->moveDown($row);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $container = $row->getContainer();
@@ -173,10 +158,12 @@ class RowController extends BaseController
         $this->validate($container);
         $this->persist($container);
 
-        $data = ['rows' => [
-            $this->getViewBuilder()->buildRow($row),
-            $this->getViewBuilder()->buildRow($sibling),
-        ]];
+        $data = [
+            'rows' => [
+                $this->getViewBuilder()->buildRow($row),
+                $this->getViewBuilder()->buildRow($sibling),
+            ],
+        ];
 
         return $this->buildResponse($data, self::SERIALIZE_LAYOUT);
     }

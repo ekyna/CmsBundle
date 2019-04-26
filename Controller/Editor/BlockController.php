@@ -6,7 +6,6 @@ use Ekyna\Bundle\CmsBundle\Editor\Exception\EditorExceptionInterface;
 use Ekyna\Bundle\CoreBundle\Modal\Modal;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class BlockController
@@ -20,7 +19,7 @@ class BlockController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function editAction(Request $request)
     {
@@ -29,7 +28,7 @@ class BlockController extends BaseController
         try {
             $response = $this->getEditor()->getBlockManager()->update($block, $request);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         if ($response instanceof Modal) {
@@ -57,7 +56,7 @@ class BlockController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function layoutAction(Request $request)
     {
@@ -68,7 +67,7 @@ class BlockController extends BaseController
         try {
             $this->getEditor()->getLayoutAdapter()->updateBlockLayout($block, $data);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $this->validate($block);
@@ -86,7 +85,7 @@ class BlockController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function changeTypeAction(Request $request)
     {
@@ -102,7 +101,7 @@ class BlockController extends BaseController
             try {
                 $this->getEditor()->getBlockManager()->changeType($block, $type);
             } catch (EditorExceptionInterface $e) {
-                throw new BadRequestHttpException($e->getMessage());
+                return $this->handleException($e);
             }
 
             $this->validate($block);
@@ -124,7 +123,7 @@ class BlockController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function removeAction(Request $request)
     {
@@ -134,7 +133,7 @@ class BlockController extends BaseController
         try {
             $this->getEditor()->getBlockManager()->delete($block);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         // Stores id for front removal
@@ -156,7 +155,7 @@ class BlockController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function moveUpAction(Request $request)
     {
@@ -168,7 +167,7 @@ class BlockController extends BaseController
         try {
             $sibling = $this->getEditor()->getBlockManager()->moveUp($block);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $this->validate($row);
@@ -195,7 +194,7 @@ class BlockController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function moveDownAction(Request $request)
     {
@@ -207,7 +206,7 @@ class BlockController extends BaseController
         try {
             $sibling = $this->getEditor()->getBlockManager()->moveDown($block);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $this->validate($row);
@@ -234,7 +233,7 @@ class BlockController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function moveLeftAction(Request $request)
     {
@@ -243,7 +242,7 @@ class BlockController extends BaseController
         try {
             $sibling = $this->getEditor()->getBlockManager()->moveLeft($block);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $row = $block->getRow();
@@ -264,7 +263,7 @@ class BlockController extends BaseController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function moveRightAction(Request $request)
     {
@@ -273,7 +272,7 @@ class BlockController extends BaseController
         try {
             $sibling = $this->getEditor()->getBlockManager()->moveRight($block);
         } catch (EditorExceptionInterface $e) {
-            throw new BadRequestHttpException($e->getMessage());
+            return $this->handleException($e);
         }
 
         $row = $block->getRow();
