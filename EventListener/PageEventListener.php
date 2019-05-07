@@ -5,13 +5,15 @@ namespace Ekyna\Bundle\CmsBundle\EventListener;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
-use Ekyna\Bundle\CmsBundle\Exception\RuntimeException;
-use Ekyna\Component\Resource\Event\ResourceEventInterface;
-use Ekyna\Component\Resource\Event\ResourceMessage;
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
+use Ekyna\Bundle\CmsBundle\Exception\RuntimeException;
+use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CoreBundle\Cache\TagManager;
+use Ekyna\Component\Resource\Event\ResourceEventInterface;
+use Ekyna\Component\Resource\Event\ResourceMessage;
 use Ekyna\Component\Resource\Exception\InvalidArgumentException;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -32,6 +34,11 @@ class PageEventListener implements EventSubscriberInterface
     private $tm;
 
     /**
+     * @var AdapterInterface
+     */
+    private $cmsCache;
+
+    /**
      * @var array
      */
     private $locales;
@@ -49,33 +56,36 @@ class PageEventListener implements EventSubscriberInterface
     /**
      * @var CacheProvider
      */
-    private $cache;
+    private $resultCache;
 
 
     /**
      * Constructor.
      *
-     * @param EntityManagerInterface   $em
-     * @param TagManager               $tm
-     * @param array                    $locales
-     * @param array                    $config
-     * @param string                   $menuClass
-     * @param CacheProvider            $cache
+     * @param EntityManagerInterface $em
+     * @param TagManager             $tm
+     * @param AdapterInterface       $cmsCache
+     * @param array                  $locales
+     * @param array                  $config
+     * @param string                 $menuClass
+     * @param CacheProvider          $resultCache
      */
     public function __construct(
         EntityManagerInterface $em,
         TagManager $tm,
+        AdapterInterface $cmsCache,
         array $locales,
         array $config,
         $menuClass,
-        CacheProvider $cache = null
+        CacheProvider $resultCache = null
     ) {
         $this->em = $em;
         $this->tm = $tm;
+        $this->cmsCache = $cmsCache;
         $this->locales = $locales;
         $this->config = $config;
         $this->menuClass = $menuClass;
-        $this->cache = $cache;
+        $this->resultCache = $resultCache;
     }
 
     /**
@@ -118,6 +128,16 @@ class PageEventListener implements EventSubscriberInterface
 
             $page->setRoute($route);
         }
+    }
+
+    /**
+     * Post create event handler.
+     *
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    public function onPostCreate()
+    {
+        $this->cmsCache->deleteItem(PageHelper::PAGES_ROUTES_CACHE_KEY);
     }
 
     /**
@@ -174,7 +194,7 @@ class PageEventListener implements EventSubscriberInterface
     {
         $page = $this->getPageFromEvent($event);
 
-        $this->deletePageCache($page);
+        $this->deletePageCacheResult($page);
     }
 
     /**
@@ -203,7 +223,7 @@ class PageEventListener implements EventSubscriberInterface
     {
         $page = $this->getPageFromEvent($event);
 
-        $this->deletePageCache($page);
+        $this->deletePageCacheResult($page);
     }
 
     /**
@@ -211,10 +231,12 @@ class PageEventListener implements EventSubscriberInterface
      *
      * @param PageInterface $page
      */
-    private function deletePageCache(PageInterface $page)
+    private function deletePageCacheResult(PageInterface $page)
     {
-        if (null !== $this->cache) {
-            $this->cache->delete('ekyna_cms.page[route:' . $page->getRoute() . ']');
+        $this->cmsCache->deleteItem(PageHelper::PAGES_ROUTES_CACHE_KEY);
+
+        if (null !== $this->resultCache) {
+            $this->resultCache->delete('ekyna_cms.page[route:' . $page->getRoute() . ']');
         }
     }
 
@@ -237,7 +259,7 @@ class PageEventListener implements EventSubscriberInterface
 
                         $this->em->persist($child);
 
-                        $this->deletePageCache($page);
+                        $this->deletePageCacheResult($page);
 
                         $this->tm->addTags($page->getEntityTag());
                     }
@@ -248,6 +270,7 @@ class PageEventListener implements EventSubscriberInterface
                 }
             }
         }
+
         return $childrenDisabled;
     }
 
@@ -282,15 +305,16 @@ class PageEventListener implements EventSubscriberInterface
                         $this->em->persist($menu);
                         $disabledMenus = true;
 
-                        $disableChildrenQuery->execute(array(
+                        $disableChildrenQuery->execute([
                             'root'  => $menu->getRoot(),
                             'left'  => $menu->getLeft(),
                             'right' => $menu->getRight(),
-                        ));
+                        ]);
                     }
                 }
             }
         }
+
         return $disabledMenus;
     }
 
@@ -317,12 +341,13 @@ class PageEventListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
-            PageEvents::INITIALIZE  => array('onInitialize', 1024),
-            PageEvents::PRE_CREATE  => array('onPreCreate', -1024),
-            PageEvents::PRE_UPDATE  => array('onPreUpdate', -1024),
-            PageEvents::POST_UPDATE => array('onPostUpdate', -1024),
-            PageEvents::POST_DELETE => array('onPostDelete', -1024),
-        );
+        return [
+            PageEvents::INITIALIZE  => ['onInitialize', 1024],
+            PageEvents::PRE_CREATE  => ['onPreCreate', -1024],
+            PageEvents::POST_CREATE => ['onPostCreate', -1024],
+            PageEvents::PRE_UPDATE  => ['onPreUpdate', -1024],
+            PageEvents::POST_UPDATE => ['onPostUpdate', -1024],
+            PageEvents::POST_DELETE => ['onPostDelete', -1024],
+        ];
     }
 }

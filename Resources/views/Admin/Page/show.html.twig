@@ -7,7 +7,8 @@
 {% block main %}
 <div class="actions">
     {% if not page.dynamicPath %}
-        {{ ui_button('ekyna_core.button.show_front', {'type': 'link', 'icon': 'eye-open', 'path': path(page.route)}, {'target': '_blank'}) }}
+        {{ admin_resource_btn(page, 'public') }}
+        {{ admin_resource_btn(page, 'editor') }}
     {% endif %}
     {{ admin_resource_btn(page, 'edit') }}
     {{ admin_resource_btn(page, 'remove') }}

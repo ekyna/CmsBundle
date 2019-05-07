@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PageHelper
 {
-    private const PAGES_ROUTES_CACHE_KEY = 'cms_pages_routes';
+    const PAGES_ROUTES_CACHE_KEY = 'cms_pages_routes';
 
     /**
      * @var PageRepository
