@@ -4,8 +4,10 @@ namespace Ekyna\Bundle\CmsBundle\DependencyInjection;
 
 use Ekyna\Bundle\CmsBundle\SlideShow\Type;
 use Ekyna\Bundle\ResourceBundle\DependencyInjection\AbstractExtension;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
@@ -77,6 +79,11 @@ class EkynaCmsExtension extends AbstractExtension
 
         $this->configureSlideShow($container, $config['slide_show']);
         $this->registerImageFilters($container);
+
+        if (in_array($container->getParameter('kernel.environment'), ['dev', 'test'], true)) {
+            $loader = new XmlFileLoader($container, new FileLocator($this->getConfigurationDirectory()));
+            $loader->load('services_dev_test.xml');
+        }
     }
 
     /**
