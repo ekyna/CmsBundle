@@ -160,11 +160,6 @@ class CmsExtension extends \Twig_Extension
                 ['is_safe' => ['html']]
             ),
             new \Twig_SimpleFunction(
-                'cms_cookie_consent',
-                [$this, 'renderCookieConsent'],
-                ['is_safe' => ['html']]
-            ),
-            new \Twig_SimpleFunction(
                 'cms_locale_switcher',
                 [$this, 'renderLocaleSwitcher'],
                 ['is_safe' => ['html'], 'needs_environment' => true]
@@ -341,20 +336,6 @@ class CmsExtension extends \Twig_Extension
         }
 
         return $this->tagRenderer->renderTags($subjectOrTags, $options);
-    }
-
-    /**
-     * Renders the session flashes.
-     *
-     * @return string
-     */
-    public function renderCookieConsent()
-    {
-        if ($this->config['page']['cookie_consent']['enable']) {
-            return '<div id="cookies-consent" style="display:none"></div>';
-        }
-
-        return '';
     }
 
     /**

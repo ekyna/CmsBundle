@@ -19,6 +19,7 @@
         "php": ">=7.0",
         "ekyna/media-bundle": "0.7.x-dev",
         "ekyna/sitemap-bundle": "0.7.x-dev",
+        "ekyna/cookie-consent-bundle": "0.7.x-dev",
         "spatie/schema-org": "^1.4"
     },
     "autoload": {

@@ -6,13 +6,6 @@ ekyna_cms_editor:
     resource: "routing/editor.yml"
     prefix:   /admin/cms/editor
 
-ekyna_cms_cookie_consent:
-    path: /cms/cookie-consent
-    defaults: { _controller: "EkynaCmsBundle:Cms:cookieConsent" }
-    methods: [GET]
-    options:
-        expose: true
-
 ekyna_cms_slide_types:
     path: /js/slide-show-types.json
     defaults: { _controller: "EkynaCmsBundle:SlideShow:types" }

@@ -4,7 +4,6 @@ namespace Ekyna\Bundle\CmsBundle\Controller;
 
 use Ekyna\Bundle\CoreBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class CmsController
@@ -36,38 +35,10 @@ class CmsController extends Controller
 
         $results = $this->get('ekyna_cms.wide_search')->search($expression);
 
-        return $this->render('@EkynaCms/Cms/search.html.twig', array(
+        return $this->render('@EkynaCms/Cms/search.html.twig', [
             'expression' => $expression,
             'results'    => $results,
-        ))->setPrivate();
-    }
-
-    /**
-     * Cookie consent action (xhr only).
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function cookieConsentAction(Request $request)
-    {
-        if (!$request->isXmlHttpRequest()) {
-            throw new NotFoundHttpException();
-        }
-
-        $enabled = $this
-            ->container
-            ->getParameter('ekyna_cms.page.config')['cookie_consent']['enable'];
-
-        if (!$enabled) {
-            throw new NotFoundHttpException();
-        }
-
-        $response = $this->render('@EkynaCms/Cms/Cookie/response.xml.twig');
-
-        $response->headers->add(['Content-Type' => 'application/xml']);
-
-        return $response->setPrivate();
+        ])->setPrivate();
     }
 
     /**

@@ -1,62 +1,9 @@
-define(['require', 'jquery', 'routing', 'js-cookie', 'bootstrap'], function (require, $, Router, Cookies) {
+define(['require', 'jquery', 'routing', 'bootstrap'], function (require, $, Router) {
     "use strict";
-
-    var CookieConsent = function ($element) {
-        this.$element = $element;
-        this.name = 'cookie-consent';
-    };
-
-    CookieConsent.prototype = {
-        _consentRequired: function () {
-            return undefined === Cookies.get(this.name);
-        },
-
-        _saveUserPreference: function () {
-            Cookies.set(this.name, 'y', {expires: 365});
-        },
-
-        init: function () {
-            var that = this;
-
-            if (this._consentRequired()) {
-                $.ajax({
-                    url: Router.generate('ekyna_cms_cookie_consent'),
-                    dataType: 'xml',
-                    type: 'GET'
-                })
-                    .done(function (xml) {
-                        var $xml = $(xml);
-
-                        // Cookie consent
-                        var $response = $xml.find('response');
-                        if (1 === $response.size()) {
-                            that.$element.html($response.text()).show();
-
-                            that.$element.on('click', '.cookies-consent-dismiss', function (e) {
-                                e.preventDefault();
-                                e.stopPropagation();
-
-                                that._saveUserPreference();
-                                that.$element.hide();
-
-                                return false;
-                            });
-                        }
-                    });
-            }
-        }
-    };
-
 
     var EkynaCms = function () {};
 
     EkynaCms.prototype.init = function () {
-        var $cookieConsent = $('#cookies-consent');
-        if (1 === $cookieConsent.size()) {
-            var cookieConsent = new CookieConsent($cookieConsent);
-            cookieConsent.init();
-        }
-
         // Editor tabs widgets
         var $tabsWidget = $('.cms-tabs');
         if (0 < $tabsWidget.length) {

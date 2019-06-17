@@ -39,13 +39,16 @@
                 {{ cms_locale_switcher() }}
             </div>
         </div>
-
-        {{ cms_cookie_consent() }}
-
     {% endblock body %}
 
     {% block javascripts -%}
         <script type="text/javascript">require(['bundles/ekynacms/js/main']);</script>
+        {{ ekyna_cookie_consent_render() }}
+
+        {#{% if ekyna_cookie_consent_category_allowed('analytic') -%}
+            Analytic cookie dependant scripts here
+        {%- endif %}#}
+
     {%- endblock javascripts %}
 </body>
 </html>

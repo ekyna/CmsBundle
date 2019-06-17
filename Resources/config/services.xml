@@ -160,11 +160,6 @@
             </argument>
             <tag name="ekyna_setting.schema" namespace="seo" position="10"/>
         </service>
-        <service id="ekyna_cms.settings.cookies"
-                 class="Ekyna\Bundle\CmsBundle\Settings\CookiesSettingsSchema"
-                 public="false">
-            <tag name="ekyna_setting.schema" namespace="cookies" position="11"/>
-        </service>
 
         <!-- Sitemap providers -->
         <service id="ekyna_cms.page.sitemap_provider"
