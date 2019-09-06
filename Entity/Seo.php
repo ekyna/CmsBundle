@@ -12,7 +12,7 @@ use Ekyna\Bundle\CmsBundle\Model as Cms;
  * @author  Étienne Dauvergne <contact@ekyna.com>
  *
  * @method Cms\SeoTranslationInterface translate($locale = null, $create = false)
- * @method Cms\SeoTranslationInterface[] getTranslations()
+ * @method \Doctrine\Common\Collections\Collection|Cms\SeoTranslationInterface[] getTranslations()
  */
 class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
 {

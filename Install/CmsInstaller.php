@@ -37,7 +37,7 @@ class CmsInstaller extends AbstractInstaller implements OrderedInstallerInterfac
         $pageGenerator->generatePages();
         $output->writeln('');
 
-        $output->writeln('<info>[CMS] Generating slide shows based on routing configuration:</info>');
+        $output->writeln('<info>[CMS] Generating slide shows:</info>');
         $pageGenerator = new SlideShowGenerator($this->container, $output);
         $pageGenerator->generateSlideShows();
         $output->writeln('');
