@@ -333,7 +333,7 @@ interface PageInterface extends
     public function isEnabled();
 
     /**
-     * Returns whether the exhibitor should be indexed or not by elasticsearch.
+     * Returns whether the page should be indexed or not by elasticsearch.
      *
      * @return bool
      */

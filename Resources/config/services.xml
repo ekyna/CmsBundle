@@ -119,7 +119,7 @@
         <service id="ekyna_cms.page.elastica_subscriber"
                  class="Ekyna\Bundle\CmsBundle\Listener\PageElasticaSubscriber"
                  public="false">
-            <argument id="fos_elastica.object_persister.search.ekyna_cms_page" type="service"/>
+            <argument id="fos_elastica.object_persister.ekyna_cms_page.doc" type="service"/>
             <argument>%ekyna_cms.page.class%</argument>
             <tag name="doctrine.event_subscriber"/>
         </service>

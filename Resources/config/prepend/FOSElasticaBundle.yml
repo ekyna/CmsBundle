@@ -1,31 +1,56 @@
 fos_elastica:
     indexes:
-        search:
+        ekyna_cms_page:
+            settings:
+                index:
+                    analysis:
+                        tokenizer:
+                            ngram: { type: ngram, min_gram: 3, max_gram: 8, token_chars: [digit] }
+                            edge: { type: edge_ngram, min_gram: 3, max_gram: 10, token_chars: [letter, digit] }
+                        filter:
+                            en_stop: { type: stop, stopwords: [_english_], ignore_case: true }
+                            en_stemmer: { type: stemmer, language: english }
+                            en_positive_stemmer: { type: stemmer, language: possessive_english }
+                            fr_elision: { type: elision, articles_case: true, articles: [l, m, t, qu, n, s, j, d, c, jusqu, quoiqu, lorsqu, puisqu] }
+                            fr_stop: { type: stop, stopwords: [_french_], ignore_case: true }
+                            fr_stemmer: { type: stemmer, language: light_french }
+                        analyzer:
+                            default: { tokenizer: standard, filter: [icu_folding] }
+                            ngram: { tokenizer: ngram, filter: [icu_folding] }
+                            edge: { tokenizer: edge, filter: [icu_folding] }
+                            search: { tokenizer: standard, filter: [icu_folding] }
+                            en_light: { char_filter: [html_strip], tokenizer: icu_tokenizer, filter: [icu_folding] }
+                            en_heavy: { char_filter: [html_strip], tokenizer: icu_tokenizer, filter: [en_positive_stemmer, icu_folding, en_stop, en_stemmer] }
+                            fr_light: { char_filter: [html_strip], tokenizer: icu_tokenizer, filter: [fr_elision, icu_folding] }
+                            fr_heavy: { char_filter: [html_strip], tokenizer: icu_tokenizer, filter: [fr_elision, icu_folding, fr_stop, fr_stemmer] }
             types:
-                ekyna_cms_page:
+                doc:
                     serializer:
                         groups: [Search]
+                    properties:
+                        id: { type: integer }
+                        text: { type: text }
                     indexable_callback: isIndexable
                     dynamic_templates:
                         en_title:
                             match_mapping_type: string
                             path_match: "*.en.title"
-                            mapping: {type: string, boost: 3, search_analyzer: en_search, index_analyzer: en_index}
+                            mapping: { type: text, analyzer: en_light, fields: { analyzed: { type: text, analyzer: en_heavy } } }
                         fr_title:
                             match_mapping_type: string
                             path_match: "*.fr.title"
-                            mapping: {type: string, boost: 3, search_analyzer: fr_search, index_analyzer: fr_index}
+                            mapping: { type: text, analyzer: fr_light, fields: { analyzed: { type: text, analyzer: fr_heavy } } }
                         en_default:
                             match_mapping_type: string
                             path_match: "*.en.*"
-                            mapping: {type: string, search_analyzer: en_search, index_analyzer: en_index}
+                            mapping: { type: text, analyzer: en_light, fields: { analyzed: { type: text, analyzer: en_heavy } } }
                         fr_default:
                             match_mapping_type: string
                             path_match: "*.fr.*"
-                            mapping: {type: string, search_analyzer: fr_search, index_analyzer: fr_index}
+                            mapping: { type: text, analyzer: fr_light, fields: { analyzed: { type: text, analyzer: fr_heavy } } }
                         default:
                             match_mapping_type: string
-                            mapping: {type: string, search_analyzer: search, index_analyzer: index}
+                            mapping: { type: text, analyzer: default }
                     persistence:
                         driver: orm
                         model: "%ekyna_cms.page.class%"

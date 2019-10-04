@@ -2,10 +2,10 @@
 
 namespace Ekyna\Bundle\CmsBundle\Search;
 
-use Ekyna\Component\Resource\Locale;
-use Ekyna\Component\Resource\Search\Elastica\ResourceRepository;
 use Ekyna\Bundle\CmsBundle\Search\Wide\ProviderInterface;
 use Ekyna\Bundle\CmsBundle\Search\Wide\Result;
+use Ekyna\Component\Resource\Locale;
+use Ekyna\Component\Resource\Search\Elastica\ResourceRepository;
 
 /**
  * Class PageRepository
@@ -46,23 +46,22 @@ class PageRepository extends ResourceRepository implements Locale\LocaleProvider
     /**
      * @inheritDoc
      */
-    protected function getDefaultMatchFields()
+    protected function getDefaultMatchFields(): array
     {
         $locale = $this->localeProvider->getCurrentLocale();
 
         return [
-            'translations.'.$locale.'.title',
-            'translations.'.$locale.'.html',
-            'seo.translations.'.$locale.'.title',
-            'seo.translations.'.$locale.'.description',
-//            'content.'.$locale.'.content',
-//            'title',
-//            'html',
-//            'seo.title',
-//            'seo.description',
+            'translations.' . $locale . '.title',
+            'translations.' . $locale . '.title.analyzed',
+            'translations.' . $locale . '.html',
+            'translations.' . $locale . '.html.analyzed',
+            'seo.translations.' . $locale . '.title',
+            'seo.translations.' . $locale . '.title.analyzed',
+            'seo.translations.' . $locale . '.description',
+            'seo.translations.' . $locale . '.description.analyzed',
+            //            'content.'.$locale.'.content',
         ];
     }
-
 
     /**
      * @inheritdoc

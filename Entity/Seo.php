@@ -231,7 +231,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     }
 
     /**
-     * Returns whether the exhibitor should be indexed or not by elasticsearch.
+     * Returns whether the seo should be indexed or not by elasticsearch.
      *
      * @return bool
      */

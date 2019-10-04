@@ -130,4 +130,11 @@ interface SeoInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfac
      * @return SeoInterface|$this
      */
     public function setCanonical($canonical);
+
+    /**
+     * Returns whether the seo should be indexed or not by elasticsearch.
+     *
+     * @return bool
+     */
+    public function isIndexable();
 }
