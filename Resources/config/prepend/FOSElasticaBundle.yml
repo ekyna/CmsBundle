@@ -1,6 +1,7 @@
 fos_elastica:
     indexes:
         ekyna_cms_page:
+            index_name: "%elasticsearch.name%_cms_page"
             types:
                 doc:
                     serializer: { groups: [Search] }
