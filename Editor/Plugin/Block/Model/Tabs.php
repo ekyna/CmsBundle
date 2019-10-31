@@ -21,12 +21,12 @@ class Tabs implements TranslatableInterface
     /**
      * @var string
      */
-    private $theme;
+    private $theme = 'default';
 
     /**
      * @var string
      */
-    private $align;
+    private $align = 'left';
 
     /**
      * @var ArrayCollection|Tab[]

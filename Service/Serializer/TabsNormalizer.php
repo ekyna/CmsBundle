@@ -103,11 +103,16 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $tabs = new Model\Tabs();
         $tabs
-            ->setTheme($data['theme'])
-            ->setAlign($data['align'])
             ->setCurrentLocale($this->localeProvider->getCurrentLocale())
             ->setFallbackLocale($this->localeProvider->getFallbackLocale());
 
+        if (empty($data)) {
+            return $tabs;
+        }
+
+        $tabs
+            ->setTheme($data['theme'])
+            ->setAlign($data['align']);
 
         foreach ($data['translations'] as $trans) {
             $translation = new Model\TabsTranslation();
