@@ -48,8 +48,12 @@ class Search
      *
      * @return array|Result[]
      */
-    public function search($expression)
+    public function search(string $expression = null): array
     {
+        if (empty($expression)) {
+            return [];
+        }
+
         $results = [];
 
         foreach ($this->providers as $provider) {

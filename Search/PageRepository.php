@@ -20,8 +20,12 @@ class PageRepository extends ResourceRepository implements Locale\LocaleProvider
     /**
      * @inheritdoc
      */
-    public function search($expression, $limit = 10)
+    public function search(string $expression, $limit = 10): array
     {
+        if (empty($expression)) {
+            return [];
+        }
+
         $results = [];
         /** @var \FOS\ElasticaBundle\HybridResult[] $elasticaResults */
         $elasticaResults = $this->findHybrid($this->createMatchQuery($expression), $limit);
@@ -66,7 +70,7 @@ class PageRepository extends ResourceRepository implements Locale\LocaleProvider
     /**
      * @inheritdoc
      */
-    public function getName()
+    public function getName(): string
     {
         return 'ekyna_cms_page';
     }

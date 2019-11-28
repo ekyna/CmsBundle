@@ -17,12 +17,12 @@ interface ProviderInterface
      *
      * @return array|Result[]
      */
-    public function search($expression, $limit = 10);
+    public function search(string $expression, $limit = 10): array;
 
     /**
      * Returns the name.
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 }
