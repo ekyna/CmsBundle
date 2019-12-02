@@ -1,36 +1,36 @@
 ekyna_cms_slide_show_admin_home:
     path: ""
-    defaults: { _controller: "ekyna_cms.slide_show.controller:homeAction" }
+    controller: "ekyna_cms.slide_show.controller:homeAction"
     methods: [GET]
 
 ekyna_cms_slide_show_admin_list:
     path: /list
-    defaults: { _controller: "ekyna_cms.slide_show.controller:listAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.slide_show.controller:listAction"
+    methods: [GET, POST]
 
 ekyna_cms_slide_show_admin_new:
     path: /new
-    defaults: { _controller: "ekyna_cms.slide_show.controller:newAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.slide_show.controller:newAction"
+    methods: [GET, POST]
 
 ekyna_cms_slide_show_admin_show:
     path: /{slideShowId}/show
-    defaults: { _controller: "ekyna_cms.slide_show.controller:showAction" }
+    controller: "ekyna_cms.slide_show.controller:showAction"
     methods: [GET]
     requirements:
         slideShowId:  \d+
 
 ekyna_cms_slide_show_admin_edit:
     path: /{slideShowId}/edit
-    defaults: { _controller: "ekyna_cms.slide_show.controller:editAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.slide_show.controller:editAction"
+    methods: [GET, POST]
     requirements:
         slideShowId:  \d+
 
 ekyna_cms_slide_show_admin_remove:
     path: /{slideShowId}/remove
-    defaults: { _controller: "ekyna_cms.slide_show.controller:removeAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.slide_show.controller:removeAction"
+    methods: [GET, POST]
     requirements:
         slideShowId:  \d+
 

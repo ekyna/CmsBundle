@@ -9,6 +9,8 @@ use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\TabsType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Serializer;
+use Twig\Environment;
+use Twig\TemplateWrapper;
 
 /**
  * Class TabsPlugin
@@ -26,12 +28,12 @@ class TabsPlugin extends AbstractPlugin
     private $serializer;
 
     /**
-     * @var \Twig_Environment
+     * @var Environment
      */
     private $twig;
 
     /**
-     * @var \Twig_TemplateWrapper
+     * @var TemplateWrapper
      */
     private $template;
 
@@ -41,12 +43,12 @@ class TabsPlugin extends AbstractPlugin
      *
      * @param array             $config
      * @param Serializer        $serializer
-     * @param \Twig_Environment $twig
+     * @param Environment $twig
      */
     public function __construct(
         array $config,
         Serializer $serializer,
-        \Twig_Environment $twig
+        Environment $twig
     ) {
         parent::__construct(array_replace([
             'themes'         => PropertyDefaults::getDefaultThemeChoices(),
@@ -145,7 +147,7 @@ class TabsPlugin extends AbstractPlugin
     /**
      * Returns the template.
      *
-     * @return \Twig_TemplateWrapper
+     * @return TemplateWrapper
      */
     private function getTemplate()
     {

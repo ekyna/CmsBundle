@@ -22,7 +22,6 @@ class EkynaCmsBundle extends AbstractBundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new Pass\AdminMenuPass());
         $container->addCompilerPass(new Pass\EditorPluginPass());
         $container->addCompilerPass(new Pass\WideSearchProviderPass());
         $container->addCompilerPass(new Pass\SchemaOrgProviderPass());
@@ -34,11 +33,11 @@ class EkynaCmsBundle extends AbstractBundle
     protected function getModelInterfaces()
     {
         return [
-            CM\SeoInterface::class  => 'ekyna_cms.seo.class',
-            CM\PageInterface::class => 'ekyna_cms.page.class',
-            CM\MenuInterface::class => 'ekyna_cms.menu.class',
-            CM\TagInterface::class  => 'ekyna_cms.tag.class',
-
+            CM\SeoInterface::class       => 'ekyna_cms.seo.class',
+            CM\PageInterface::class      => 'ekyna_cms.page.class',
+            CM\MenuInterface::class      => 'ekyna_cms.menu.class',
+            CM\TagInterface::class       => 'ekyna_cms.tag.class',
+            CM\NoticeInterface::class    => 'ekyna_cms.notice.class',
             EM\BlockInterface::class     => 'ekyna_cms.block.class',
             EM\ContainerInterface::class => 'ekyna_cms.container.class',
             EM\ContentInterface::class   => 'ekyna_cms.content.class',

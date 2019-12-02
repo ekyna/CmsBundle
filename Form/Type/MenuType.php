@@ -43,7 +43,7 @@ class MenuType extends ResourceFormType
         parent::__construct($menuClass);
 
         $this->authorization = $authorization;
-        $this->pageClass = $pageClass;
+        $this->pageClass     = $pageClass;
     }
 
     /**
@@ -52,13 +52,6 @@ class MenuType extends ResourceFormType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('translations', TranslationsFormsType::class, [
-                'form_type' => MenuTranslationType::class,
-                'label'     => false,
-                'attr'      => [
-                    'widget_col' => 12,
-                ],
-            ])
             ->add('description', Type\TextareaType::class, [
                 'label'        => 'ekyna_core.field.description',
                 'admin_helper' => 'CMS_MENU_DESCRIPTION',
@@ -75,23 +68,23 @@ class MenuType extends ResourceFormType
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             /** @var \Ekyna\Bundle\CmsBundle\Entity\Menu $menu */
-            $menu = $event->getData();
-            $form = $event->getForm();
-            $disabled = $menu->isLocked();
+            $menu   = $event->getData();
+            $form   = $event->getForm();
+            $locked = $menu->isLocked();
 
             $form
                 ->add('name', Type\TextType::class, [
                     'label'        => 'ekyna_core.field.name',
                     'admin_helper' => 'CMS_MENU_NAME',
                     'required'     => true,
-                    'disabled'     => $disabled,
+                    'disabled'     => $locked,
                 ])
                 ->add('parent', EntityType::class, [
                     'label'         => 'ekyna_core.field.parent',
                     'admin_helper'  => 'CMS_MENU_PARENT',
                     'choice_label'  => 'title',
                     'required'      => true,
-                    'disabled'      => $disabled,
+                    'disabled'      => $locked,
                     'class'         => $this->dataClass,
                     'query_builder' => function (EntityRepository $er) use ($menu) {
                         $qb = $er->createQueryBuilder('m');
@@ -110,19 +103,23 @@ class MenuType extends ResourceFormType
                         return $qb;
                     },
                 ])
-                ->add('path', Type\TextType::class, [
-                    'label'        => 'ekyna_core.field.url',
-                    'admin_helper' => 'CMS_MENU_PATH',
-                    'required'     => false,
-                    'disabled'     => $disabled,
-                ])
                 ->add('enabled', Type\CheckboxType::class, [
                     'label'        => 'ekyna_core.field.enabled',
                     'admin_helper' => 'CMS_MENU_ENABLED',
                     'required'     => false,
-                    'disabled'     => $disabled,
+                    'disabled'     => $locked,
                     'attr'         => [
                         'align_with_widget' => true,
+                    ],
+                ])
+                ->add('translations', TranslationsFormsType::class, [
+                    'form_type'    => MenuTranslationType::class,
+                    'form_options' => [
+                        'locked' => $locked,
+                    ],
+                    'label'        => false,
+                    'attr'         => [
+                        'widget_col' => 12,
                     ],
                 ]);
 
@@ -132,7 +129,7 @@ class MenuType extends ResourceFormType
                         'label'        => 'ekyna_core.field.route',
                         'admin_helper' => 'CMS_MENU_ROUTE',
                         'required'     => false,
-                        'disabled'     => $disabled,
+                        'disabled'     => $locked,
                     ])
                     ->add('parameters', KeyValueCollectionType::class, [
                         'label'           => 'ekyna_core.field.parameters',
@@ -141,7 +138,7 @@ class MenuType extends ResourceFormType
                     ]);
             }
 
-            if (!$disabled) {
+            if (!$locked) {
                 $form
                     ->add('page', EntityType::class, [
                         'label'         => 'ekyna_cms.page.label.singular',

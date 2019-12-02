@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping
+    xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                        http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <mapped-superclass
+            name="Ekyna\Bundle\CmsBundle\Entity\Notice"
+            table="cms_notice">
+
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO" />
+        </id>
+
+        <field name="name" column="name" type="string" length="64" nullable="false" />
+        <field name="theme" column="theme" type="string" length="16" nullable="false" />
+        <field name="icon" type="string" column="icon" length="32" nullable="true" />
+        <field name="startAt" column="start_at" type="datetime" nullable="false" />
+        <field name="endAt" column="end_at" type="datetime" nullable="false" />
+
+    </mapped-superclass>
+
+</doctrine-mapping>

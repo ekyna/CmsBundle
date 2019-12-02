@@ -1,0 +1,11 @@
+{% spaceless %}
+{% for notice in notices %}
+<div class="alert alert-{{ notice.theme }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    {% if notice.icon is not empty %}{{ notice.icon|ui_fa_icon('fa-3x fa-pull-left') }}{% endif %}
+    {{ notice.content|raw }}
+</div>
+{% endfor %}
+{% endspaceless %}

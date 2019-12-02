@@ -1,6 +1,6 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Entity;
+namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Ekyna\Component\Resource\Doctrine\ORM\TranslatableResourceRepository;
 

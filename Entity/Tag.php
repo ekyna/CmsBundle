@@ -25,12 +25,12 @@ class Tag implements TagInterface
     /**
      * @var string
      */
-    private $icon;
+    private $theme;
 
     /**
      * @var string
      */
-    private $theme;
+    private $icon;
 
 
     /**

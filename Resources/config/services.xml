@@ -65,16 +65,16 @@
         </service>
 
         <!-- Event listeners -->
-        <service id="ekyna_cms.kernel_event_listener"
-                 class="Ekyna\Bundle\CmsBundle\EventListener\KernelEventListener">
+        <service id="Ekyna\Bundle\CmsBundle\EventListener\KernelEventListener"
+                 public="false">
             <argument id="ekyna_cms.editor.editor" type="service"/>
             <argument id="ekyna_cms.helper.page" type="service"/>
             <argument id="security.authorization_checker" type="service"/>
             <argument id="session" type="service"/>
             <tag name="kernel.event_subscriber"/>
         </service>
-        <service id="ekyna_cms.page_event_listener"
-                 class="Ekyna\Bundle\CmsBundle\EventListener\PageEventListener">
+        <service id="Ekyna\Bundle\CmsBundle\EventListener\PageEventListener"
+                 public="false">
             <argument type="service" id="doctrine.orm.default_entity_manager"/>
             <argument type="service" id="ekyna_core.cache.tag_manager"/>
             <argument type="service" id="ekyna_cms.cache"/>
@@ -84,47 +84,46 @@
             <argument type="service" id="doctrine.orm.default_result_cache" on-invalid="null"/>
             <tag name="resource.event_subscriber"/>
         </service>
-        <service id="ekyna_cms.menu_event_listener"
-                 class="Ekyna\Bundle\CmsBundle\EventListener\MenuEventListener">
+        <service id="Ekyna\Bundle\CmsBundle\EventListener\MenuEventListener"
+                 public="false">
             <argument type="service" id="doctrine.orm.default_entity_manager"/>
             <argument>%ekyna_cms.menu.class%</argument>
             <argument>%ekyna_cms.page.class%</argument>
             <tag name="resource.event_subscriber"/>
         </service>
+        <service id="Ekyna\Bundle\CmsBundle\EventListener\NoticeEventListener"
+                 public="false">
+            <argument type="service" id="ekyna_cms.notice.manager"/>
+            <tag name="resource.event_subscriber"/>
+        </service>
 
         <!-- (Page) public url event subscriber -->
-        <service id="ekyna_cms.event_subscriber.public_url"
-                 class="Ekyna\Bundle\CmsBundle\EventListener\PublicUrlEventSubscriber">
+        <service id="Ekyna\Bundle\CmsBundle\EventListener\PublicUrlEventSubscriber">
             <tag name="resource.event_subscriber"/>
         </service>
 
         <!-- Doctrine subscribers/listeners -->
         <!-- TODO merge metadata subscriber -->
-        <service id="ekyna_cms.content.subject_subscriber"
-                 class="Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber"
+        <service id="Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber"
                  public="false">
             <tag name="doctrine.event_subscriber" connection="default"/>
         </service>
-        <service id="ekyna_cms.seo.subject_subscriber"
-                 class="Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber"
+        <service id="Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber"
                  public="false">
             <tag name="doctrine.event_subscriber" connection="default"/>
         </service>
-        <service id="ekyna_cms.tag.subject_subscriber"
-                 class="Ekyna\Bundle\CmsBundle\Listener\TagsSubjectSubscriber"
+        <service id="Ekyna\Bundle\CmsBundle\Listener\TagsSubjectSubscriber"
                  public="false">
             <tag name="doctrine.event_subscriber" connection="default"/>
         </service>
 
-        <service id="ekyna_cms.page.elastica_subscriber"
-                 class="Ekyna\Bundle\CmsBundle\Listener\PageElasticaSubscriber"
+        <service id="Ekyna\Bundle\CmsBundle\Listener\PageElasticaSubscriber"
                  public="false">
             <argument id="fos_elastica.object_persister.ekyna_cms_page.doc" type="service"/>
             <argument>%ekyna_cms.page.class%</argument>
             <tag name="doctrine.event_subscriber"/>
         </service>
-        <service id="ekyna_core.page.listener"
-                 class="Ekyna\Bundle\CmsBundle\Listener\PageListener"
+        <service id="Ekyna\Bundle\CmsBundle\Listener\PageListener"
                  public="false">
             <argument id="event_dispatcher" type="service"/>
             <argument id="router" type="service"/>
@@ -132,20 +131,17 @@
             <argument>%locales%</argument>
             <tag name="doctrine.orm.entity_listener"/>
         </service>
-        <service id="ekyna_core.page_translation.listener"
-                 class="Ekyna\Bundle\CmsBundle\Listener\PageTranslationListener"
+        <service id="Ekyna\Bundle\CmsBundle\Listener\PageTranslationListener"
                  public="false">
             <argument id="event_dispatcher" type="service"/>
             <tag name="doctrine.orm.entity_listener"/>
             <tag name="doctrine.event_subscriber"/>
         </service>
-        <service id="ekyna_core.menu.listener"
-                 class="Ekyna\Bundle\CmsBundle\Listener\MenuListener"
+        <service id="Ekyna\Bundle\CmsBundle\Listener\MenuListener"
                  public="false">
             <tag name="doctrine.orm.entity_listener"/>
         </service>
-        <!--<service id="ekyna_core.block.listener"
-                 class="Ekyna\Bundle\CmsBundle\Listener\BlockListener"
+        <!--<service id="Ekyna\Bundle\CmsBundle\Listener\BlockListener"
                  public="false">
             <argument type="service" id="ekyna_core.cache.tag_manager"/>
             <tag name="doctrine.orm.entity_listener"/>
@@ -556,6 +552,13 @@
             <tag name="form.type"/>
         </service>
 
+        <!-- Notice renderer -->
+        <service id="Ekyna\Bundle\CmsBundle\Service\Renderer\NoticeRenderer">
+            <argument type="service" id="ekyna_cms.notice.repository"/>
+            <argument type="service" id="Symfony\Component\Templating\EngineInterface"/>
+            <argument type="collection"/><!-- Replaced by DI extension -->
+        </service>
+
         <!-- Twig extensions -->
         <service id="ekyna_cms.twig.cms_extension"
                  class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
@@ -565,6 +568,7 @@
             <argument type="service" id="ekyna_cms.helper.page"/>
             <argument type="service" id="ekyna_cms.seo.repository"/>
             <argument type="service" id="ekyna_core.cache.tag_manager"/>
+            <argument type="service" id="Ekyna\Bundle\CmsBundle\Service\Renderer\NoticeRenderer"/>
             <argument type="service" id="ekyna_cms.locale_switcher"/>
             <argument type="service" id="ekyna_resource.locale_provider"/>
             <argument type="collection"/>

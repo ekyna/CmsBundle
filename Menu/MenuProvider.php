@@ -2,8 +2,8 @@
 
 namespace Ekyna\Bundle\CmsBundle\Menu;
 
-use Ekyna\Bundle\CmsBundle\Entity\MenuRepository;
 use Ekyna\Bundle\CmsBundle\Event\MenuEvent;
+use Ekyna\Bundle\CmsBundle\Repository\MenuRepository;
 use Ekyna\Component\Resource\Locale\LocaleProviderInterface;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\Provider\MenuProviderInterface;

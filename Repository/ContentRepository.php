@@ -1,13 +1,13 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Entity;
+namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
 
 /**
  * Class ContentRepository
- * @package Ekyna\Bundle\CmsBundle\Entity
+ * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class ContentRepository extends ResourceRepository

@@ -48,7 +48,6 @@ class ThemeType extends AbstractType
         ]);
     }
 
-
     /**
      * @inheritDoc
      */

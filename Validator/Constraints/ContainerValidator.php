@@ -2,10 +2,10 @@
 
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
+use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\Container\CopyPlugin;
 use Ekyna\Bundle\CmsBundle\Editor\Plugin\PluginRegistry;
-use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
-use Ekyna\Bundle\CmsBundle\Entity\ContainerRepository;
+use Ekyna\Bundle\CmsBundle\Repository\ContainerRepository;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;

@@ -65,7 +65,10 @@
                             'html': {
                                 'label': 'ekyna_core.field.content',
                                 'type': 'tinymce',
-                                'value': path('ekyna_cms_page_admin_tinymce', identifiers|merge({'pageId': page.id})),
+                                'options': {
+                                    'route': 'ekyna_cms_page_admin_tinymce',
+                                    'route_params': identifiers|merge({'pageId': page.id}),
+                                }
                             }
                         }
                     }) }}

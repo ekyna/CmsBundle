@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\DependencyInjection;
 
+use Ekyna\Bundle\CmsBundle\Service\Renderer\NoticeRenderer;
 use Ekyna\Bundle\CmsBundle\SlideShow\Type;
 use Ekyna\Bundle\ResourceBundle\DependencyInjection\AbstractExtension;
 use Symfony\Component\Config\FileLocator;
@@ -56,10 +57,15 @@ class EkynaCmsExtension extends AbstractExtension
             }
         }
 
+        // Notice renderer config
+        $container
+            ->getDefinition(NoticeRenderer::class)
+            ->replaceArgument(2, $config['notice']);
+
         // Cms twig extension config
         $container
             ->getDefinition('ekyna_cms.twig.cms_extension')
-            ->replaceArgument(8, [
+            ->replaceArgument(9, [
                 'home_route' => $config['home_route'],
                 'seo'        => $config['seo'],
                 'page'       => $config['page'],
@@ -135,13 +141,13 @@ class EkynaCmsExtension extends AbstractExtension
         foreach ($types as $name => $c) {
             $class = $c['class'];
             if (class_exists($class)) {
-                $id = "ekyna_cms.slide_show.type.{$name}";
+                $id         = "ekyna_cms.slide_show.type.{$name}";
                 $definition = new Definition($class, []);
                 $container->setDefinition($id, $definition);
             } elseif ($container->hasDefinition($class)) {
-                $id = $class;
+                $id         = $class;
                 $definition = $container->getDefinition($class);
-                $class = $definition->getClass();
+                $class      = $definition->getClass();
             } else {
                 throw new \InvalidArgumentException("Unexpected slide show type '$class'.");
             }

@@ -1,13 +1,13 @@
 ekyna_cms_slide_admin_new:
     path: /new
-    defaults: { _controller: "ekyna_cms.slide.controller:newAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.slide.controller:newAction"
+    methods: [GET, POST]
     requirements:
         slideShowId:  \d+
 
 ekyna_cms_slide_admin_show:
     path: /{slideId}/show
-    defaults: { _controller: "ekyna_cms.slide.controller:showAction" }
+    controller: "ekyna_cms.slide.controller:showAction"
     methods: [GET]
     requirements:
         slideShowId:  \d+
@@ -15,15 +15,15 @@ ekyna_cms_slide_admin_show:
 
 ekyna_cms_slide_admin_edit:
     path: /{slideId}/edit
-    defaults: { _controller: "ekyna_cms.slide.controller:editAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.slide.controller:editAction"
+    methods: [GET, POST]
     requirements:
         slideShowId:  \d+
         slideId:  \d+
 
 ekyna_cms_slide_admin_move_up:
     path: /{slideId}/move-up
-    defaults: { _controller: "ekyna_cms.slide.controller:moveUpAction" }
+    controller: "ekyna_cms.slide.controller:moveUpAction"
     methods: [GET]
     requirements:
         slideShowId:  \d+
@@ -31,7 +31,7 @@ ekyna_cms_slide_admin_move_up:
 
 ekyna_cms_slide_admin_move_down:
     path: /{slideId}/move-down
-    defaults: { _controller: "ekyna_cms.slide.controller:moveDownAction" }
+    controller: "ekyna_cms.slide.controller:moveDownAction"
     methods: [GET]
     requirements:
         slideShowId:  \d+
@@ -39,8 +39,8 @@ ekyna_cms_slide_admin_move_down:
 
 ekyna_cms_slide_admin_remove:
     path: /{slideId}/remove
-    defaults: { _controller: "ekyna_cms.slide.controller:removeAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.slide.controller:removeAction"
+    methods: [GET, POST]
     requirements:
         slideShowId:  \d+
         slideId:  \d+

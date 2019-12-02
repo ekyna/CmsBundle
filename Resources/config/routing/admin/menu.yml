@@ -1,64 +1,65 @@
 ekyna_cms_menu_admin_home:
     path: ""
-    defaults: { _controller: "ekyna_cms.menu.controller:homeAction" }
+    controller: "ekyna_cms.menu.controller:homeAction"
     methods: [GET]
 
 ekyna_cms_menu_admin_list:
     path: /list
-    defaults: { _controller: "ekyna_cms.menu.controller:listAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.menu.controller:listAction"
+    methods: [GET, POST]
 
 ekyna_cms_menu_admin_new:
     path: /new
-    defaults: { _controller: "ekyna_cms.menu.controller:newAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.menu.controller:newAction"
+    methods: [GET, POST]
 
 ekyna_cms_menu_admin_new_child:
     path: /{menuId}/new-child
-    defaults: { _controller: "ekyna_cms.menu.controller:newChildAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.menu.controller:newChildAction"
+    methods: [GET, POST]
     requirements:
         menuId:  \d+
 
 ekyna_cms_menu_admin_show:
     path: /{menuId}/show
-    defaults: { _controller: "ekyna_cms.menu.controller:showAction" }
+    controller: "ekyna_cms.menu.controller:showAction"
     methods: [GET]
     requirements:
         menuId:  \d+
 
 ekyna_cms_menu_admin_edit:
     path: /{menuId}/edit
-    defaults: { _controller: "ekyna_cms.menu.controller:editAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.menu.controller:editAction"
+    methods: [GET, POST]
     requirements:
         menuId:  \d+
 
 ekyna_cms_menu_admin_move_up:
     path: /{menuId}/moveup
-    defaults: { _controller: "ekyna_cms.menu.controller:moveUpAction" }
+    controller: "ekyna_cms.menu.controller:moveUpAction"
     methods: [GET]
     requirements:
         menuId:  \d+
 
 ekyna_cms_menu_admin_move_down:
     path: /{menuId}/movedown
-    defaults: { _controller: "ekyna_cms.menu.controller:moveDownAction" }
+    controller: "ekyna_cms.menu.controller:moveDownAction"
     methods: [GET]
     requirements:
         menuId:  \d+
 
 ekyna_cms_menu_admin_toggle:
     path: /{menuId}/toggle/{field}
-    defaults: { _controller: "ekyna_cms.menu.controller:toggleAction", field: "enabled" }
+    controller: "ekyna_cms.menu.controller:toggleAction"
+    methods: [GET]
+    defaults: { field: "enabled" }
     requirements:
-        _method: GET
         menuId:  \d+
         field:  \w+
 
 ekyna_cms_menu_admin_remove:
     path: /{menuId}/remove
-    defaults: { _controller: "ekyna_cms.menu.controller:removeAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.menu.controller:removeAction"
+    methods: [GET, POST]
     requirements:
         menuId:  \d+

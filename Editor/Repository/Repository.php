@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Editor\Repository;
 
 use Doctrine\Common\Collections\Collection;
-use Ekyna\Bundle\CmsBundle\Entity as ER;
+use Ekyna\Bundle\CmsBundle\Repository as ER;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Component\Resource\Model\SortableInterface;

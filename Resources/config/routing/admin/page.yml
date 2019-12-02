@@ -1,22 +1,22 @@
 ekyna_cms_page_admin_home:
     path: ""
-    defaults: { _controller: "ekyna_cms.page.controller:homeAction" }
+    controller: "ekyna_cms.page.controller:homeAction"
     methods: [GET]
 
 ekyna_cms_page_admin_list:
     path: /list
-    defaults: { _controller: "ekyna_cms.page.controller:listAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.page.controller:listAction"
+    methods: [GET, POST]
 
 ekyna_cms_page_admin_new:
     path: /new
-    defaults: { _controller: "ekyna_cms.page.controller:newAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.page.controller:newAction"
+    methods: [GET, POST]
 
 ekyna_cms_page_admin_new_child:
     path: /{pageId}/new-child
-    defaults: { _controller: "ekyna_cms.page.controller:newChildAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.page.controller:newChildAction"
+    methods: [GET, POST]
     requirements:
         pageId: \d+
     options:
@@ -24,45 +24,49 @@ ekyna_cms_page_admin_new_child:
 
 ekyna_cms_page_admin_show:
     path: /{pageId}/show
-    defaults: { _controller: "ekyna_cms.page.controller:showAction" }
+    controller: "ekyna_cms.page.controller:showAction"
     methods: [GET]
     requirements:
         pageId: \d+
 
 ekyna_cms_page_admin_edit:
     path: /{pageId}/edit
-    defaults: { _controller: "ekyna_cms.page.controller:editAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.page.controller:editAction"
+    methods: [GET, POST]
     requirements:
         pageId: \d+
     options:
         expose: true
 
 ekyna_cms_page_admin_tinymce:
-    path: /{pageId}/tinymce
-    defaults: { _controller: "ekyna_cms.page.controller:tinymceAction", field: html }
+    path: /{pageId}/tinymce/{_locale}/{field}
+    controller: "ekyna_cms.page.controller:tinymceAction"
     methods: [GET]
     requirements:
         field: "[a-zA-Z0-9]+"
         pageId: \d+
+    defaults:
+        _locale: "%locale%"
+        field: html
 
 ekyna_cms_page_admin_move_up:
     path: /{pageId}/moveup
-    defaults: { _controller: "ekyna_cms.page.controller:moveUpAction" }
+    controller: "ekyna_cms.page.controller:moveUpAction"
     methods: [GET]
     requirements:
         pageId: \d+
 
 ekyna_cms_page_admin_move_down:
     path: /{pageId}/movedown
-    defaults: { _controller: "ekyna_cms.page.controller:moveDownAction" }
+    controller: "ekyna_cms.page.controller:moveDownAction"
     methods: [GET]
     requirements:
         pageId: \d+
 
 ekyna_cms_page_admin_toggle:
     path: /{pageId}/toggle/{field}
-    defaults: { _controller: "ekyna_cms.page.controller:toggleAction", field: "enabled" }
+    controller: "ekyna_cms.page.controller:toggleAction"
+    defaults: { field: "enabled" }
     methods: [GET]
     requirements:
         pageId: \d+
@@ -70,7 +74,7 @@ ekyna_cms_page_admin_toggle:
 
 ekyna_cms_page_admin_remove:
     path: /{pageId}/remove
-    defaults: { _controller: "ekyna_cms.page.controller:removeAction" }
-    methods: [GET|POST]
+    controller: "ekyna_cms.page.controller:removeAction"
+    methods: [GET, POST]
     requirements:
         pageId: \d+

@@ -3,13 +3,15 @@
 namespace Ekyna\Bundle\CmsBundle\Twig;
 
 use Ekyna\Bundle\CmsBundle\Service\SchemaOrg\BuilderInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 /**
  * Class SchemaOrgExtension
  * @package Ekyna\Bundle\CmsBundle\Twig
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class SchemaOrgExtension extends \Twig_Extension
+class SchemaOrgExtension extends AbstractExtension
 {
     /**
      * @var BuilderInterface
@@ -33,7 +35,7 @@ class SchemaOrgExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('json_ld', [$this, 'build'], ['is_safe' => ['html']]),
+            new TwigFilter('json_ld', [$this, 'build'], ['is_safe' => ['html']]),
         ];
     }
 

@@ -65,6 +65,24 @@ ekyna_cms:
         alert:
             no_item: No menu configured
             cant_enable_as_disabled_page: This menu cannot be enabled because it targets an inactive page.
+    notice:
+        label:
+            singular: Notice
+            plural: Notices
+        header:
+            list: Notices <small>List of the notices</small>
+            show: Notice details <small>%name%</small>
+            new: Create a new notice
+            edit: Edit the notice <small>%name%</small>
+            remove: Remove the notice <small>%name%</small>
+        button:
+            list: Notices list
+            show: Notice details
+            new: New notice
+            edit: Edit the notice
+            remove: Remove the notice
+        alert:
+            no_item: No notice configured
     slide_show:
         label:
             singular: Carousel

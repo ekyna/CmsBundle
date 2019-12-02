@@ -1,0 +1,59 @@
+{% extends '@EkynaAdmin/Entity/Default/show.html.twig' %}
+
+{% block actions %}
+
+{% endblock %}
+
+{% block main %}
+<div class="actions">
+    {{ admin_resource_btn(notice, 'edit') }}
+    {{ admin_resource_btn(notice, 'remove') }}
+</div>
+<div class="show">
+    <div class="show-body">
+        {{ show_row(notice.name, 'text', {
+            'label': 'ekyna_core.field.name'
+        }) }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ show_row(notice.theme|cms_theme, 'text', {
+                    'label': 'ekyna_core.field.theme',
+                    'label_col': 4
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ show_row(notice.icon|ui_fa_icon ~ ' (' ~ notice.icon ~ ')', 'text', {
+                    'label': 'ekyna_core.field.icon',
+                    'label_col': 4
+                }) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                {{ show_row(notice.startAt, 'datetime', {
+                    'label': 'ekyna_core.field.start_date',
+                    'label_col': 4
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ show_row(notice.endAt, 'datetime', {
+                    'label': 'ekyna_core.field.end_date',
+                    'label_col': 4
+                }) }}
+            </div>
+        </div>
+        {{ show_row(notice.translations, 'translations', {
+            'fields': {
+                'content': {
+                    'label': 'ekyna_core.field.content',
+                    'type': 'tinymce',
+                    'options': {
+                        'route': 'ekyna_cms_notice_admin_tinymce',
+                        'route_params': identifiers|merge({'noticeId': notice.id}),
+                    }
+                }
+            }
+        }) }}
+    </div>
+</div>
+{% endblock %}

@@ -54,17 +54,17 @@ class PageGenerator
     private $routesTranslationDomain = 'routes'; // TODO DI
 
     /**
-     * @var \Ekyna\Bundle\CmsBundle\Entity\SeoRepository
+     * @var \Ekyna\Bundle\CmsBundle\Repository\SeoRepository
      */
     private $seoRepository;
 
     /**
-     * @var \Ekyna\Bundle\CmsBundle\Entity\PageRepository
+     * @var \Ekyna\Bundle\CmsBundle\Repository\PageRepository
      */
     private $pageRepository;
 
     /**
-     * @var \Ekyna\Bundle\CmsBundle\Entity\MenuRepository
+     * @var \Ekyna\Bundle\CmsBundle\Repository\MenuRepository
      */
     private $menuRepository;
 

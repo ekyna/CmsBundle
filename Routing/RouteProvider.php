@@ -2,11 +2,11 @@
 
 namespace Ekyna\Bundle\CmsBundle\Routing;
 
-use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
+use Ekyna\Bundle\CmsBundle\Repository\PageRepository;
+use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 
 /**
  * Class RouteProvider

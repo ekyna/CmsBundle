@@ -3,9 +3,9 @@
 namespace Ekyna\Bundle\CmsBundle\Sitemap;
 
 use Doctrine\ORM\Query;
-use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
-use Ekyna\Bundle\SitemapBundle\Url\Url;
+use Ekyna\Bundle\CmsBundle\Repository\PageRepository;
 use Ekyna\Bundle\SitemapBundle\Provider\AbstractProvider;
+use Ekyna\Bundle\SitemapBundle\Url\Url;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**

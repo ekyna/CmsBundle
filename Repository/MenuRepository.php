@@ -1,6 +1,6 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Entity;
+namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Doctrine\ORM\Query\Expr;
 use Ekyna\Component\Resource\Doctrine\ORM\TranslatableResourceRepositoryInterface;
@@ -9,7 +9,7 @@ use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
  * Class MenuRepository
- * @package Ekyna\Bundle\CmsBundle\Entity
+ * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class MenuRepository extends NestedTreeRepository implements TranslatableResourceRepositoryInterface

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Entity;
+namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Doctrine\ORM\Query;
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
@@ -8,7 +8,7 @@ use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
 
 /**
  * Class ContainerRepository
- * @package Ekyna\Bundle\CmsBundle\Entity
+ * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
 class ContainerRepository extends ResourceRepository

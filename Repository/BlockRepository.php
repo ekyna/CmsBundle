@@ -1,12 +1,12 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Entity;
+namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Ekyna\Component\Resource\Doctrine\ORM\TranslatableResourceRepository;
 
 /**
  * Class BlockRepository
- * @package Ekyna\Bundle\CmsBundle\Entity
+ * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class BlockRepository extends TranslatableResourceRepository

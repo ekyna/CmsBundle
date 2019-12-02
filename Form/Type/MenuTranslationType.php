@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Class MenuTranslationType
  * @package Ekyna\Bundle\CmsBundle\Form\Type
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class MenuTranslationType extends AbstractType
 {
@@ -21,11 +21,17 @@ class MenuTranslationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', TextType::class, array(
+            ->add('title', TextType::class, [
                 'label'        => 'ekyna_core.field.title',
                 'admin_helper' => 'CMS_MENU_TITLE',
                 'required'     => true,
-            ));
+            ])
+            ->add('path', TextType::class, [
+                'label'        => 'ekyna_core.field.url',
+                'admin_helper' => 'CMS_MENU_PATH',
+                'required'     => false,
+                'disabled'     => $options['locked'],
+            ]);
     }
 
     /**
@@ -34,8 +40,9 @@ class MenuTranslationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setDefaults(array(
+            ->setDefaults([
                 'data_class' => MenuTranslation::class,
-            ));
+                'locked'     => false,
+            ]);
     }
 }

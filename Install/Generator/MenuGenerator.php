@@ -23,7 +23,7 @@ class MenuGenerator
     private $operator;
 
     /**
-     * @var \Ekyna\Bundle\CmsBundle\Entity\MenuRepository
+     * @var \Ekyna\Bundle\CmsBundle\Repository\MenuRepository
      */
     private $repository;
 

@@ -2,8 +2,8 @@
 
 namespace Ekyna\Bundle\CmsBundle\Helper;
 
-use Ekyna\Bundle\CmsBundle\Entity\PageRepository;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\CmsBundle\Repository\PageRepository;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 

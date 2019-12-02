@@ -73,9 +73,6 @@ class PageValidator extends ConstraintValidator
 
                     return;
                 }
-                if ($page->isStatic()) {
-
-                }
             }
         }
 

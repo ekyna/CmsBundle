@@ -7,13 +7,15 @@ use Ekyna\Bundle\CmsBundle\Exception\InvalidArgumentException;
 use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
 use Ekyna\Bundle\MediaBundle\Model\MediaTypes;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 /**
  * Class MediaExtension
  * @package Ekyna\Bundle\CmsBundle\Twig
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class MediaExtension extends \Twig_Extension
+class MediaExtension extends AbstractExtension
 {
     /**
      * @var CacheManager
@@ -37,7 +39,7 @@ class MediaExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('cms_image', [$this, 'renderImage'], ['is_safe' => ['html']]),
+            new TwigFilter('cms_image', [$this, 'renderImage'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -90,7 +92,7 @@ class MediaExtension extends \Twig_Extension
             return sprintf('%s="%s"', $key, $value);
         }, array_keys($attr), $attr));
 
-
+        /** @noinspection HtmlRequiredAltAttribute */
         return "<img $attributes>";
     }
 }

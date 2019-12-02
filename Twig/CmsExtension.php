@@ -3,24 +3,29 @@
 namespace Ekyna\Bundle\CmsBundle\Twig;
 
 use Ekyna\Bundle\CmsBundle\Entity\Menu;
-use Ekyna\Bundle\CmsBundle\Entity\SeoRepository;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Menu\MenuProvider;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
+use Ekyna\Bundle\CmsBundle\Repository\SeoRepository;
 use Ekyna\Bundle\CmsBundle\Service\LocaleSwitcher;
+use Ekyna\Bundle\CmsBundle\Service\Renderer\NoticeRenderer;
 use Ekyna\Bundle\CmsBundle\Service\Renderer\TagRenderer;
 use Ekyna\Bundle\CoreBundle\Cache\TagManager;
 use Ekyna\Bundle\SettingBundle\Manager\SettingsManagerInterface;
 use Ekyna\Component\Resource\Locale\LocaleProviderInterface;
 use Knp\Menu\Twig\Helper;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 /**
  * Class CmsExtension
  * @package Ekyna\Bundle\CmsBundle\Twig
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class CmsExtension extends \Twig_Extension
+class CmsExtension extends AbstractExtension
 {
     /**
      * @var SettingsManagerInterface
@@ -58,6 +63,11 @@ class CmsExtension extends \Twig_Extension
     protected $tagRenderer;
 
     /**
+     * @var NoticeRenderer
+     */
+    protected $noticeRenderer;
+
+    /**
      * @var LocaleSwitcher
      */
     protected $localeSwitcher;
@@ -82,6 +92,7 @@ class CmsExtension extends \Twig_Extension
      * @param PageHelper               $pageHelper
      * @param SeoRepository            $seoRepository
      * @param TagManager               $tagManager
+     * @param NoticeRenderer           $noticeRenderer
      * @param LocaleSwitcher           $localeSwitcher
      * @param LocaleProviderInterface  $localeProvider
      * @param array                    $config
@@ -93,16 +104,18 @@ class CmsExtension extends \Twig_Extension
         PageHelper $pageHelper,
         SeoRepository $seoRepository,
         TagManager $tagManager,
+        NoticeRenderer $noticeRenderer,
         LocaleSwitcher $localeSwitcher,
         LocaleProviderInterface $localeProvider,
         array $config
     ) {
-        $this->settings = $settings;
-        $this->menuProvider = $menuProvider;
-        $this->menuHelper = $menuHelper;
-        $this->pageHelper = $pageHelper;
-        $this->tagManager = $tagManager;
-        $this->seoRepository = $seoRepository;
+        $this->settings       = $settings;
+        $this->menuProvider   = $menuProvider;
+        $this->menuHelper     = $menuHelper;
+        $this->pageHelper     = $pageHelper;
+        $this->tagManager     = $tagManager;
+        $this->noticeRenderer = $noticeRenderer;
+        $this->seoRepository  = $seoRepository;
         $this->localeSwitcher = $localeSwitcher;
         $this->localeProvider = $localeProvider;
 
@@ -115,9 +128,14 @@ class CmsExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'cms_tags',
                 [$this, 'renderTags'],
+                ['is_safe' => ['html']]
+            ),
+            new TwigFilter(
+                'cms_theme',
+                [$this, 'renderTheme'],
                 ['is_safe' => ['html']]
             ),
         ];
@@ -129,48 +147,53 @@ class CmsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'cms_metas',
                 [$this, 'renderMetas'],
                 ['is_safe' => ['html']]
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'cms_seo',
                 [$this, 'renderSeo'],
                 ['is_safe' => ['html']]
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'cms_meta',
                 [$this, 'renderMeta'],
                 ['is_safe' => ['html']]
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'cms_title',
                 [$this, 'renderTitle'],
                 ['is_safe' => ['html']]
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'cms_menu',
                 [$this, 'renderMenu'],
                 ['is_safe' => ['html']]
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'cms_breadcrumb',
                 [$this, 'renderBreadcrumb'],
                 ['is_safe' => ['html']]
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'cms_locale_switcher',
                 [$this, 'renderLocaleSwitcher'],
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'cms_page',
                 [$this, 'getPage']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'cms_page_controller',
                 [$this, 'getPageControllerTitle']
+            ),
+            new TwigFunction(
+                'cms_notices',
+                [$this->noticeRenderer, 'render'],
+                ['is_safe' => ['html']]
             ),
         ];
     }
@@ -217,7 +240,7 @@ class CmsExtension extends \Twig_Extension
 
         if (null !== $seo) {
             $follow = !$this->config['seo']['no_follow'] ? ($seo->getFollow() ? 'follow' : 'nofollow') : 'nofollow';
-            $index = !$this->config['seo']['no_index'] ? ($seo->getIndex() ? 'index' : 'noindex') : 'noindex';
+            $index  = !$this->config['seo']['no_index'] ? ($seo->getIndex() ? 'index' : 'noindex') : 'noindex';
 
             $metas =
                 $this->renderTitle('title', $seo->getTitle() . $this->config['seo']['title_append']) . "\n" .
@@ -286,9 +309,9 @@ class CmsExtension extends \Twig_Extension
      * @param array  $options
      * @param string $renderer
      *
+     * @return string
      * @throws \InvalidArgumentException
      *
-     * @return string
      */
     public function renderMenu($name, array $options = [], $renderer = null)
     {
@@ -341,12 +364,12 @@ class CmsExtension extends \Twig_Extension
     /**
      * Renders the locale switcher.
      *
-     * @param \Twig_Environment $twig
-     * @param array             $options
+     * @param Environment $twig
+     * @param array       $options
      *
      * @return string
      */
-    public function renderLocaleSwitcher(\Twig_Environment $twig, array $options = [])
+    public function renderLocaleSwitcher(Environment $twig, array $options = [])
     {
         if (!$this->localeSwitcher->hasResource()) {
             $this->localeSwitcher->setResource($this->getPage());
@@ -375,8 +398,8 @@ class CmsExtension extends \Twig_Extension
             $options['attr']['id'] = 'locale-switcher';
         }
         if ($options['dropdown']) {
-            $classes = isset($options['attr']['class']) ? $options['attr']['class'] : '';
-            $classes = trim($classes . ' dropdown');
+            $classes                  = isset($options['attr']['class']) ? $options['attr']['class'] : '';
+            $classes                  = trim($classes . ' dropdown');
             $options['attr']['class'] = $classes;
         }
 
@@ -414,6 +437,18 @@ class CmsExtension extends \Twig_Extension
         }
 
         return $this->config['page']['controllers'][$name]['title'];
+    }
+
+    /**
+     * Renders the theme.
+     *
+     * @param string $theme
+     *
+     * @return string
+     */
+    public function renderTheme(string $theme): string
+    {
+        return sprintf('<span class="label label-%s">%s</span>', $theme, $theme);
     }
 
     /**
@@ -456,10 +491,10 @@ class CmsExtension extends \Twig_Extension
             ],
             'page'                     => [
                 'cookie_content' => [
-                    'enable' => false,
+                    'enabled' => false,
                 ],
                 'wide_search'    => [
-                    'enable' => false,
+                    'enabled' => false,
                 ],
                 'controllers'    => [],
             ],

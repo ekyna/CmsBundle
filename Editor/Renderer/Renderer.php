@@ -10,6 +10,9 @@ use Ekyna\Bundle\CmsBundle\Editor\View;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Model as CM;
 use Ekyna\Bundle\CoreBundle\Cache\TagManager;
+use Twig\Environment;
+use Twig\Error\Error;
+use Twig\TemplateWrapper;
 
 /**
  * Class Renderer
@@ -44,12 +47,12 @@ class Renderer
     protected $config;
 
     /**
-     * @var \Twig_Environment
+     * @var Environment
      */
     private $environment;
 
     /**
-     * @var \Twig_TemplateWrapper
+     * @var TemplateWrapper
      */
     private $template;
 
@@ -60,7 +63,7 @@ class Renderer
      * @param Editor                 $editor
      * @param PageHelper             $pageHelper
      * @param TagManager             $tagManager
-     * @param \Twig_Environment      $environment
+     * @param Environment      $environment
      * @param EntityManagerInterface $manager
      * @param array                  $config
      */
@@ -68,7 +71,7 @@ class Renderer
         Editor $editor,
         PageHelper $pageHelper,
         TagManager $tagManager,
-        \Twig_Environment $environment,
+        Environment $environment,
         EntityManagerInterface $manager,
         array $config = []
     ) {
@@ -153,7 +156,6 @@ class Renderer
             );
         }
 
-        /** @noinspection PhpInternalEntityUsedInspection */
         return $this->getTemplate()->renderBlock('cms_content', [
             'content' => $content,
         ]);
@@ -192,7 +194,6 @@ class Renderer
             );
         }
 
-        /** @noinspection PhpInternalEntityUsedInspection */
         return $this->getTemplate()->renderBlock('cms_container', [
             'container' => $container,
         ]);
@@ -230,7 +231,6 @@ class Renderer
             );
         }
 
-        /** @noinspection PhpInternalEntityUsedInspection */
         return $this->getTemplate()->renderBlock('cms_row', [
             'row' => $row,
         ]);
@@ -275,7 +275,7 @@ class Renderer
     }
 
     /**
-     * @return \Twig_TemplateWrapper
+     * @return TemplateWrapper
      *
      * @throws Exception\RenderingException
      */
@@ -287,7 +287,7 @@ class Renderer
 
         try {
             $this->template = $this->environment->load($name = $this->config['template']);
-        } catch (\Twig_Error $e) {
+        } catch (Error $e) {
             throw new Exception\RenderingException("Failed to load $name template.");
         }
 

@@ -26,6 +26,7 @@
 
         {% block breadcrumb -%}
             <div class="container">
+                {{ cms_notices() }}
                 {%- include '@EkynaCore/Ui/flashes.html.twig' -%}
                 {{ cms_breadcrumb() }}
             </div>

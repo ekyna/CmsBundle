@@ -1,6 +1,6 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Entity;
+namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Doctrine\ORM\Query\Expr;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
@@ -60,7 +60,7 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
             ->getQuery()
             ->setParameter('route_name', $routeName)
             ->useQueryCache(true)
-            // TODO ->useResultCache(true, 3600, 'ekyna_cms.page[route:' . $routeName . ']')
+            ->useResultCache(true, 3600, 'ekyna_cms.page[route:' . $routeName . ']')
             ->getOneOrNullResult();
     }
 

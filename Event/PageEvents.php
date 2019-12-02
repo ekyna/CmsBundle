@@ -7,7 +7,7 @@ namespace Ekyna\Bundle\CmsBundle\Event;
  * @package Ekyna\Bundle\CmsBundle\Event
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class PageEvents
+final class PageEvents
 {
     // Persistence
     const INSERT      = 'ekyna_cms.page.insert';
@@ -27,4 +27,11 @@ class PageEvents
     const POST_DELETE = 'ekyna_cms.page.post_delete';
 
     const PUBLIC_URL  = 'ekyna_cms.page.public_url';
+
+    /**
+     * Disabled constructor.
+     */
+    private function __construct()
+    {
+    }
 }

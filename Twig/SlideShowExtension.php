@@ -5,13 +5,15 @@ namespace Ekyna\Bundle\CmsBundle\Twig;
 use Ekyna\Bundle\CmsBundle\Entity\SlideShow;
 use Ekyna\Bundle\CmsBundle\SlideShow\RendererInterface;
 use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepositoryInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
  * Class SlideShowExtension
  * @package Ekyna\Bundle\CmsBundle\Twig
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class SlideShowExtension extends \Twig_Extension
+class SlideShowExtension extends AbstractExtension
 {
     /**
      * @var RendererInterface
@@ -44,7 +46,7 @@ class SlideShowExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'slide_show_render',
                 [$this, 'renderSlideShow'],
                 ['is_safe' => ['html']]

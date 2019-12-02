@@ -65,6 +65,24 @@ ekyna_cms:
         alert:
             no_item: Aucun menu configuré
             cant_enable_as_disabled_page: Ce menu ne peut être activé car la page ciblée est inactive.
+    notice:
+        label:
+            singular: Annonce
+            plural: Annonces
+        header:
+            list: Annonces <small>Liste des annonces</small>
+            show: Détail de l'annonce <small>%name%</small>
+            new: Créer une nouvelle annonce
+            edit: Modifier l'annonce <small>%name%</small>
+            remove: Supprimer l'annonce <small>%name%</small>
+        button:
+            list: Liste des annonces
+            show: Détail de l'annonce
+            new: Nouvelle annonce
+            edit: Modifier l'annonce
+            remove: Supprimer l'annonce
+        alert:
+            no_item: Aucune annonce configuré
     slide_show:
         label:
             singular: Carousel

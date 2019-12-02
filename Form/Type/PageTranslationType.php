@@ -15,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Class PageTranslationType
  * @package Ekyna\Bundle\CmsBundle\Form\Type
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class PageTranslationType extends AbstractType
 {
@@ -25,20 +25,20 @@ class PageTranslationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', TextType::class, array(
+            ->add('title', TextType::class, [
                 'label'        => 'ekyna_core.field.title',
                 'admin_helper' => 'CMS_PAGE_TITLE',
-            ))
-            ->add('breadcrumb', TextType::class, array(
+            ])
+            ->add('breadcrumb', TextType::class, [
                 'label'        => 'ekyna_core.field.breadcrumb',
                 'admin_helper' => 'CMS_PAGE_BREADCRUMB',
-            ));
+            ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
 
             /** @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page */
-            $page = $form->getParent()->getParent()->getData();
+            $page   = $form->getParent()->getParent()->getData();
             $parent = $page->getParent();
             if ($page && !$page->isStatic() && $parent) {
                 $pathOptions = [
@@ -47,39 +47,39 @@ class PageTranslationType extends AbstractType
                     'required'     => false,
                     'disabled'     => $page->isStatic(),
                 ];
-                $parentPath = $parent->translate($form->getName())->getPath();
+                $parentPath  = $parent->translate($form->getName())->getPath();
                 if (1 < strlen($parentPath)) {
                     if (16 < strlen($parentPath)) {
                         $parentPath = '&hellip;' . substr($parentPath, -16);
                     }
                     $pathOptions['attr'] = [
                         'input_group' => [
-                            'prepend' => rtrim($parentPath, '/') . '/'
+                            'prepend' => rtrim($parentPath, '/') . '/',
                         ],
                     ];
                 }
                 $form->add('path', TextType::class, $pathOptions);
             } else {
-                $form->add('path', TextType::class, array(
+                $form->add('path', TextType::class, [
                     'label'        => 'ekyna_core.field.url',
                     'admin_helper' => 'CMS_PAGE_PATH',
                     'required'     => false,
                     'disabled'     => ($page && $page->isStatic()),
-                ));
+                ]);
             }
 
             if (!$page->isAdvanced()) {
-                $form->add('html', TinymceType::class, array(
+                $form->add('html', TinymceType::class, [
                     'label'        => 'ekyna_core.field.content',
                     'admin_helper' => 'CMS_PAGE_CONTENT',
                     'theme'        => 'advanced',
                     'required'     => false,
-                ));
+                ]);
             }
         });
 
         $builder->addModelTransformer(new CallbackTransformer(
-            // Transform
+        // Transform
             function ($data) {
                 if (null === $data) {
                     return $data;
@@ -87,7 +87,7 @@ class PageTranslationType extends AbstractType
 
                 /**
                  * @var \Ekyna\Bundle\CmsBundle\Entity\PageTranslation $data
-                 * @var \Ekyna\Bundle\CmsBundle\Model\PageInterface $page
+                 * @var \Ekyna\Bundle\CmsBundle\Model\PageInterface    $page
                  */
                 if (0 < strlen($path = $data->getPath())) {
                     $page = $data->getTranslatable();
@@ -97,7 +97,7 @@ class PageTranslationType extends AbstractType
                     }
                     if (null !== $parent = $page->getParent()) {
                         $parentPath = $parent->translate($data->getLocale())->getPath();
-                        $path = substr($path, strlen(rtrim($parentPath, '/')));
+                        $path       = substr($path, strlen(rtrim($parentPath, '/')));
                     }
                     $data->setPath(trim($path, '/'));
                 }
@@ -117,9 +117,8 @@ class PageTranslationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setDefaults(array(
+            ->setDefaults([
                 'data_class' => PageTranslation::class,
-            ))
-        ;
+            ]);
     }
 }

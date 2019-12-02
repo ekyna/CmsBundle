@@ -1,12 +1,12 @@
 <?php
 
-namespace Ekyna\Bundle\CmsBundle\Entity;
+namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
 
 /**
  * Class RowRepository
- * @package Ekyna\Bundle\CmsBundle\Entity
+ * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
 class RowRepository extends ResourceRepository

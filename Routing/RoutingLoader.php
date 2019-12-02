@@ -44,11 +44,11 @@ class RoutingLoader extends Loader
 
         $collection = new RouteCollection();
 
-        $cookiesPolicyConfig = $this->config['cookie_consent'];
-        if ($cookiesPolicyConfig['enable']) {
+        $config = $this->config['cookie_consent'];
+        if ($config['enabled']) {
             $cookiesPolicy = new Route('/cookies-privacy-policy');
             $cookiesPolicy->setDefaults(array(
-                '_controller' => $cookiesPolicyConfig['controller'],
+                '_controller' => $config['controller'],
             ));
             $cookiesPolicy->setOptions(array(
                 'expose' => true,
@@ -66,11 +66,11 @@ class RoutingLoader extends Loader
             $collection->add('cookies_privacy_policy', $cookiesPolicy);
         }
 
-        $wideSearchConfig = $this->config['wide_search'];
-        if ($wideSearchConfig['enable']) {
+        $config = $this->config['wide_search'];
+        if ($config['enabled']) {
             $wideSearch = new Route('/search');
             $wideSearch->setDefaults(array(
-                '_controller' => $wideSearchConfig['controller'],
+                '_controller' => $config['controller'],
             ));
             $wideSearch->setOptions(array(
                 'expose' => true,

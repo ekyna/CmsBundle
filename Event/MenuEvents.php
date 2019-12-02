@@ -26,5 +26,10 @@ final class MenuEvents
     const PRE_DELETE  = 'ekyna_cms.menu.pre_delete';
     const POST_DELETE = 'ekyna_cms.menu.post_delete';
 
-    const CONFIGURE   = 'ekyna_cms.menu.configure';
+    /**
+     * Disabled constructor.
+     */
+    private function __construct()
+    {
+    }
 }
