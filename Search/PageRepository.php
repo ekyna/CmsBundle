@@ -20,7 +20,7 @@ class PageRepository extends ResourceRepository implements Locale\LocaleProvider
     /**
      * @inheritdoc
      */
-    public function search(string $expression, $limit = 10): array
+    public function search(string $expression, int $limit = 10): array
     {
         if (empty($expression)) {
             return [];

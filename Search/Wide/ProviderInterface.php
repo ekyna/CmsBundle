@@ -12,12 +12,12 @@ interface ProviderInterface
     /**
      * Returns the results for the given expression.
      *
-     * @param string  $expression
-     * @param integer $limit
+     * @param string $expression
+     * @param int    $limit
      *
      * @return array|Result[]
      */
-    public function search(string $expression, $limit = 10): array;
+    public function search(string $expression, int $limit = 10): array;
 
     /**
      * Returns the name.
