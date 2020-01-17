@@ -32,7 +32,7 @@ class ContentRepository extends ResourceRepository
             ->andWhere($qb->expr()->eq('c.name', ':name'))
             ->getQuery()
             ->useQueryCache(true)
-            // TODO ->useResultCache(true, 3600, Content::getEntityTagPrefix() . '[name:'.$name.']')
+            // TODO ->enableResultCache(3600, Content::getEntityTagPrefix() . '[name:'.$name.']')
             ->setParameter('name', $name)
             ->getOneOrNullResult();
     }
@@ -57,7 +57,7 @@ class ContentRepository extends ResourceRepository
             ->andWhere($qb->expr()->eq('c.id', ':id'))
             ->getQuery()
             ->useQueryCache(true)
-            // TODO ->useResultCache(true, 3600, Content::getEntityTagPrefix() . '[id:'.$id.']')
+            // TODO ->enableResultCache(3600, Content::getEntityTagPrefix() . '[id:'.$id.']')
             ->setParameter('id', $id)
             ->getOneOrNullResult();
     }
@@ -84,7 +84,7 @@ class ContentRepository extends ResourceRepository
                 ->andWhere($qb->expr()->eq('c.id', ':id'))
                 ->getQuery()
                 ->useQueryCache(true)
-                // TODO ->useResultCache(true, 3600, Content::getEntityTagPrefix() . '[id:'.$id.']')
+                // TODO ->enableResultCache(3600, Content::getEntityTagPrefix() . '[id:'.$id.']')
                 ->setParameter('id', $content->getId())
                 ->getOneOrNullResult();
         }

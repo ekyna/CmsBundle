@@ -60,7 +60,7 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
             ->getQuery()
             ->setParameter('route_name', $routeName)
             ->useQueryCache(true)
-            ->useResultCache(true, 3600, 'ekyna_cms.page[route:' . $routeName . ']')
+            ->enableResultCache(3600, 'ekyna_cms.page[route:' . $routeName . ']')
             ->getOneOrNullResult();
     }
 
@@ -88,7 +88,7 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
                 'right' => $current->getRight(),
             ])
             ->useQueryCache(true)
-            // TODO ->useResultCache(true, 3600, $this->getCachePrefix())
+            // TODO ->enableResultCache(3600, $this->getCachePrefix())
             ->getArrayResult();
     }
 

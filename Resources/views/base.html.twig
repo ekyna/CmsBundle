@@ -11,6 +11,9 @@
 
     {% block stylesheets -%}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <link href="{{ asset('bundles/ekynacore/css/fontawesome.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('bundles/ekynacore/css/glyphicons.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('bundles/ekynacookieconsent/css/cookie-consent.css') }}" rel="stylesheet" type="text/css" />
         {{ ui_fonts_stylesheets() }}
         {{ ui_forms_stylesheets() }}
     {%- endblock stylesheets %}

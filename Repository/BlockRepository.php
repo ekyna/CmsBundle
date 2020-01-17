@@ -27,7 +27,7 @@ class BlockRepository extends TranslatableResourceRepository
             ->andWhere($qb->expr()->isNull('b.row'))
             ->getQuery()
             ->useQueryCache(true)
-            // TODO ->useResultCache(true, 3600, Block::getEntityTagPrefix() . '[name:'.$name.']')
+            // TODO ->enableResultCache(3600, Block::getEntityTagPrefix() . '[name:'.$name.']')
             ->setParameter('name', $name)
             ->getOneOrNullResult();
     }
@@ -47,7 +47,7 @@ class BlockRepository extends TranslatableResourceRepository
             ->andWhere($qb->expr()->eq('b.id', ':id'))
             ->getQuery()
             ->useQueryCache(true)
-            // TODO ->useResultCache(true, 3600, Block::getEntityTagPrefix() . '[id:'.$id.']')
+            // TODO ->enableResultCache(3600, Block::getEntityTagPrefix() . '[id:'.$id.']')
             ->setParameter('id', $id)
             ->getOneOrNullResult();
     }

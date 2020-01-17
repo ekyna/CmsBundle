@@ -2,7 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr;
 use Ekyna\Component\Resource\Doctrine\ORM\TranslatableResourceRepository;
 
@@ -31,8 +31,8 @@ class NoticeRepository extends TranslatableResourceRepository implements NoticeR
             ->andWhere($ex->gte('n.endAt', ':now'))
             ->getQuery()
             ->useQueryCache(true)
-            ->useResultCache(true, 15 * 60, NoticeRepositoryInterface::CACHE_KEY)
-            ->setParameter('now', $now, Type::DATETIME)
+            ->enableResultCache(15 * 60, NoticeRepositoryInterface::CACHE_KEY)
+            ->setParameter('now', $now, Types::DATETIME_MUTABLE)
             ->getResult();
     }
 }
