@@ -10,8 +10,6 @@
         <parameter key="ekyna_cms.menu.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\MenuType</parameter>
         <parameter key="ekyna_cms.page.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\PageType</parameter>
         <parameter key="ekyna_cms.seo.form_type.class">Ekyna\Bundle\CmsBundle\Form\Type\SeoType</parameter>
-
-        <parameter key="ekyna_cms.page.search_repository.class">Ekyna\Bundle\CmsBundle\Search\PageRepository</parameter>
     </parameters>
 
     <services>
@@ -426,16 +424,15 @@
             <tag name="knp_menu.menu" alias="breadcrumb"/>
         </service>
 
-        <!-- Search -->
-        <service id="ekyna_cms.wide_search"
-                 class="Ekyna\Bundle\CmsBundle\Search\Wide\Search">
-            <argument type="collection"/>
-        </service>
-        <service id="ekyna_cms.page.search_repository"
-                 class="%ekyna_cms.page.search_repository.class%">
-            <factory service="fos_elastica.manager" method="getRepository"/>
-            <argument>%ekyna_cms.page.class%</argument>
-            <tag name="ekyna_cms.wide_search.provider"/>
+        <!-- Search repositories -->
+        <service id="ekyna_cms.page.search"
+                 class="Ekyna\Bundle\CmsBundle\Service\Search\PageRepository">
+            <argument type="service" id="fos_elastica.index.ekyna_cms_page.doc"/>
+            <argument type="service" id="fos_elastica.elastica_to_model_transformer.ekyna_cms_page.doc"/>
+            <call method="setLocaleProvider">
+                <argument type="service" id="Ekyna\Component\Resource\Locale\LocaleProviderInterface"/>
+            </call>
+            <tag name="ekyna_resource.search" resource="ekyna_cms.page"/>
         </service>
 
         <!-- Serialization -->

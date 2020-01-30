@@ -23,7 +23,6 @@ class EkynaCmsBundle extends AbstractBundle
         parent::build($container);
 
         $container->addCompilerPass(new Pass\EditorPluginPass());
-        $container->addCompilerPass(new Pass\WideSearchProviderPass());
         $container->addCompilerPass(new Pass\SchemaOrgProviderPass());
     }
 

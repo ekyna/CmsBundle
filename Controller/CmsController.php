@@ -3,7 +3,9 @@
 namespace Ekyna\Bundle\CmsBundle\Controller;
 
 use Ekyna\Bundle\CoreBundle\Controller\Controller;
+use Ekyna\Component\Resource\Search;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class CmsController
@@ -15,9 +17,9 @@ class CmsController extends Controller
     /**
      * Default action.
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function defaultAction()
+    public function defaultAction(): Response
     {
         return $this->configureSharedCache($this->render('@EkynaCms/Cms/default.html.twig'));
     }
@@ -27,13 +29,13 @@ class CmsController extends Controller
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function searchAction(Request $request)
+    public function searchAction(Request $request): Response
     {
         $expression = $request->request->get('expression');
 
-        $results = $this->get('ekyna_cms.wide_search')->search($expression);
+        $results = $this->get(Search\Search::class)->search(new Search\Request($expression));
 
         return $this->render('@EkynaCms/Cms/search.html.twig', [
             'expression' => $expression,
@@ -46,9 +48,9 @@ class CmsController extends Controller
      *
      * @param string $locale
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function footerAction($locale)
+    public function footerAction(string $locale): Response
     {
         $this->get('request_stack')->getCurrentRequest()->setLocale($locale);
 
