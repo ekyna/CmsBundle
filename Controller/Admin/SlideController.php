@@ -41,7 +41,6 @@ class SlideController extends ResourceController
             'action'            => $this->generateResourcePath($slide, 'new'),
             'method'            => 'POST',
             'attr'              => ['class' => 'form-horizontal'],
-            'admin_mode'        => true,
             '_redirect_enabled' => true,
         ]);
         $flow->bind($slide);
