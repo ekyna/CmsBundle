@@ -21,7 +21,7 @@ final class Themes extends AbstractConstants
     /**
      * @inheritDoc
      */
-    public static function getConfig()
+    public static function getConfig(): array
     {
         $prefix = 'ekyna_cms.theme.';
 
@@ -32,5 +32,15 @@ final class Themes extends AbstractConstants
             static::THEME_WARNING => [$prefix . static::THEME_WARNING],
             static::THEME_DANGER  => [$prefix . static::THEME_DANGER],
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getTheme(string $constant): ?string
+    {
+        static::isValid($constant, true);
+
+        return $constant;
     }
 }

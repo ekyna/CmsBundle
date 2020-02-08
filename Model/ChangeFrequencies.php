@@ -15,7 +15,7 @@ class ChangeFrequencies extends AbstractConstants
     const MONTHLY = 'monthly';
     const YEARLY  = 'yearly';
 
-    public static function getConfig()
+    public static function getConfig(): array
     {
         $prefix = 'ekyna_core.changefreq.';
 
@@ -24,5 +24,13 @@ class ChangeFrequencies extends AbstractConstants
             self::MONTHLY => [$prefix . self::MONTHLY],
             self::YEARLY  => [$prefix . self::YEARLY],
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getTheme(string $constant): ?string
+    {
+        return null;
     }
 }
