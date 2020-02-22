@@ -1,22 +1,28 @@
 {% spaceless %}
 <!DOCTYPE html>
-<html lang="{{ app.request.locale }}"{{ cms_document_data() }}>
+<html lang="{{ app.request.locale }}"{{ cms_document_data() }}{% if app.debug %} data-debug="1"{% endif %}>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
 
-    {% block metas %}{% endblock metas %}
+    {% block metas %}
+        <title>EkynaCmsBundle</title>
+    {% endblock metas %}
+
+    {{ ui_content_stylesheets() }}
 
     {% block stylesheets -%}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
         <link href="{{ asset('bundles/ekynacore/css/fontawesome.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('bundles/ekynacore/css/glyphicons.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('bundles/ekynacms/css/bootstrap-content.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('bundles/ekynacookieconsent/css/cookie-consent.css') }}" rel="stylesheet" type="text/css" />
-        {{ ui_fonts_stylesheets() }}
-        {{ ui_forms_stylesheets() }}
     {%- endblock stylesheets %}
+
+    {{ ui_fonts_stylesheets() }}
+    {{ ui_forms_stylesheets() }}
 
     {% include '@EkynaCore/Ui/ie-fix.html.twig' %}
 
