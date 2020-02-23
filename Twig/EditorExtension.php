@@ -14,22 +14,6 @@ use Twig\TwigFunction;
 class EditorExtension extends AbstractExtension
 {
     /**
-     * @var Renderer
-     */
-    private $renderer;
-
-
-    /**
-     * Constructor.
-     *
-     * @param Renderer $renderer
-     */
-    public function __construct(Renderer $renderer)
-    {
-        $this->renderer = $renderer;
-    }
-
-    /**
      * @inheritdoc
      */
     public function getFunctions()
@@ -37,27 +21,27 @@ class EditorExtension extends AbstractExtension
         return [
             new TwigFunction(
                 'cms_document_data',
-                [$this->renderer, 'renderDocumentData'],
+                [Renderer::class, 'renderDocumentData'],
                 ['is_safe' => ['html']]
             ),
             new TwigFunction(
                 'cms_content',
-                [$this->renderer, 'renderContent'],
+                [Renderer::class, 'renderContent'],
                 ['is_safe' => ['html']]
             ),
             new TwigFunction(
                 'cms_container',
-                [$this->renderer, 'renderContainer'],
+                [Renderer::class, 'renderContainer'],
                 ['is_safe' => ['html']]
             ),
             new TwigFunction(
                 'cms_row',
-                [$this->renderer, 'renderRow'],
+                [Renderer::class, 'renderRow'],
                 ['is_safe' => ['html']]
             ),
             new TwigFunction(
                 'cms_block',
-                [$this->renderer, 'renderBlock'],
+                [Renderer::class, 'renderBlock'],
                 ['is_safe' => ['html']]
             ),
         ];

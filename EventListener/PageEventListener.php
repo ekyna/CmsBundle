@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\EventListener;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
+use Ekyna\Bundle\CmsBundle\Entity\Page;
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
 use Ekyna\Bundle\CmsBundle\Exception\RuntimeException;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
@@ -115,7 +116,8 @@ class PageEventListener implements EventSubscriberInterface
         // Generate random route name.
         if (null === $page->getRoute()) {
             $class = get_class($page);
-            /** @noinspection SqlDialectInspection */
+
+            /** @noinspection SqlResolve */
             $query = $this->em->createQuery("SELECT p.id FROM {$class} p WHERE p.route = :route");
             $query->setMaxResults(1);
 
@@ -131,13 +133,11 @@ class PageEventListener implements EventSubscriberInterface
     }
 
     /**
-     * Post create event handler.
-     *
-     * @throws \Psr\Cache\InvalidArgumentException
+     * Insert event handler.
      */
-    public function onPostCreate()
+    public function onInsert(): void
     {
-        $this->cmsCache->deleteItem(PageHelper::PAGES_ROUTES_CACHE_KEY);
+        $this->purgeRoutesCache();
     }
 
     /**
@@ -186,15 +186,16 @@ class PageEventListener implements EventSubscriberInterface
     }
 
     /**
-     * Post update event handler.
+     * Insert event handler.
      *
      * @param ResourceEventInterface $event
      */
-    public function onPostUpdate(ResourceEventInterface $event)
+    public function onUpdate(ResourceEventInterface $event)
     {
         $page = $this->getPageFromEvent($event);
 
-        $this->deletePageCacheResult($page);
+        $this->purgeRoutesCache();
+        $this->purgePageCache($page);
     }
 
     /**
@@ -215,29 +216,38 @@ class PageEventListener implements EventSubscriberInterface
     }
 
     /**
-     * Post delete event handler.
+     * Insert event handler.
      *
      * @param ResourceEventInterface $event
      */
-    public function onPostDelete(ResourceEventInterface $event)
+    public function onDelete(ResourceEventInterface $event)
     {
         $page = $this->getPageFromEvent($event);
 
-        $this->deletePageCacheResult($page);
+        $this->purgeRoutesCache();
+        $this->purgePageCache($page);
     }
 
     /**
-     * Saves the page in doctrine cache.
+     * Purges the pages routes cache.
+     */
+    private function purgeRoutesCache(): void
+    {
+        $this->cmsCache->deleteItem(PageHelper::PAGES_ROUTES_CACHE_KEY);
+    }
+
+    /**
+     * Purges the page cache.
      *
      * @param PageInterface $page
      */
-    private function deletePageCacheResult(PageInterface $page)
+    private function purgePageCache(PageInterface $page): void
     {
-        $this->cmsCache->deleteItem(PageHelper::PAGES_ROUTES_CACHE_KEY);
-
-        if (null !== $this->resultCache) {
-            $this->resultCache->delete('ekyna_cms.page[route:' . $page->getRoute() . ']');
+        if (!$this->resultCache) {
+            return;
         }
+
+        $this->resultCache->delete(Page::getRouteCacheTag($page->getRoute()));
     }
 
     /**
@@ -258,8 +268,6 @@ class PageEventListener implements EventSubscriberInterface
                         $childrenDisabled = true;
 
                         $this->em->persist($child);
-
-                        $this->deletePageCacheResult($page);
 
                         $this->tm->addTags($page->getEntityTag());
                     }
@@ -285,8 +293,8 @@ class PageEventListener implements EventSubscriberInterface
     {
         $disabledMenus = false;
         if (!$page->isEnabled()) {
-
             // Disable menu children query
+            /** @noinspection SqlResolve */
             $disableChildrenQuery = $this->em->createQuery(sprintf(
                 'UPDATE %s m SET m.enabled = 0 WHERE m.root = :root AND m.left > :left AND m.right < :right',
                 $this->menuClass
@@ -294,6 +302,7 @@ class PageEventListener implements EventSubscriberInterface
 
             // Disable pointing menus
             /** @var \Ekyna\Bundle\CmsBundle\Model\MenuInterface[] $menus */
+            /** @noinspection SqlResolve */
             $menus = $this->em
                 ->createQuery("SELECT m FROM {$this->menuClass} m WHERE m.route = :route")
                 ->setParameter('route', $page->getRoute())
@@ -342,12 +351,13 @@ class PageEventListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            PageEvents::INITIALIZE  => ['onInitialize', 1024],
-            PageEvents::PRE_CREATE  => ['onPreCreate', -1024],
-            PageEvents::POST_CREATE => ['onPostCreate', -1024],
-            PageEvents::PRE_UPDATE  => ['onPreUpdate', -1024],
-            PageEvents::POST_UPDATE => ['onPostUpdate', -1024],
-            PageEvents::POST_DELETE => ['onPostDelete', -1024],
+            PageEvents::INITIALIZE  => ['onInitialize',  1024],
+            PageEvents::PRE_CREATE  => ['onPreCreate',  -1024],
+            PageEvents::INSERT      => ['onInsert',      1024],
+            PageEvents::PRE_UPDATE  => ['onPreUpdate',  -1024],
+            PageEvents::UPDATE      => ['onUpdate',      1024],
+            PageEvents::PRE_DELETE  => ['onPreDelete',   1024],
+            PageEvents::DELETE      => ['onDelete',      1024],
         ];
     }
 }

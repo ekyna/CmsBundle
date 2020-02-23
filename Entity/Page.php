@@ -500,4 +500,12 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     {
         return 'ekyna_cms.page';
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getRouteCacheTag(string $route): string
+    {
+        return "ekyna_cms.page[route:$route]";
+    }
 }

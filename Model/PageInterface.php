@@ -338,4 +338,13 @@ interface PageInterface extends
      * @return bool
      */
     public function isIndexable();
+
+    /**
+     * Returns the page route cache tag.
+     *
+     * @param string $route
+     *
+     * @return string
+     */
+    public static function getRouteCacheTag(string $route): string;
 }

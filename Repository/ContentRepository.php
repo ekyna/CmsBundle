@@ -2,8 +2,10 @@
 
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
+use Doctrine\ORM\Query\Expr;
 use Ekyna\Bundle\CmsBundle\Model\ContentSubjectInterface;
 use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
+use Ekyna\Component\Resource\Doctrine\ORM\Util\LocaleAwareRepositoryTrait;
 
 /**
  * Class ContentRepository
@@ -12,6 +14,8 @@ use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
  */
 class ContentRepository extends ResourceRepository
 {
+    use LocaleAwareRepositoryTrait;
+
     /**
      * Finds the content by id.
      *
@@ -27,7 +31,7 @@ class ContentRepository extends ResourceRepository
             ->leftJoin('c.containers', 'container')
             ->leftJoin('container.rows', 'row')
             ->leftJoin('row.blocks', 'block')
-            ->leftJoin('block.translations', 'block_t')
+            ->leftJoin('block.translations', 'block_t', Expr\Join::WITH, $this->getLocaleCondition('block_t'))
             ->addSelect('container', 'row', 'block', 'block_t')
             ->andWhere($qb->expr()->eq('c.name', ':name'))
             ->getQuery()
@@ -52,7 +56,7 @@ class ContentRepository extends ResourceRepository
             ->leftJoin('c.containers', 'container')
             ->leftJoin('container.rows', 'row')
             ->leftJoin('row.blocks', 'block')
-            ->leftJoin('block.translations', 'block_t')
+            ->leftJoin('block.translations', 'block_t', Expr\Join::WITH, $this->getLocaleCondition('block_t'))
             ->addSelect('container', 'row', 'block', 'block_t')
             ->andWhere($qb->expr()->eq('c.id', ':id'))
             ->getQuery()
@@ -79,7 +83,7 @@ class ContentRepository extends ResourceRepository
                 ->leftJoin('c.containers', 'container')
                 ->leftJoin('container.rows', 'row')
                 ->leftJoin('row.blocks', 'block')
-                ->leftJoin('block.translations', 'block_t')
+                ->leftJoin('block.translations', 'block_t', Expr\Join::WITH, $this->getLocaleCondition('block_t'))
                 ->select('PARTIAL c.{id}', 'container', 'row', 'block', 'block_t')
                 ->andWhere($qb->expr()->eq('c.id', ':id'))
                 ->getQuery()

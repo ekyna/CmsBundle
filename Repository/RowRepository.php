@@ -2,7 +2,9 @@
 
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
+use Doctrine\ORM\Query\Expr;
 use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
+use Ekyna\Component\Resource\Doctrine\ORM\Util\LocaleAwareRepositoryTrait;
 
 /**
  * Class RowRepository
@@ -11,6 +13,8 @@ use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
  */
 class RowRepository extends ResourceRepository
 {
+    use LocaleAwareRepositoryTrait;
+
     /**
      * Finds the row by id.
      *
@@ -24,8 +28,8 @@ class RowRepository extends ResourceRepository
 
         return $qb
             ->leftJoin('r.blocks', 'block')
-            ->leftJoin('block.translations', 'translation')
-            ->addSelect('block', 'translation')
+            ->leftJoin('block.translations', 'block_t', Expr\Join::WITH, $this->getLocaleCondition('block_t'))
+            ->addSelect('block', 'block_t')
             ->andWhere($qb->expr()->eq('r.name', ':name'))
             ->getQuery()
             ->useQueryCache(true)
@@ -47,8 +51,8 @@ class RowRepository extends ResourceRepository
 
         return $qb
             ->leftJoin('r.blocks', 'block')
-            ->leftJoin('block.translations', 'translation')
-            ->addSelect('block', 'translation')
+            ->leftJoin('block.translations', 'block_t', Expr\Join::WITH, $this->getLocaleCondition('block_t'))
+            ->addSelect('block', 'block_t')
             ->andWhere($qb->expr()->eq('r.id', ':id'))
             ->getQuery()
             ->useQueryCache(true)

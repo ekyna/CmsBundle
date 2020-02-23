@@ -3,8 +3,10 @@
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Expr;
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
 use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
+use Ekyna\Component\Resource\Doctrine\ORM\Util\LocaleAwareRepositoryTrait;
 
 /**
  * Class ContainerRepository
@@ -13,6 +15,8 @@ use Ekyna\Component\Resource\Doctrine\ORM\ResourceRepository;
  */
 class ContainerRepository extends ResourceRepository
 {
+    use LocaleAwareRepositoryTrait;
+
     /**
      * Finds the container by id.
      *
@@ -27,8 +31,8 @@ class ContainerRepository extends ResourceRepository
         return $qb
             ->leftJoin('c.rows', 'row')
             ->leftJoin('row.blocks', 'block')
-            ->leftJoin('block.translations', 'translation')
-            ->addSelect('row', 'block', 'translation')
+            ->leftJoin('block.translations', 'block_t', Expr\Join::WITH, $this->getLocaleCondition('block_t'))
+            ->addSelect('row', 'block', 'block_t')
             ->andWhere($qb->expr()->eq('c.name', ':name'))
             ->getQuery()
             ->useQueryCache(true)
@@ -51,8 +55,8 @@ class ContainerRepository extends ResourceRepository
         return $qb
             ->leftJoin('c.rows', 'row')
             ->leftJoin('row.blocks', 'block')
-            ->leftJoin('block.translations', 'translation')
-            ->addSelect('row', 'block', 'translation')
+            ->leftJoin('block.translations', 'block_t', Expr\Join::WITH, $this->getLocaleCondition('block_t'))
+            ->addSelect('row', 'block', 'block_t')
             ->andWhere($qb->expr()->eq('c.id', ':id'))
             ->getQuery()
             ->useQueryCache(true)
@@ -70,11 +74,11 @@ class ContainerRepository extends ResourceRepository
      */
     public function getCopyCount(ContainerInterface $container)
     {
+        /** @noinspection SqlResolve */
         $query = $this->getEntityManager()->createQuery(
             "SELECT COUNT(c.id) FROM {$this->getClassName()} c WHERE c.copy = :copied"
         );
 
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $query
             ->setParameter('copied', $container)
             ->getSingleResult(Query::HYDRATE_SINGLE_SCALAR);

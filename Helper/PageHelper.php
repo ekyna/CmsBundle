@@ -62,8 +62,8 @@ class PageHelper
     public function __construct(PageRepository $repository, AdapterInterface $cache, string $homeRoute)
     {
         $this->repository = $repository;
-        $this->cache = $cache;
-        $this->homeRoute = $homeRoute;
+        $this->cache      = $cache;
+        $this->homeRoute  = $homeRoute;
     }
 
     /**
