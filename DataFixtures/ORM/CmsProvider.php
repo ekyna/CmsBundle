@@ -31,6 +31,49 @@ class CmsProvider
     }
 
     /**
+     * Returns html paragraphs.
+     *
+     * @param int $min
+     * @param int $max
+     *
+     * @return string
+     */
+    public function htmlParagraphs(int $min = 2, int $max = 5): string
+    {
+        $paragraphs = [];
+
+        // Each paragraph
+        for ($i = 0; $i < rand($min, $max); $i++) {
+            $sentences = [];
+
+            // Each sentence
+            for ($j = 0; $j < rand(3, 7); $j++) {
+                $nb = rand(5, 9);
+                $words = Fixtures::getFaker()->words($nb, false);
+                $words[0] = ucwords($words[0]);
+
+                if (rand(0, 100) < 20) { // strong or em
+                    $tag = rand(0, 100) > 50 ? 'strong' : 'em';
+                    $start = 0;
+                    $end = count($words) - 1;
+                    if (rand(0, 100) > 50) {
+                        $start = rand(0, $nb - 2);
+                        $end = rand($start, $nb - 1);
+                    }
+                    $words[$start] = "<$tag>" . $words[$start];
+                    $words[$end] = $words[$end] . "</$tag>";
+                }
+
+                $sentences[] = implode(' ', $words) . '.';
+            }
+
+            $paragraphs[] = implode(' ', $sentences);
+        }
+
+        return '<p>' . implode('</p><p>', $paragraphs) . '</p>';
+    }
+
+    /**
      * Returns a random theme.
      *
      * @return string

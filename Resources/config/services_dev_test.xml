@@ -5,9 +5,16 @@
 
     <services>
 
+        <defaults autoconfigure="false" autowire="false" public="false"/>
+
         <service id="Ekyna\Bundle\CmsBundle\DataFixtures\ORM\CmsProvider">
             <argument type="service" id="ekyna_cms.tag.repository"/>
             <tag name="nelmio_alice.faker.provider"/>
+        </service>
+
+        <service id="Ekyna\Bundle\CmsBundle\DataFixtures\ORM\CmsProcessor">
+            <argument type="service" id="ekyna_cms.seo.repository"/>
+            <tag name="fidry_alice_data_fixtures.processor"/>
         </service>
 
     </services>
