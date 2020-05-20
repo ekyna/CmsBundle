@@ -26,13 +26,16 @@ class BackgroundContainerType extends AbstractType
             ->add('image', MediaChoiceType::class, [
                 'label' => 'ekyna_core.field.image',
                 'types' => [MediaTypes::IMAGE],
+                'required' => false,
             ])
             ->add('video', MediaChoiceType::class, [
                 'label' => 'ekyna_core.field.video',
                 'types' => [MediaTypes::VIDEO],
+                'required' => false,
             ])
             ->add('color', ColorPickerType::class, [
                 'label' => 'ekyna_core.field.color',
+                'required' => false,
             ]);
 
         if (!empty($themes = $options['themes'])) {
