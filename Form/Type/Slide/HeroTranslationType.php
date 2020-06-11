@@ -29,7 +29,7 @@ class HeroTranslationType extends AbstractType
             ->add('content', TinymceType::class, [
                 'label'         => 'ekyna_core.field.content',
                 'property_path' => 'data[content]',
-                'theme'         => 'front',
+                'theme'         => 'light',
             ])
             ->add('button_label', TextType::class, [
                 'label'         => 'ekyna_cms.slide.type.default.button_label',

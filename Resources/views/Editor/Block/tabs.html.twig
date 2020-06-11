@@ -84,8 +84,9 @@
             'loop': true,
             'muted': true,
             'player': false,
-            'attr': {'class': 'embed-responsive-item'}
-        }) -}}{# TODO filter #}
+            'attr': {'class': 'embed-responsive-item'},
+            'filter': 'cms_block_tab'
+        }) -}}
     </div>
 {%- else -%}
     {%- for tab in tabs.tabs -%}
@@ -98,8 +99,9 @@
             'loop': true,
             'muted': true,
             'player': false,
-            'attr': {'class': 'embed-responsive-item'}
-        }) -}}{# TODO filter #}
+            'attr': {'class': 'embed-responsive-item'},
+            'filter': 'cms_block_tab'
+        }) -}}
     </div>
     {%- endif -%}
     {%- endfor -%}

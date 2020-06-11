@@ -34,7 +34,7 @@ class TabsTranslationType extends AbstractType
             ])
             ->add('content', TinymceType::class, [
                 'label' => 'ekyna_core.field.content',
-                'theme' => 'front',
+                'theme' => 'light',
             ])
             ->add('buttonLabel', TextType::class, [
                 'label'    => 'Button label', // TODO
