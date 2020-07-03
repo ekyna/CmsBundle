@@ -37,9 +37,13 @@ class TinymcePlugin extends AbstractPlugin
     {
         parent::create($block, $data);
 
+        $data = array_replace([
+            'default_content' => $this->config['default_content'],
+        ], $data);
+
         $block
             ->translate($this->localeProvider->getCurrentLocale(), true)
-            ->setData('content', $this->config['default_content']);
+            ->setData('content', $data['default_content']);
     }
 
     /**
