@@ -222,6 +222,7 @@
         <!-- Routing helper -->
         <service id="Ekyna\Bundle\CmsBundle\Helper\RoutingHelper">
             <argument type="service" id="Symfony\Component\Routing\RouterInterface"/>
+            <argument>%locale%</argument>
         </service>
 
         <!-- Locale switcher -->

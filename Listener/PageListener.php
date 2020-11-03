@@ -5,7 +5,6 @@ namespace Ekyna\Bundle\CmsBundle\Listener;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Ekyna\Bundle\CmsBundle\Helper\RoutingHelper;
-use Ekyna\Bundle\CmsBundle\Install\Generator\Util;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\SettingBundle\Event\BuildRedirectionEvent;
 use Ekyna\Bundle\SettingBundle\Event\DiscardRedirectionEvent;
@@ -83,7 +82,7 @@ class PageListener
     {
         $doRecompute = false;
 
-        $dynamicPath = $this->hasDynamicPath($page);
+        $dynamicPath = $this->routingHelper->isPagePathDynamic($page->getRoute());
         if ($dynamicPath != $page->isDynamicPath()) {
             $page->setDynamicPath($dynamicPath);
             $doRecompute = true;
@@ -96,26 +95,6 @@ class PageListener
         }
 
         return $doRecompute;
-    }
-
-    /**
-     * Returns whether the page has dynamic path or not.
-     *
-     * @param PageInterface $page
-     *
-     * @return bool
-     */
-    private function hasDynamicPath(PageInterface $page): bool
-    {
-        if (empty($route = $page->getRoute())) {
-            return false;
-        }
-
-        if (null === $route = $this->routingHelper->findRouteByName($route)) {
-            return false;
-        }
-
-        return Util::isDynamic($route);
     }
 
     /**

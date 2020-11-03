@@ -125,6 +125,7 @@ class PageGenerator
         $this->removeNonMappedPages();
     }
 
+    /** @noinspection PhpUnusedParameterInspection */
     private function configureOptionsResolver(): void
     {
         /**
@@ -213,7 +214,7 @@ class PageGenerator
                         } elseif (is_array($val)) {
                             $normalized[$key] = $menuOptionResolver->resolve((array)$val);
                         } else {
-                            throw new \InvalidArgumentException("Unexpected menu options format.");
+                            throw new InvalidArgumentException("Unexpected menu options format.");
                         }
                     }
                 }
@@ -269,8 +270,8 @@ class PageGenerator
         }
 
         return $this->optionsResolver->resolve(array_merge($cmsOptions, [
-            'path'    => Util::buildPath($route->getPath(), $route->getDefaults()),
-            'dynamic' => Util::isDynamic($route),
+            'path'    => $this->routingHelper->buildPagePath($routeName),
+            'dynamic' => $this->routingHelper->isPagePathDynamic($routeName),
         ]));
     }
 
@@ -331,7 +332,7 @@ class PageGenerator
     {
         $routeName = $definition->getRouteName();
 
-        if (null !== $page = $this->findPageByRouteName($routeName)) {
+        if (null !== $page = $this->pageRepository->findOneByRoute($routeName)) {
             $updated = false;
             if ($page->getName() !== $definition->getPageName()) {
                 $page->setName($definition->getPageName());
@@ -352,12 +353,9 @@ class PageGenerator
 
             // Watch for paths update
             foreach ($this->locales as $locale) {
-                $path = $this->translator->trans(
-                    $routeName, [], $this->routesTranslationDomain, $locale
-                );
-                if ($routeName === $path) {
-                    $path = $definition->getPath();
-                }
+                $path = $this
+                    ->routingHelper
+                    ->buildPagePath($page->getRoute(), $locale);
 
                 $pageTranslation = $page->translate($locale, true);
                 if ($pageTranslation->getPath() !== $path) {
@@ -398,11 +396,10 @@ class PageGenerator
                 ->setStatic(true)
                 ->setLocked($definition->isLocked())
                 ->setAdvanced($definition->isAdvanced())
+                ->setDynamicPath($definition->isDynamic())
                 ->setParent($parentPage)
                 ->setSeo($seo);
 
-            // TODO Dynamic check already done ?
-            $dynamic = false;
             foreach ($this->locales as $locale) {
                 $title = $seoTitle = $definition->getPageName();
                 if (null !== $parentPage && $parentPage->getRoute() !== $this->homeRouteName) {
@@ -413,26 +410,15 @@ class PageGenerator
                 $seoTranslation
                     ->setTitle($seoTitle);
 
-                $path = $this->translator->trans(
-                    $routeName, [], $this->routesTranslationDomain, $locale
-                );
-                if ($routeName === $path) {
-                    $path = $definition->getPath();
-                }
+                $path = $this
+                    ->routingHelper
+                    ->buildPagePath($page->getRoute(), $locale);
 
                 $pageTranslation = $page->translate($locale, true);
                 $pageTranslation
                     ->setTitle($title)
                     ->setBreadcrumb($title)
                     ->setPath($path);
-
-                if (0 < preg_match('~\{.*\}~', $path)) {
-                    $dynamic = true;
-                }
-            }
-
-            if ($dynamic != $page->isDynamicPath()) {
-                $page->setDynamicPath($dynamic);
             }
 
             if (!$this->validate($page)) {
@@ -459,25 +445,13 @@ class PageGenerator
     }
 
     /**
-     * Finds a page by route
-     *
-     * @param string $routeName
-     *
-     * @return PageInterface|NULL
-     */
-    private function findPageByRouteName($routeName)
-    {
-        return $this->pageRepository->findOneBy(['route' => $routeName]);
-    }
-
-    /**
      * Validates the element.
      *
      * @param object $element
      *
      * @return bool
      */
-    private function validate($element)
+    private function validate(object $element): bool
     {
         $violationList = $this->validator->validate($element, null, ['Generator']);
         if (0 < $violationList->count()) {
@@ -500,7 +474,7 @@ class PageGenerator
      * @param string $name
      * @param string $action
      */
-    private function outputPageAction($name, $action)
+    private function outputPageAction(string $name, string $action): void
     {
         $this->output->writeln(sprintf(
             '- <comment>%s</comment> %s %s.',
@@ -518,7 +492,7 @@ class PageGenerator
      *
      * @return bool
      */
-    private function createMenus(PageInterface $page, array $menus)
+    private function createMenus(PageInterface $page, array $menus): bool
     {
         if (!empty($menus)) {
             foreach ($menus as $parentName => $config) {
@@ -569,7 +543,7 @@ class PageGenerator
     /**
      * Removes static pages which are no longer mapped to the routing.
      */
-    private function removeNonMappedPages()
+    private function removeNonMappedPages(): void
     {
         /** @var PageInterface[] $staticPages */
         $staticPages = $this->pageRepository->findBy(['static' => true], ['left' => 'DESC']);
