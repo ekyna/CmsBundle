@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
+use DateTime;
 use Doctrine\ORM\Query\Expr;
 use Ekyna\Bundle\CmsBundle\Entity\Page;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
@@ -22,9 +23,9 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
     /**
      * Returns the last updated at date time.
      *
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getLastUpdatedAt()
+    public function getLastUpdatedAt(): ?DateTime
     {
         $qb = $this->createQueryBuilder('p');
 
@@ -36,7 +37,7 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
             ->getSingleScalarResult();
 
         if (null !== $date) {
-            return new \DateTime($date);
+            return new DateTime($date);
         }
 
         return null;
@@ -46,20 +47,29 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
      * Finds a page by request.
      *
      * @param string $routeName
+     * @param bool   $cached
      *
-     * @return null|PageInterface
+     * @return PageInterface|null
      */
-    public function findOneByRoute($routeName)
+    public function findOneByRoute(string $routeName, bool $cached = false): ?PageInterface
     {
         $qb = $this->getQueryBuilder('p');
+
+        $qb->andWhere($qb->expr()->eq('p.route', ':route'));
+
+        if (!$cached) {
+            return $qb
+                ->getQuery()
+                ->setParameter('route', $routeName)
+                ->getOneOrNullResult();
+        }
 
         return $qb
             ->leftJoin('p.seo', 's')
             ->leftJoin('s.translations', 's_t', Expr\Join::WITH, $this->getLocaleCondition('s_t'))
             ->addSelect('s', 's_t')
-            ->andWhere($qb->expr()->eq('p.route', ':route_name'))
             ->getQuery()
-            ->setParameter('route_name', $routeName)
+            ->setParameter('route', $routeName)
             ->useQueryCache(true)
             ->enableResultCache(3600, Page::getRouteCacheTag($routeName))
             ->getOneOrNullResult();
@@ -72,7 +82,7 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
      *
      * @return array
      */
-    public function findParentsForBreadcrumb(PageInterface $current)
+    public function findParentsForBreadcrumb(PageInterface $current): array
     {
         $qb = $this->createQueryBuilder('p');
 
@@ -98,7 +108,7 @@ class PageRepository extends NestedTreeRepository implements TranslatableResourc
      *
      * @return array
      */
-    public function getPagesRoutes()
+    public function getPagesRoutes(): array
     {
         $qb = $this->createQueryBuilder('p');
 

@@ -124,7 +124,7 @@
         <service id="Ekyna\Bundle\CmsBundle\Listener\PageListener"
                  public="false">
             <argument id="event_dispatcher" type="service"/>
-            <argument id="router" type="service"/>
+            <argument id="Ekyna\Bundle\CmsBundle\Helper\RoutingHelper" type="service"/>
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%locales%</argument>
             <tag name="doctrine.orm.entity_listener"/>
@@ -217,6 +217,11 @@
                  class="Ekyna\Bundle\CmsBundle\Routing\RoutingLoader">
             <argument>%ekyna_cms.page.config%</argument>
             <tag name="routing.loader"/>
+        </service>
+
+        <!-- Routing helper -->
+        <service id="Ekyna\Bundle\CmsBundle\Helper\RoutingHelper">
+            <argument type="service" id="Symfony\Component\Routing\RouterInterface"/>
         </service>
 
         <!-- Locale switcher -->
@@ -485,7 +490,7 @@
         <!-- Validators -->
         <service id="ekyna_cms.page.validator"
                  class="Ekyna\Bundle\CmsBundle\Validator\Constraints\PageValidator">
-            <argument type="service" id="router"/>
+            <argument type="service" id="Ekyna\Bundle\CmsBundle\Helper\RoutingHelper"/>
             <argument>%ekyna_cms.page.config%</argument>
             <argument>%locales%</argument>
             <tag name="validator.constraint_validator"/>

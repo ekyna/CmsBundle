@@ -2,8 +2,9 @@
 
 namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
+use Ekyna\Bundle\CmsBundle\Helper\RoutingHelper;
+use Ekyna\Bundle\CmsBundle\Install\Generator\Util;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -16,9 +17,9 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class PageValidator extends ConstraintValidator
 {
     /**
-     * @var UrlGeneratorInterface
+     * @var RoutingHelper
      */
-    private $urlGenerator;
+    private $routingHelper;
 
     /**
      * @var array
@@ -34,15 +35,15 @@ class PageValidator extends ConstraintValidator
     /**
      * Constructor.
      *
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param array                 $pageConfig
-     * @param array                 $locales
+     * @param RoutingHelper $routingHelper
+     * @param array         $pageConfig
+     * @param array         $locales
      */
-    public function __construct(UrlGeneratorInterface $urlGenerator, array $pageConfig, array $locales)
+    public function __construct(RoutingHelper $routingHelper, array $pageConfig, array $locales)
     {
-        $this->urlGenerator = $urlGenerator;
-        $this->pageConfig = $pageConfig;
-        $this->locales = $locales;
+        $this->routingHelper = $routingHelper;
+        $this->pageConfig    = $pageConfig;
+        $this->locales       = $locales;
     }
 
     /**
@@ -79,18 +80,32 @@ class PageValidator extends ConstraintValidator
         // Validates the controller
         if ($page->isStatic()) {
             if (!$page->isDynamicPath()) {
-                /** @var \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface $translation */
-                foreach ($page->getTranslations() as $translation) {
-                    $current = $translation->getPath();
-                    $locale = $translation->getLocale();
-                    $expected = $this->urlGenerator->generate($page->getRoute(), ['_locale' => $locale]);
-                    if (0 === strpos($expected, '/app_dev.php/')) {
-                        $expected = substr($expected, strlen('/app_dev.php'));
-                    }
-                    if (0 === strpos($expected, '/'.$locale.'/')) {
-                        $expected = substr($expected, strlen('/'.$locale));
-                    }
-                    if ($current != $expected) {
+                if (null === $route = $this->routingHelper->findRouteByName($page->getRoute())) {
+                    $this->context
+                        ->buildViolation($constraint->routeNotFound)
+                        ->atPath('route')
+                        ->addViolation();
+                } else {
+                    /** @var \Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface $translation */
+                    foreach ($page->getTranslations() as $translation) {
+                        $current = Util::buildPath($translation->getPath(), $route->getDefaults());
+                        $locale  = $translation->getLocale();
+
+                        $expected = $this
+                            ->routingHelper
+                            ->getRouter()
+                            ->generate($page->getRoute(), ['_locale' => $locale]);
+
+                        if (0 === strpos($expected, '/app_dev.php/')) {
+                            $expected = substr($expected, 12);
+                        }
+                        if (0 === strpos($expected, '/' . $locale . '/')) {
+                            $expected = substr($expected, strlen('/' . $locale));
+                        }
+                        if ($current === $expected) {
+                            continue;
+                        }
+
                         $this->context
                             ->buildViolation($constraint->invalidPath)
                             ->atPath('translations[' . $locale . '].path')
@@ -100,13 +115,11 @@ class PageValidator extends ConstraintValidator
             }
         } else {
             // Check that the parent page is not locked
-            if (null !== $parentPage = $page->getParent()) {
-                if ($parentPage->isLocked()) {
-                    $this->context
-                        ->buildViolation($constraint->invalidParent)
-                        ->atPath('parent')
-                        ->addViolation();
-                }
+            if (!is_null($parentPage = $page->getParent()) && $parentPage->isLocked()) {
+                $this->context
+                    ->buildViolation($constraint->invalidParent)
+                    ->atPath('parent')
+                    ->addViolation();
             }
             // Check that the controller is defined
             if (null === $controller = $page->getController()) {

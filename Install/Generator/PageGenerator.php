@@ -3,8 +3,11 @@
 namespace Ekyna\Bundle\CmsBundle\Install\Generator;
 
 use Ekyna\Bundle\CmsBundle\Entity\Seo;
+use Ekyna\Bundle\CmsBundle\Helper\RoutingHelper;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
+use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\OptionsResolver\Options;
@@ -69,9 +72,9 @@ class PageGenerator
     private $menuRepository;
 
     /**
-     * @var \Symfony\Component\Routing\RouteCollection
+     * @var RoutingHelper
      */
-    private $routes;
+    private $routingHelper;
 
     /**
      * @var OptionsResolver
@@ -99,27 +102,20 @@ class PageGenerator
     {
         $this->output = $output;
 
-        /** @var \Symfony\Component\Routing\RouterInterface|\JMS\I18nRoutingBundle\Router\I18nRouter $router */
-        $router = $container->get('router');
-        $i18nRouterClass = 'JMS\I18nRoutingBundle\Router\I18nRouterInterface';
-        if (interface_exists($i18nRouterClass) && $router instanceof $i18nRouterClass) {
-            $this->routes = $router->getOriginalRouteCollection();
-        } else {
-            $this->routes = $router->getRouteCollection();
-        }
         $this->homeRouteName = $container->getParameter('ekyna_cms.home_route');
 
-        $this->pageOperator = $container->get('ekyna_cms.page.operator');
-        $this->menuOperator = $container->get('ekyna_cms.menu.operator');
-        $this->validator = $container->get('validator');
-        $this->translator = $container->get('translator');
-        $this->locales = $container->getParameter('locales');
-        $this->seoRepository = $container->get('ekyna_cms.seo.repository');
+        $this->pageOperator   = $container->get('ekyna_cms.page.operator');
+        $this->menuOperator   = $container->get('ekyna_cms.menu.operator');
+        $this->validator      = $container->get('validator');
+        $this->translator     = $container->get('translator');
+        $this->locales        = $container->getParameter('locales');
+        $this->seoRepository  = $container->get('ekyna_cms.seo.repository');
         $this->pageRepository = $container->get('ekyna_cms.page.repository');
         $this->menuRepository = $container->get('ekyna_cms.menu.repository');
+        $this->routingHelper  = $container->get(RoutingHelper::class);
     }
 
-    public function generatePages()
+    public function generatePages(): void
     {
         $this->configureOptionsResolver();
         $this->gatherRoutesDefinitions();
@@ -129,7 +125,7 @@ class PageGenerator
         $this->removeNonMappedPages();
     }
 
-    private function configureOptionsResolver()
+    private function configureOptionsResolver(): void
     {
         /**
          * Seo options
@@ -183,7 +179,7 @@ class PageGenerator
                 'parent'   => null,
                 'locked'   => true,
                 'advanced' => false,
-                'dynamic' => false,
+                'dynamic'  => false,
                 'position' => 0,
                 'seo'      => null,
                 'menus'    => [],
@@ -200,7 +196,7 @@ class PageGenerator
             ->setAllowedTypes('menus', 'array')
             ->setNormalizer('locked', function (Options $options, $value) {
                 // Lock pages with parameters in path
-                if (preg_match('#\{.*\}#', $options['path'])) {
+                if (preg_match('#{[^}]+}#', $options['path'])) {
                     return true;
                 }
 
@@ -230,52 +226,22 @@ class PageGenerator
     }
 
     /**
-     * Resolve route options.
-     *
-     * @param Route  $route
-     * @param string $routeName
-     *
-     * @return array
-     * @throws \InvalidArgumentException
+     * Creates a tree of RouteDefinition.
      */
-    private function resolveRouteOptions(Route $route, $routeName)
+    private function gatherRoutesDefinitions(): void
     {
-        if (null === $cmsOptions = $route->getOption('_cms')) {
-            throw new \InvalidArgumentException(sprintf('Route "%s" does not have "_cms" defaults attributes.', $routeName));
+        if (!$route = $this->routingHelper->findRouteByName($this->homeRouteName)) {
+            throw new RuntimeException("Route '$this->homeRouteName' not found.");
         }
 
-        $path = $route->getPath();
-
-        $dynamic = false;
-        if (preg_match_all('~\{([^\}]+)\}~', $path, $matches, PREG_SET_ORDER)) {
-            foreach ($matches as $match) {
-                // If route parameter does not have a default value
-                if (!array_key_exists($match[1], $route->getDefaults())) {
-                    $dynamic = true;
-                    break;
-                }
-            }
-        }
-
-        return $this->optionsResolver->resolve(array_merge($cmsOptions, [
-            'path'    => $path,
-            'dynamic' => $dynamic,
-        ]));
-    }
-
-    /**
-     * Creates a tree of RouteDefinition
-     *
-     * @throws \RuntimeException
-     */
-    private function gatherRoutesDefinitions()
-    {
-        $route = $this->findRouteByName($this->homeRouteName);
-        $this->homeDefinition = new RouteDefinition($this->homeRouteName, $this->resolveRouteOptions($route, $this->homeRouteName));
+        $this->homeDefinition = new RouteDefinition(
+            $this->homeRouteName,
+            $this->resolveRouteOptions($route, $this->homeRouteName)
+        );
 
         /** @var Route $route */
-        foreach ($this->routes as $name => $route) {
-            if ($this->homeRouteName !== $name && null !== $cms = $route->getOption('_cms')) {
+        foreach ($this->routingHelper->getRoutes() as $name => $route) {
+            if (($name !== $this->homeRouteName) && !is_null($cms = $route->getOption('_cms'))) {
                 if (array_key_exists('name', $cms)) {
                     $this->createRouteDefinition($name, $route);
                 }
@@ -286,14 +252,37 @@ class PageGenerator
     }
 
     /**
+     * Resolves route options.
+     *
+     * @param Route  $route
+     * @param string $routeName
+     *
+     * @return array
+     */
+    private function resolveRouteOptions(Route $route, string $routeName): array
+    {
+        if (null === $cmsOptions = $route->getOption('_cms')) {
+            throw new InvalidArgumentException(sprintf(
+                'Route "%s" does not have "_cms" defaults attributes.',
+                $routeName
+            ));
+        }
+
+        return $this->optionsResolver->resolve(array_merge($cmsOptions, [
+            'path'    => Util::buildPath($route->getPath(), $route->getDefaults()),
+            'dynamic' => Util::isDynamic($route),
+        ]));
+    }
+
+    /**
      * Creates a route definition
      *
-     * @param string                           $routeName
-     * @param \Symfony\Component\Routing\Route $route
+     * @param string $routeName
+     * @param Route  $route
      *
      * @return RouteDefinition
      */
-    private function createRouteDefinition($routeName, Route $route)
+    private function createRouteDefinition(string $routeName, Route $route): RouteDefinition
     {
         if (null === $definition = $this->findRouteDefinitionByRouteName($routeName)) {
             $definition = new RouteDefinition($routeName, $this->resolveRouteOptions($route, $routeName));
@@ -303,7 +292,9 @@ class PageGenerator
                 $this->homeDefinition->appendChild($definition);
             } else {
                 // Creates parent route definition if needed
-                $parentRoute = $this->findRouteByName($parentRouteName);
+                if (!$parentRoute = $this->routingHelper->findRouteByName($parentRouteName)) {
+                    throw new RuntimeException("Route '$parentRouteName' not found.");
+                }
                 $parentDefinition = $this->createRouteDefinition($parentRouteName, $parentRoute);
                 $parentDefinition->appendChild($definition);
             }
@@ -313,31 +304,13 @@ class PageGenerator
     }
 
     /**
-     * Finds a route by name
-     *
-     * @param string $name
-     *
-     * @throws \RuntimeException
-     *
-     * @return \Symfony\Component\Routing\Route|NULL
-     */
-    private function findRouteByName($name)
-    {
-        if (null === $route = $this->routes->get($name)) {
-            throw new \RuntimeException(sprintf('Route "%s" not found.', $name));
-        }
-
-        return $route;
-    }
-
-    /**
      * Finds a RouteDefinition by route name
      *
      * @param string $routeName
      *
-     * @return RouteDefinition
+     * @return RouteDefinition|null
      */
-    private function findRouteDefinitionByRouteName($routeName)
+    private function findRouteDefinitionByRouteName(string $routeName): ?RouteDefinition
     {
         if ($routeName === $this->homeRouteName) {
             return $this->homeDefinition;
@@ -347,32 +320,18 @@ class PageGenerator
     }
 
     /**
-     * Finds a page by route
-     *
-     * @param string $routeName
-     *
-     * @return PageInterface|NULL
-     */
-    private function findPageByRouteName($routeName)
-    {
-        return $this->pageRepository->findOneBy(['route' => $routeName]);
-    }
-
-    /**
      * Creates a Page from given Route
      *
-     * @param RouteDefinition $definition
-     * @param PageInterface   $parentPage
+     * @param RouteDefinition    $definition
+     * @param PageInterface|null $parentPage
      *
-     * @throws \InvalidArgumentException
-     *
-     * @return boolean
+     * @return bool
      */
-    private function createPage(RouteDefinition $definition, PageInterface $parentPage = null)
+    private function createPage(RouteDefinition $definition, PageInterface $parentPage = null): bool
     {
         $routeName = $definition->getRouteName();
-        if (null !== $page = $this->findPageByRouteName($routeName)) {
 
+        if (null !== $page = $this->findPageByRouteName($routeName)) {
             $updated = false;
             if ($page->getName() !== $definition->getPageName()) {
                 $page->setName($definition->getPageName());
@@ -393,10 +352,10 @@ class PageGenerator
 
             // Watch for paths update
             foreach ($this->locales as $locale) {
-                if ($routeName === $path = $this->translator->trans(
-                        $routeName, [], $this->routesTranslationDomain, $locale
-                    )
-                ) {
+                $path = $this->translator->trans(
+                    $routeName, [], $this->routesTranslationDomain, $locale
+                );
+                if ($routeName === $path) {
                     $path = $definition->getPath();
                 }
 
@@ -442,6 +401,7 @@ class PageGenerator
                 ->setParent($parentPage)
                 ->setSeo($seo);
 
+            // TODO Dynamic check already done ?
             $dynamic = false;
             foreach ($this->locales as $locale) {
                 $title = $seoTitle = $definition->getPageName();
@@ -453,10 +413,10 @@ class PageGenerator
                 $seoTranslation
                     ->setTitle($seoTitle);
 
-                if ($routeName === $path = $this->translator->trans(
-                        $routeName, [], $this->routesTranslationDomain, $locale
-                    )
-                ) {
+                $path = $this->translator->trans(
+                    $routeName, [], $this->routesTranslationDomain, $locale
+                );
+                if ($routeName === $path) {
                     $path = $definition->getPath();
                 }
 
@@ -496,6 +456,58 @@ class PageGenerator
         }
 
         return true;
+    }
+
+    /**
+     * Finds a page by route
+     *
+     * @param string $routeName
+     *
+     * @return PageInterface|NULL
+     */
+    private function findPageByRouteName($routeName)
+    {
+        return $this->pageRepository->findOneBy(['route' => $routeName]);
+    }
+
+    /**
+     * Validates the element.
+     *
+     * @param object $element
+     *
+     * @return bool
+     */
+    private function validate($element)
+    {
+        $violationList = $this->validator->validate($element, null, ['Generator']);
+        if (0 < $violationList->count()) {
+            $this->output->writeln('<error>Invalid element</error>');
+            /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
+            foreach ($violationList as $violation) {
+                $this->output->writeln(sprintf('<error>%s : %s</error>', $violation->getPropertyPath(),
+                    $violation->getMessage()));
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Outputs the page action.
+     *
+     * @param string $name
+     * @param string $action
+     */
+    private function outputPageAction($name, $action)
+    {
+        $this->output->writeln(sprintf(
+            '- <comment>%s</comment> %s %s.',
+            $name,
+            str_pad('.', 44 - mb_strlen($name), '.', STR_PAD_LEFT),
+            $action
+        ));
     }
 
     /**
@@ -567,44 +579,5 @@ class PageGenerator
                 $this->pageOperator->delete($page);
             }
         }
-    }
-
-    /**
-     * Validates the element.
-     *
-     * @param object $element
-     *
-     * @return bool
-     */
-    private function validate($element)
-    {
-        $violationList = $this->validator->validate($element, null, ['Generator']);
-        if (0 < $violationList->count()) {
-            $this->output->writeln('<error>Invalid element</error>');
-            /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
-            foreach ($violationList as $violation) {
-                $this->output->writeln(sprintf('<error>%s : %s</error>', $violation->getPropertyPath(), $violation->getMessage()));
-            }
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Outputs the page action.
-     *
-     * @param string $name
-     * @param string $action
-     */
-    private function outputPageAction($name, $action)
-    {
-        $this->output->writeln(sprintf(
-            '- <comment>%s</comment> %s %s.',
-            $name,
-            str_pad('.', 44 - mb_strlen($name), '.', STR_PAD_LEFT),
-            $action
-        ));
     }
 }

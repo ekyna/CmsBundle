@@ -13,11 +13,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MenuGenerator
 {
     /**
-     * @var OutputInterface
-     */
-    private $output;
-
-    /**
      * @var \Ekyna\Component\Resource\Operator\ResourceOperatorInterface
      */
     private $operator;
@@ -36,6 +31,11 @@ class MenuGenerator
      * @var array
      */
     private $locales;
+
+    /**
+     * @var OutputInterface
+     */
+    private $output;
 
 
     /**
@@ -66,7 +66,7 @@ class MenuGenerator
                 str_pad('.', 44 - mb_strlen($name), '.', STR_PAD_LEFT)
             ));
 
-            if (null !== $menu = $this->findMenuByName($name)) {
+            if (null !== $menu = $this->repository->findOneByName($name)) {
                 $this->output->writeln('already exists.');
                 continue;
             }
@@ -88,17 +88,5 @@ class MenuGenerator
 
             $this->output->writeln('created.');
         }
-    }
-
-    /**
-     * Finds the menu by its name.
-     *
-     * @param string $name
-     *
-     * @return \Ekyna\Bundle\CmsBundle\Entity\Menu|null
-     */
-    public function findMenuByName($name)
-    {
-        return $this->repository->findOneBy(['name' => $name]);
     }
 }

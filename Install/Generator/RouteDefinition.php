@@ -330,6 +330,7 @@ class RouteDefinition
             if (array_key_exists($routeName, $this->children)) {
                 return $this->children[$routeName];
             }
+
             /** @var RouteDefinition $definition */
             foreach ($this->children as $definition) {
                 if (null !== $child = $definition->findChildByRouteName($routeName)) {

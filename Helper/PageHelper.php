@@ -109,7 +109,7 @@ class PageHelper
             return null;
         }
 
-        return $this->repository->findOneByRoute($route);
+        return $this->repository->findOneByRoute($route, true);
     }
 
     /**

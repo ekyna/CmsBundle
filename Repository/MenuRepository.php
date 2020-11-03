@@ -3,6 +3,8 @@
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Doctrine\ORM\Query\Expr;
+use Ekyna\Bundle\CmsBundle\Exception\InvalidArgumentException;
+use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
 use Ekyna\Component\Resource\Doctrine\ORM\TranslatableResourceRepositoryInterface;
 use Ekyna\Component\Resource\Doctrine\ORM\Util\TranslatableResourceRepositoryTrait;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
@@ -21,10 +23,9 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
      *
      * @param string $name
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\MenuInterface|null
-     * @throws \InvalidArgumentException
+     * @return MenuInterface|null
      */
-    public function findOneByName($name)
+    public function findOneByName(string $name): ?MenuInterface
     {
         $as = $this->getAlias();
         $qb = $this->getQueryBuilder();
@@ -34,11 +35,11 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
         $parameters = ['name' => $name];
 
         if (0 < strpos($name, ':')) {
-            list($rootName, $menuName) = explode(':', $name);
+            [$rootName, $menuName] = explode(':', $name);
 
-            /** @var \Ekyna\Bundle\CmsBundle\Model\MenuInterface $root */
+            /** @var MenuInterface $root */
             if (null === $root = $this->findOneBy(['name' => $rootName])) {
-                throw new \InvalidArgumentException(sprintf('Root menu "%s" not found.', $rootName));
+                throw new InvalidArgumentException(sprintf('Root menu "%s" not found.', $rootName));
             }
 
             $qb->andWhere($qb->expr()->eq($as . '.root', ':root'));
@@ -63,7 +64,7 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
      *
      * @return array
      */
-    public function findForProvider()
+    public function findForProvider(): array
     {
         $qb = $this->createQueryBuilder('m');
         $qb
