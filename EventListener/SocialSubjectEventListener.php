@@ -6,7 +6,7 @@ use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\SocialButtonsBundle\Event\SubjectEvent;
 use Ekyna\Bundle\SocialButtonsBundle\Event\SubjectEvents;
-use Ekyna\Bundle\SocialButtonsBundle\Share\Subject;
+use Ekyna\Bundle\SocialButtonsBundle\Model\Subject;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Class SocialSubjectEventListener
  * @package Ekyna\Bundle\CmsBundle\EventListener
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class SocialSubjectEventListener implements EventSubscriberInterface
 {
@@ -32,12 +32,12 @@ class SocialSubjectEventListener implements EventSubscriberInterface
     /**
      * Constructor.
      *
-     * @param PageHelper               $pageHelper
-     * @param UrlGeneratorInterface    $urlGenerator
+     * @param PageHelper            $pageHelper
+     * @param UrlGeneratorInterface $urlGenerator
      */
     public function __construct(PageHelper $pageHelper, UrlGeneratorInterface $urlGenerator)
     {
-        $this->pageHelper = $pageHelper;
+        $this->pageHelper   = $pageHelper;
         $this->urlGenerator = $urlGenerator;
     }
 
@@ -46,7 +46,7 @@ class SocialSubjectEventListener implements EventSubscriberInterface
      *
      * @param SubjectEvent $event
      */
-    public function onResolveSubject(SubjectEvent $event)
+    public function onResolveSubject(SubjectEvent $event): void
     {
         $params = $event->getParameters();
 
@@ -66,11 +66,12 @@ class SocialSubjectEventListener implements EventSubscriberInterface
      *
      * @return Subject|null
      */
-    private function createPageSubject()
+    private function createPageSubject(): ?Subject
     {
         if (null !== $page = $this->pageHelper->getCurrent()) {
             return $this->createSubjectFromPage($page);
         }
+
         return null;
     }
 
@@ -79,11 +80,12 @@ class SocialSubjectEventListener implements EventSubscriberInterface
      *
      * @return Subject|null
      */
-    private function createGlobalSubject()
+    private function createGlobalSubject(): ?Subject
     {
         if (null !== $home = $this->pageHelper->getHomePage()) {
             return $this->createSubjectFromPage($home);
         }
+
         return null;
     }
 
@@ -91,14 +93,15 @@ class SocialSubjectEventListener implements EventSubscriberInterface
      * Creates the social share subject from the given page.
      *
      * @param PageInterface $page
+     *
      * @return Subject|null
      */
-    private function createSubjectFromPage(PageInterface $page)
+    private function createSubjectFromPage(PageInterface $page): ?Subject
     {
         try {
             $url = $this->urlGenerator->generate($page->getRoute(), [], UrlGeneratorInterface::ABSOLUTE_URL);
 
-            $subject = new Subject();
+            $subject        = new Subject();
             $subject->title = $page->getSeo()->getTitle();
             $subject->url   = $url;
 
