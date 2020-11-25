@@ -1,15 +1,6 @@
 module.exports = function (grunt, options) {
     return {
-        cms_font_css: {
-            src: 'src/Ekyna/Bundle/CmsBundle/Resources/private/css/editor-icons.css',
-            dest: 'src/Ekyna/Bundle/CmsBundle/Resources/public/css/editor-icons.css',
-            options: {
-                process: function (content, srcpath) {
-                    return content.replace(/fonts/g, '/bundles/ekynacms/font');
-                }
-            }
-        },
-        cms_font_files: {
+        cms_font: {
             expand: true,
             cwd: 'src/Ekyna/Bundle/CmsBundle/Resources/private/font',
             src: ['**'],

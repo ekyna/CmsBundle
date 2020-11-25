@@ -30,5 +30,5 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link href="{{ asset('bundles/ekynacms/css/slide-show.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ absolute_url(asset('bundles/ekynacms/css/slide-show.css')) }}" rel="stylesheet" type="text/css" />
 {% endblock stylesheets %}

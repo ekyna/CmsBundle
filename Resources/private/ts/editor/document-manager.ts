@@ -1694,12 +1694,13 @@ export class DocumentManager {
             return;
         }
 
-        if (0 == $document.find('link#cms-editor-stylesheet').length) {
+        if (0 === $document.find('link#cms-editor-stylesheet').length) {
             let stylesheet: HTMLLinkElement = document.createElement('link');
             stylesheet.id = 'cms-editor-stylesheet';
-            stylesheet.href = this.config.css_path;
-            stylesheet.type = 'text/css';
+            stylesheet.href = document.documentElement.getAttribute('data-asset-base-url') + this.config.css_path;
+            stylesheet.media = 'screen';
             stylesheet.rel = 'stylesheet';
+            stylesheet.type = 'text/css';
             $document.find('head').append(stylesheet);
         }
 

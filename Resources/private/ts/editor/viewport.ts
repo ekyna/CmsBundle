@@ -5,7 +5,7 @@ import * as Backbone from 'backbone';
 import * as _ from 'underscore';
 
 import Dispatcher from './dispatcher';
-import {Util, OffsetInterface, Button} from './ui';
+import {Button, OffsetInterface, Util} from './ui';
 
 /**
  * SizeInterface
@@ -148,7 +148,7 @@ export class ViewportView extends Backbone.View<ViewportModel> {
      * Resizes the viewport.
      */
     private resize(): void {
-        let viewport:HTMLElement = <HTMLElement>window.document.querySelector('#editor-viewport'),
+        let viewport: HTMLElement = <HTMLElement>window.document.querySelector('#editor-viewport'),
             width: number = viewport.offsetWidth,
             //height: number = viewport.offsetHeight,
             size: SizeInterface = this.model.get('size'),

@@ -1,8 +1,4 @@
 module.exports = {
-    'copy:cms_font': [
-        'copy:cms_font_css',
-        'copy:cms_font_files'
-    ],
     'build:cms_css': [
         'less:cms',
         'cssmin:cms_less',

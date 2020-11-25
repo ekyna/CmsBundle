@@ -4,7 +4,10 @@ namespace Ekyna\Bundle\CmsBundle\EventListener;
 
 use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
+use League\Uri\Modifiers\AppendQuery;
+use League\Uri\Uri;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -62,6 +65,17 @@ class KernelEventListener implements EventSubscriberInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::REQUEST  => ['onKernelRequest', 0],
+            KernelEvents::RESPONSE => ['onKernelResponse', 0],
+        ];
+    }
+
+    /**
      * Kernel request event handler.
      *
      * @param GetResponseEvent $event
@@ -74,7 +88,7 @@ class KernelEventListener implements EventSubscriberInterface
 
         $request = $event->getRequest();
 
-        if (1 === intval($request->query->get('cms-editor-enable', 0))) {
+        if (1 === intval($request->query->get(Editor::URL_PARAMETER, 0))) {
             $this->editor->setEnabled(true);
         }
         if (0 < intval($width = $request->request->get('cms_viewport_width', 0))) {
@@ -102,25 +116,23 @@ class KernelEventListener implements EventSubscriberInterface
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        if ($this->editor->isEnabled()) {
-            $event
-                ->getResponse()
-                ->setSharedMaxAge(0)
-                ->setMaxAge(0)
-                ->setExpires(null)
-                ->setLastModified(null)
-                ->setPrivate();
+        if (!$this->editor->isEnabled()) {
+            return;
         }
-    }
 
-    /**
-     * @inheritdoc
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            KernelEvents::REQUEST  => ['onKernelRequest', 0],
-            KernelEvents::RESPONSE => ['onKernelResponse', 0],
-        ];
+        $response = $event->getResponse();
+
+        if ($response->getStatusCode() === Response::HTTP_FOUND && $response->headers->has('Location')) {
+            $uri = Uri::createFromString($response->headers->get('Location'));
+            $uri = (new AppendQuery(Editor::URL_PARAMETER . '=1'))->process($uri);
+            $response->headers->set('Location', (string)$uri);
+        }
+
+        $response
+            ->setSharedMaxAge(0)
+            ->setMaxAge(0)
+            ->setExpires(null)
+            ->setLastModified(null)
+            ->setPrivate();
     }
 }

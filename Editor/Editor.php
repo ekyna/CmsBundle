@@ -19,11 +19,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class Editor
 {
-    const VIEWPORT_PHONE   = 'phone';
-    const VIEWPORT_TABLET  = 'tablet';
-    const VIEWPORT_LAPTOP  = 'laptop';
-    const VIEWPORT_DESKTOP = 'desktop';
-    const VIEWPORT_ADJUST  = 'adjust';
+    public const URL_PARAMETER = 'cms-editor-enable'; // Used in Typescript files
+
+    private const VIEWPORT_PHONE   = 'phone';
+    private const VIEWPORT_TABLET  = 'tablet';
+    private const VIEWPORT_LAPTOP  = 'laptop';
+    private const VIEWPORT_DESKTOP = 'desktop';
+    private const VIEWPORT_ADJUST  = 'adjust';
 
 
     /**

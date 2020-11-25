@@ -1,6 +1,6 @@
 {% spaceless %}
 <!DOCTYPE html>
-<html lang="{{ app.request.locale }}"{{ cms_document_data() }}{% if app.debug %} data-debug="1"{% endif %}>
+<html lang="{{ app.request.locale }}"{{ ui_assets_base_url() }}{{ cms_document_data() }}{% if app.debug %} data-debug="1"{% endif %}>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,10 +15,10 @@
 
     {% block stylesheets -%}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-        <link href="{{ asset('bundles/ekynacore/css/fontawesome.css') }}" rel="stylesheet" type="text/css" />
-        <link href="{{ asset('bundles/ekynacore/css/glyphicons.css') }}" rel="stylesheet" type="text/css" />
-        <link href="{{ asset('bundles/ekynacms/css/bootstrap-content.css') }}" rel="stylesheet" type="text/css" />
-        <link href="{{ asset('bundles/ekynacookieconsent/css/cookie-consent.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ absolute_url(asset('bundles/ekynacore/css/fontawesome.css')) }}" rel="stylesheet" type="text/css" />
+        <link href="{{ absolute_url(asset('bundles/ekynacore/css/glyphicons.css')) }}" rel="stylesheet" type="text/css" />
+        <link href="{{ absolute_url(asset('bundles/ekynacms/css/bootstrap-content.css')) }}" rel="stylesheet" type="text/css" />
+        <link href="{{ absolute_url(asset('bundles/ekynacookieconsent/css/cookie-consent.css')) }}" rel="stylesheet" type="text/css" />
     {%- endblock stylesheets %}
 
     {{ ui_fonts_stylesheets() }}
