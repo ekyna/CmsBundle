@@ -17,21 +17,10 @@ class BlockTranslation extends AbstractTranslation implements BlockTranslationIn
 
 
     /**
-     * @var integer
+     * @var int
      */
     protected $id;
 
-
-    /**
-     * Clones the block translation.
-     */
-    public function __clone()
-    {
-        if ($this->id) {
-            $this->id = null;
-            $this->translatable = null;
-        }
-    }
 
     /**
      * @inheritdoc

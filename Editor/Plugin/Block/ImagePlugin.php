@@ -103,7 +103,7 @@ class ImagePlugin extends AbstractPlugin
 
         $block
             ->setData(array_merge(self::DEFAULT_DATA, $data))
-            ->translate($this->localeProvider->getCurrentLocale(), true)
+            ->translate($this->localeProvider->getCurrentLocale())
             ->setData(self::DEFAULT_TRANSLATION_DATA);
     }
 
@@ -352,6 +352,9 @@ class ImagePlugin extends AbstractPlugin
      * Changes the block and translation data to follow the 2019-03-11 changes (poster and video per translation).
      *
      * @param BlockInterface $block
+     *
+     * @deprecated
+     * @TODO Remove
      */
     private function upgrade(BlockInterface $block)
     {

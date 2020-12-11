@@ -18,8 +18,8 @@ use Ekyna\Component\Resource\Model\TranslatableTrait;
  */
 class Tab implements TranslatableInterface, SortableInterface
 {
-    use TranslatableTrait,
-        SortableTrait;
+    use TranslatableTrait;
+    use SortableTrait;
 
     /**
      * @var string

@@ -16,13 +16,13 @@ use Ekyna\Component\Resource\Model as RM;
  */
 class Page extends RM\AbstractTranslatable implements Cms\PageInterface
 {
-    use Cms\ContentSubjectTrait,
-        Cms\SeoSubjectTrait,
-        RM\TimestampableTrait,
-        RM\TaggedEntityTrait;
+    use Cms\ContentSubjectTrait;
+    use Cms\SeoSubjectTrait;
+    use RM\TimestampableTrait;
+    use RM\TaggedEntityTrait;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $id;
 
@@ -32,22 +32,22 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     protected $parent;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $left;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $right;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $root;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $level;
 
@@ -67,12 +67,12 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     protected $route;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $static;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $locked;
 
@@ -82,17 +82,17 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     protected $controller;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $advanced;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $dynamicPath;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $enabled;
 
@@ -116,11 +116,11 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * Returns a string representation
      *
-     * @return string
+     * @return string|null
      */
-    public function __toString()
+    public function __toString(): ?string
     {
-        return $this->getName();
+        return $this->name;
     }
 
     /**

@@ -19,7 +19,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     use RM\TaggedEntityTrait;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $id;
 
@@ -29,22 +29,22 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     protected $parent;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $left;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $right;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $root;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $level;
 
@@ -79,12 +79,12 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     protected $attributes;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $locked;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $enabled;
 
@@ -117,9 +117,9 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * Returns the string representation.
      *
-     * @return string
+     * @return string|null
      */
-    public function __toString()
+    public function __toString(): ?string
     {
         return $this->getTitle();
     }

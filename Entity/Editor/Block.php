@@ -15,10 +15,10 @@ use Ekyna\Component\Resource\Model as RM;
  */
 class Block extends RM\AbstractTranslatable implements EM\BlockInterface
 {
-    use EM\DataTrait,
-        EM\LayoutTrait,
-        RM\SortableTrait,
-        RM\TimestampableTrait;
+    use EM\DataTrait;
+    use EM\LayoutTrait;
+    use RM\SortableTrait;
+    use RM\TimestampableTrait;
 
     use RM\TaggedEntityTrait {
         getEntityTag as traitGetEntityTag;

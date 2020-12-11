@@ -19,7 +19,7 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     use RM\TaggedEntityTrait;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $id;
 
@@ -34,12 +34,12 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     protected $priority;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $follow;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $index;
 
@@ -81,9 +81,9 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     /**
      * Returns the string representation.
      *
-     * @return string
+     * @return string|null
      */
-    public function __toString()
+    public function __toString(): ?string
     {
         return $this->getTitle();
     }

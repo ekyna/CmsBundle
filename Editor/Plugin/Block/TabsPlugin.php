@@ -72,7 +72,7 @@ class TabsPlugin extends AbstractPlugin
             ->setAlign('left')
             ->setCurrentLocale($this->localeProvider->getCurrentLocale())
             ->setFallbackLocale($this->localeProvider->getFallbackLocale())
-            ->translate(null, true)
+            ->translate($this->localeProvider->getCurrentLocale())
                 ->setTitle('Default tabs')
                 ->setContent('<p>Edit the container to configure tabs.</p>')
                 ->setButtonLabel('Some button')
@@ -82,7 +82,7 @@ class TabsPlugin extends AbstractPlugin
         $tab
             ->setCurrentLocale($this->localeProvider->getCurrentLocale())
             ->setFallbackLocale($this->localeProvider->getFallbackLocale())
-            ->translate(null, true)
+            ->translate($this->localeProvider->getCurrentLocale())
                 ->setTitle('Default tab');
 
         $tabs->addTab($tab);

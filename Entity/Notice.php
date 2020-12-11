@@ -2,6 +2,7 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
+use DateTime;
 use Ekyna\Bundle\CmsBundle\Model\NoticeInterface;
 use Ekyna\Bundle\CmsBundle\Model\NoticeTranslationInterface;
 use Ekyna\Bundle\CmsBundle\Model\Themes;
@@ -38,12 +39,12 @@ class Notice extends AbstractTranslatable implements NoticeInterface
     private $icon;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $startAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $endAt;
 
@@ -59,9 +60,11 @@ class Notice extends AbstractTranslatable implements NoticeInterface
     }
 
     /**
-     * @inheritDoc
+     * Returns the string representation.
+     *
+     * @return string|null
      */
-    public function __toString()
+    public function __toString(): ?string
     {
         return $this->name;
     }
@@ -131,7 +134,7 @@ class Notice extends AbstractTranslatable implements NoticeInterface
     /**
      * @inheritDoc
      */
-    public function getStartAt(): ?\DateTime
+    public function getStartAt(): ?DateTime
     {
         return $this->startAt;
     }
@@ -139,7 +142,7 @@ class Notice extends AbstractTranslatable implements NoticeInterface
     /**
      * @inheritDoc
      */
-    public function setStartAt(\DateTime $date): NoticeInterface
+    public function setStartAt(DateTime $date): NoticeInterface
     {
         $this->startAt = $date;
 
@@ -149,7 +152,7 @@ class Notice extends AbstractTranslatable implements NoticeInterface
     /**
      * @inheritDoc
      */
-    public function getEndAt(): ?\DateTime
+    public function getEndAt(): ?DateTime
     {
         return $this->endAt;
     }
@@ -157,7 +160,7 @@ class Notice extends AbstractTranslatable implements NoticeInterface
     /**
      * @inheritDoc
      */
-    public function setEndAt(\DateTime $date): NoticeInterface
+    public function setEndAt(DateTime $date): NoticeInterface
     {
         $this->endAt = $date;
 

@@ -77,7 +77,7 @@ class VideoPlugin extends AbstractPlugin
 
         $block
             ->setData(array_merge(self::DEFAULT_DATA, $data))
-            ->translate($this->localeProvider->getCurrentLocale(), true)
+            ->translate($this->localeProvider->getCurrentLocale())
             ->setData(self::DEFAULT_TRANSLATION_DATA);
     }
 
@@ -120,7 +120,7 @@ class VideoPlugin extends AbstractPlugin
 
         $data = array_replace_recursive(
             $block->getData(),
-            $block->translate($this->localeProvider->getCurrentLocale())->getData()
+            $block->translate($this->localeProvider->getCurrentLocale(), true)->getData()
         );
 
         $view = parent::createWidget($block, $adapter, $options, $position);

@@ -42,7 +42,7 @@ class TinymcePlugin extends AbstractPlugin
         ], $data);
 
         $block
-            ->translate($this->localeProvider->getCurrentLocale(), true)
+            ->translate($this->localeProvider->getCurrentLocale())
             ->setData('content', $data['default_content']);
     }
 
@@ -95,7 +95,7 @@ class TinymcePlugin extends AbstractPlugin
     {
         $view = parent::createWidget($block, $adapter, $options, $position);
 
-        $translationData = $block->translate($this->localeProvider->getCurrentLocale())->getData();
+        $translationData = $block->translate($this->localeProvider->getCurrentLocale(), true)->getData();
         if (array_key_exists('content', $translationData)) {
             $view->content = $translationData['content'];
         } else {
