@@ -67,31 +67,25 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
      */
     public function __clone()
     {
-        if ($this->id) {
-            $this->id = null;
+        parent::__clone();
 
-            $translations = $this->translations->toArray();
-            $this->translations = new ArrayCollection();
-            foreach ($translations as $translation) {
-                $this->addTranslation(clone $translation);
-            }
-        }
+        $this->id = null;
     }
 
     /**
      * Returns the string representation.
      *
-     * @return string|null
+     * @return string
      */
-    public function __toString(): ?string
+    public function __toString(): string
     {
-        return $this->getTitle();
+        return $this->getTitle() ?: 'New Seo';
     }
 
     /**
      * @inheritdoc
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }

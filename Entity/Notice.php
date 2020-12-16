@@ -62,17 +62,17 @@ class Notice extends AbstractTranslatable implements NoticeInterface
     /**
      * Returns the string representation.
      *
-     * @return string|null
+     * @return string
      */
-    public function __toString(): ?string
+    public function __toString(): string
     {
-        return $this->name;
+        return $this->name ?: 'New notice';
     }
 
     /**
      * @inheritDoc
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

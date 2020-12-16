@@ -41,7 +41,7 @@ class TabTranslation implements TranslationInterface
      *
      * @TODO Remove
      */
-    public function getId()
+    public function getId(): ?int
     {
         return null;
     }

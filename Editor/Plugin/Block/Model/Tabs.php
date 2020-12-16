@@ -49,7 +49,7 @@ class Tabs implements TranslatableInterface
      *
      * @TODO Remove
      */
-    public function getId()
+    public function getId(): ?int
     {
         return null;
     }

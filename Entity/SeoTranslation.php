@@ -13,11 +13,6 @@ use Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface;
 class SeoTranslation extends AbstractTranslation implements SeoTranslationInterface
 {
     /**
-     * @var integer
-     */
-    protected $id;
-
-    /**
      * @var string
      */
     protected $title;
@@ -34,11 +29,13 @@ class SeoTranslation extends AbstractTranslation implements SeoTranslationInterf
 
 
     /**
-     * @inheritdoc
+     * Clones the seo translation.
      */
-    public function getId()
+    public function __clone()
     {
-        return $this->id;
+        parent::__clone();
+
+        $this->title = null;
     }
 
     /**

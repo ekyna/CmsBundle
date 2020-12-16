@@ -12,25 +12,10 @@ use Ekyna\Component\Resource\Model as RM;
 class SlideTranslation extends RM\AbstractTranslation
 {
     /**
-     * @var int
-     */
-    private $id;
-
-    /**
      * @var array
      */
     private $data = [];
 
-
-    /**
-     * Returns the id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Returns the data.

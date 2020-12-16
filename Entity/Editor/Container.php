@@ -13,10 +13,10 @@ use Ekyna\Component\Resource\Model as RM;
  */
 class Container implements EM\ContainerInterface
 {
-    use EM\DataTrait,
-        EM\LayoutTrait,
-        RM\SortableTrait,
-        RM\TimestampableTrait;
+    use EM\DataTrait;
+    use EM\LayoutTrait;
+    use RM\SortableTrait;
+    use RM\TimestampableTrait;
 
     use RM\TaggedEntityTrait {
         getEntityTag as traitGetEntityTag;
@@ -73,22 +73,20 @@ class Container implements EM\ContainerInterface
      */
     public function __clone()
     {
-        if ($this->id) {
-            $this->id = null;
-            $this->content = null;
+        $this->id = null;
+        $this->content = null;
 
-            $rows = $this->rows->toArray();
-            $this->rows = new ArrayCollection();
-            foreach ($rows as $row) {
-                $this->addRow(clone $row);
-            }
+        $rows = $this->rows->toArray();
+        $this->rows = new ArrayCollection();
+        foreach ($rows as $row) {
+            $this->addRow(clone $row);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }

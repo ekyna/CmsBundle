@@ -13,23 +13,10 @@ use Ekyna\Component\Resource\Model\AbstractTranslation;
 class NoticeTranslation extends AbstractTranslation implements NoticeTranslationInterface
 {
     /**
-     * @var int
-     */
-    private $id;
-
-    /**
      * @var string
      */
-    private $content;
+    protected $content;
 
-
-    /**
-     * @inheritDoc
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     /**
      * @inheritDoc

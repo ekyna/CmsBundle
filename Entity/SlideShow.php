@@ -46,9 +46,9 @@ class SlideShow implements ResourceInterface
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->name;
+        return $this->name ?: 'New slide show';
     }
 
     /**
@@ -56,7 +56,7 @@ class SlideShow implements ResourceInterface
      *
      * @return int
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }

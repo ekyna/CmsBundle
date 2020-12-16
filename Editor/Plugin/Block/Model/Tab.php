@@ -30,7 +30,7 @@ class Tab implements TranslatableInterface, SortableInterface
     /**
      * @inheritDoc
      */
-    public function getId()
+    public function getId(): ?int
     {
         return null;
     }

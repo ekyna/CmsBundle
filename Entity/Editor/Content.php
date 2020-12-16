@@ -13,8 +13,8 @@ use Ekyna\Component\Resource\Model as RM;
  */
 class Content implements EM\ContentInterface
 {
-    use RM\TimestampableTrait,
-        RM\TaggedEntityTrait;
+    use RM\TaggedEntityTrait;
+    use RM\TimestampableTrait;
 
     /**
      * @var integer
@@ -45,21 +45,19 @@ class Content implements EM\ContentInterface
      */
     public function __clone()
     {
-        if ($this->id) {
-            $this->id = null;
+        $this->id = null;
 
-            $containers = $this->containers->toArray();
-            $this->containers = new ArrayCollection();
-            foreach ($containers as $container) {
-                $this->addContainer(clone $container);
-            }
+        $containers = $this->containers->toArray();
+        $this->containers = new ArrayCollection();
+        foreach ($containers as $container) {
+            $this->addContainer(clone $container);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }

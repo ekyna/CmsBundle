@@ -13,11 +13,6 @@ use Ekyna\Bundle\CmsBundle\Model\MenuTranslationInterface;
 class MenuTranslation extends AbstractTranslation implements MenuTranslationInterface
 {
     /**
-     * @var integer
-     */
-    protected $id;
-
-    /**
      * @var string
      */
     protected $title;
@@ -27,14 +22,6 @@ class MenuTranslation extends AbstractTranslation implements MenuTranslationInte
      */
     protected $path;
 
-
-    /**
-     * @inheritdoc
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * @inheritdoc

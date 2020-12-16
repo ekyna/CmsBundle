@@ -114,19 +114,19 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     }
 
     /**
-     * Returns a string representation
+     * Returns the string representation.
      *
-     * @return string|null
+     * @return string
      */
-    public function __toString(): ?string
+    public function __toString(): string
     {
-        return $this->name;
+        return $this->name ?: 'New page';
     }
 
     /**
      * @inheritdoc
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }

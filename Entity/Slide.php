@@ -46,9 +46,9 @@ class Slide extends RM\AbstractTranslatable implements RM\SortableInterface, RM\
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->name;
+        return $this->name ?: 'New slide';
     }
 
     /**
@@ -56,7 +56,7 @@ class Slide extends RM\AbstractTranslatable implements RM\SortableInterface, RM\
      *
      * @return int
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }

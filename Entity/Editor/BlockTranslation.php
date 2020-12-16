@@ -14,19 +14,4 @@ use Ekyna\Bundle\CmsBundle\Editor\Model\BlockTranslationInterface;
 class BlockTranslation extends AbstractTranslation implements BlockTranslationInterface
 {
     use DataTrait;
-
-
-    /**
-     * @var int
-     */
-    protected $id;
-
-
-    /**
-     * @inheritdoc
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 }

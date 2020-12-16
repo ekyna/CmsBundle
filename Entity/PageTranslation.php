@@ -13,11 +13,6 @@ use Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface;
 class PageTranslation extends AbstractTranslation implements PageTranslationInterface
 {
     /**
-     * @var integer
-     */
-    protected $id;
-
-    /**
      * @var string
      */
     protected $title;
@@ -37,14 +32,6 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
      */
     protected $path;
 
-
-    /**
-     * @inheritdoc
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * @inheritdoc

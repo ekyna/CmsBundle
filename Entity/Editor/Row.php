@@ -13,9 +13,9 @@ use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
  */
 class Row implements EM\RowInterface
 {
-    use EM\LayoutTrait,
-        RM\SortableTrait,
-        RM\TimestampableTrait;
+    use EM\LayoutTrait;
+    use RM\SortableTrait;
+    use RM\TimestampableTrait;
 
     use RM\TaggedEntityTrait {
         getEntityTag as traitGetEntityTag;
@@ -57,22 +57,20 @@ class Row implements EM\RowInterface
      */
     public function __clone()
     {
-        if ($this->id) {
-            $this->id = null;
-            $this->container = null;
+        $this->id = null;
+        $this->container = null;
 
-            $blocks = $this->blocks->toArray();
-            $this->blocks = new ArrayCollection();
-            foreach ($blocks as $block) {
-                $this->addBlock(clone $block);
-            }
+        $blocks = $this->blocks->toArray();
+        $this->blocks = new ArrayCollection();
+        foreach ($blocks as $block) {
+            $this->addBlock(clone $block);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }

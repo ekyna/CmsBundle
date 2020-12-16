@@ -30,16 +30,10 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
      */
     public function __clone()
     {
-        if ($this->id) {
-            $this->id = null;
-            $this->row = null;
+        parent::__clone();
 
-            $translations = $this->translations->toArray();
-            $this->translations = new ArrayCollection();
-            foreach ($translations as $translation) {
-                $this->addTranslation(clone $translation);
-            }
-        }
+        $this->id = null;
+        $this->row = null;
     }
 
     /**
@@ -66,7 +60,7 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
     /**
      * @inheritdoc
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
