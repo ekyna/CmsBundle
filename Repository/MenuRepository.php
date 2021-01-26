@@ -89,6 +89,24 @@ class MenuRepository extends NestedTreeRepository implements TranslatableResourc
     }
 
     /**
+     * Finds menu by route.
+     *
+     * @param string $route
+     *
+     * @return MenuInterface[]
+     */
+    public function findByRoute(string $route): array
+    {
+        $qb = $this->createQueryBuilder('m');
+
+        return $qb
+            ->andWhere($qb->expr()->eq('m.route', ':route'))
+            ->getQuery()
+            ->setParameter('route', $route)
+            ->getResult();
+    }
+
+    /**
      * @inheritdoc
      */
     protected function getAlias()

@@ -43,7 +43,7 @@ class SlideShowExtension extends AbstractExtension
     /**
      * @inheritdoc
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(
@@ -62,7 +62,7 @@ class SlideShowExtension extends AbstractExtension
      *
      * @return string
      */
-    public function renderSlideShow($slideShowOrTag, array $options = [])
+    public function renderSlideShow($slideShowOrTag, array $options = []): string
     {
         if (is_string($slideShowOrTag)) {
             $slideShowOrTag = $this->repository->findOneBy(['tag' => $slideShowOrTag]);

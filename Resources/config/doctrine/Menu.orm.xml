@@ -19,10 +19,6 @@
             <unique-constraint name="uniq_cms_menu_name" columns="name,parent_id" />
         </unique-constraints>
 
-        <entity-listeners>
-            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\MenuListener" />
-        </entity-listeners>
-
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO" />
         </id>

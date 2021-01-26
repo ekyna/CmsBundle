@@ -36,7 +36,7 @@ class MediaExtension extends AbstractExtension
     /**
      * @inheritdoc
      */
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('cms_image', [$this, 'renderImage'], ['is_safe' => ['html']]),
@@ -52,7 +52,7 @@ class MediaExtension extends AbstractExtension
      *
      * @return string
      */
-    public function renderImage(MediaInterface $image, array $columns, array $attr = [])
+    public function renderImage(MediaInterface $image, array $columns, array $attr = []): string
     {
         if (!$image->getType() === MediaTypes::IMAGE) {
             throw new InvalidArgumentException("Expected 'image' media type.");

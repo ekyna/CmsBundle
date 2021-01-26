@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\CmsBundle\Twig;
 use Ekyna\Bundle\CmsBundle\Entity\Menu;
 use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Menu\MenuProvider;
+use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoInterface;
 use Ekyna\Bundle\CmsBundle\Model\SeoSubjectInterface;
 use Ekyna\Bundle\CmsBundle\Repository\SeoRepository;
@@ -109,13 +110,13 @@ class CmsExtension extends AbstractExtension
         LocaleProviderInterface $localeProvider,
         array $config
     ) {
-        $this->settings       = $settings;
-        $this->menuProvider   = $menuProvider;
-        $this->menuHelper     = $menuHelper;
-        $this->pageHelper     = $pageHelper;
-        $this->tagManager     = $tagManager;
+        $this->settings = $settings;
+        $this->menuProvider = $menuProvider;
+        $this->menuHelper = $menuHelper;
+        $this->pageHelper = $pageHelper;
+        $this->tagManager = $tagManager;
         $this->noticeRenderer = $noticeRenderer;
-        $this->seoRepository  = $seoRepository;
+        $this->seoRepository = $seoRepository;
         $this->localeSwitcher = $localeSwitcher;
         $this->localeProvider = $localeProvider;
 
@@ -125,7 +126,7 @@ class CmsExtension extends AbstractExtension
     /**
      * @inheritdoc
      */
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter(
@@ -144,7 +145,7 @@ class CmsExtension extends AbstractExtension
     /**
      * @inheritdoc
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(
@@ -206,7 +207,7 @@ class CmsExtension extends AbstractExtension
      * @return string
      * @deprecated use renderSeo()
      */
-    public function renderMetas($seoOrSubject = null)
+    public function renderMetas($seoOrSubject = null): string
     {
         if ($seoOrSubject instanceof SeoSubjectInterface) {
             $seoOrSubject = $seoOrSubject->getSeo();
@@ -218,11 +219,11 @@ class CmsExtension extends AbstractExtension
     /**
      * Generates document title and metas tags from the given Seo object or form the current page.
      *
-     * @param SeoInterface $seo
+     * @param SeoInterface|null $seo
      *
      * @return string
      */
-    public function renderSeo(SeoInterface $seo = null)
+    public function renderSeo(SeoInterface $seo = null): string
     {
         if (null === $seo) {
             if (null !== $page = $this->getPage()) {
@@ -240,7 +241,7 @@ class CmsExtension extends AbstractExtension
 
         if (null !== $seo) {
             $follow = !$this->config['seo']['no_follow'] ? ($seo->getFollow() ? 'follow' : 'nofollow') : 'nofollow';
-            $index  = !$this->config['seo']['no_index'] ? ($seo->getIndex() ? 'index' : 'noindex') : 'noindex';
+            $index = !$this->config['seo']['no_index'] ? ($seo->getIndex() ? 'index' : 'noindex') : 'noindex';
 
             $metas =
                 $this->renderTitle('title', $seo->getTitle() . $this->config['seo']['title_append']) . "\n" .
@@ -268,12 +269,12 @@ class CmsExtension extends AbstractExtension
     /**
      * Generates a meta tag.
      *
-     * @param string $name
-     * @param string $content
+     * @param string      $name
+     * @param string|null $content
      *
      * @return string
      */
-    public function renderMeta($name, $content)
+    public function renderMeta(string $name, string $content = null): string
     {
         return $this->renderTag('meta', null, ['name' => $name, 'content' => $content]);
     }
@@ -281,12 +282,12 @@ class CmsExtension extends AbstractExtension
     /**
      * Returns current page's title.
      *
-     * @param string $tag
-     * @param string $content
+     * @param string      $tag
+     * @param string|null $content
      *
      * @return string
      */
-    public function renderTitle($tag = 'h1', $content = null)
+    public function renderTitle(string $tag = 'h1', string $content = null): string
     {
         if (null === $content && null !== $page = $this->getPage()) {
             $content = $page->getTitle();
@@ -305,15 +306,15 @@ class CmsExtension extends AbstractExtension
     /**
      * Renders the menu by his name.
      *
-     * @param string $name
-     * @param array  $options
-     * @param string $renderer
+     * @param string      $name
+     * @param array       $options
+     * @param string|null $renderer
      *
      * @return string
      * @throws \InvalidArgumentException
      *
      */
-    public function renderMenu($name, array $options = [], $renderer = null)
+    public function renderMenu(string $name, array $options = [], string $renderer = null): string
     {
         if (null === $menu = $this->menuProvider->findByName($name)) {
             throw new \InvalidArgumentException(sprintf('Menu named "%s" not found.', $name));
@@ -335,7 +336,7 @@ class CmsExtension extends AbstractExtension
      *
      * @return string
      */
-    public function renderBreadcrumb(array $options = [])
+    public function renderBreadcrumb(array $options = []): string
     {
         return $this->menuHelper->render('breadcrumb', array_merge([
             'template' => '@EkynaCms/Cms/breadcrumb.html.twig',
@@ -352,7 +353,7 @@ class CmsExtension extends AbstractExtension
      *
      * @return string
      */
-    public function renderTags($subjectOrTags, array $options = [])
+    public function renderTags($subjectOrTags, array $options = []): string
     {
         if (null === $this->tagRenderer) {
             $this->tagRenderer = new TagRenderer();
@@ -369,7 +370,7 @@ class CmsExtension extends AbstractExtension
      *
      * @return string
      */
-    public function renderLocaleSwitcher(Environment $twig, array $options = [])
+    public function renderLocaleSwitcher(Environment $twig, array $options = []): string
     {
         if (!$this->localeSwitcher->hasResource()) {
             $this->localeSwitcher->setResource($this->getPage());
@@ -398,8 +399,8 @@ class CmsExtension extends AbstractExtension
             $options['attr']['id'] = 'locale-switcher';
         }
         if ($options['dropdown']) {
-            $classes                  = isset($options['attr']['class']) ? $options['attr']['class'] : '';
-            $classes                  = trim($classes . ' dropdown');
+            $classes = isset($options['attr']['class']) ? $options['attr']['class'] : '';
+            $classes = trim($classes . ' dropdown');
             $options['attr']['class'] = $classes;
         }
 
@@ -415,9 +416,9 @@ class CmsExtension extends AbstractExtension
     /**
      * Returns the current page.
      *
-     * @return \Ekyna\Bundle\CmsBundle\Model\PageInterface|null
+     * @return PageInterface|null
      */
-    public function getPage()
+    public function getPage(): ?PageInterface
     {
         return $this->pageHelper->getCurrent();
     }
@@ -430,7 +431,7 @@ class CmsExtension extends AbstractExtension
      * @return string
      * @throws \InvalidArgumentException
      */
-    public function getPageControllerTitle($name)
+    public function getPageControllerTitle(string $name): string
     {
         if (!array_key_exists($name, $this->config['page']['controllers'])) {
             throw new \InvalidArgumentException(sprintf('Undefined controller "%s".', $name));
@@ -454,13 +455,13 @@ class CmsExtension extends AbstractExtension
     /**
      * Renders the html tag.
      *
-     * @param        $tag
-     * @param string $content
-     * @param array  $attributes
+     * @param             $tag
+     * @param string|null $content
+     * @param array       $attributes
      *
      * @return string
      */
-    private function renderTag($tag, $content = null, array $attributes = [])
+    private function renderTag($tag, string $content = null, array $attributes = []): string
     {
         $attr = [];
 
@@ -480,7 +481,7 @@ class CmsExtension extends AbstractExtension
      *
      * @return array
      */
-    private function getDefaultConfig()
+    private function getDefaultConfig(): array
     {
         return [
             'home_route'               => 'home',

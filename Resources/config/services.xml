@@ -62,6 +62,30 @@
             <tag name="table.column_type"/>
         </service>
 
+        <!-- Updater -->
+        <service id="Ekyna\Bundle\CmsBundle\Service\Updater\PageUpdater">
+            <argument type="service" id="ekyna_cms.page.repository"/>
+            <argument type="service" id="Ekyna\Bundle\CmsBundle\Helper\RoutingHelper"/>
+            <argument type="service" id="Ekyna\Bundle\CmsBundle\Service\Updater\MenuUpdater"/>
+            <argument type="service" id="ekyna_cms.menu.repository"/>
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface"/>
+            <argument type="service" id="ekyna_core.cache.tag_manager"/>
+            <argument type="service" id="ekyna_cms.cache"/>
+            <argument>%ekyna_cms.page.config%</argument>
+            <argument>%ekyna_cms.page.class%</argument>
+            <argument type="service" id="doctrine.orm.default_result_cache" on-invalid="null"/>
+        </service>
+        <service id="Ekyna\Bundle\CmsBundle\Service\Updater\PageRedirectionUpdater">
+            <argument type="service" id="Symfony\Component\EventDispatcher\EventDispatcherInterface"/>
+            <argument>%locales%</argument>
+        </service>
+        <service id="Ekyna\Bundle\CmsBundle\Service\Updater\MenuUpdater">
+            <argument type="service" id="ekyna_cms.page.repository"/>
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface"/>
+            <argument type="service" id="ekyna_core.cache.tag_manager"/>
+            <argument>%ekyna_cms.menu.class%</argument>
+        </service>
+
         <!-- Event listeners -->
         <service id="Ekyna\Bundle\CmsBundle\EventListener\KernelEventListener"
                  public="false">
@@ -73,20 +97,15 @@
         </service>
         <service id="Ekyna\Bundle\CmsBundle\EventListener\PageEventListener"
                  public="false">
-            <argument type="service" id="doctrine.orm.default_entity_manager"/>
-            <argument type="service" id="ekyna_core.cache.tag_manager"/>
-            <argument type="service" id="ekyna_cms.cache"/>
-            <argument>%locales%</argument>
-            <argument>%ekyna_cms.page.config%</argument>
-            <argument>%ekyna_cms.menu.class%</argument>
-            <argument type="service" id="doctrine.orm.default_result_cache" on-invalid="null"/>
+            <argument type="service" id="ekyna_resource.doctrine.orm.persistence_helper"/>
+            <argument type="service" id="Ekyna\Bundle\CmsBundle\Service\Updater\PageUpdater"/>
+            <argument type="service" id="Ekyna\Bundle\CmsBundle\Service\Updater\PageRedirectionUpdater"/>
             <tag name="resource.event_subscriber"/>
         </service>
         <service id="Ekyna\Bundle\CmsBundle\EventListener\MenuEventListener"
                  public="false">
-            <argument type="service" id="doctrine.orm.default_entity_manager"/>
-            <argument>%ekyna_cms.menu.class%</argument>
-            <argument>%ekyna_cms.page.class%</argument>
+            <argument type="service" id="ekyna_resource.doctrine.orm.persistence_helper"/>
+            <argument type="service" id="Ekyna\Bundle\CmsBundle\Service\Updater\MenuUpdater"/>
             <tag name="resource.event_subscriber"/>
         </service>
         <service id="Ekyna\Bundle\CmsBundle\EventListener\NoticeEventListener"
@@ -121,29 +140,12 @@
             <argument>%ekyna_cms.page.class%</argument>
             <tag name="doctrine.event_subscriber"/>
         </service>
-        <service id="Ekyna\Bundle\CmsBundle\Listener\PageListener"
-                 public="false">
-            <argument id="event_dispatcher" type="service"/>
-            <argument id="Ekyna\Bundle\CmsBundle\Helper\RoutingHelper" type="service"/>
-            <argument>%ekyna_cms.page.config%</argument>
-            <argument>%locales%</argument>
-            <tag name="doctrine.orm.entity_listener"/>
-        </service>
         <service id="Ekyna\Bundle\CmsBundle\Listener\PageTranslationListener"
                  public="false">
-            <argument id="event_dispatcher" type="service"/>
+            <argument type="service" id="Symfony\Component\EventDispatcher\EventDispatcherInterface"/>
             <tag name="doctrine.orm.entity_listener"/>
             <tag name="doctrine.event_subscriber"/>
         </service>
-        <service id="Ekyna\Bundle\CmsBundle\Listener\MenuListener"
-                 public="false">
-            <tag name="doctrine.orm.entity_listener"/>
-        </service>
-        <!--<service id="Ekyna\Bundle\CmsBundle\Listener\BlockListener"
-                 public="false">
-            <argument type="service" id="ekyna_core.cache.tag_manager"/>
-            <tag name="doctrine.orm.entity_listener"/>
-        </service>-->
 
         <!-- Settings Schema -->
         <service id="ekyna_cms.settings.seo"
@@ -180,7 +182,7 @@
             <argument type="service" id="ekyna_cms.nested_matcher"/>
             <argument type="service" id="ekyna_cms.url_generator"/>
             <argument>null</argument>
-            <argument type="service" id="event_dispatcher" on-invalid="ignore"/>
+            <argument type="service" id="Symfony\Component\EventDispatcher\EventDispatcherInterface" on-invalid="ignore"/>
             <argument type="service" id="ekyna_cms.route_provider"/>
             <tag name="router"/>
         </service>
@@ -410,7 +412,7 @@
         <!-- Menus -->
         <service id="ekyna_cms.menu.menu_provider"
                  class="Ekyna\Bundle\CmsBundle\Menu\MenuProvider">
-            <argument type="service" id="event_dispatcher"/>
+            <argument type="service" id="Symfony\Component\EventDispatcher\EventDispatcherInterface"/>
             <argument type="service" id="knp_menu.factory"/>
             <argument type="service" id="ekyna_cms.menu.repository"/>
             <argument type="service" id="ekyna_resource.locale_provider"/>
@@ -564,8 +566,7 @@
         </service>
 
         <!-- Twig extensions -->
-        <service id="ekyna_cms.twig.cms_extension"
-                 class="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
+        <service id="Ekyna\Bundle\CmsBundle\Twig\CmsExtension">
             <argument type="service" id="ekyna_setting.manager"/>
             <argument type="service" id="ekyna_cms.menu.menu_provider"/>
             <argument type="service" id="knp_menu.helper"/>
@@ -581,19 +582,16 @@
         <service id="Ekyna\Bundle\CmsBundle\Twig\EditorExtension">
             <tag name="twig.extension"/>
         </service>
-        <service id="ekyna_cms.twig.slide_show_extension"
-                 class="Ekyna\Bundle\CmsBundle\Twig\SlideShowExtension">
+        <service id="Ekyna\Bundle\CmsBundle\Twig\SlideShowExtension">
             <argument type="service" id="ekyna_cms.slide_show.renderer"/>
             <argument type="service" id="ekyna_cms.slide_show.repository"/>
             <tag name="twig.extension"/>
         </service>
-        <service id="ekyna_cms.twig.media_extension"
-                 class="Ekyna\Bundle\CmsBundle\Twig\MediaExtension">
+        <service id="Ekyna\Bundle\CmsBundle\Twig\MediaExtension">
             <argument type="service" id="liip_imagine.cache.manager"/>
             <tag name="twig.extension"/>
         </service>
-        <service id="ekyna_cms.twig.schema_extension"
-                 class="Ekyna\Bundle\CmsBundle\Twig\SchemaOrgExtension">
+        <service id="Ekyna\Bundle\CmsBundle\Twig\SchemaOrgExtension">
             <argument type="service" id="ekyna_cms.schema_org.builder"/>
             <tag name="twig.extension"/>
         </service>

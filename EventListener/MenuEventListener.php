@@ -2,94 +2,102 @@
 
 namespace Ekyna\Bundle\CmsBundle\EventListener;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
+use Ekyna\Bundle\CmsBundle\Event\MenuEvents;
 use Ekyna\Bundle\CmsBundle\Model\MenuInterface;
+use Ekyna\Bundle\CmsBundle\Service\Updater\MenuUpdater;
 use Ekyna\Component\Resource\Event\ResourceEventInterface;
 use Ekyna\Component\Resource\Event\ResourceMessage;
-use Ekyna\Bundle\CmsBundle\Event\MenuEvents;
 use Ekyna\Component\Resource\Exception\InvalidArgumentException;
+use Ekyna\Component\Resource\Persistence\PersistenceHelperInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class MenuEventListener
  * @package Ekyna\Bundle\CmsBundle\EventListener
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class MenuEventListener implements EventSubscriberInterface
 {
     /**
-     * @var EntityManagerInterface
+     * @var PersistenceHelperInterface
      */
-    private $em;
+    private $persistenceHelper;
 
     /**
-     * @var
+     * @var MenuUpdater
      */
-    private $menuClass;
-
-    /**
-     * @var
-     */
-    private $pageClass;
+    private $updater;
 
 
     /**
      * Constructor.
      *
-     * @param EntityManagerInterface $em
-     * @param string                 $menuClass
-     * @param string                 $pageClass
+     * @param PersistenceHelperInterface $persistenceHelper
+     * @param MenuUpdater                $updater
      */
-    public function __construct(EntityManagerInterface $em, $menuClass, $pageClass)
+    public function __construct(PersistenceHelperInterface $persistenceHelper, MenuUpdater $updater)
     {
-        $this->em        = $em;
-        $this->menuClass = $menuClass;
-        $this->pageClass = $pageClass;
+        $this->persistenceHelper = $persistenceHelper;
+        $this->updater = $updater;
     }
 
     /**
-     * Pre create event handler.
+     * Menu insert event handler.
      *
      * @param ResourceEventInterface $event
      */
-    public function onPreUpdate(ResourceEventInterface $event)
+    public function onInsert(ResourceEventInterface $event): void
     {
         $menu = $this->getMenuFromEvent($event);
 
-        // Don't disable if locked
-        if (!$menu->isEnabled() && $menu->isLocked()) {
-            $menu->setEnabled(true);
+        $changed = $this->updater->updateRoute($menu);
+
+        $changed |= $this->updater->updateName($menu);
+
+        if ($changed) {
+            $this->persistenceHelper->persistAndRecompute($menu, false);
+        }
+    }
+
+    /**
+     * Menu update event handler.
+     *
+     * @param ResourceEventInterface $event
+     */
+    public function onUpdate(ResourceEventInterface $event): void
+    {
+        $menu = $this->getMenuFromEvent($event);
+
+        $changed = $this->updater->updateRoute($menu);
+
+        if ($this->persistenceHelper->isChanged($menu, 'name')) {
+            $changed |= $this->updater->updateName($menu);
         }
 
-        // Don't enable if disabled relative page
-        if ($menu->isEnabled() && !$menu->isLocked() && 0 < strlen($menu->getRoute())) {
-            /** @noinspection SqlDialectInspection */
-            $disabledPageId = $this->em
-                ->createQuery("SELECT p.id FROM {$this->pageClass} p WHERE p.route = :route AND p.enabled = 0")
-                ->setParameter('route', $menu->getRoute())
-                ->getOneOrNullResult(Query::HYDRATE_SCALAR)
-            ;
-            if (null !== $disabledPageId) {
-                $event->addMessage(new ResourceMessage(
-                    'ekyna_cms.menu.alert.cant_enable_as_disabled_page',
-                    ResourceMessage::TYPE_ERROR
-                ));
-                return;
-            }
+        if ($changed) {
+            $this->persistenceHelper->persistAndRecompute($menu, false);
         }
+    }
 
-        // Disable menu children
-        if (!$menu->isEnabled()) {
-            $this->em->createQuery(sprintf(
-                'UPDATE %s m SET m.enabled = 0 WHERE m.root = :root AND m.left > :left AND m.right < :right',
-                $this->menuClass
-            ))->execute(array(
-                'root'  => $menu->getRoot(),
-                'left'  => $menu->getLeft(),
-                'right' => $menu->getRight(),
+    /**
+     * Pre update event handler.
+     *
+     * @param ResourceEventInterface $event
+     */
+    public function onPreUpdate(ResourceEventInterface $event): void
+    {
+        $menu = $this->getMenuFromEvent($event);
+
+        if ($this->updater->checkEnabled($menu)) {
+            $event->addMessage(new ResourceMessage(
+                'ekyna_cms.menu.alert.cant_enable_as_disabled_page',
+                ResourceMessage::TYPE_ERROR
             ));
+
+            return;
         }
+
+        $this->updater->disabledMenuRecursively($menu->getChildren()->toArray());
     }
 
     /**
@@ -99,7 +107,7 @@ class MenuEventListener implements EventSubscriberInterface
      *
      * @return MenuInterface
      */
-    private function getMenuFromEvent(ResourceEventInterface $event)
+    private function getMenuFromEvent(ResourceEventInterface $event): MenuInterface
     {
         $resource = $event->getResource();
 
@@ -113,10 +121,12 @@ class MenuEventListener implements EventSubscriberInterface
     /**
      * @inheritdoc
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
-        return array(
-            MenuEvents::PRE_UPDATE  => array('onPreUpdate', -1024),
-        );
+        return [
+            MenuEvents::PRE_UPDATE => ['onPreUpdate', -1024],
+            MenuEvents::INSERT     => ['onInsert', 0],
+            MenuEvents::UPDATE     => ['onUpdate', 0],
+        ];
     }
 }

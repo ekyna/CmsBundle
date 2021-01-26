@@ -37,7 +37,7 @@ class RoutingHelper
      */
     public function __construct(RouterInterface $router, string $defaultLocale)
     {
-        $this->router        = $router;
+        $this->router = $router;
         $this->defaultLocale = $defaultLocale;
     }
 
@@ -63,10 +63,10 @@ class RoutingHelper
     {
         $locale = $locale ?: $this->defaultLocale;
 
-        $route    = $this->findRouteByName($name, $locale);
+        $route = $this->findRouteByName($name, $locale);
         $compiled = $route->compile();
 
-        $path     = '';
+        $path = '';
         $optional = true;
 
         foreach ($compiled->getTokens() as $token) {
@@ -158,7 +158,10 @@ class RoutingHelper
      */
     public function isPagePathDynamic(string $name): bool
     {
-        $route    = $this->findRouteByName($name);
+        if (null === $route = $this->findRouteByName($name)) {
+            return false;
+        }
+
         $compiled = $route->compile();
 
         $optional = true;

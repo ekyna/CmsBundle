@@ -3,7 +3,9 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
+use Ekyna\Bundle\CoreBundle\Model\TreeTrait;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -17,6 +19,7 @@ use Ekyna\Component\Resource\Model as RM;
 class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
 {
     use RM\TaggedEntityTrait;
+    use TreeTrait;
 
     /**
      * @var int
@@ -49,7 +52,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     protected $level;
 
     /**
-     * @var ArrayCollection|Menu[]
+     * @var Collection|Menu[]
      */
     protected $children;
 
@@ -135,7 +138,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function setParent(Cms\MenuInterface $parent = null)
+    public function setParent(Cms\MenuInterface $parent = null): Cms\MenuInterface
     {
         $this->parent = $parent;
 
@@ -145,7 +148,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function getParent()
+    public function getParent(): ?Cms\MenuInterface
     {
         return $this->parent;
     }
@@ -153,79 +156,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function setLeft($left)
-    {
-        $this->left = $left;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getLeft()
-    {
-        return $this->left;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setRight($right)
-    {
-        $this->right = $right;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getRight()
-    {
-        return $this->right;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setRoot($root)
-    {
-        $this->root = $root;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getRoot()
-    {
-        return $this->root;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setLevel($level)
-    {
-        $this->level = $level;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getLevel()
-    {
-        return $this->level;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setChildren(ArrayCollection $children)
+    public function setChildren(Collection $children): Cms\MenuInterface
     {
         $this->children = $children;
 
@@ -235,7 +166,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return 0 < count($this->children);
     }
@@ -243,7 +174,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function addChild(Cms\MenuInterface $menu)
+    public function addChild(Cms\MenuInterface $menu): Cms\MenuInterface
     {
         $this->children[] = $menu;
 
@@ -253,7 +184,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function removeChild(Cms\MenuInterface $menu)
+    public function removeChild(Cms\MenuInterface $menu): Cms\MenuInterface
     {
         $this->children->removeElement($menu);
 
@@ -263,7 +194,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function getChildren()
+    public function getChildren(): Collection
     {
         return $this->children;
     }
@@ -271,7 +202,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function setName($name)
+    public function setName(string $name): Cms\MenuInterface
     {
         $this->name = $name;
 
@@ -281,7 +212,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -289,25 +220,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function setTitle($title)
-    {
-        $this->translate()->setTitle($title);
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getTitle()
-    {
-        return $this->translate()->getTitle();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setDescription($description)
+    public function setDescription(string $description = null): Cms\MenuInterface
     {
         $this->description = $description;
 
@@ -317,7 +230,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -325,25 +238,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function setPath($path)
-    {
-        $this->translate()->setPath($path);
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getPath()
-    {
-        return $this->translate()->getPath();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setRoute($route)
+    public function setRoute(string $route = null): Cms\MenuInterface
     {
         $this->route = $route;
 
@@ -353,7 +248,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function getRoute()
+    public function getRoute(): ?string
     {
         return $this->route;
     }
@@ -361,7 +256,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function setParameters(array $parameters = [])
+    public function setParameters(array $parameters = []): Cms\MenuInterface
     {
         $this->parameters = $parameters;
 
@@ -371,7 +266,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         return $this->parameters;
     }
@@ -379,7 +274,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function setAttributes(array $attributes = [])
+    public function setAttributes(array $attributes = []): Cms\MenuInterface
     {
         $this->attributes = $attributes;
 
@@ -389,7 +284,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -397,7 +292,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function setLocked($locked)
+    public function setLocked(bool $locked): Cms\MenuInterface
     {
         $this->locked = $locked;
 
@@ -407,7 +302,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function isLocked()
+    public function isLocked(): bool
     {
         return $this->locked;
     }
@@ -415,7 +310,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function setEnabled($enabled)
+    public function setEnabled(bool $enabled): Cms\MenuInterface
     {
         $this->enabled = $enabled;
 
@@ -425,7 +320,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
@@ -433,15 +328,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getOption($key)
+    public function getOption(string $key)
     {
         return isset($this->options[$key]) ? $this->options[$key] : null;
     }
@@ -449,7 +336,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): Cms\MenuInterface
     {
         $this->options = $options;
 
@@ -459,15 +346,61 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public function setPage(Cms\PageInterface $page)
+    public function getOptions(): array
     {
-        $this->page = $page;
+        return $this->options;
     }
 
     /**
      * @inheritdoc
      */
-    public function getPage()
+    public function setTitle(string $title): Cms\MenuInterface
+    {
+        $this->translate()->setTitle($title);
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getTitle(): ?string
+    {
+        return $this->translate()->getTitle();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setPath(string $path = null): Cms\MenuInterface
+    {
+        $this->translate()->setPath($path);
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPath(): ?string
+    {
+        return $this->translate()->getPath();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setPage(Cms\PageInterface $page): Cms\MenuInterface
+    {
+        $this->page = $page;
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPage(): ?CMS\PageInterface
     {
         return $this->page;
     }
@@ -475,7 +408,7 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     /**
      * @inheritdoc
      */
-    public static function getEntityTagPrefix()
+    public static function getEntityTagPrefix(): string
     {
         return 'ekyna_cms.menu';
     }

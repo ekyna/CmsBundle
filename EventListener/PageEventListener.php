@@ -2,19 +2,15 @@
 
 namespace Ekyna\Bundle\CmsBundle\EventListener;
 
-use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
-use Ekyna\Bundle\CmsBundle\Entity\Page;
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
 use Ekyna\Bundle\CmsBundle\Exception\RuntimeException;
-use Ekyna\Bundle\CmsBundle\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
-use Ekyna\Bundle\CoreBundle\Cache\TagManager;
+use Ekyna\Bundle\CmsBundle\Service\Updater\PageRedirectionUpdater;
+use Ekyna\Bundle\CmsBundle\Service\Updater\PageUpdater;
 use Ekyna\Component\Resource\Event\ResourceEventInterface;
 use Ekyna\Component\Resource\Event\ResourceMessage;
 use Ekyna\Component\Resource\Exception\InvalidArgumentException;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Ekyna\Component\Resource\Persistence\PersistenceHelperInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -25,68 +21,36 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class PageEventListener implements EventSubscriberInterface
 {
     /**
-     * @var EntityManagerInterface
+     * @var PersistenceHelperInterface
      */
-    private $em;
+    private $persistenceHelper;
 
     /**
-     * @var TagManager
+     * @var PageUpdater
      */
-    private $tm;
+    private $pageUpdater;
 
     /**
-     * @var AdapterInterface
+     * @var PageRedirectionUpdater
      */
-    private $cmsCache;
-
-    /**
-     * @var array
-     */
-    private $locales;
-
-    /**
-     * @var array
-     */
-    private $config;
-
-    /**
-     * @var string
-     */
-    private $menuClass;
-
-    /**
-     * @var CacheProvider
-     */
-    private $resultCache;
+    private $redirectionUpdater;
 
 
     /**
      * Constructor.
      *
-     * @param EntityManagerInterface $em
-     * @param TagManager             $tm
-     * @param AdapterInterface       $cmsCache
-     * @param array                  $locales
-     * @param array                  $config
-     * @param string                 $menuClass
-     * @param CacheProvider          $resultCache
+     * @param PersistenceHelperInterface $persistenceHelper
+     * @param PageUpdater                $pageUpdater
+     * @param PageRedirectionUpdater     $redirectionUpdater
      */
     public function __construct(
-        EntityManagerInterface $em,
-        TagManager $tm,
-        AdapterInterface $cmsCache,
-        array $locales,
-        array $config,
-        $menuClass,
-        CacheProvider $resultCache = null
+        PersistenceHelperInterface $persistenceHelper,
+        PageUpdater $pageUpdater,
+        PageRedirectionUpdater $redirectionUpdater
     ) {
-        $this->em = $em;
-        $this->tm = $tm;
-        $this->cmsCache = $cmsCache;
-        $this->locales = $locales;
-        $this->config = $config;
-        $this->menuClass = $menuClass;
-        $this->resultCache = $resultCache;
+        $this->persistenceHelper = $persistenceHelper;
+        $this->pageUpdater = $pageUpdater;
+        $this->redirectionUpdater = $redirectionUpdater;
     }
 
     /**
@@ -94,7 +58,7 @@ class PageEventListener implements EventSubscriberInterface
      *
      * @param ResourceEventInterface $event
      */
-    public function onInitialize(ResourceEventInterface $event)
+    public function onInitialize(ResourceEventInterface $event): void
     {
         $page = $this->getPageFromEvent($event);
 
@@ -102,6 +66,8 @@ class PageEventListener implements EventSubscriberInterface
         if ($parent && $parent->isLocked()) {
             throw new RuntimeException("Cannot create child page under a locked parent page.");
         }
+
+        $this->pageUpdater->updateRoute($page);
     }
 
     /**
@@ -109,35 +75,35 @@ class PageEventListener implements EventSubscriberInterface
      *
      * @param ResourceEventInterface $event
      */
-    public function onPreCreate(ResourceEventInterface $event)
+    public function onPreCreate(ResourceEventInterface $event): void
     {
         $page = $this->getPageFromEvent($event);
 
-        // Generate random route name.
-        if (null === $page->getRoute()) {
-            $class = get_class($page);
-
-            /** @noinspection SqlResolve */
-            $query = $this->em->createQuery("SELECT p.id FROM {$class} p WHERE p.route = :route");
-            $query->setMaxResults(1);
-
-            do {
-                $route = sprintf('cms_page_%s', uniqid());
-                $result = $query
-                    ->setParameter('route', $route)
-                    ->getOneOrNullResult(Query::HYDRATE_SCALAR);
-            } while (null !== $result);
-
-            $page->setRoute($route);
+        if (!$this->checkEnabled($page)) {
+            $event->addMessage(new ResourceMessage(
+                'ekyna_cms.page.alert.parent_disabled',
+                ResourceMessage::TYPE_WARNING
+            ));
         }
     }
 
     /**
      * Insert event handler.
+     *
+     * @param ResourceEventInterface $event
      */
-    public function onInsert(): void
+    public function onInsert(ResourceEventInterface $event): void
     {
-        $this->purgeRoutesCache();
+        $page = $this->getPageFromEvent($event);
+
+        $changed = $this->pageUpdater->updateIsDynamic($page);
+        $changed |= $this->pageUpdater->updateIsAdvanced($page);
+
+        if ($changed) {
+            $this->persistenceHelper->persistAndRecompute($page, false);
+        }
+
+        $this->pageUpdater->purgeRoutesCache();
     }
 
     /**
@@ -145,43 +111,29 @@ class PageEventListener implements EventSubscriberInterface
      *
      * @param ResourceEventInterface $event
      */
-    public function onPreUpdate(ResourceEventInterface $event)
+    public function onPreUpdate(ResourceEventInterface $event): void
     {
         $page = $this->getPageFromEvent($event);
 
-        // Don't disable if static
-        if (!$page->isEnabled() && $page->isStatic()) {
-            $page->setEnabled(true);
-        }
-
-        // Don't enable if at least one ancestor is disabled.
-        if ($page->isEnabled()) {
-            $parentPage = $page;
-            while (null !== $parentPage = $parentPage->getParent()) {
-                if (!$parentPage->isEnabled()) {
-                    $page->setEnabled(false);
-                    $event->addMessage(new ResourceMessage(
-                        'ekyna_cms.page.alert.parent_disabled',
-                        ResourceMessage::TYPE_WARNING
-                    ));
-                    break;
-                }
-            }
+        if (!$this->checkEnabled($page)) {
+            $event->addMessage(new ResourceMessage(
+                'ekyna_cms.page.alert.parent_disabled',
+                ResourceMessage::TYPE_WARNING
+            ));
         }
 
         // Bubble disable
-        if ($this->disablePageChildren($page)) {
+        if ($this->pageUpdater->disablePageChildren($page)) {
             $event->addMessage(new ResourceMessage(
                 'ekyna_cms.page.alert.children_disabled',
                 ResourceMessage::TYPE_WARNING
             ));
         }
-        if ($this->disablePageRelativeMenus($page)) {
+        if ($this->pageUpdater->disablePageRelativeMenus($page)) {
             $event->addMessage(new ResourceMessage(
                 'ekyna_cms.page.alert.menus_disabled',
                 ResourceMessage::TYPE_WARNING
             ));
-            $this->tm->addTags(call_user_func($this->menuClass . '::getEntityTagPrefix'));
         }
     }
 
@@ -190,12 +142,29 @@ class PageEventListener implements EventSubscriberInterface
      *
      * @param ResourceEventInterface $event
      */
-    public function onUpdate(ResourceEventInterface $event)
+    public function onUpdate(ResourceEventInterface $event): void
     {
         $page = $this->getPageFromEvent($event);
 
-        $this->purgeRoutesCache();
-        $this->purgePageCache($page);
+        $changed = $this->pageUpdater->updateIsDynamic($page);
+        $changed |= $this->pageUpdater->updateIsAdvanced($page);
+
+        if ($changed) {
+            $this->persistenceHelper->persistAndRecompute($page, false);
+        }
+
+        $this->pageUpdater->purgeRoutesCache();
+        $this->pageUpdater->purgePageCache($page);
+
+        if (!$this->persistenceHelper->isChanged($page, 'enabled')) {
+            return;
+        }
+
+        if ($page->isEnabled()) {
+            $this->redirectionUpdater->discardPageRedirections($page);
+        } else {
+            $this->redirectionUpdater->buildPageRedirections($page);
+        }
     }
 
     /**
@@ -203,7 +172,7 @@ class PageEventListener implements EventSubscriberInterface
      *
      * @param ResourceEventInterface $event
      */
-    public function onPreDelete(ResourceEventInterface $event)
+    public function onPreDelete(ResourceEventInterface $event): void
     {
         $page = $this->getPageFromEvent($event);
 
@@ -220,111 +189,43 @@ class PageEventListener implements EventSubscriberInterface
      *
      * @param ResourceEventInterface $event
      */
-    public function onDelete(ResourceEventInterface $event)
+    public function onDelete(ResourceEventInterface $event): void
     {
         $page = $this->getPageFromEvent($event);
 
-        $this->purgeRoutesCache();
-        $this->purgePageCache($page);
+        $this->pageUpdater->purgeRoutesCache();
+        $this->pageUpdater->purgePageCache($page);
+
+        $this->redirectionUpdater->buildPageRedirections($page);
     }
 
     /**
-     * Purges the pages routes cache.
-     */
-    private function purgeRoutesCache(): void
-    {
-        $this->cmsCache->deleteItem(PageHelper::PAGES_ROUTES_CACHE_KEY);
-    }
-
-    /**
-     * Purges the page cache.
-     *
-     * @param PageInterface $page
-     */
-    private function purgePageCache(PageInterface $page): void
-    {
-        if (!$this->resultCache) {
-            return;
-        }
-
-        $this->resultCache->delete(Page::getRouteCacheTag($page->getRoute()));
-    }
-
-    /**
-     * Disables the page children if needed.
+     * Changes the page's 'enabled' property if needed.
      *
      * @param PageInterface $page
      *
      * @return bool
      */
-    private function disablePageChildren(PageInterface $page)
+    private function checkEnabled(PageInterface $page): bool
     {
-        $childrenDisabled = false;
-        if (!$page->isEnabled()) {
-            if (0 < $page->getChildren()->count()) {
-                foreach ($page->getChildren() as $child) {
-                    if ($child->isEnabled()) {
-                        $child->setEnabled(false);
-                        $childrenDisabled = true;
+        // Don't disable if static
+        if (!$page->isEnabled() && $page->isStatic()) {
+            $page->setEnabled(true);
+        }
 
-                        $this->em->persist($child);
+        // Don't enable if at least one ancestor is disabled.
+        if ($page->isEnabled()) {
+            $parentPage = $page;
+            while (null !== $parentPage = $parentPage->getParent()) {
+                if (!$parentPage->isEnabled()) {
+                    $page->setEnabled(false);
 
-                        $this->tm->addTags($page->getEntityTag());
-                    }
-
-                    $this->disablePageRelativeMenus($child);
-
-                    $childrenDisabled |= $this->disablePageChildren($child);
+                    return false;
                 }
             }
         }
 
-        return $childrenDisabled;
-    }
-
-    /**
-     * Disable the page relative menus if needed.
-     *
-     * @param PageInterface $page
-     *
-     * @return bool
-     */
-    private function disablePageRelativeMenus(PageInterface $page)
-    {
-        $disabledMenus = false;
-        if (!$page->isEnabled()) {
-            // Disable menu children query
-            /** @noinspection SqlResolve */
-            $disableChildrenQuery = $this->em->createQuery(sprintf(
-                'UPDATE %s m SET m.enabled = 0 WHERE m.root = :root AND m.left > :left AND m.right < :right',
-                $this->menuClass
-            ));
-
-            // Disable pointing menus
-            /** @var \Ekyna\Bundle\CmsBundle\Model\MenuInterface[] $menus */
-            /** @noinspection SqlResolve */
-            $menus = $this->em
-                ->createQuery("SELECT m FROM {$this->menuClass} m WHERE m.route = :route")
-                ->setParameter('route', $page->getRoute())
-                ->getResult();
-            if (!empty($menus)) {
-                foreach ($menus as $menu) {
-                    if ($menu->isEnabled()) {
-                        $menu->setEnabled(false);
-                        $this->em->persist($menu);
-                        $disabledMenus = true;
-
-                        $disableChildrenQuery->execute([
-                            'root'  => $menu->getRoot(),
-                            'left'  => $menu->getLeft(),
-                            'right' => $menu->getRight(),
-                        ]);
-                    }
-                }
-            }
-        }
-
-        return $disabledMenus;
+        return true;
     }
 
     /**
@@ -334,7 +235,7 @@ class PageEventListener implements EventSubscriberInterface
      *
      * @return PageInterface
      */
-    private function getPageFromEvent(ResourceEventInterface $event)
+    private function getPageFromEvent(ResourceEventInterface $event): PageInterface
     {
         $resource = $event->getResource();
 
@@ -348,16 +249,16 @@ class PageEventListener implements EventSubscriberInterface
     /**
      * @inheritdoc
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
-            PageEvents::INITIALIZE  => ['onInitialize',  1024],
-            PageEvents::PRE_CREATE  => ['onPreCreate',  -1024],
-            PageEvents::INSERT      => ['onInsert',      1024],
-            PageEvents::PRE_UPDATE  => ['onPreUpdate',  -1024],
-            PageEvents::UPDATE      => ['onUpdate',      1024],
-            PageEvents::PRE_DELETE  => ['onPreDelete',   1024],
-            PageEvents::DELETE      => ['onDelete',      1024],
+            PageEvents::INITIALIZE => ['onInitialize', 1024],
+            PageEvents::PRE_CREATE => ['onPreCreate', -1024],
+            PageEvents::INSERT     => ['onInsert', 1024],
+            PageEvents::PRE_UPDATE => ['onPreUpdate', -1024],
+            PageEvents::UPDATE     => ['onUpdate', 1024],
+            PageEvents::PRE_DELETE => ['onPreDelete', 1024],
+            PageEvents::DELETE     => ['onDelete', 1024],
         ];
     }
 }

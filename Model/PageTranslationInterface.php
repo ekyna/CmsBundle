@@ -7,7 +7,7 @@ use Ekyna\Component\Resource\Model\TranslationInterface;
 /**
  * Interface PageTranslationInterface
  * @package Ekyna\Bundle\CmsBundle\Model
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 interface PageTranslationInterface extends TranslationInterface
 {
@@ -15,59 +15,63 @@ interface PageTranslationInterface extends TranslationInterface
      * Sets the title.
      *
      * @param string $title
+     *
      * @return PageTranslationInterface|$this
      */
-    public function setTitle($title);
+    public function setTitle(string $title): PageTranslationInterface;
 
     /**
      * Returns the title.
      *
      * @return string
      */
-    public function getTitle();
+    public function getTitle(): ?string;
 
     /**
      * Sets the breadcrumb.
      *
      * @param string $breadcrumb
+     *
      * @return PageTranslationInterface|$this
      */
-    public function setBreadcrumb($breadcrumb);
+    public function setBreadcrumb(string $breadcrumb): PageTranslationInterface;
 
     /**
      * Returns the breadcrumb.
      *
      * @return string
      */
-    public function getBreadcrumb();
+    public function getBreadcrumb(): ?string;
 
     /**
      * Sets the html.
      *
-     * @param string $html
+     * @param string|null $html
+     *
      * @return PageTranslationInterface|$this
      */
-    public function setHtml($html);
+    public function setHtml(string $html = null): PageTranslationInterface;
 
     /**
      * Returns the html.
      *
      * @return string
      */
-    public function getHtml();
+    public function getHtml(): ?string;
 
     /**
      * Set path
      *
-     * @param string $path
+     * @param string|null $path
+     *
      * @return PageTranslationInterface|$this
      */
-    public function setPath($path);
+    public function setPath(string $path = null): PageTranslationInterface;
 
     /**
      * Get path
      *
      * @return string
      */
-    public function getPath();
+    public function getPath(): ?string;
 }

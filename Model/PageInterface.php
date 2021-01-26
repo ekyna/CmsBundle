@@ -2,6 +2,8 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
+use Doctrine\Common\Collections\Collection;
+use Ekyna\Bundle\CoreBundle\Model\TreeInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -17,87 +19,24 @@ interface PageInterface extends
     SeoSubjectInterface,
     RM\TimestampableInterface,
     RM\TaggedEntityInterface,
-    RM\TranslatableInterface
+    RM\TranslatableInterface,
+    TreeInterface
 {
     /**
      * Set parent
      *
-     * @param PageInterface $parent
+     * @param PageInterface|null $parent
      *
      * @return PageInterface|$this
      */
-    public function setParent(PageInterface $parent = null);
+    public function setParent(PageInterface $parent = null): PageInterface;
 
     /**
      * Get parent
      *
      * @return PageInterface|null
      */
-    public function getParent();
-
-    /**
-     * Set left
-     *
-     * @param integer $left
-     *
-     * @return PageInterface|$this
-     */
-    public function setLeft($left);
-
-    /**
-     * Get left
-     *
-     * @return integer
-     */
-    public function getLeft();
-
-    /**
-     * Set right
-     *
-     * @param integer $right
-     *
-     * @return PageInterface|$this
-     */
-    public function setRight($right);
-
-    /**
-     * Get right
-     *
-     * @return integer
-     */
-    public function getRight();
-
-    /**
-     * Set root
-     *
-     * @param integer $root
-     *
-     * @return PageInterface|$this
-     */
-    public function setRoot($root = null);
-
-    /**
-     * Get root
-     *
-     * @return integer
-     */
-    public function getRoot();
-
-    /**
-     * Set level
-     *
-     * @param integer $level
-     *
-     * @return PageInterface|$this
-     */
-    public function setLevel($level);
-
-    /**
-     * Get level
-     *
-     * @return integer
-     */
-    public function getLevel();
+    public function getParent(): ?PageInterface;
 
     /**
      * Returns whether the page has the child or not.
@@ -106,7 +45,7 @@ interface PageInterface extends
      *
      * @return bool
      */
-    public function hasChild(PageInterface $child);
+    public function hasChild(PageInterface $child): bool;
 
     /**
      * Add children
@@ -115,7 +54,7 @@ interface PageInterface extends
      *
      * @return PageInterface|$this
      */
-    public function addChild(PageInterface $child);
+    public function addChild(PageInterface $child): PageInterface;
 
     /**
      * Remove children
@@ -124,21 +63,21 @@ interface PageInterface extends
      *
      * @return PageInterface|$this
      */
-    public function removeChild(PageInterface $child);
+    public function removeChild(PageInterface $child): PageInterface;
 
     /**
      * Has children
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasChildren();
+    public function hasChildren(): bool;
 
     /**
      * Get children
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection|PageInterface[]
+     * @return Collection|PageInterface[]
      */
-    public function getChildren();
+    public function getChildren(): Collection;
 
     /**
      * Set name
@@ -147,14 +86,14 @@ interface PageInterface extends
      *
      * @return PageInterface|$this
      */
-    public function setName($name);
+    public function setName(string $name): PageInterface;
 
     /**
      * Get name
      *
      * @return string
      */
-    public function getName();
+    public function getName(): ?string;
 
     /**
      * Set title
@@ -163,14 +102,14 @@ interface PageInterface extends
      *
      * @return PageInterface|$this
      */
-    public function setTitle($title);
+    public function setTitle(string $title): PageInterface;
 
     /**
      * Get title
      *
      * @return string
      */
-    public function getTitle();
+    public function getTitle(): ?string;
 
     /**
      * Set breadcrumb
@@ -179,165 +118,165 @@ interface PageInterface extends
      *
      * @return PageInterface|$this
      */
-    public function setBreadcrumb($breadcrumb);
+    public function setBreadcrumb(string $breadcrumb): PageInterface;
 
     /**
      * Get breadcrumb
      *
      * @return string
      */
-    public function getBreadcrumb();
+    public function getBreadcrumb(): ?string;
 
     /**
      * Set html
      *
-     * @param string $html
+     * @param string|null $html
      *
      * @return PageInterface|$this
      */
-    public function setHtml($html);
+    public function setHtml(string $html = null): PageInterface;
 
     /**
      * Return html
      *
      * @return string
      */
-    public function getHtml();
+    public function getHtml(): ?string;
 
     /**
      * Set path
      *
-     * @param string $path
+     * @param string|null $path
      *
      * @return PageInterface|$this
      */
-    public function setPath($path);
+    public function setPath(string $path = null): PageInterface;
 
     /**
      * Get path
      *
      * @return string
      */
-    public function getPath();
+    public function getPath(): ?string;
 
     /**
      * Set route
      *
-     * @param string $route
+     * @param string|null $route
      *
      * @return PageInterface|$this
      */
-    public function setRoute($route = null);
+    public function setRoute(string $route = null): PageInterface;
 
     /**
      * Get route
      *
      * @return string
      */
-    public function getRoute();
+    public function getRoute(): ?string;
 
     /**
      * Set static
      *
-     * @param boolean $static
+     * @param bool $static
      *
      * @return PageInterface|$this
      */
-    public function setStatic($static);
+    public function setStatic(bool $static): PageInterface;
 
     /**
      * Get static
      *
-     * @return boolean
+     * @return bool
      */
-    public function isStatic();
+    public function isStatic(): bool;
 
     /**
      * Set locked
      *
-     * @param boolean $locked
+     * @param bool $locked
      *
      * @return PageInterface|$this
      */
-    public function setLocked($locked);
+    public function setLocked(bool $locked): PageInterface;
 
     /**
      * Get locked
      *
-     * @return boolean
+     * @return bool
      */
-    public function isLocked();
+    public function isLocked(): bool;
 
     /**
      * Set controller
      *
-     * @param string $controller
+     * @param string|null $controller
      *
      * @return PageInterface|$this
      */
-    public function setController($controller = null);
+    public function setController(string $controller = null): PageInterface;
 
     /**
      * Get controller
      *
      * @return string
      */
-    public function getController();
+    public function getController(): ?string;
 
     /**
      * Set advanced
      *
-     * @param boolean $advanced
+     * @param bool $advanced
      *
      * @return PageInterface|$this
      */
-    public function setAdvanced($advanced);
+    public function setAdvanced(bool $advanced): PageInterface;
 
     /**
      * Get advanced
      *
-     * @return boolean
+     * @return bool
      */
-    public function isAdvanced();
+    public function isAdvanced(): bool;
 
     /**
-     * Sets the dynamicPath.
+     * Sets the dynamic path.
      *
-     * @param boolean $dynamicPath
+     * @param bool $dynamicPath
      *
      * @return PageInterface|$this
      */
-    public function setDynamicPath($dynamicPath);
+    public function setDynamicPath(bool $dynamicPath): PageInterface;
 
     /**
-     * Returns the dynamicPath.
+     * Returns the dynamic path.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isDynamicPath();
+    public function isDynamicPath(): bool;
 
     /**
      * Sets the enabled.
      *
-     * @param boolean $enabled
+     * @param bool $enabled
      *
      * @return PageInterface|$this
      */
-    public function setEnabled($enabled);
+    public function setEnabled(bool $enabled): PageInterface;
 
     /**
      * Returns the enabled.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isEnabled();
+    public function isEnabled(): bool;
 
     /**
      * Returns whether the page should be indexed or not by elasticsearch.
      *
      * @return bool
      */
-    public function isIndexable();
+    public function isIndexable(): bool;
 
     /**
      * Returns the page route cache tag.

@@ -2,13 +2,13 @@
 
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
-use Ekyna\Component\Resource\Model\AbstractTranslation;
 use Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface;
+use Ekyna\Component\Resource\Model\AbstractTranslation;
 
 /**
  * Class PageTranslation
  * @package Ekyna\Bundle\CmsBundle\Entity
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class PageTranslation extends AbstractTranslation implements PageTranslationInterface
 {
@@ -36,16 +36,17 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     /**
      * @inheritdoc
      */
-    public function setTitle($title)
+    public function setTitle(string $title): PageTranslationInterface
     {
         $this->title = $title;
+
         return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -53,16 +54,17 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     /**
      * @inheritdoc
      */
-    public function setBreadcrumb($breadcrumb)
+    public function setBreadcrumb(string $breadcrumb): PageTranslationInterface
     {
         $this->breadcrumb = $breadcrumb;
+
         return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function getBreadcrumb()
+    public function getBreadcrumb(): ?string
     {
         return $this->breadcrumb;
     }
@@ -70,16 +72,17 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     /**
      * @inheritdoc
      */
-    public function setHtml($html)
+    public function setHtml(string $html = null): PageTranslationInterface
     {
         $this->html = $html;
+
         return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function getHtml()
+    public function getHtml(): ?string
     {
         return $this->html;
     }
@@ -87,16 +90,17 @@ class PageTranslation extends AbstractTranslation implements PageTranslationInte
     /**
      * @inheritdoc
      */
-    public function setPath($path)
+    public function setPath(string $path = null): PageTranslationInterface
     {
         $this->path = $path;
+
         return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function getPath()
+    public function getPath(): ?string
     {
         return $this->path;
     }

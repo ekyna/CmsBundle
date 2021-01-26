@@ -20,10 +20,6 @@
             <unique-constraint name="unique_cms_page_name" columns="name,parent_id" />
         </unique-constraints>
 
-        <entity-listeners>
-            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\PageListener" />
-        </entity-listeners>
-
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO" />
         </id>

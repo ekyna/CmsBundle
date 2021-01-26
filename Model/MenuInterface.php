@@ -2,7 +2,8 @@
 
 namespace Ekyna\Bundle\CmsBundle\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Ekyna\Bundle\CoreBundle\Model\TreeInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -13,103 +14,39 @@ use Ekyna\Component\Resource\Model as RM;
  * @method MenuTranslationInterface translate($locale = null, $create = false)
  * @method MenuTranslationInterface[] getTranslations()
  */
-interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterface
+interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterface, TreeInterface
 {
     /**
      * Sets the parent.
      *
-     * @param MenuInterface $parent
+     * @param MenuInterface|null $parent
      *
      * @return MenuInterface|$this
      */
-    public function setParent(MenuInterface $parent = null);
+    public function setParent(MenuInterface $parent = null): MenuInterface;
 
     /**
      * Returns the parent.
      *
      * @return MenuInterface|null
      */
-    public function getParent();
-
-    /**
-     * Sets the left.
-     *
-     * @param int $left
-     *
-     * @return MenuInterface|$this
-     */
-    public function setLeft($left);
-
-    /**
-     * Returns the left.
-     *
-     * @return int
-     */
-    public function getLeft();
-
-    /**
-     * Sets the right.
-     *
-     * @param int $right
-     *
-     * @return MenuInterface|$this
-     */
-    public function setRight($right);
-
-    /**
-     * Returns the right.
-     *
-     * @return int
-     */
-    public function getRight();
-
-    /**
-     * Sets the root.
-     *
-     * @param int $root
-     *
-     * @return MenuInterface|$this
-     */
-    public function setRoot($root);
-
-    /**
-     * Returns the root.
-     *
-     * @return int
-     */
-    public function getRoot();
-
-    /**
-     * Sets the level.
-     *
-     * @param int $level
-     *
-     * @return MenuInterface|$this
-     */
-    public function setLevel($level);
-
-    /**
-     * Returns the level.
-     *
-     * @return int
-     */
-    public function getLevel();
+    public function getParent(): ?MenuInterface;
 
     /**
      * Sets the children.
      *
-     * @param ArrayCollection|MenuInterface[] $children
+     * @param Collection $children
      *
      * @return MenuInterface|$this
      */
-    public function setChildren(ArrayCollection $children);
+    public function setChildren(Collection $children): MenuInterface;
 
     /**
      * Returns whether the menu has children or not.
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasChildren();
+    public function hasChildren(): bool;
 
     /**
      * Adds the child menu.
@@ -118,7 +55,7 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
      *
      * @return MenuInterface|$this
      */
-    public function addChild(MenuInterface $menu);
+    public function addChild(MenuInterface $menu): MenuInterface;
 
     /**
      * Removes the child menu.
@@ -127,12 +64,14 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
      *
      * @return MenuInterface|$this
      */
-    public function removeChild(MenuInterface $menu);
+    public function removeChild(MenuInterface $menu): MenuInterface;
 
     /**
-     * @inheritdoc
+     * Returns the menu's children.
+     *
+     * @return Collection
      */
-    public function getChildren();
+    public function getChildren(): Collection;
 
     /**
      * Set name
@@ -141,76 +80,46 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
      *
      * @return MenuInterface|$this
      */
-    public function setName($name);
+    public function setName(string $name): MenuInterface;
 
     /**
-     * @inheritdoc
-     */
-    public function getName();
-
-    /**
-     * Set title
-     *
-     * @param string $title
-     *
-     * @return MenuInterface|$this
-     */
-    public function setTitle($title);
-
-    /**
-     * Get title
+     * Returns the name.
      *
      * @return string
      */
-    public function getTitle();
+    public function getName(): ?string;
 
     /**
      * Set description
      *
-     * @param string $description
+     * @param string|null $description
      *
      * @return MenuInterface|$this
      */
-    public function setDescription($description);
+    public function setDescription(string $description = null): MenuInterface;
 
     /**
      * Get description
      *
      * @return string
      */
-    public function getDescription();
-
-    /**
-     * Sets the path.
-     *
-     * @param string $path
-     *
-     * @return MenuInterface|$this
-     */
-    public function setPath($path);
-
-    /**
-     * Returns the path.
-     *
-     * @return string
-     */
-    public function getPath();
+    public function getDescription(): ?string;
 
     /**
      * Sets the route.
      *
-     * @param string $route
+     * @param string|null $route
      *
      * @return MenuInterface|$this
      */
-    public function setRoute($route);
+    public function setRoute(string $route = null): MenuInterface;
 
     /**
      * Returns the route.
      *
      * @return string
      */
-    public function getRoute();
+    public function getRoute(): ?string;
 
     /**
      * Sets the route parameters.
@@ -219,14 +128,14 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
      *
      * @return MenuInterface|$this
      */
-    public function setParameters(array $parameters = []);
+    public function setParameters(array $parameters = []): MenuInterface;
 
     /**
      * Returns the route parameters.
      *
      * @return array
      */
-    public function getParameters();
+    public function getParameters(): array;
 
     /**
      * Sets the route attributes.
@@ -235,53 +144,46 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
      *
      * @return MenuInterface|$this
      */
-    public function setAttributes(array $attributes = []);
+    public function setAttributes(array $attributes = []): MenuInterface;
 
     /**
      * Returns the route attributes.
      *
      * @return array
      */
-    public function getAttributes();
+    public function getAttributes(): array;
 
     /**
      * Sets the locked.
      *
-     * @param boolean $locked
+     * @param bool $locked
      *
      * @return MenuInterface|$this
      */
-    public function setLocked($locked);
+    public function setLocked(bool $locked): MenuInterface;
 
     /**
      * Returns the locked.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isLocked();
+    public function isLocked(): bool;
 
     /**
      * Sets the enabled.
      *
-     * @param boolean $enabled
+     * @param bool $enabled
      *
      * @return MenuInterface|$this
      */
-    public function setEnabled($enabled);
+    public function setEnabled(bool $enabled): MenuInterface;
 
     /**
      * Returns the enabled.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isEnabled();
-
-    /**
-     * Returns the options.
-     *
-     * @return array
-     */
-    public function getOptions();
+    public function isEnabled(): bool;
 
     /**
      * Returns the option for the given key.
@@ -290,7 +192,7 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
      *
      * @return mixed|null
      */
-    public function getOption($key);
+    public function getOption(string $key);
 
     /**
      * Sets the options.
@@ -299,7 +201,46 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
      *
      * @return MenuInterface|$this
      */
-    public function setOptions(array $options);
+    public function setOptions(array $options): MenuInterface;
+
+    /**
+     * Returns the options.
+     *
+     * @return array
+     */
+    public function getOptions(): array;
+
+    /**
+     * Set title
+     *
+     * @param string $title
+     *
+     * @return MenuInterface|$this
+     */
+    public function setTitle(string $title): MenuInterface;
+
+    /**
+     * Get title
+     *
+     * @return string
+     */
+    public function getTitle(): ?string;
+
+    /**
+     * Sets the path.
+     *
+     * @param string|null $path
+     *
+     * @return MenuInterface|$this
+     */
+    public function setPath(string $path = null): MenuInterface;
+
+    /**
+     * Returns the path.
+     *
+     * @return string
+     */
+    public function getPath(): ?string;
 
     /**
      * Sets the page (non mapped).
@@ -308,12 +249,12 @@ interface MenuInterface extends RM\TaggedEntityInterface, RM\TranslatableInterfa
      *
      * @return MenuInterface|$this
      */
-    public function setPage(PageInterface $page);
+    public function setPage(PageInterface $page): MenuInterface;
 
     /**
      * Returns the page (non mapped).
      *
      * @return PageInterface|null
      */
-    public function getPage();
+    public function getPage(): ?PageInterface;
 }

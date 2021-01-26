@@ -3,7 +3,9 @@
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
+use Ekyna\Bundle\CoreBundle\Model\TreeTrait;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -20,6 +22,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     use Cms\SeoSubjectTrait;
     use RM\TimestampableTrait;
     use RM\TaggedEntityTrait;
+    use TreeTrait;
 
     /**
      * @var int
@@ -30,26 +33,6 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
      * @var Cms\PageInterface
      */
     protected $parent;
-
-    /**
-     * @var int
-     */
-    protected $left;
-
-    /**
-     * @var int
-     */
-    protected $right;
-
-    /**
-     * @var int
-     */
-    protected $root;
-
-    /**
-     * @var int
-     */
-    protected $level;
 
     /**
      * @var ArrayCollection|Cms\PageInterface[]
@@ -134,7 +117,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setParent(Cms\PageInterface $parent = null)
+    public function setParent(Cms\PageInterface $parent = null): Cms\PageInterface
     {
         $this->parent = $parent;
 
@@ -144,7 +127,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function getParent()
+    public function getParent(): ?Cms\PageInterface
     {
         return $this->parent;
     }
@@ -152,79 +135,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setLeft($left)
-    {
-        $this->left = $left;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getLeft()
-    {
-        return $this->left;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setRight($right)
-    {
-        $this->right = $right;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getRight()
-    {
-        return $this->right;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setRoot($root = null)
-    {
-        $this->root = $root;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getRoot()
-    {
-        return $this->root;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setLevel($level)
-    {
-        $this->level = $level;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getLevel()
-    {
-        return $this->level;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function hasChild(Cms\PageInterface $child)
+    public function hasChild(Cms\PageInterface $child): bool
     {
         return $this->children->contains($child);
     }
@@ -232,7 +143,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function addChild(Cms\PageInterface $child)
+    public function addChild(Cms\PageInterface $child): Cms\PageInterface
     {
         if (!$this->hasChild($child)) {
             $this->children->add($child);
@@ -244,7 +155,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function removeChild(Cms\PageInterface $child)
+    public function removeChild(Cms\PageInterface $child): Cms\PageInterface
     {
         if ($this->hasChild($child)) {
             $this->children->removeElement($child);
@@ -256,7 +167,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return 0 < $this->children->count();
     }
@@ -264,7 +175,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function getChildren()
+    public function getChildren(): Collection
     {
         return $this->children;
     }
@@ -272,7 +183,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setName($name)
+    public function setName(string $name): Cms\PageInterface
     {
         $this->name = $name;
 
@@ -282,7 +193,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -290,7 +201,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setTitle($title)
+    public function setTitle(string $title): Cms\PageInterface
     {
         $this->translate()->setTitle($title);
 
@@ -300,7 +211,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->translate()->getTitle();
     }
@@ -308,7 +219,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setBreadcrumb($breadcrumb)
+    public function setBreadcrumb(string $breadcrumb): Cms\PageInterface
     {
         $this->translate()->setBreadcrumb($breadcrumb);
 
@@ -318,7 +229,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function getBreadcrumb()
+    public function getBreadcrumb(): ?string
     {
         return $this->translate()->getBreadcrumb();
     }
@@ -326,7 +237,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setHtml($html)
+    public function setHtml(string $html = null): Cms\PageInterface
     {
         $this->translate()->setHtml($html);
 
@@ -336,7 +247,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function getHtml()
+    public function getHtml(): ?string
     {
         return $this->translate()->getHtml();
     }
@@ -344,7 +255,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setPath($path)
+    public function setPath(string $path = null): Cms\PageInterface
     {
         $this->translate()->setPath($path);
 
@@ -354,7 +265,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function getPath()
+    public function getPath(): ?string
     {
         return $this->translate()->getPath();
     }
@@ -362,7 +273,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setRoute($route = null)
+    public function setRoute(string $route = null): Cms\PageInterface
     {
         $this->route = $route;
 
@@ -372,7 +283,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function getRoute()
+    public function getRoute(): ?string
     {
         return $this->route;
     }
@@ -380,9 +291,9 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setStatic($static)
+    public function setStatic(bool $static): Cms\PageInterface
     {
-        $this->static = (bool)$static;
+        $this->static = $static;
 
         return $this;
     }
@@ -390,7 +301,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function isStatic()
+    public function isStatic(): bool
     {
         return $this->static;
     }
@@ -398,9 +309,9 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setLocked($locked)
+    public function setLocked(bool $locked): Cms\PageInterface
     {
-        $this->locked = (bool)$locked;
+        $this->locked = $locked;
 
         return $this;
     }
@@ -408,7 +319,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function isLocked()
+    public function isLocked(): bool
     {
         return $this->locked;
     }
@@ -416,7 +327,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setController($controller = null)
+    public function setController(string $controller = null): Cms\PageInterface
     {
         $this->controller = $controller;
 
@@ -426,7 +337,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function getController()
+    public function getController(): ?string
     {
         return $this->controller;
     }
@@ -434,9 +345,9 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setAdvanced($advanced)
+    public function setAdvanced(bool $advanced): Cms\PageInterface
     {
-        $this->advanced = (bool)$advanced;
+        $this->advanced = $advanced;
 
         return $this;
     }
@@ -444,7 +355,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function isAdvanced()
+    public function isAdvanced(): bool
     {
         return $this->advanced;
     }
@@ -452,9 +363,9 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setDynamicPath($dynamicPath)
+    public function setDynamicPath(bool $dynamicPath): Cms\PageInterface
     {
-        $this->dynamicPath = (bool)$dynamicPath;
+        $this->dynamicPath = $dynamicPath;
 
         return $this;
     }
@@ -462,7 +373,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function isDynamicPath()
+    public function isDynamicPath(): bool
     {
         return $this->dynamicPath;
     }
@@ -470,9 +381,9 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function setEnabled($enabled)
+    public function setEnabled(bool $enabled): Cms\PageInterface
     {
-        $this->enabled = (bool)$enabled;
+        $this->enabled = $enabled;
 
         return $this;
     }
@@ -480,7 +391,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
@@ -488,7 +399,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public function isIndexable()
+    public function isIndexable(): bool
     {
         return $this->enabled && $this->seo->getIndex();
     }
@@ -496,7 +407,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     /**
      * @inheritdoc
      */
-    public static function getEntityTagPrefix()
+    public static function getEntityTagPrefix(): string
     {
         return 'ekyna_cms.page';
     }

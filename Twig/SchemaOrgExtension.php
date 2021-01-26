@@ -32,14 +32,22 @@ class SchemaOrgExtension extends AbstractExtension
     /**
      * @inheritdoc
      */
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('json_ld', [$this, 'build'], ['is_safe' => ['html']]),
         ];
     }
 
-    public function build($object)
+    /**
+     * Builds the schema.org JSON LD.
+     *
+     * @param object $object
+     *
+     * @return string
+     */
+    public function build(object $object): string
+
     {
         if (null !== $schema = $this->builder->build($object)) {
             return $schema->toScript();

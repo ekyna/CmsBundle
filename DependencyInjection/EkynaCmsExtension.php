@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\CmsBundle\DependencyInjection;
 
 use Ekyna\Bundle\CmsBundle\Service\Renderer\NoticeRenderer;
 use Ekyna\Bundle\CmsBundle\SlideShow\Type;
+use Ekyna\Bundle\CmsBundle\Twig\CmsExtension;
 use Ekyna\Bundle\ResourceBundle\DependencyInjection\AbstractExtension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -64,7 +65,7 @@ class EkynaCmsExtension extends AbstractExtension
 
         // Cms twig extension config
         $container
-            ->getDefinition('ekyna_cms.twig.cms_extension')
+            ->getDefinition(CmsExtension::class)
             ->replaceArgument(9, [
                 'home_route' => $config['home_route'],
                 'seo'        => $config['seo'],
