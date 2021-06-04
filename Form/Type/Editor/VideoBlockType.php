@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\CmsBundle\Form\Type\Editor;
 
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
+use Ekyna\Bundle\MediaBundle\Model\AspectRatio;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -40,6 +41,15 @@ class VideoBlockType extends AbstractType
             ->add('player', Type\CheckboxType::class, [
                 'label'    => 'ekyna_cms.block.field.player',
                 'required' => false,
+            ])
+            ->add('ratio', Type\ChoiceType::class, [
+                'label'    => 'ekyna_core.field.format',
+                'choices'  => AspectRatio::getChoices(),
+                'required' => true,
+            ])
+            ->add('height', Type\TextType::class, [
+                'label'    => 'ekyna_core.field.height',
+                'required' => false,
             ]);
 
         // Data form
@@ -57,7 +67,6 @@ class VideoBlockType extends AbstractType
                 'label'          => false,
                 'error_bubbling' => false,
             ]);
-
     }
 
     /**

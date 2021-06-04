@@ -6,6 +6,7 @@ use Ekyna\Bundle\CmsBundle\Editor\Adapter\AdapterInterface;
 use Ekyna\Bundle\CmsBundle\Editor\Model\BlockInterface;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\VideoBlockType;
 use Ekyna\Bundle\MediaBundle\Entity\MediaRepository;
+use Ekyna\Bundle\MediaBundle\Model\AspectRatio;
 use Ekyna\Bundle\MediaBundle\Service\Renderer;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -25,6 +26,8 @@ class VideoPlugin extends AbstractPlugin
             'loop'       => false,
             'muted'      => false,
             'player'     => false,
+            'ratio'      => AspectRatio::RATIO_16_9,
+            'height'     => null,
         ],
     ];
 
@@ -89,13 +92,13 @@ class VideoPlugin extends AbstractPlugin
         $this->upgrade($block);
 
         $options = array_replace([
-            'action'     => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
+            'action' => $this->urlGenerator->generate('ekyna_cms_editor_block_edit', [
                 'blockId'         => $block->getId(),
                 'widgetType'      => $request->get('widgetType', $block->getType()),
                 '_content_locale' => $this->localeProvider->getCurrentLocale(),
             ]),
-            'method'     => 'post',
-            'attr'       => [
+            'method' => 'post',
+            'attr'   => [
                 'class' => 'form-horizontal',
             ],
         ], $options);
@@ -119,7 +122,9 @@ class VideoPlugin extends AbstractPlugin
         $this->upgrade($block);
 
         $data = array_replace_recursive(
+            self::DEFAULT_DATA,
             $block->getData(),
+            self::DEFAULT_TRANSLATION_DATA,
             $block->translate($this->localeProvider->getCurrentLocale(), true)->getData()
         );
 
@@ -153,6 +158,8 @@ class VideoPlugin extends AbstractPlugin
         if ($video) {
             $params = $videoData;
             $params['responsive'] = true;
+            $params['aspect_ratio'] = $params['ratio'];
+            $params['min_height'] = $params['height'];
             $params['poster'] = $posterPath;
 
             $view->content = $this->mediaRenderer->renderVideo($video, $params);

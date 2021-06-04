@@ -172,15 +172,19 @@
 
 {%- block ekyna_cms_block_video_widget -%}
     {{- form_errors(form) -}}
+    {{- form_row(form.translations, {'label_col': 0, 'widget_col': 12}) -}}
     <div class="row">
-        <div class="col-md-8">
-            {{- form_row(form.translations, {'label_col': 0, 'widget_col': 12}) -}}
+        <div class="col-md-4">
+            {{- form_row(form.data.video.autoplay, {'label_col': 6, 'widget_col': 6, 'attr': {'align_with_widget': true}}) -}}
+            {{- form_row(form.data.video.loop, {'label_col': 6, 'widget_col': 6, 'attr': {'align_with_widget': true}}) -}}
         </div>
         <div class="col-md-4">
-            {{- form_row(form.data.video.autoplay) -}}
-            {{- form_row(form.data.video.loop) -}}
-            {{- form_row(form.data.video.muted) -}}
-            {{- form_row(form.data.video.player) -}}
+            {{- form_row(form.data.video.muted, {'label_col': 6, 'widget_col': 6, 'attr': {'align_with_widget': true}}) -}}
+            {{- form_row(form.data.video.player, {'label_col': 6, 'widget_col': 6, 'attr': {'align_with_widget': true}}) -}}
+        </div>
+        <div class="col-md-4">
+            {{- form_row(form.data.video.ratio, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
+            {{- form_row(form.data.video.height, {'label_col': 6, 'widget_col': 6, 'sizing': 'sm'}) -}}
         </div>
     </div>
     {{- form_rest(form) -}}
