@@ -20,7 +20,7 @@ class ContentNormalizer extends TranslatableNormalizer
      *
      * @param ContentInterface $content
      */
-    public function normalize($content, $format = null, array $context = [])
+    public function normalize($content, string $format = null, array $context = [])
     {
         $data = parent::normalize($content, $format, $context);
 
@@ -35,7 +35,7 @@ class ContentNormalizer extends TranslatableNormalizer
     /**
      * @inheritDoc
      */
-    public function denormalize($data, $type, $format = null, array $context = [])
+    public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         //$resource = parent::denormalize($data, $class, $format, $context);
 
@@ -45,7 +45,7 @@ class ContentNormalizer extends TranslatableNormalizer
     /**
      * @inheritDoc
      */
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsNormalization($data, string $format = null): bool
     {
         return $data instanceof ContentInterface;
     }
@@ -53,7 +53,7 @@ class ContentNormalizer extends TranslatableNormalizer
     /**
      * @inheritDoc
      */
-    public function supportsDenormalization($data, $type, $format = null): bool
+    public function supportsDenormalization($data, string $type, string $format = null): bool
     {
         return class_exists($type) && is_subclass_of($type, ContentInterface::class);
     }

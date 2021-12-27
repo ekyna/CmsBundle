@@ -20,7 +20,7 @@ class PageNormalizer extends TranslatableNormalizer
      *
      * @param Model\PageInterface $page
      */
-    public function normalize($page, $format = null, array $context = [])
+    public function normalize($page, string $format = null, array $context = [])
     {
         $data = parent::normalize($page, $format, $context);
 
@@ -44,7 +44,7 @@ class PageNormalizer extends TranslatableNormalizer
     /**
      * @inheritDoc
      */
-    public function denormalize($data, $type, $format = null, array $context = [])
+    public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         //$resource = parent::denormalize($data, $class, $format, $context);
 

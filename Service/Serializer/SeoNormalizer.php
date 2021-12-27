@@ -19,7 +19,7 @@ class SeoNormalizer extends TranslatableNormalizer
      *
      * @param Model\SeoInterface $object
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = [])
     {
         return array_replace(
             ['id' => $object->getId()],
@@ -30,7 +30,7 @@ class SeoNormalizer extends TranslatableNormalizer
     /**
      * @inheritDoc
      */
-    public function denormalize($data, $type, $format = null, array $context = [])
+    public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         //$resource = parent::denormalize($data, $class, $format, $context);
 
