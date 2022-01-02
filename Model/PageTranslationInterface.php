@@ -10,70 +10,24 @@ use Ekyna\Component\Resource\Model\TranslationInterface;
  * Interface PageTranslationInterface
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author  Étienne Dauvergne <contact@ekyna.com>
+ *
+ * @method PageInterface getTranslatable()
  */
 interface PageTranslationInterface extends TranslationInterface
 {
-    /**
-     * Sets the title.
-     *
-     * @param string|null $title
-     *
-     * @return PageTranslationInterface|$this
-     */
-    public function setTitle(string $title = null): PageTranslationInterface;
+    public function setTitle(?string $title): PageTranslationInterface;
 
-    /**
-     * Returns the title.
-     *
-     * @return string|null
-     */
     public function getTitle(): ?string;
 
-    /**
-     * Sets the breadcrumb.
-     *
-     * @param string|null $breadcrumb
-     *
-     * @return PageTranslationInterface|$this
-     */
-    public function setBreadcrumb(string $breadcrumb = null): PageTranslationInterface;
+    public function setBreadcrumb(?string $breadcrumb): PageTranslationInterface;
 
-    /**
-     * Returns the breadcrumb.
-     *
-     * @return string|null
-     */
     public function getBreadcrumb(): ?string;
 
-    /**
-     * Sets the html.
-     *
-     * @param string|null $html
-     *
-     * @return PageTranslationInterface|$this
-     */
-    public function setHtml(string $html = null): PageTranslationInterface;
+    public function setHtml(?string $html): PageTranslationInterface;
 
-    /**
-     * Returns the html.
-     *
-     * @return string|null
-     */
     public function getHtml(): ?string;
 
-    /**
-     * Set path
-     *
-     * @param string|null $path
-     *
-     * @return PageTranslationInterface|$this
-     */
-    public function setPath(string $path = null): PageTranslationInterface;
+    public function setPath(?string $path): PageTranslationInterface;
 
-    /**
-     * Get path
-     *
-     * @return string|null
-     */
     public function getPath(): ?string;
 }

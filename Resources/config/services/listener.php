@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Doctrine\ORM\Events;
 use Ekyna\Bundle\CmsBundle\EventListener\KernelEventListener;
 use Ekyna\Bundle\CmsBundle\EventListener\MenuEventListener;
 use Ekyna\Bundle\CmsBundle\EventListener\NoticeEventListener;
 use Ekyna\Bundle\CmsBundle\EventListener\PageEventListener;
+use Ekyna\Bundle\CmsBundle\EventListener\PageTranslationListener;
 use Ekyna\Bundle\CmsBundle\EventListener\PublicUrlEventSubscriber;
 use Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber;
 use Ekyna\Bundle\CmsBundle\Listener\PageElasticaSubscriber;
-use Ekyna\Bundle\CmsBundle\Listener\PageTranslationListener;
 use Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber;
 use Ekyna\Bundle\CmsBundle\Listener\TagsSubjectSubscriber;
 
@@ -38,6 +39,17 @@ return static function (ContainerConfigurator $container) {
             ])
             ->tag('resource.event_subscriber')
 
+        ->set('ekyna_cms.listener.page_translation', PageTranslationListener::class)
+            ->args([
+                service('ekyna_resource.orm.persistence_helper'),
+                service('event_dispatcher'),
+            ])
+            ->tag('resource.event_subscriber')
+            ->tag('doctrine.event_listener', [
+                'event'      => Events::postFlush,
+                'connection' => 'default',
+            ])
+
         // Menu event listener
         ->set('ekyna_cms.listener.menu', MenuEventListener::class)
             ->args([
@@ -61,17 +73,17 @@ return static function (ContainerConfigurator $container) {
         // TODO merge metadata subscribers
         ->set('ekyna_cms.listener.content_subject_metadata', ContentSubjectSubscriber::class)
             ->tag('doctrine.event_listener', [
-                'event'      => 'loadClassMetadata',
+                'event'      => Events::loadClassMetadata,
                 'connection' => 'default',
             ])
         ->set('ekyna_cms.listener.seo_subject_metadata', SeoSubjectSubscriber::class)
             ->tag('doctrine.event_listener', [
-                'event'      => 'loadClassMetadata',
+                'event'      => Events::loadClassMetadata,
                 'connection' => 'default',
             ])
         ->set('ekyna_cms.listener.tags_subject_metadata', TagsSubjectSubscriber::class)
             ->tag('doctrine.event_listener', [
-                'event'      => 'loadClassMetadata',
+                'event'      => Events::loadClassMetadata,
                 'connection' => 'default',
             ])
 
@@ -82,21 +94,7 @@ return static function (ContainerConfigurator $container) {
                 param('ekyna_cms.class.page'),
             ])
             ->tag('doctrine.event_listener', [
-                'event'      => 'onFlush',
-                'connection' => 'default',
-            ])
-
-        // Page translation listener
-        ->set('ekyna_cms.listener.page_translation', PageTranslationListener::class)
-            ->args([
-                service('event_dispatcher'),
-            ])
-            ->tag('doctrine.orm.entity_listener', [
-                // TODO  'entity' => 'PageTranslation',
-                'lazy' => true
-            ])
-            ->tag('doctrine.event_listener', [
-                'event'      => 'onPostFlush',
+                'event'      => Events::onFlush,
                 'connection' => 'default',
             ])
     ;

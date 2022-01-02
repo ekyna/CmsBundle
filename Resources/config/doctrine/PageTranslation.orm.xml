@@ -13,10 +13,6 @@
             <unique-constraint name="unique_cms_page_path" columns="path,locale" />
         </unique-constraints>
 
-        <entity-listeners>
-            <entity-listener class="Ekyna\Bundle\CmsBundle\Listener\PageTranslationListener" />
-        </entity-listeners>
-
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO" />
         </id>

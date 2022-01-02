@@ -642,7 +642,9 @@ class PageGenerator
 
             $this->outputPageAction($page->getName(), 'removed');
 
-            $this->pageManager->delete($page);
+            $this->pageManager->remove($page);
         }
+
+        $this->pageManager->flush();
     }
 }
