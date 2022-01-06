@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\CmsBundle\Entity;
 
 use Ekyna\Bundle\CmsBundle\Model\SeoTranslationInterface;
+use Ekyna\Component\Resource\Copier\CopierInterface;
+use Ekyna\Component\Resource\Copier\CopyInterface;
 use Ekyna\Component\Resource\Model\AbstractTranslation;
 
 /**
@@ -12,20 +14,14 @@ use Ekyna\Component\Resource\Model\AbstractTranslation;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class SeoTranslation extends AbstractTranslation implements SeoTranslationInterface
+class SeoTranslation extends AbstractTranslation implements SeoTranslationInterface, CopyInterface
 {
     protected ?string $title       = null;
     protected ?string $description = null;
     protected ?string $keywords    = null;
 
-
-    /**
-     * Clones the seo translation.
-     */
-    public function __clone()
+    public function onCopy(CopierInterface $copier): void
     {
-        parent::__clone();
-
         $this->title = null;
     }
 

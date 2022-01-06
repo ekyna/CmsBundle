@@ -27,30 +27,11 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     protected bool    $index      = true;
     protected ?string $canonical  = null;
 
-
-    /**
-     * Clones the seo.
-     */
-    public function __clone()
-    {
-        parent::__clone();
-
-        $this->id = null;
-    }
-
-    /**
-     * Returns the string representation.
-     *
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->getTitle() ?: 'New Seo';
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getId(): ?int
     {
         return $this->id;

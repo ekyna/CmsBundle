@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\CmsBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
+use Ekyna\Component\Resource\Copier\CopyInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -12,7 +13,7 @@ use Ekyna\Component\Resource\Model as RM;
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author  Étienne Dauvergne <contact@ekyna.com>
  *
- * @method SeoTranslationInterface translate($locale = null, $create = false)
+ * @method SeoTranslationInterface translate(string $locale = null, bool $create = false)
  * @method Collection|SeoTranslationInterface[] getTranslations()
  */
 interface SeoInterface extends RM\TaggedEntityInterface, RM\TranslatableInterface

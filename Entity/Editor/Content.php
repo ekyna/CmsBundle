@@ -7,6 +7,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity\Editor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
+use Ekyna\Component\Resource\Copier\CopierInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -23,27 +24,19 @@ class Content implements EM\ContentInterface
     protected ?string    $name = null;
     protected Collection $containers;
 
-
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->containers = new ArrayCollection();
     }
 
-    /**
-     * Clones the content.
-     */
     public function __clone()
     {
         $this->id = null;
+    }
 
-        $containers = $this->containers->toArray();
-        $this->containers = new ArrayCollection();
-        foreach ($containers as $container) {
-            $this->addContainer(clone $container);
-        }
+    public function onCopy(CopierInterface $copier): void
+    {
+        $this->containers = $copier->copyCollection($this->containers, true);
     }
 
     /**

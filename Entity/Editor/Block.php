@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\CmsBundle\Entity\Editor;
 
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
+use Ekyna\Component\Resource\Copier\CopierInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -12,7 +13,7 @@ use Ekyna\Component\Resource\Model as RM;
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Étienne Dauvergne <contact@ekyna.com>
  *
- * @method EM\BlockTranslationInterface translate($locale = null, $create = false)
+ * @method EM\BlockTranslationInterface translate(string $locale = null, bool $create = false)
  */
 class Block extends RM\AbstractTranslatable implements EM\BlockInterface
 {
@@ -30,16 +31,16 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
     protected ?string          $name = null;
     protected ?string          $type = null;
 
-
-    /**
-     * Clones the block.
-     */
     public function __clone()
     {
         parent::__clone();
 
-        $this->id = null;
         $this->row = null;
+    }
+
+    public function onCopy(CopierInterface $copier): void
+    {
+        $this->name = null;
     }
 
     /**

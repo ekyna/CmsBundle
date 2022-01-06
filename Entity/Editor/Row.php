@@ -7,6 +7,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity\Editor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
+use Ekyna\Component\Resource\Copier\CopierInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -19,40 +20,30 @@ class Row implements EM\RowInterface
     use EM\LayoutTrait;
     use RM\SortableTrait;
     use RM\TimestampableTrait;
-
     use RM\TaggedEntityTrait {
         getEntityTag as traitGetEntityTag;
     }
-
 
     protected ?int                   $id        = null;
     protected ?EM\ContainerInterface $container = null;
     protected ?string                $name      = null;
     protected Collection             $blocks;
 
-
-    /**
-     * Constructor.
-     */
     public function __construct()
     {
         $this->position = 0;
         $this->blocks = new ArrayCollection();
     }
 
-    /**
-     * Clones the row.
-     */
     public function __clone()
     {
         $this->id = null;
         $this->container = null;
+    }
 
-        $blocks = $this->blocks->toArray();
-        $this->blocks = new ArrayCollection();
-        foreach ($blocks as $block) {
-            $this->addBlock(clone $block);
-        }
+    public function onCopy(CopierInterface $copier): void
+    {
+        $this->blocks = $copier->copyCollection($this->blocks, true);
     }
 
     /**

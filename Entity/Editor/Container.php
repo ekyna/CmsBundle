@@ -7,6 +7,7 @@ namespace Ekyna\Bundle\CmsBundle\Entity\Editor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
+use Ekyna\Component\Resource\Copier\CopierInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -20,11 +21,9 @@ class Container implements EM\ContainerInterface
     use EM\LayoutTrait;
     use RM\SortableTrait;
     use RM\TimestampableTrait;
-
     use RM\TaggedEntityTrait {
         getEntityTag as traitGetEntityTag;
     }
-
 
     protected ?int                   $id      = null;
     protected ?EM\ContentInterface   $content = null;
@@ -34,34 +33,24 @@ class Container implements EM\ContainerInterface
     protected ?string                $type    = null;
     protected Collection             $rows;
 
-
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->position = 0;
         $this->rows = new ArrayCollection();
     }
 
-    /**
-     * Clones the container.
-     */
     public function __clone()
     {
         $this->id = null;
         $this->content = null;
-
-        $rows = $this->rows->toArray();
-        $this->rows = new ArrayCollection();
-        foreach ($rows as $row) {
-            $this->addRow(clone $row);
-        }
     }
 
-    /**
-     * @inheritDoc
-     */
+    public function onCopy(CopierInterface $copier): void
+    {
+        $this->copy = null;
+        $this->rows = $copier->copyCollection($this->rows, true);
+    }
+
     public function getId(): ?int
     {
         return $this->id;

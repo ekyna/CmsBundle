@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
 use Doctrine\Common\Collections\Collection;
+use Ekyna\Component\Resource\Copier\CopyInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -14,6 +15,7 @@ use Ekyna\Component\Resource\Model as RM;
  */
 interface RowInterface
     extends LayoutInterface,
+            CopyInterface,
             RM\SortableInterface,
             RM\TimestampableInterface,
             RM\TaggedEntityInterface

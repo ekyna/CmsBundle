@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
 use Doctrine\Common\Collections\Collection;
+use Ekyna\Component\Resource\Copier\CopyInterface;
 use Ekyna\Component\Resource\Model as RM;
 
 /**
@@ -12,7 +13,7 @@ use Ekyna\Component\Resource\Model as RM;
  * @package Ekyna\Bundle\CmsBundle\Model
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-interface ContentInterface extends RM\TimestampableInterface, RM\TaggedEntityInterface
+interface ContentInterface extends RM\TimestampableInterface, CopyInterface, RM\TaggedEntityInterface
 {
     /**
      * Sets the name
