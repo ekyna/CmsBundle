@@ -79,10 +79,6 @@ class RoutingHelper
             $optional = false;
         }
 
-        if (0 === strpos($path, '/' . $locale . '/')) {
-            $path = substr($path, strlen('/' . $locale));
-        }
-
         return $path;
     }
 

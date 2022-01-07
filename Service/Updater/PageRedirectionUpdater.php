@@ -10,6 +10,8 @@ use Ekyna\Bundle\SettingBundle\Event\DiscardRedirectionEvent;
 use Ekyna\Bundle\SettingBundle\Event\RedirectionEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use function array_key_exists;
+
 /**
  * Class PageRedirectionUpdater
  * @package Ekyna\Bundle\CmsBundle\Service\Updater
@@ -18,25 +20,14 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class PageRedirectionUpdater
 {
     private EventDispatcherInterface $dispatcher;
-    private array                    $locales;
 
-
-    /**
-     * Constructor.
-     *
-     * @param EventDispatcherInterface $dispatcher
-     * @param array                    $locales
-     */
-    public function __construct(EventDispatcherInterface $dispatcher, array $locales)
+    public function __construct(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
-        $this->locales = $locales;
     }
 
     /**
      * Discards redirections for the page.
-     *
-     * @param PageInterface $page
      */
     public function discardPageRedirections(PageInterface $page): void
     {
@@ -44,18 +35,14 @@ class PageRedirectionUpdater
             return;
         }
 
-        foreach ($page->getTranslations() as $locale => $translation) {
-            // TODO use url generator or i18n routing prefix strategy
-            $localePrefix = $locale != 'fr' ? '/' . $locale : '';
-            $event = new DiscardRedirectionEvent($localePrefix . $translation->getPath());
+        foreach ($page->getTranslations() as $translation) {
+            $event = new DiscardRedirectionEvent($translation->getPath());
             $this->dispatcher->dispatch($event, RedirectionEvents::DISCARD);
         }
     }
 
     /**
      * Builds redirections for the page.
-     *
-     * @param PageInterface $page
      */
     public function buildPageRedirections(PageInterface $page): void
     {
@@ -77,38 +64,38 @@ class PageRedirectionUpdater
         // Find the first enabled ancestor
         $parentPage = $page;
         while (null !== $parentPage = $parentPage->getParent()) {
-            if ($parentPage->isEnabled()) {
-                // Store "to" paths for each locale
-                foreach ($parentPage->getTranslations() as $locale => $translation) {
-                    if (array_key_exists($locale, $redirections)) {
-                        $redirections[$locale]['to'] = $translation->getPath();
-                        unset($locales[$locale]);
-                    }
+            if (!$parentPage->isEnabled()) {
+                continue;
+            }
 
-                    // Check that all locales has been handled
-                    if (empty($locales)) {
-                        break 2;
-                    }
+            // Store "to" paths for each locale
+            foreach ($parentPage->getTranslations() as $locale => $translation) {
+                if (!array_key_exists($locale, $redirections)) {
+                    continue;
+                }
+
+                $redirections[$locale]['to'] = $translation->getPath();
+                unset($locales[$locale]);
+
+                // Check that all locales has been handled
+                if (empty($locales)) {
+                    break 2;
                 }
             }
         }
 
-        if (!empty($redirections)) {
-            foreach ($redirections as $locale => $redirection) {
-                if (!(array_key_exists('from', $redirection) && array_key_exists('to', $redirection))) {
-                    continue;
-                }
-                // TODO use url generator or i18n routing prefix strategy
-                $localePrefix = $locale != 'fr' ? '/' . $locale : '';
+        if (empty($redirections)) {
+            return;
+        }
 
-                $event = new BuildRedirectionEvent(
-                    $localePrefix . $redirection['from'],
-                    $localePrefix . $redirection['to'],
-                    true
-                );
-
-                $this->dispatcher->dispatch($event, RedirectionEvents::BUILD);
+        foreach ($redirections as $redirection) {
+            if (!array_key_exists('from', $redirection) || !array_key_exists('to', $redirection)) {
+                continue;
             }
+
+            $event = new BuildRedirectionEvent($redirection['from'], $redirection['to'], true);
+
+            $this->dispatcher->dispatch($event, RedirectionEvents::BUILD);
         }
     }
 }

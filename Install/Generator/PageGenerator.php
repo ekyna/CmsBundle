@@ -460,9 +460,8 @@ class PageGenerator
             }
 
             if ($updated) {
-                if (!$this->validate($page)) {
-                    return false;
-                }
+                $this->validate($page);
+
                 $this->pageManager->save($page);
             }
 
@@ -518,9 +517,7 @@ class PageGenerator
                     ->setPath($path);
             }
 
-            if (!$this->validate($page)) {
-                return false;
-            }
+            $this->validate($page);
 
             $this->pageManager->save($page);
 
@@ -544,12 +541,12 @@ class PageGenerator
     /**
      * Validates the element.
      */
-    private function validate(object $element): bool
+    private function validate(object $element): void
     {
         $violationList = $this->validator->validate($element, null, ['Generator']);
 
         if (0 === $violationList->count()) {
-            return true;
+            return;
         }
 
         $this->output->writeln('<error>Invalid element</error>');
@@ -562,7 +559,7 @@ class PageGenerator
             ));
         }
 
-        return false;
+        throw new RuntimeException('Invalid element.');
     }
 
     /**
@@ -616,9 +613,7 @@ class PageGenerator
                             ->setTitle($page->translate($locale)->getTitle());
                     }
 
-                    if (!$this->validate($menu)) {
-                        return false;
-                    }
+                    $this->validate($menu);
 
                     $this->menuManager->save($menu);
                 }
@@ -641,6 +636,10 @@ class PageGenerator
             }
 
             $this->outputPageAction($page->getName(), 'removed');
+
+            if ($parent = $page->getParent()) {
+                $parent->removeChild($page);
+            }
 
             $this->pageManager->remove($page);
         }

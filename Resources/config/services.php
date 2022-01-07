@@ -62,7 +62,6 @@ return static function (ContainerConfigurator $container) {
         ->set('ekyna_cms.updater.page_redirection', PageRedirectionUpdater::class)
             ->args([
                 service('event_dispatcher'),
-                param('ekyna_resource.locales'),
             ])
 
         // Setting schema
