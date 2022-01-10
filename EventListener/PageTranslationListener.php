@@ -7,6 +7,7 @@ namespace Ekyna\Bundle\CmsBundle\EventListener;
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Model\PageTranslationInterface;
+use Ekyna\Bundle\CmsBundle\Service\Helper\CacheHelper;
 use Ekyna\Bundle\SettingBundle\Event\BuildRedirectionEvent;
 use Ekyna\Bundle\SettingBundle\Event\RedirectionEvents;
 use Ekyna\Component\Resource\Event\ResourceEventInterface;
@@ -15,8 +16,11 @@ use Ekyna\Component\Resource\Persistence\PersistenceHelperInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+use function rtrim;
 use function str_replace;
+use function strlen;
 use function strpos;
+use function substr;
 
 /**
  * Class PageTranslationListener
@@ -27,14 +31,18 @@ class PageTranslationListener implements EventSubscriberInterface
 {
     private PersistenceHelperInterface $persistenceHelper;
     private EventDispatcherInterface   $eventDispatcher;
-    private array                      $redirections = [];
+    private CacheHelper                $cacheHelper;
+
+    private array $redirections = [];
 
     public function __construct(
         PersistenceHelperInterface $persistenceHelper,
-        EventDispatcherInterface   $eventDispatcher
+        EventDispatcherInterface   $eventDispatcher,
+        CacheHelper                $cacheHelper
     ) {
         $this->persistenceHelper = $persistenceHelper;
         $this->eventDispatcher = $eventDispatcher;
+        $this->cacheHelper = $cacheHelper;
     }
 
     public function onUpdate(ResourceEventInterface $event): void
@@ -53,7 +61,12 @@ class PageTranslationListener implements EventSubscriberInterface
             ];
         }
 
+        $page = $translation->getTranslatable();
+
         $this->updateChildren($translation->getTranslatable(), $from, $to, $translation->getLocale());
+
+        $this->cacheHelper->purgePageCache($page);
+        $this->cacheHelper->purgeRoutesCache();
     }
 
     private function updateChildren(PageInterface $page, string $from, string $to, string $locale): void
@@ -75,7 +88,8 @@ class PageTranslationListener implements EventSubscriberInterface
             }
 
             $newPath = str_replace($from, $to, $oldPath);
-            $translation->setPath($newPath);
+            // Full slug will be built by TreeTranslationSlugHandler
+            $translation->setPath(substr($newPath, strlen(rtrim($to, '/'))));
             $this->persistenceHelper->persistAndRecompute($translation, true);
 
             if (!empty($oldPath) && !empty($newPath) && ($oldPath !== $newPath)) {
@@ -94,6 +108,9 @@ class PageTranslationListener implements EventSubscriberInterface
         if (null === $page = $this->getTranslationPage($translation)) {
             return;
         }
+
+        $this->cacheHelper->purgePageCache($page);
+        $this->cacheHelper->purgeRoutesCache();
 
         if (empty($from = $this->getTranslationPath($translation))) {
             return;

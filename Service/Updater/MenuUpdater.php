@@ -24,15 +24,6 @@ class MenuUpdater
     private TagManager              $tagManager;
     private string                  $menuClass;
 
-
-    /**
-     * Constructor.
-     *
-     * @param PageRepositoryInterface $pageRepository
-     * @param EntityManagerInterface  $entityManager
-     * @param TagManager              $tagManager
-     * @param string                  $menuClass
-     */
     public function __construct(
         PageRepositoryInterface $pageRepository,
         EntityManagerInterface $entityManager,
@@ -47,10 +38,6 @@ class MenuUpdater
 
     /**
      * Update the menu's 'route' property.
-     *
-     * @param MenuInterface $menu
-     *
-     * @return bool
      */
     public function updateRoute(MenuInterface $menu): bool
     {
@@ -69,10 +56,6 @@ class MenuUpdater
 
     /**
      * Update the menu's 'name' property.
-     *
-     * @param MenuInterface $menu
-     *
-     * @return bool
      */
     public function updateName(MenuInterface $menu): bool
     {
@@ -86,40 +69,32 @@ class MenuUpdater
     }
 
     /**
-     * Checks the menu(s 'enabled' property.
+     * Checks the menu's 'enabled' property.
      *
-     * @param MenuInterface $menu
-     *
-     * @return bool
+     * @return bool Whether the menu should not be enabled
      */
     public function checkEnabled(MenuInterface $menu): bool
     {
-        if ($menu->isLocked()) {
-            // Don't disable if locked
-            if (!$menu->isEnabled()) {
-                $menu->setEnabled(true);
-            }
+        if (!$menu->isEnabled()) {
+            return false;
+        }
 
+        if ((!$page = $menu->getPage()) && !empty($route = $menu->getRoute())) {
+            $page = $this->pageRepository->findOneByRoute($route);
+        }
+
+        // Don't enable if relative page is disabled
+        if ($page && !$page->isEnabled()) {
             return true;
         }
 
-        if ($menu->isEnabled() && !empty($route = $menu->getRoute())) {
-            // Don't enable if relative page is disabled
-            $page = $this->pageRepository->findOneByRoute($route);
-            if ($page && !$page->isEnabled()) {
-                return false;
-            }
-        }
-
-        return true;
+        return false;
     }
 
     /**
      * Disables the menus recursively.
      *
-     * @param MenuInterface[] $menus
-     *
-     * @return bool
+     * @param array<MenuInterface> $menus
      */
     public function disabledMenuRecursively(array $menus): bool
     {

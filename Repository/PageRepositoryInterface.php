@@ -47,13 +47,6 @@ interface PageRepositoryInterface extends TranslatableRepositoryInterface
     public function findParentsForBreadcrumb(PageInterface $current): array;
 
     /**
-     * Returns the pages routes.
-     *
-     * @return array
-     */
-    public function getPagesRoutes(): array;
-
-    /**
      * Returns the indexable pages.
      *
      * @return array<PageInterface>
@@ -61,29 +54,14 @@ interface PageRepositoryInterface extends TranslatableRepositoryInterface
     public function getIndexablePages(): array;
 
     /**
-     * Returns the routes data matching the given path.
-     *
-     * @param string $path
+     * Returns the pages routes.
      *
      * @return array
      */
-    public function getRoutesDataByPath(string $path): array;
+    public function getPagesRoutesNames(): array;
 
     /**
-     * Returns the routes data matching the given names.
-     *
-     * @param array|null $names
-     *
-     * @return array
+     * Returns the static routes data.
      */
-    public function getRoutesDataByNames(?array $names): array;
-
-    /**
-     * Returns the route data matching the given name.
-     *
-     * @param string $name
-     *
-     * @return array|null
-     */
-    public function getRouteDataByName(string $name): ?array;
+    public function getDynamicRouterData(): array;
 }

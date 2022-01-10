@@ -228,8 +228,9 @@ interface PageInterface extends
      * Returns the page route cache tag.
      *
      * @param string $route
+     * @param string $locale
      *
      * @return string
      */
-    public static function getRouteCacheTag(string $route): string;
+    public static function getRouteCacheTag(string $route, string $locale): string;
 }

@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\CmsBundle\Service\Updater;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Repository\MenuRepositoryInterface;
 use Ekyna\Bundle\CmsBundle\Repository\PageRepositoryInterface;
-use Ekyna\Bundle\CmsBundle\Service\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Service\Helper\RoutingHelper;
 use Ekyna\Bundle\ResourceBundle\Service\Http\TagManager;
 use RuntimeException;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 /**
  * Class PageUpdater
@@ -28,22 +25,16 @@ class PageUpdater
     private MenuRepositoryInterface $menuRepository;
     private EntityManagerInterface  $entityManager;
     private TagManager              $tagManager;
-    private AdapterInterface        $cmsCache;
     private array                   $config;
-    private string                  $pageClass;
-    private ?CacheProvider          $resultCache;
 
     public function __construct(
         PageRepositoryInterface $pageRepository,
-        RoutingHelper $routingHelper,
-        MenuUpdater $menuUpdater,
+        RoutingHelper           $routingHelper,
+        MenuUpdater             $menuUpdater,
         MenuRepositoryInterface $menuRepository,
-        EntityManagerInterface $entityManager,
-        TagManager $tagManager,
-        AdapterInterface $cmsCache,
-        array $config,
-        string $pageClass,
-        CacheProvider $resultCache = null
+        EntityManagerInterface  $entityManager,
+        TagManager              $tagManager,
+        array                   $config
     ) {
         $this->pageRepository = $pageRepository;
         $this->routingHelper = $routingHelper;
@@ -51,10 +42,7 @@ class PageUpdater
         $this->menuRepository = $menuRepository;
         $this->entityManager = $entityManager;
         $this->tagManager = $tagManager;
-        $this->cmsCache = $cmsCache;
         $this->config = $config;
-        $this->pageClass = $pageClass;
-        $this->resultCache = $resultCache;
     }
 
     /**
@@ -168,27 +156,5 @@ class PageUpdater
         }
 
         return false;
-    }
-
-    /**
-     * Purges the pages routes cache.
-     */
-    public function purgeRoutesCache(): void
-    {
-        $this->cmsCache->deleteItem(PageHelper::PAGES_ROUTES_CACHE_KEY);
-    }
-
-    /**
-     * Purges the page cache.
-     */
-    public function purgePageCache(PageInterface $page): void
-    {
-        if (!$this->resultCache) {
-            return;
-        }
-
-        $this->resultCache->delete(
-            call_user_func($this->pageClass . '::getRouteCacheTag', $page->getRoute())
-        );
     }
 }

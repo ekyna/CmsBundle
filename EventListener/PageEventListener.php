@@ -6,6 +6,7 @@ namespace Ekyna\Bundle\CmsBundle\EventListener;
 
 use Ekyna\Bundle\CmsBundle\Event\PageEvents;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Bundle\CmsBundle\Service\Helper\CacheHelper;
 use Ekyna\Bundle\CmsBundle\Service\Updater\PageRedirectionUpdater;
 use Ekyna\Bundle\CmsBundle\Service\Updater\PageUpdater;
 use Ekyna\Component\Resource\Event\ResourceEventInterface;
@@ -22,17 +23,20 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class PageEventListener implements EventSubscriberInterface
 {
     private PersistenceHelperInterface $persistenceHelper;
-    private PageUpdater $pageUpdater;
-    private PageRedirectionUpdater $redirectionUpdater;
+    private PageUpdater                $pageUpdater;
+    private PageRedirectionUpdater     $redirectionUpdater;
+    private CacheHelper                $cacheHelper;
 
     public function __construct(
         PersistenceHelperInterface $persistenceHelper,
-        PageUpdater $pageUpdater,
-        PageRedirectionUpdater $redirectionUpdater
+        PageUpdater                $pageUpdater,
+        PageRedirectionUpdater     $redirectionUpdater,
+        CacheHelper                $cacheHelper
     ) {
         $this->persistenceHelper = $persistenceHelper;
         $this->pageUpdater = $pageUpdater;
         $this->redirectionUpdater = $redirectionUpdater;
+        $this->cacheHelper = $cacheHelper;
     }
 
     /**
@@ -67,7 +71,7 @@ class PageEventListener implements EventSubscriberInterface
             $this->persistenceHelper->persistAndRecompute($page, false);
         }
 
-        $this->pageUpdater->purgeRoutesCache();
+        $this->cacheHelper->purgeRoutesCache();
     }
 
     /**
@@ -120,8 +124,8 @@ class PageEventListener implements EventSubscriberInterface
             $this->persistenceHelper->persistAndRecompute($page, false);
         }
 
-        $this->pageUpdater->purgeRoutesCache();
-        $this->pageUpdater->purgePageCache($page);
+        $this->cacheHelper->purgeRoutesCache();
+        $this->cacheHelper->purgePageCache($page);
 
         if (!$this->persistenceHelper->isChanged($page, 'enabled')) {
             return;
@@ -158,8 +162,8 @@ class PageEventListener implements EventSubscriberInterface
     {
         $page = $this->getPageFromEvent($event);
 
-        $this->pageUpdater->purgeRoutesCache();
-        $this->pageUpdater->purgePageCache($page);
+        $this->cacheHelper->purgeRoutesCache();
+        $this->cacheHelper->purgePageCache($page);
 
         $this->redirectionUpdater->buildPageRedirections($page);
     }

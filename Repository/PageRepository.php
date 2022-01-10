@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use DateTime;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr;
-use Doctrine\ORM\QueryBuilder;
 use Ekyna\Bundle\CmsBundle\Entity\Page;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Component\Resource\Doctrine\ORM\Repository\TranslatableRepository;
@@ -19,14 +17,10 @@ use Ekyna\Component\Resource\Doctrine\ORM\Repository\TranslatableRepository;
  */
 class PageRepository extends TranslatableRepository implements PageRepositoryInterface
 {
-    /**
-     * @inheritDoc
-     */
     public function getLastUpdatedAt(): ?DateTime
     {
         $qb = $this->createQueryBuilder('p');
 
-        /** @noinspection PhpUnhandledExceptionInspection */
         $date = $qb
             ->select('p.updatedAt')
             ->addOrderBy('p.updatedAt', 'DESC')
@@ -35,16 +29,12 @@ class PageRepository extends TranslatableRepository implements PageRepositoryInt
             ->getSingleScalarResult();
 
         if (null !== $date) {
-            /** @noinspection PhpUnhandledExceptionInspection */
             return new DateTime($date);
         }
 
         return null;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function findOneByRoute(string $routeName, bool $cached = false): ?PageInterface
     {
         $qb = $this->getQueryBuilder('p');
@@ -52,14 +42,14 @@ class PageRepository extends TranslatableRepository implements PageRepositoryInt
         $qb->andWhere($qb->expr()->eq('p.route', ':route'));
 
         if (!$cached) {
-            /** @noinspection PhpUnhandledExceptionInspection */
             return $qb
                 ->getQuery()
                 ->setParameter('route', $routeName)
                 ->getOneOrNullResult();
         }
 
-        /** @noinspection PhpUnhandledExceptionInspection */
+        $locale = $this->getLocaleProvider()->getCurrentLocale();
+
         return $qb
             ->leftJoin('p.seo', 's')
             ->leftJoin('s.translations', 's_t', Expr\Join::WITH, $this->getLocaleCondition('s_t'))
@@ -67,13 +57,10 @@ class PageRepository extends TranslatableRepository implements PageRepositoryInt
             ->getQuery()
             ->setParameter('route', $routeName)
             ->useQueryCache(true)
-            ->enableResultCache(3600, Page::getRouteCacheTag($routeName))
+            ->enableResultCache(3600, Page::getRouteCacheTag($routeName, $locale))
             ->getOneOrNullResult();
     }
 
-    /**
-     * @inheritDoc
-     */
     public function findParentsForBreadcrumb(PageInterface $current): array
     {
         $qb = $this->createQueryBuilder('p');
@@ -92,28 +79,10 @@ class PageRepository extends TranslatableRepository implements PageRepositoryInt
                 'right' => $current->getRight(),
             ])
             ->useQueryCache(true)
-            // TODO ->enableResultCache(3600, $this->getCachePrefix())
+            // TODO ->enableResultCache(3600, $this->getCachePrefix()) + current locale
             ->getArrayResult();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getPagesRoutes(): array
-    {
-        $qb = $this->createQueryBuilder('p');
-
-        $results = $qb
-            ->select('p.route')
-            ->getQuery()
-            ->getScalarResult();
-
-        return array_column($results, 'route');
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getIndexablePages(): array
     {
         $qb = $this->createQueryBuilder('p');
@@ -126,76 +95,30 @@ class PageRepository extends TranslatableRepository implements PageRepositoryInt
             ->getResult();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getRoutesDataByPath(string $path): array
+    public function getPagesRoutesNames(): array
     {
-        $qb = $this->createRouteQueryBuilder();
+        $qb = $this->createQueryBuilder('p');
 
-        return $qb
-            ->andWhere($qb->expr()->eq('t.path', ':path'))
+        $results = $qb
+            ->select('p.route')
             ->getQuery()
-            ->useQueryCache(true)
-            ->setParameter('path', $path)
-            // TODO Caching
-            ->getArrayResult();
+            ->getScalarResult();
+
+        return array_column($results, 'route');
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getRoutesDataByNames(?array $names): array
-    {
-        $qb = $this->createRouteQueryBuilder();
-        $parameters = [];
-
-        if (!empty($names)) {
-            $qb->andWhere($qb->expr()->in('p.route', ':routes'));
-            $parameters['routes'] = $names;
-        }
-
-        return $qb
-            ->getQuery()
-            ->useQueryCache(true)
-            ->setParameters($parameters)
-            // TODO Caching
-            ->getArrayResult();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRouteDataByName(string $name): ?array
-    {
-        $qb = $this->createRouteQueryBuilder();
-
-        return $qb
-            ->andWhere($qb->expr()->eq('p.route', ':route'))
-            ->getQuery()
-            ->setParameter('route', $name)
-            // TODO Caching
-            ->getOneOrNullResult(Query::HYDRATE_ARRAY);
-    }
-
-    /**
-     * Creates a route data query builder.
-     *
-     * @return QueryBuilder
-     */
-    protected function createRouteQueryBuilder(): QueryBuilder
+    public function getDynamicRouterData(): array
     {
         $qb = $this->createQueryBuilder('p');
 
         return $qb
             ->select('p.route, p.controller, t.path, t.locale')
             ->join('p.translations', 't')
-            ->andWhere($qb->expr()->eq('p.static', 0));
+            ->andWhere($qb->expr()->eq('p.static', 0))
+            ->getQuery()
+            ->getArrayResult();
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function getAlias(): string
     {
         return 'p';

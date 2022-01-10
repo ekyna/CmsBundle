@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PageHelper
 {
-    public const PAGES_ROUTES_CACHE_KEY = 'cms_pages_routes';
+    public const CACHE_KEY = 'ekyna_cms.routes_names';
 
     protected PageRepositoryInterface $repository;
     protected AdapterInterface        $cache;
@@ -32,14 +32,6 @@ class PageHelper
     private bool           $homePageLoaded = false;
     private ?PageInterface $homePage;
 
-
-    /**
-     * Constructor.
-     *
-     * @param PageRepositoryInterface $repository
-     * @param AdapterInterface        $cache
-     * @param string                  $homeRoute
-     */
     public function __construct(PageRepositoryInterface $repository, AdapterInterface $cache, string $homeRoute)
     {
         $this->repository = $repository;
@@ -49,10 +41,6 @@ class PageHelper
 
     /**
      * Initializes the helper.
-     *
-     * @param Request $request
-     *
-     * @return PageInterface|null
      */
     public function init(Request $request): ?PageInterface
     {
@@ -63,10 +51,6 @@ class PageHelper
 
     /**
      * Finds the page by route.
-     *
-     * @param Request $request
-     *
-     * @return PageInterface|null
      */
     public function findByRequest(Request $request): ?PageInterface
     {
@@ -79,10 +63,6 @@ class PageHelper
 
     /**
      * Finds the page by route.
-     *
-     * @param string $route
-     *
-     * @return PageInterface|null
      */
     public function findByRoute(string $route): ?PageInterface
     {
@@ -95,8 +75,6 @@ class PageHelper
 
     /**
      * Returns the current page.
-     *
-     * @return PageInterface|null
      */
     public function getCurrent(): ?PageInterface
     {
@@ -115,8 +93,6 @@ class PageHelper
 
     /**
      * Returns the home page.
-     *
-     * @return PageInterface|null
      */
     public function getHomePage(): ?PageInterface
     {
@@ -129,8 +105,6 @@ class PageHelper
 
     /**
      * Returns the request.
-     *
-     * @return Request
      */
     public function getRequest(): Request
     {
@@ -139,8 +113,6 @@ class PageHelper
 
     /**
      * Returns the page repository.
-     *
-     * @return PageRepositoryInterface
      */
     public function getPageRepository(): PageRepositoryInterface
     {
@@ -149,9 +121,6 @@ class PageHelper
 
     /**
      * Returns the cms routes list.
-     *
-     * @return array
-     * @noinspection PhpDocMissingThrowsInspection
      */
     private function getCmsRoutes(): array
     {
@@ -159,14 +128,13 @@ class PageHelper
             return $this->routes;
         }
 
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $item = $this->cache->getItem(self::PAGES_ROUTES_CACHE_KEY);
+        $item = $this->cache->getItem(self::CACHE_KEY);
 
         if ($item->isHit()) {
             return $this->routes = $item->get();
         }
 
-        $routes = $this->repository->getPagesRoutes();
+        $routes = $this->repository->getPagesRoutesNames();
 
         $item->set($routes);
         $this->cache->save($item);

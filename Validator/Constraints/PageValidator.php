@@ -18,22 +18,14 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class PageValidator extends ConstraintValidator
 {
     private RoutingHelper $routingHelper;
-    private array $pageConfig;
-    private array $locales;
+    private array         $pageConfig;
+    private array         $locales;
 
-
-    /**
-     * Constructor.
-     *
-     * @param RoutingHelper $routingHelper
-     * @param array         $pageConfig
-     * @param array         $locales
-     */
     public function __construct(RoutingHelper $routingHelper, array $pageConfig, array $locales)
     {
         $this->routingHelper = $routingHelper;
-        $this->pageConfig    = $pageConfig;
-        $this->locales       = $locales;
+        $this->pageConfig = $pageConfig;
+        $this->locales = $locales;
     }
 
     /**

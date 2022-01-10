@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraint;
  */
 class Menu extends Constraint
 {
-    public $invalidRouting = 'ekyna_cms.menu.invalid_routing';
+    public string $invalidRouting = 'ekyna_cms.menu.invalid_routing';
 
     /**
      * @inheritDoc
@@ -22,12 +22,4 @@ class Menu extends Constraint
     {
         return self::CLASS_CONSTRAINT;
     }
-
-    /**
-     * @inheritDoc
-     */
-    /*public function validatedBy()
-    {
-        return MenuValidator::class;
-    }*/
 }

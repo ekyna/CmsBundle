@@ -20,7 +20,6 @@
         "ekyna/media-bundle": "0.8.x-dev",
         "ekyna/sitemap-bundle": "0.8.x-dev",
         "ekyna/cookie-consent-bundle": "0.8.x-dev",
-        "symfony-cmf/routing": "^2.3",
         "league/uri": "^6.4",
         "spatie/schema-org": "^3.3"
     },

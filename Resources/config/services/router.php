@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Ekyna\Bundle\CmsBundle\DependencyInjection\Compiler\ChainRouterPass;
 use Ekyna\Bundle\CmsBundle\Service\Helper\RoutingHelper;
-use Ekyna\Bundle\CmsBundle\Service\Routing\FinalMatcher;
-use Ekyna\Bundle\CmsBundle\Service\Routing\NestedMatcher;
+use Ekyna\Bundle\CmsBundle\Service\Routing\ChainRouter;
+use Ekyna\Bundle\CmsBundle\Service\Routing\DynamicRouter;
 use Ekyna\Bundle\CmsBundle\Service\Routing\RouteProvider;
-use Ekyna\Bundle\CmsBundle\Service\Routing\Router;
 use Ekyna\Bundle\CmsBundle\Service\Routing\RoutingLoader;
-use Ekyna\Bundle\CmsBundle\Service\Routing\UrlGenerator;
-use Symfony\Cmf\Component\Routing\ChainRouter;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\RouteCollection;
 
 return static function (ContainerConfigurator $container) {
     $container
@@ -24,42 +20,28 @@ return static function (ContainerConfigurator $container) {
             ->lazy(true)
             ->args([
                 service('ekyna_cms.repository.page'),
+                service('ekyna_cms.cache'),
                 abstract_arg('Page configuration'),
                 param('ekyna_resource.locales'),
             ])
 
-        // Nested matcher
-        ->set('ekyna_cms.routing.nested_matcher', NestedMatcher::class)
-            ->args([
-                service('ekyna_cms.routing.route_provider'),
-                service('ekyna_cms.routing.final_matcher'),
-            ])
-
-        // Final matcher
-        ->set('ekyna_cms.routing.final_matcher', FinalMatcher::class)
-            ->args([
-                inline_service(RouteCollection::class),
-                inline_service(RequestContext::class),
-            ])
-
-        // Url generator
-        ->set('ekyna_cms.routing.url_generator', UrlGenerator::class)
-            ->args([
-                service('ekyna_cms.routing.route_provider'),
-                service('logger')->nullOnInvalid(),
-            ])
-
         // Dynamic router
-        ->set('ekyna_cms.routing.dynamic_router', Router::class)
+        ->set('ekyna_cms.routing.dynamic_router', DynamicRouter::class)
+            ->args([
+                service('ekyna_cms.routing.route_provider'),
+                service('router.request_context'),
+                service('logger')->nullOnInvalid(),
+                param('kernel.default_locale'),
+            ])
+
+        // Chain router
+        ->set(ChainRouterPass::ROUTER_ID, ChainRouter::class)
             ->args([
                 service('router.request_context'),
-                service('ekyna_cms.routing.nested_matcher'),
-                service('ekyna_cms.routing.url_generator'),
-                '',
-                service('event_dispatcher'),
-                service('ekyna_cms.routing.route_provider'),
+                service('logger')->ignoreOnInvalid()
             ])
-            ->call('setRequestStack', [service('request_stack')])
+            ->call('registerRouter', [service('ekyna_cms.routing.dynamic_router'), 0])
+            ->call('registerRouter', [service('router.default'), 64])
 
         // Routing loader
         ->set('ekyna_cms.routing.loader', RoutingLoader::class)
@@ -68,15 +50,6 @@ return static function (ContainerConfigurator $container) {
                 param('kernel.debug'),
             ])
             ->tag('routing.loader')
-
-        // Chain router
-        ->set('ekyna_cms.router', ChainRouter::class)
-            ->args([
-                service('logger')->ignoreOnInvalid()
-            ])
-            ->call('setContext', [service('router.request_context')])
-            ->call('add', [service('ekyna_cms.routing.dynamic_router'), 0])
-            ->call('add', [service('router.default'), 64])
 
         // Routing helper
         ->set('ekyna_cms.helper.routing', RoutingHelper::class)

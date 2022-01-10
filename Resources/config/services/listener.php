@@ -36,6 +36,7 @@ return static function (ContainerConfigurator $container) {
                 service('ekyna_resource.orm.persistence_helper'),
                 service('ekyna_cms.updater.page'),
                 service('ekyna_cms.updater.page_redirection'),
+                service('ekyna_cms.helper.cache'),
             ])
             ->tag('resource.event_subscriber')
 
@@ -43,6 +44,7 @@ return static function (ContainerConfigurator $container) {
             ->args([
                 service('ekyna_resource.orm.persistence_helper'),
                 service('event_dispatcher'),
+                service('ekyna_cms.helper.cache'),
             ])
             ->tag('resource.event_subscriber')
             ->tag('doctrine.event_listener', [

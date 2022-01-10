@@ -60,7 +60,7 @@ class MenuType extends AbstractResourceType
 
             $form
                 ->add('name', Type\TextType::class, [
-                    'label'        => t('field.attributes', [], 'EkynaUi'),
+                    'label'        => t('field.name', [], 'EkynaUi'),
                     'admin_helper' => 'CMS_MENU_NAME',
                     'required'     => true,
                     'disabled'     => $locked,
@@ -120,7 +120,7 @@ class MenuType extends AbstractResourceType
                     ->add('parameters', KeyValueCollectionType::class, [
                         'label'           => t('field.parameters', [], 'EkynaUi'),
                         'admin_helper'    => 'CMS_MENU_PARAMETERS',
-                        'add_button_text' => 'button.add_parameter',
+                        'add_button_text' => t('button.add_parameter', [], 'EkynaUi'),
                     ]);
             }
 

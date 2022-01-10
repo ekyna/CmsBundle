@@ -23,13 +23,6 @@ class MenuEventListener implements EventSubscriberInterface
     private PersistenceHelperInterface $persistenceHelper;
     private MenuUpdater                $updater;
 
-
-    /**
-     * Constructor.
-     *
-     * @param PersistenceHelperInterface $persistenceHelper
-     * @param MenuUpdater                $updater
-     */
     public function __construct(PersistenceHelperInterface $persistenceHelper, MenuUpdater $updater)
     {
         $this->persistenceHelper = $persistenceHelper;
@@ -38,8 +31,6 @@ class MenuEventListener implements EventSubscriberInterface
 
     /**
      * Menu insert event handler.
-     *
-     * @param ResourceEventInterface $event
      */
     public function onInsert(ResourceEventInterface $event): void
     {
@@ -56,8 +47,6 @@ class MenuEventListener implements EventSubscriberInterface
 
     /**
      * Menu update event handler.
-     *
-     * @param ResourceEventInterface $event
      */
     public function onUpdate(ResourceEventInterface $event): void
     {
@@ -76,12 +65,15 @@ class MenuEventListener implements EventSubscriberInterface
 
     /**
      * Pre update event handler.
-     *
-     * @param ResourceEventInterface $event
      */
     public function onPreUpdate(ResourceEventInterface $event): void
     {
         $menu = $this->getMenuFromEvent($event);
+
+        if ($menu->isLocked()) {
+            // Don't disable if locked
+            $menu->setEnabled(true);
+        }
 
         if ($this->updater->checkEnabled($menu)) {
             $message = ResourceMessage::create(
@@ -94,15 +86,15 @@ class MenuEventListener implements EventSubscriberInterface
             return;
         }
 
+        if ($menu->isEnabled()) {
+            return;
+        }
+
         $this->updater->disabledMenuRecursively($menu->getChildren()->toArray());
     }
 
     /**
      * Returns the menu from the event.
-     *
-     * @param ResourceEventInterface $event
-     *
-     * @return MenuInterface
      */
     private function getMenuFromEvent(ResourceEventInterface $event): MenuInterface
     {
@@ -115,9 +107,6 @@ class MenuEventListener implements EventSubscriberInterface
         return $resource;
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function getSubscribedEvents(): array
     {
         return [

@@ -52,15 +52,22 @@ class MenuValidator extends ConstraintValidator
 
         $path = true;
         foreach ($this->locales as $locale) {
-            if (empty($menu->translate($locale, true)->getPath())) {
+            if (!$menu->hasTranslationForLocale($locale)) {
                 $path = false;
+                break;
+            }
+
+            if (empty($menu->translate($locale)->getPath())) {
+                $path = false;
+                break;
             }
         }
 
-        if (!($page || $path || $route)) {
-            $this->context->addViolation($constraint->invalidRouting);
-        } elseif (!$page && ($path || $route) || ($path && $route)) {
-            $this->context->addViolation($constraint->invalidRouting);
+        // One and only one of page, route or path
+        if ((!$page && ($route ^ $path)) || ($page && !($route || $path))) {
+            return;
         }
+
+        $this->context->addViolation($constraint->invalidRouting);
     }
 }

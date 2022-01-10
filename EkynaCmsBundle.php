@@ -18,7 +18,7 @@ class EkynaCmsBundle extends Bundle
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new Pass\AdminMenuPass());
-        $container->addCompilerPass(new Pass\RegisterRoutersPass());
+        $container->addCompilerPass(new Pass\ChainRouterPass());
         $container->addCompilerPass(new Pass\EditorPluginPass());
         $container->addCompilerPass(new Pass\SchemaOrgProviderPass());
     }

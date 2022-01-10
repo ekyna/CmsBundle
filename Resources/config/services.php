@@ -9,6 +9,7 @@ use Ekyna\Bundle\CmsBundle\Install\CmsInstaller;
 use Ekyna\Bundle\CmsBundle\Install\Generator\MenuGenerator;
 use Ekyna\Bundle\CmsBundle\Install\Generator\PageGenerator;
 use Ekyna\Bundle\CmsBundle\Install\Generator\SlideShowGenerator;
+use Ekyna\Bundle\CmsBundle\Service\Helper\CacheHelper;
 use Ekyna\Bundle\CmsBundle\Service\Helper\PageHelper;
 use Ekyna\Bundle\CmsBundle\Service\LocaleSwitcher;
 use Ekyna\Bundle\CmsBundle\Service\SchemaOrg\Builder;
@@ -52,10 +53,7 @@ return static function (ContainerConfigurator $container) {
                 service('ekyna_cms.repository.menu'),
                 service('doctrine.orm.entity_manager'),
                 service('ekyna_resource.http.tag_manager'),
-                service('ekyna_cms.cache'),
                 abstract_arg('Page configuration'),
-                param('ekyna_cms.class.page'),
-                service('doctrine.orm.default_result_cache'),
             ])
 
         // Page redirection updater
@@ -92,6 +90,15 @@ return static function (ContainerConfigurator $container) {
             ->parent('cache.app')
             ->private()
             ->tag('cache.pool', ['clearer' => 'cache.default_clearer'])
+
+        // Cache helper
+        ->set('ekyna_cms.helper.cache', CacheHelper::class)
+            ->args([
+                service('ekyna_cms.cache'),
+                service('doctrine.orm.default_result_cache')->nullOnInvalid(),
+                param('ekyna_resource.locales'),
+                param('ekyna_cms.class.page'),
+            ])
 
         // Page helper
         ->set('ekyna_cms.helper.page', PageHelper::class)
