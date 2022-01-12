@@ -25,7 +25,7 @@ class RowController extends AbstractController
     public function createBlock(Request $request): Response
     {
         $row = $this->findRowByRequest($request);
-        $type = $request->request->get('type', null);
+        $type = $request->request->get('type');
 
         try {
             $block = $this->editor->createDefaultBlock($type, [], $row);
@@ -57,7 +57,7 @@ class RowController extends AbstractController
     {
         $row = $this->findRowByRequest($request);
 
-        $data = $request->request->get('data', []);
+        $data = (array)$request->request->get('data', []);
 
         try {
             $this->editor->getLayoutAdapter()->updateRowLayout($row, $data);

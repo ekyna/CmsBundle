@@ -25,7 +25,7 @@ class ContainerController extends AbstractController
      */
     public function createRow(Request $request): Response
     {
-        $container = $this->findContainer(intval($request->attributes->get('containerId')));
+        $container = $this->findContainer($request->attributes->getInt('containerId'));
 
         $target = is_null($container->getCopy()) ? $container : $container->getCopy();
 
@@ -92,7 +92,7 @@ class ContainerController extends AbstractController
     {
         $container = $this->findContainerByRequest($request);
 
-        $data = $request->request->get('data', []);
+        $data = (array)$request->request->get('data', []);
 
         try {
             $this->editor->getLayoutAdapter()->updateContainerLayout($container, $data);
@@ -121,7 +121,7 @@ class ContainerController extends AbstractController
     {
         $container = $this->findContainerByRequest($request);
 
-        $type = $request->request->get('type', null);
+        $type = $request->request->get('type');
 
         $data = [];
 

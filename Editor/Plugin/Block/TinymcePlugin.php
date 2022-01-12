@@ -59,7 +59,7 @@ class TinymcePlugin extends AbstractPlugin
             throw new InvalidOperationException('Tinymce block plugin only supports POST request.');
         }
 
-        $data = $request->request->get('data');
+        $data = (array)$request->request->get('data');
         if (!array_key_exists('content', $data)) {
             throw new InvalidOperationException('Invalid POST data.');
         }

@@ -64,7 +64,7 @@ class BlockController extends AbstractController
     {
         $block = $this->findBlockByRequest($request);
 
-        $data = $request->request->get('data', []);
+        $data = (array)$request->request->get('data', []);
 
         try {
             $this->editor->getLayoutAdapter()->updateBlockLayout($block, $data);
