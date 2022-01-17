@@ -155,10 +155,10 @@ class FeaturePlugin extends AbstractPlugin implements PluginRegistryAwareInterfa
             $animData = $data['animation'] ?? [];
             if (isset($animData['name']) && isset($this->config['animations'][$animData['name']])) {
                 $hasAnim = true;
-                $attributes->setExtra('data-aos', $animData['name']);
+                $attributes->setExtra('data-aos', (string)$animData['name']);
                 foreach (['duration', 'offset', 'once'] as $prop) {
                     if (isset($animData[$prop]) && $animData[$prop]) {
-                        $attributes->setExtra('data-aos-' . $prop, $animData[$prop]);
+                        $attributes->setExtra('data-aos-' . $prop, (string)$animData[$prop]);
                     }
                 }
             }
