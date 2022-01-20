@@ -36,7 +36,7 @@ class Content implements EM\ContentInterface
 
     public function onCopy(CopierInterface $copier): void
     {
-        $this->containers = $copier->copyCollection($this->containers, true);
+        $copier->copyCollection($this, 'containers', true);
     }
 
     /**

@@ -43,7 +43,7 @@ class Row implements EM\RowInterface
 
     public function onCopy(CopierInterface $copier): void
     {
-        $this->blocks = $copier->copyCollection($this->blocks, true);
+        $copier->copyCollection($this, 'blocks', true);
     }
 
     /**

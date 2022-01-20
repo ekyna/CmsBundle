@@ -48,7 +48,7 @@ class Container implements EM\ContainerInterface
     public function onCopy(CopierInterface $copier): void
     {
         $this->copy = null;
-        $this->rows = $copier->copyCollection($this->rows, true);
+        $copier->copyCollection($this, 'rows', true);
     }
 
     public function getId(): ?int

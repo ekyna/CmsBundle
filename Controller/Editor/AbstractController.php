@@ -81,7 +81,7 @@ abstract class AbstractController
 
         if (empty($buttons)) {
             $buttons['submit'] = array_replace(Modal::BTN_SUBMIT, [
-                'label'        => 'button.validate',
+                'label' => 'button.validate',
             ]);
         }
         if (!array_key_exists('close', $buttons)) {
