@@ -20,7 +20,6 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     use RM\TreeTrait;
     use RM\TaggedEntityTrait;
 
-    protected ?int               $id          = null;
     protected ?string            $name        = null;
     protected ?string            $description = null;
     protected ?string            $route       = null;
@@ -56,14 +55,6 @@ class Menu extends RM\AbstractTranslatable implements Cms\MenuInterface
     public function __toString(): string
     {
         return $this->getTitle() ?: 'New menu';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**

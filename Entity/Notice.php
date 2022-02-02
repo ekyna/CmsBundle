@@ -20,7 +20,6 @@ use Ekyna\Component\Resource\Model\AbstractTranslatable;
  */
 class Notice extends AbstractTranslatable implements NoticeInterface
 {
-    private ?int      $id      = null;
     private ?string   $name    = null;
     private string    $theme   = Themes::THEME_DEFAULT;
     private ?string   $icon    = null;
@@ -36,14 +35,6 @@ class Notice extends AbstractTranslatable implements NoticeInterface
     public function __toString(): string
     {
         return $this->name ?: 'New notice';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**

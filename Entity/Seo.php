@@ -20,7 +20,6 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
 {
     use RM\TaggedEntityTrait;
 
-    protected ?int    $id         = null;
     protected string  $changefreq = Cms\ChangeFrequencies::MONTHLY;
     protected string  $priority   = '0.5';
     protected bool    $follow     = true;
@@ -30,11 +29,6 @@ class Seo extends RM\AbstractTranslatable implements Cms\SeoInterface
     public function __toString(): string
     {
         return $this->getTitle() ?: 'New Seo';
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**

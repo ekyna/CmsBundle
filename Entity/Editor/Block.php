@@ -26,7 +26,6 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
         getEntityTag as traitGetEntityTag;
     }
 
-    protected ?int             $id   = null;
     protected ?EM\RowInterface $row  = null;
     protected ?string          $name = null;
     protected ?string          $type = null;
@@ -41,14 +40,6 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
     public function onCopy(CopierInterface $copier): void
     {
         $this->name = null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**

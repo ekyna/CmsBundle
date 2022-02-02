@@ -9,13 +9,14 @@ use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Component\Resource\Copier\CopierInterface;
 use Ekyna\Component\Resource\Model as RM;
+use Ekyna\Component\Resource\Model\AbstractResource;
 
 /**
  * Class Container
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Etienne Dauvergne <contact@ekyna.com>
  */
-class Container implements EM\ContainerInterface
+class Container extends AbstractResource implements EM\ContainerInterface
 {
     use EM\DataTrait;
     use EM\LayoutTrait;
@@ -25,7 +26,6 @@ class Container implements EM\ContainerInterface
         getEntityTag as traitGetEntityTag;
     }
 
-    protected ?int                   $id      = null;
     protected ?EM\ContentInterface   $content = null;
     protected ?EM\ContainerInterface $copy    = null;
     protected ?string                $name    = null;
@@ -41,7 +41,8 @@ class Container implements EM\ContainerInterface
 
     public function __clone()
     {
-        $this->id = null;
+        parent::__clone();
+
         $this->content = null;
     }
 
@@ -49,11 +50,6 @@ class Container implements EM\ContainerInterface
     {
         $this->copy = null;
         $copier->copyCollection($this, 'rows', true);
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**

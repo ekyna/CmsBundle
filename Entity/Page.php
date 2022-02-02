@@ -23,8 +23,6 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     use RM\TaggedEntityTrait;
     use RM\TreeTrait;
 
-
-    protected ?int    $id         = null;
     protected ?string $name       = null;
     protected ?string $route      = null;
     protected bool    $static;
@@ -59,14 +57,6 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     public function __toString(): string
     {
         return $this->name ?: 'New page';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**

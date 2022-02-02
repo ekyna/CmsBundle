@@ -21,7 +21,6 @@ class Slide extends RM\AbstractTranslatable implements SlideInterface
 {
     use RM\SortableTrait;
 
-    private ?int       $id        = null;
     private ?string    $name      = null;
     private ?SlideShow $slideShow = null;
     private ?string    $type      = null;
@@ -36,14 +35,6 @@ class Slide extends RM\AbstractTranslatable implements SlideInterface
     public function __toString(): string
     {
         return $this->name ?: 'New slide';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**

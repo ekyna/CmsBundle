@@ -9,18 +9,18 @@ use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Component\Resource\Copier\CopierInterface;
 use Ekyna\Component\Resource\Model as RM;
+use Ekyna\Component\Resource\Model\AbstractResource;
 
 /**
  * Class Content
  * @package Ekyna\Bundle\CmsBundle\Entity
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class Content implements EM\ContentInterface
+class Content extends AbstractResource implements EM\ContentInterface
 {
     use RM\TaggedEntityTrait;
     use RM\TimestampableTrait;
 
-    protected ?int       $id   = null;
     protected ?string    $name = null;
     protected Collection $containers;
 
@@ -29,22 +29,9 @@ class Content implements EM\ContentInterface
         $this->containers = new ArrayCollection();
     }
 
-    public function __clone()
-    {
-        $this->id = null;
-    }
-
     public function onCopy(CopierInterface $copier): void
     {
         $copier->copyCollection($this, 'containers', true);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**

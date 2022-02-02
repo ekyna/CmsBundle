@@ -9,13 +9,14 @@ use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\CmsBundle\Editor\Model as EM;
 use Ekyna\Component\Resource\Copier\CopierInterface;
 use Ekyna\Component\Resource\Model as RM;
+use Ekyna\Component\Resource\Model\AbstractResource;
 
 /**
  * Class Row
  * @package      Ekyna\Bundle\CmsBundle\Entity
  * @author       Etienne Dauvergne <contact@ekyna.com>
  */
-class Row implements EM\RowInterface
+class Row extends AbstractResource implements EM\RowInterface
 {
     use EM\LayoutTrait;
     use RM\SortableTrait;
@@ -24,7 +25,6 @@ class Row implements EM\RowInterface
         getEntityTag as traitGetEntityTag;
     }
 
-    protected ?int                   $id        = null;
     protected ?EM\ContainerInterface $container = null;
     protected ?string                $name      = null;
     protected Collection             $blocks;
@@ -37,21 +37,14 @@ class Row implements EM\RowInterface
 
     public function __clone()
     {
-        $this->id = null;
+        parent::__clone();
+
         $this->container = null;
     }
 
     public function onCopy(CopierInterface $copier): void
     {
         $copier->copyCollection($this, 'blocks', true);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**
