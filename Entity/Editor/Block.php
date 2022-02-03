@@ -39,6 +39,8 @@ class Block extends RM\AbstractTranslatable implements EM\BlockInterface
 
     public function onCopy(CopierInterface $copier): void
     {
+        parent::onCopy($copier);
+
         $this->name = null;
     }
 
