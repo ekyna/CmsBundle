@@ -24,8 +24,13 @@ export interface TypeInterface {
     build(element: HTMLDivElement, dispatcher: Dispatcher): TimelineLite
 }
 
+interface TweenHTMLElement extends HTMLHtmlElement {
+    _gsTransform: any;
+    _gsTweenID: any;
+}
+
 export class BaseType implements TypeInterface {
-    private background: HTMLElement;
+    private background: TweenHTMLElement;
     private bgInitialTransform: string;
     private bgOpacityTween: gsap.TweenLite;
     private bgTransformTween: gsap.TweenLite;
@@ -63,7 +68,7 @@ export class BaseType implements TypeInterface {
             }
         });
 
-        this.background = <HTMLElement>element.querySelector('div.background');
+        this.background = <TweenHTMLElement>element.querySelector('div.background');
         if (this.background) {
             element.style.backgroundColor = 'transparent';
             this.bgInitialTransform = this.background.style.getPropertyValue('transform');

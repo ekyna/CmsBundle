@@ -1,1 +1,1 @@
-define(["jquery","select2"],function(a){"use strict";function b(b){if(!b.element)return b.text;var c=a(b.element);return a('<span><span class="fa fa-'+c.data("icon")+'"></span> '+b.text+"</span>")}return{init:function(a){a.select2({templateResult:b,templateSelection:b})}}});
+define(["jquery","select2"],function(n){"use strict";function t(e){if(!e.element)return e.text;var t=n(e.element);return n('<span><span class="fa fa-'+t.data("icon")+'"></span> '+e.text+"</span>")}return{init:function(e){e.select2({templateResult:t,templateSelection:t})}}});

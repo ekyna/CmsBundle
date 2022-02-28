@@ -228,7 +228,7 @@ export class Button extends Control {
  * ButtonView
  */
 export class ButtonView extends ControlView<Button> {
-    template: (data: ButtonConfig) => string;
+    template: (data: Partial<ButtonConfig>) => string;
 
     events(): Backbone.EventsHash {
         return {
@@ -274,7 +274,7 @@ export class ButtonView extends ControlView<Button> {
         }
     }
 
-    render(): ButtonView {
+    render(): this {
         this.$el.html(this.template(this.model.attributes));
 
         this.$('button')
@@ -293,7 +293,7 @@ export class ButtonView extends ControlView<Button> {
  * ButtonDropdownView
  */
 export class ButtonDropdownView extends ControlView<Button> {
-    template: (data: ButtonConfig) => string;
+    template: (data: Partial<ButtonConfig>) => string;
 
     events(): Backbone.EventsHash {
         return {
@@ -351,7 +351,7 @@ export class ButtonDropdownView extends ControlView<Button> {
 
     }
 
-    render(): ButtonView {
+    render(): this {
         this.$el.html(this.template(this.model.attributes));
 
         this.$('button')
@@ -425,7 +425,7 @@ export class Slider extends Control {
 }
 
 export class SliderView extends ControlView<Slider> {
-    template: (data: SliderConfig) => string;
+    template: (data: Partial<SliderConfig>) => string;
 
     events(): Backbone.EventsHash {
         return {
@@ -463,7 +463,7 @@ export class SliderView extends ControlView<Slider> {
         this.model.setValue(<string>this.$('input').val(), true);
     }
 
-    render(): SliderView {
+    render(): this {
         this.$el.html(this.template(this.model.attributes));
 
         let $input:JQuery = this.$('input');
@@ -592,7 +592,7 @@ export class Select extends Control {
 }
 
 export class SelectView extends ControlView<Select> {
-    template: (data: SelectConfig) => string;
+    template: (data: Partial<SelectConfig>) => string;
 
     events(): Backbone.EventsHash {
         return {
@@ -619,7 +619,7 @@ export class SelectView extends ControlView<Select> {
         this.model.setValue(<string>this.$('select').val(), true);
     }
 
-    render(): SelectView {
+    render(): this {
         this.$el.html(this.template(this.model.attributes));
 
         let $select = this.$('select')
@@ -700,7 +700,7 @@ export class ControlGroupView extends Backbone.View<ControlGroup> {
         this.subViews.forEach((view: ControlView<Control>) => view.remove());
     }
 
-    render(): ControlGroupView {
+    render(): this {
         this.clear();
 
         this.model.get('controls').each((control: Control) => {
@@ -712,7 +712,7 @@ export class ControlGroupView extends Backbone.View<ControlGroup> {
         return this;
     }
 
-    remove(): ControlGroupView {
+    remove(): this {
         this.clear();
 
         super.remove();
@@ -810,7 +810,6 @@ export class Toolbar extends Backbone.Model {
  * ToolbarView
  */
 export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
-    model: T;
     private subViews: Array<ControlGroupView>;
 
     constructor(options?: Backbone.ViewOptions<T>) {
@@ -860,7 +859,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
         return this;
     }
 
-    render(): ToolbarView<T> {
+    render(): this {
         this.clear();
 
         this.model.get('groups').each((group: ControlGroup) => {
@@ -876,7 +875,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
         return this.postRender();
     }
 
-    postRender(): ToolbarView<T> {
+    postRender(): this {
         this.$('.dropdown-toggle').dropdown();
         this.$('select').select2({width: "resolve"});
 
@@ -884,7 +883,7 @@ export class ToolbarView<T extends Toolbar> extends Backbone.View<T> {
         return this;
     }
 
-    remove(): ToolbarView<T> {
+    remove(): this {
         this.clear();
 
         super.remove();

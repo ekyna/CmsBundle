@@ -95,7 +95,7 @@ class SlideShowRenderer implements RendererInterface
 
         if ($options['javascript']) {
             $html .= <<<EOT
-<script type="text/javascript">require(['ekyna-cms/slide-show'], function (SlideShow) { SlideShow.create($jsonConfig) });</script>
+<script type="text/javascript">require(['ekyna-cms/slide-show/slide-show'], function (SlideShow) { SlideShow.create($jsonConfig) });</script>
 EOT;
         }
 

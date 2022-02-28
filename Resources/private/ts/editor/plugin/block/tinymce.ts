@@ -1,13 +1,8 @@
 /// <reference path="../../../../../../../../../../assets/typings/index.d.ts" />
 
-import * as es6Promise from 'es6-promise';
-
 import Dispatcher from '../../dispatcher';
 import {BasePlugin} from '../base-plugin';
 import {BlockManager} from '../../document-manager';
-
-es6Promise.polyfill();
-let Promise = es6Promise.Promise;
 
 declare let clone:(object:Object) => Object;
 
@@ -83,7 +78,7 @@ Dispatcher.on('viewport_iframe.unload', function() {
 });
 
 class TinymcePlugin extends BasePlugin {
-    private static initPromise:Promise<TinyMceStatic>;
+    private static initPromise:Promise<void>;
     private static config:TinymceConfig;
     private static externalPlugins:any;
     private static tinymce:TinyMceStatic;
@@ -94,6 +89,7 @@ class TinymcePlugin extends BasePlugin {
         TinymcePlugin.externalPlugins = null;
         TinymcePlugin.tinymce = null;
     }
+
 
     edit() {
         super.edit();
@@ -166,7 +162,7 @@ class TinymcePlugin extends BasePlugin {
     private initialize():Promise<any> {
         if (!TinymcePlugin.initPromise) {
             Dispatcher.trigger('editor.set_busy');
-            TinymcePlugin.initPromise = new Promise((resolve) => {
+            TinymcePlugin.initPromise = new Promise<void>((resolve) => {
                 if (TinymcePlugin.tinymce) {
                     resolve();
                 }

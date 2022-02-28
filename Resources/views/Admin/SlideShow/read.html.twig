@@ -18,8 +18,7 @@
 {% block main_contents -%}
     <div class="tab-pane active" id="slideshow-general">
         {{ show_row(slideShow.name, 'text', {
-            'label': 'field.name',
-            'trans_domain': 'EkynaUi'
+            'label': t('field.name', {}, 'EkynaUi'),
         }) }}
         {{ show_row(slideShow.slides, 'table', {
             'resource': 'ekyna_cms.slide'
@@ -36,7 +35,7 @@
         </div>
     </div>
     <div class="tab-pane" id="slideshow-render">
-        {{ slide_show_render(slideShow) }}
+        {{ slide_show_render(slideShow, {'javascript': true}) }}
     </div>
 {%- endblock main_contents -%}
 

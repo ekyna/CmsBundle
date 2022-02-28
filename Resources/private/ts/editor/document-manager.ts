@@ -1,9 +1,8 @@
 /// <reference path="../../../../../../../../assets/typings/index.d.ts" />
 
 import * as $ from 'jquery';
-import 'jquery-ui/widgets/slider';
+import 'jquery-ui/ui/widgets/slider';
 import * as _ from 'underscore';
-import * as es6Promise from 'es6-promise';
 import * as Router from 'routing';
 
 import Dispatcher from './dispatcher';
@@ -13,11 +12,6 @@ import {BasePlugin} from './plugin/base-plugin';
 import RouteParams = FOS.RouteParams;
 import {Bootstrap3Adapter} from "./layout/bootstrap3";
 import {CommonAdapter} from "./layout/common";
-
-
-es6Promise.polyfill();
-let Promise = es6Promise.Promise;
-
 
 const DEFAULT_WIDGET_ACTIONS = {
     edit: false,
@@ -131,9 +125,9 @@ export class BaseManager {
         return this.contentWindow;
     }
 
-    private static $contentDocument: JQuery;
+    private static $contentDocument: JQuery<Document>;
 
-    static setContentDocument($doc: JQuery): void {
+    static setContentDocument($doc: JQuery<Document>): void {
         this.$contentDocument = $doc;
 
         let data: DocumentData = <DocumentData>$doc.find('html').data('cms-editor-document');
@@ -145,7 +139,7 @@ export class BaseManager {
         this.setDocumentData(data);
     }
 
-    static getContentDocument(): JQuery {
+    static getContentDocument(): JQuery<Document> {
         if (!this.$contentDocument) {
             throw 'Document is not defined.';
         }
@@ -233,12 +227,11 @@ export class BaseManager {
         Dispatcher.trigger('editor.set_busy');
 
         settings = _.extend({}, settings, {
-            method: 'POST'
+            method: 'POST',
         });
-        if (!settings.data) {
-            settings.data = {};
-        }
-        settings.data.cms_viewport_width = BaseManager.getContentWindow().innerWidth;
+        settings.data = _.extend({}, settings.data, {
+            cms_viewport_width: BaseManager.getContentWindow().innerWidth
+        });
 
         let xhr = $.ajax(settings);
         xhr.done((data: ResponseData) => {
@@ -911,7 +904,7 @@ export class PluginManager {
                         return;
                     }
                 });
-                throw 'Plugin "' + type + '" not found.';
+                // TODO throw 'Plugin "' + type + '" not found.';
             });
     }
 
@@ -1409,7 +1402,7 @@ export class DocumentManager {
     private enabled: boolean = false;
 
     private clickEvent: SelectionEvent = null;
-    private documentMouseDownHandler: (e: JQueryEventObject) => void;
+    private documentMouseDownHandler: (e: JQuery.MouseDownEvent) => void;
     private documentMouseUpHandler: () => void;
     private documentSelectHandler: (e: SelectionEvent) => void;
 
@@ -1426,7 +1419,7 @@ export class DocumentManager {
         this.selectionOffset = {top: 0, left: 0}; // Document relative : offset between click origin and element top-left corner
         this.selectionId = null;
 
-        this.documentMouseDownHandler = (e: JQueryEventObject) => this.onDocumentMouseDown(e);
+        this.documentMouseDownHandler = (e: JQuery.MouseDownEvent) => this.onDocumentMouseDown(e);
         this.documentMouseUpHandler = () => this.onDocumentMouseUp();
         this.documentSelectHandler = (e: SelectionEvent) => this.select(e);
 
@@ -1479,7 +1472,7 @@ export class DocumentManager {
      */
     private onViewportLoad(win: Window, doc: Document): DocumentManager {
 
-        let $doc: JQuery = $(doc);
+        let $doc: JQuery<Document> = $(doc);
 
         BaseManager.setContentWindow(win);
         BaseManager.setContentDocument($doc);
@@ -1496,7 +1489,7 @@ export class DocumentManager {
     }
 
     private tweakAnchorsAndForms() {
-        let $doc: JQuery = BaseManager.getContentDocument();
+        let $doc: JQuery<Document> = BaseManager.getContentDocument();
 
         // Intercept anchors click
         $doc.off('click', 'a[href]').on('click', 'a[href]', (e: Event) => {
@@ -1583,7 +1576,7 @@ export class DocumentManager {
         return this;
     }
 
-    private onDocumentMouseDown(e: JQueryEventObject): void {
+    private onDocumentMouseDown(e: JQuery.MouseDownEvent): void {
         this.clickEvent = null;
 
         let $target: JQuery = $(e.target);
@@ -1611,17 +1604,18 @@ export class DocumentManager {
     }
 
     private onDocumentMouseUp(): void {
-        if (this.clickEvent) {
-            this.deselect()
-                .then(() => {
-                    if (this.clickEvent.$element) {
-                        this.select(this.clickEvent);
-                    } else {
-                        this.createToolbar();
-                    }
-                    this.clickEvent = null;
-                });
+        if (!this.clickEvent) {
+            return;
         }
+        this.deselect()
+            .then(() => {
+                if (this.clickEvent.$element) {
+                    this.select(this.clickEvent);
+                } else {
+                    this.createToolbar(this.clickEvent);
+                }
+                this.clickEvent = null;
+            });
     }
 
     private deselect(): Promise<any> {
@@ -1651,7 +1645,7 @@ export class DocumentManager {
         this.createToolbar(e);
     }
 
-    private createToolbar(e?: SelectionEvent): void {
+    private createToolbar(e: SelectionEvent): void {
         if (!e.$element) {
             let $element: JQuery = BaseManager.findElementById(this.selectionId);
             if (1 != $element.length) {

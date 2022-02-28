@@ -1,12 +1,8 @@
 /// <reference path="../../../../../../../../../assets/typings/index.d.ts" />
 
-import * as es6Promise from 'es6-promise';
 import * as Modal from 'ekyna-modal';
 import Dispatcher from '../dispatcher';
 import {BaseManager, SelectionEvent} from "../document-manager";
-
-es6Promise.polyfill();
-let Promise = es6Promise.Promise;
 
 export class BasePlugin {
     protected window:any;
@@ -18,14 +14,14 @@ export class BasePlugin {
 
     static setup():Promise<any> {
         //noinspection JSUnusedLocalSymbols
-        return new Promise(function(resolve, reject) {
+        return new Promise<void>((resolve, reject) => {
             resolve();
         })
     }
 
     static tearDown():Promise<any> {
         //noinspection JSUnusedLocalSymbols
-        return new Promise(function(resolve, reject) {
+        return new Promise<void>(function(resolve, reject) {
             resolve();
         })
     }
@@ -46,7 +42,7 @@ export class BasePlugin {
 
     save ():Promise<any> {
         //noinspection JSUnusedLocalSymbols
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             if (this.isUpdated()) {
                 throw 'Plugin has updates.';
             }

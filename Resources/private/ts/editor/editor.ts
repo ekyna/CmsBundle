@@ -49,7 +49,8 @@ class Editor {
     init(config:EditorConfig) {
         this.config = config;
 
-        $(document).off('ajaxError', function(event: JQueryEventObject, jqXHR: JQueryXHR) {
+        // @ts-ignore
+        $(document).ajaxError(function(jqXHR: JQuery.jqXHR) {
             if (403 === jqXHR.status) {
                 alert('You have been disconnected. Please proceed to login.');
             }

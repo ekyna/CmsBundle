@@ -32,10 +32,12 @@
 
     .generate-circle(@n, @i: 2) when (@i =< @n) {
         .sk-circle-@{i} {
-            transform: rotate(360deg / @spinkit-circle-count * (@i - 1));
+            @degree: (360deg / @spinkit-circle-count * (@i - 1));
+            transform: rotate(@degree);
         }
         .sk-circle-@{i}:before {
-            animation-delay: -@spinkit-animation-duration + @spinkit-animation-duration / @spinkit-circle-count * (@i - 1);
+            @delay: (-@spinkit-animation-duration + @spinkit-animation-duration / @spinkit-circle-count * (@i - 1));
+            animation-delay: @delay;
         }
         .generate-circle(@n, (@i + 1));
     }
@@ -69,14 +71,12 @@ html, body {
         right: 0;
         bottom: 0;
         background-color: rgba(0, 0, 0, .5);
-        //display: none;
 
         > div {
             position: absolute;
             top: 50%;
             left: 50%;
-            margin-top: -@spinkit-size/2;
-            margin-left: -@spinkit-size/2;
+            transform: translate(-50%, -50%);
         }
     }
 
@@ -89,25 +89,25 @@ html, body {
         border-radius: @editor-toolbar-border-radius;
 
         -webkit-transition: top @editor-viewport-transition-speed,
-                        right @editor-viewport-transition-speed,
-                        bottom @editor-viewport-transition-speed,
-                        left @editor-viewport-transition-speed;
+        right @editor-viewport-transition-speed,
+        bottom @editor-viewport-transition-speed,
+        left @editor-viewport-transition-speed;
         -moz-transition: top @editor-viewport-transition-speed,
-                        right @editor-viewport-transition-speed,
-                        bottom @editor-viewport-transition-speed,
-                        left @editor-viewport-transition-speed;
+        right @editor-viewport-transition-speed,
+        bottom @editor-viewport-transition-speed,
+        left @editor-viewport-transition-speed;
         -o-transition: top @editor-viewport-transition-speed,
-                        right @editor-viewport-transition-speed,
-                        bottom @editor-viewport-transition-speed,
-                        left @editor-viewport-transition-speed;
+        right @editor-viewport-transition-speed,
+        bottom @editor-viewport-transition-speed,
+        left @editor-viewport-transition-speed;
         -ms-transition: top @editor-viewport-transition-speed,
-                        right @editor-viewport-transition-speed,
-                        bottom @editor-viewport-transition-speed,
-                        left @editor-viewport-transition-speed;
+        right @editor-viewport-transition-speed,
+        bottom @editor-viewport-transition-speed,
+        left @editor-viewport-transition-speed;
         transition: top @editor-viewport-transition-speed,
-                    right @editor-viewport-transition-speed,
-                    bottom @editor-viewport-transition-speed,
-                    left @editor-viewport-transition-speed;
+        right @editor-viewport-transition-speed,
+        bottom @editor-viewport-transition-speed,
+        left @editor-viewport-transition-speed;
 
         > .input-group {
             width: auto;

@@ -15,7 +15,7 @@ class BackgroundPlugin extends BasePlugin {
             (e:Ekyna.ModalResponseEvent) => {
                 if (e.contentType == 'json') {
 
-                    let videos:NodeListOf<HTMLVideoElement> = BaseManager.getContentWindow().document.getElementsByTagName('video');
+                    let videos:HTMLCollectionOf<HTMLVideoElement> = BaseManager.getContentWindow().document.getElementsByTagName('video');
                     for (let i = 0; i < videos.length; i++) {
                         videos.item(i).play();
                     }

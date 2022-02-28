@@ -98,7 +98,7 @@ export class ViewportView extends Backbone.View<ViewportModel> {
      *
      * @returns ViewportView
      */
-    render(): ViewportView {
+    render(): this {
         this.$el.html(this.template());
 
         this.resize();

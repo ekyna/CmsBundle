@@ -1,32 +1,31 @@
 /// <reference path="../../../../../../../../assets/typings/index.d.ts" />
 /// <reference path="../../typings/slide-show.d.ts" />
 
-import * as es6Promise from 'es6-promise';
 import * as _ from 'underscore';
 import TimelineLite = require('gsap/TimelineLite');
 import {TypeInterface, Dispatcher} from "./model";
 import types = require('json!ekyna-cms/slide-types');
 
-
-es6Promise.polyfill();
-let Promise = es6Promise.Promise;
+interface TypeConstructor {
+    new(): TypeInterface
+}
 
 class TypeRegistry {
     static config: { [name: string]: string };
     static types: { [name: string]: TypeInterface };
 
-    static initialize(config) {
+    static initialize(config: { [name: string]: string }) {
         TypeRegistry.config = config;
         TypeRegistry.types = {};
     }
 
     static getType(name: string): Promise<TypeInterface> {
-        return new Promise((resolve, reject) => {
+        return new Promise<TypeInterface>((resolve, reject) => {
             if (TypeRegistry.types.hasOwnProperty(name)) {
                 resolve(TypeRegistry.types[name]);
             } else if (TypeRegistry.config.hasOwnProperty(name)) {
                 try {
-                    require([TypeRegistry.config[name]], (type) => {
+                    require([TypeRegistry.config[name]], (type: TypeConstructor) => {
                         TypeRegistry.types[name] = new type();
                         resolve(TypeRegistry.types[name]);
                     });
@@ -59,8 +58,8 @@ class Slide {
             this.timeline.seek(0, false);
             this.timeline.pause();
         } else {
-            let onReverse:Function;
-            if (onReverse = this.timeline.eventCallback('onReverse')) {
+            let onReverse:Function = this.timeline.eventCallback('onReverse');
+            if (onReverse) {
                 onReverse();
             }
             this.timeline.reverse();
@@ -79,7 +78,7 @@ interface SlideShowConfig {
     debug: boolean
 }
 
-let DEFAULT_OPTIONS = {
+let DEFAULT_OPTIONS:SlideShowConfig = {
     id: null,
     types: {},
     ui: true,
@@ -428,7 +427,7 @@ class SlideShow extends Dispatcher {
      *
      * @param message
      */
-    private log(message) {
+    private log(message: String) {
         if (this.config.debug) {
             console.log('[SlideShow]', message);
         }
