@@ -7,7 +7,7 @@ namespace Ekyna\Bundle\CmsBundle\Service\Helper;
 use Doctrine\Common\Cache\CacheProvider;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Service\Routing\RouteProvider;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 use function call_user_func;
 
@@ -18,16 +18,16 @@ use function call_user_func;
  */
 class CacheHelper
 {
-    private AdapterInterface $cmsCache;
-    private ?CacheProvider   $resultCache;
-    private array            $locales;
-    private string           $pageClass;
+    private CacheItemPoolInterface $cmsCache;
+    private ?CacheProvider         $resultCache;
+    private array                  $locales;
+    private string                 $pageClass;
 
     public function __construct(
-        AdapterInterface $cmsCache,
-        ?CacheProvider   $resultCache,
-        array            $locales,
-        string           $pageClass
+        CacheItemPoolInterface $cmsCache,
+        ?CacheProvider         $resultCache,
+        array                  $locales,
+        string                 $pageClass
     ) {
         $this->cmsCache = $cmsCache;
         $this->resultCache = $resultCache;

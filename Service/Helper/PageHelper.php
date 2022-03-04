@@ -6,8 +6,8 @@ namespace Ekyna\Bundle\CmsBundle\Service\Helper;
 
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Repository\PageRepositoryInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use RuntimeException;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -20,7 +20,7 @@ class PageHelper
     public const CACHE_KEY = 'ekyna_cms.routes_names';
 
     protected PageRepositoryInterface $repository;
-    protected AdapterInterface        $cache;
+    protected CacheItemPoolInterface  $cache;
     private string                    $homeRoute;
 
     private ?array   $routes  = null;
@@ -32,7 +32,7 @@ class PageHelper
     private bool           $homePageLoaded = false;
     private ?PageInterface $homePage;
 
-    public function __construct(PageRepositoryInterface $repository, AdapterInterface $cache, string $homeRoute)
+    public function __construct(PageRepositoryInterface $repository, CacheItemPoolInterface $cache, string $homeRoute)
     {
         $this->repository = $repository;
         $this->cache = $cache;
