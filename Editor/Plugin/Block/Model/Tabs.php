@@ -103,7 +103,7 @@ class Tabs implements TranslatableInterface
      *
      * @return Tabs
      */
-    public function setsTabs($tabs): Tabs
+    public function setsTabs(Collection|array $tabs): Tabs
     {
         if (is_array($tabs)) {
             $tabs = new ArrayCollection($tabs);

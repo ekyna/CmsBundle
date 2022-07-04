@@ -18,19 +18,13 @@ class ContentManager extends AbstractManager
     /**
      * Creates a new content.
      *
-     * @param ContentSubjectInterface|string $subjectOrName
-     *
-     * @return ContentInterface
      * @throws InvalidOperationException
      */
-    public function create($subjectOrName): ContentInterface
+    public function create(ContentSubjectInterface|string $subjectOrName): ContentInterface
     {
         // Check if container or name is defined
-        if (
-            !$subjectOrName instanceof ContentSubjectInterface &&
-            !(is_string($subjectOrName) && !empty($subjectOrName))
-        ) {
-            throw new InvalidOperationException('Excepted instance of ContentSubjectInterface or string.');
+        if (is_string($subjectOrName) && empty($subjectOrName)) {
+            throw new InvalidOperationException('Excepted instance of ContentSubjectInterface or non-empty string.');
         }
 
         // New instance
@@ -50,11 +44,7 @@ class ContentManager extends AbstractManager
     }
 
     /**
-     * Fix the containers positions.
-     *
-     * @param ContentInterface $content
-     *
-     * @return ContentManager
+     * Fixes the containers positions.
      */
     public function fixContainersPositions(ContentInterface $content): ContentManager
     {

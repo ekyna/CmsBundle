@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model;
 
-use Doctrine\Common\Collections\Collection;
 use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
 use Ekyna\Component\Resource\Model\SortableInterface;
 use Ekyna\Component\Resource\Model\SortableTrait;
@@ -16,8 +15,7 @@ use Ekyna\Component\Resource\Model\TranslatableTrait;
  * @package Ekyna\Bundle\CmsBundle\Editor\Plugin\Block\Model
  * @author  Etienne Dauvergne <contact@ekyna.com>
  *
- * @method TabTranslation translate($locale = null, $create = false)
- * @method Collection|TabTranslation[] getTranslations()
+ * @template-extends TranslatableInterface<TabTranslation>
  */
 class Tab implements TranslatableInterface, SortableInterface
 {
@@ -26,10 +24,6 @@ class Tab implements TranslatableInterface, SortableInterface
 
     private ?string $anchor = null;
 
-
-    /**
-     * @inheritDoc
-     */
     public function getId(): ?int
     {
         return null;

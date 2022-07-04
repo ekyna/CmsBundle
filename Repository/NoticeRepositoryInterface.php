@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use Ekyna\Bundle\CmsBundle\Model\NoticeInterface;
+use Ekyna\Component\Resource\Repository\ResourceRepositoryInterface;
 use Ekyna\Component\Resource\Repository\TranslatableRepositoryInterface;
 
 /**
  * Interface NoticeRepositoryInterface
  * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Etienne Dauvergne <contact@ekyna.com>
+ *
+ * @implements ResourceRepositoryInterface<NoticeInterface>
  */
 interface NoticeRepositoryInterface extends TranslatableRepositoryInterface
 {

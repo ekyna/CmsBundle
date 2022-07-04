@@ -15,16 +15,10 @@ trait DataTrait
 {
     protected array $data = [];
 
-
     /**
      * Sets the data as key/value or whole array.
-     *
-     * @param string|array $keyOrData
-     * @param mixed        $value
-     *
-     * @return DataInterface|$this
      */
-    public function setData($keyOrData, $value = null): DataInterface
+    public function setData(array|string $keyOrData, array|string|int|bool|null$value = null): DataInterface
     {
         if (is_string($keyOrData) && !empty($keyOrData)) {
             $this->data[$keyOrData] = $value;
@@ -39,10 +33,6 @@ trait DataTrait
 
     /**
      * Unsets the data for the given key.
-     *
-     * @param string|null $key
-     *
-     * @return DataInterface|$this
      */
     public function unsetData(string $key = null): DataInterface
     {
@@ -57,8 +47,6 @@ trait DataTrait
 
     /**
      * Returns the data.
-     *
-     * @return array
      */
     public function getData(): array
     {

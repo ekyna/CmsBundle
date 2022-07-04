@@ -17,20 +17,13 @@ class RowManager extends AbstractManager
     /**
      * Creates a new row.
      *
-     * @param Model\ContainerInterface|string $containerOrName
-     * @param array                           $data
-     *
-     * @return Model\RowInterface
      * @throws InvalidOperationException
      */
     public function create($containerOrName, array $data = []): Model\RowInterface
     {
         // Check if parent or name is defined
-        if (
-            !$containerOrName instanceof Model\ContainerInterface &&
-            !(is_string($containerOrName) && !empty($containerOrName))
-        ) {
-            throw new InvalidOperationException('Excepted instance of ContainerInterface or string.');
+        if (is_string($containerOrName) && empty($containerOrName)) {
+            throw new InvalidOperationException('Excepted instance of ContainerInterface or non-empty string.');
         }
 
         // New instance
@@ -53,9 +46,6 @@ class RowManager extends AbstractManager
 
     /**
      * Deletes the row.
-     *
-     * @param Model\RowInterface $row
-     * @param bool               $force
      *
      * @return Model\RowInterface The removed row.
      * @throws InvalidOperationException
@@ -93,8 +83,6 @@ class RowManager extends AbstractManager
     /**
      * Moves the row up.
      *
-     * @param Model\RowInterface $row
-     *
      * @return Model\RowInterface the sibling row that has been swapped.
      * @throws InvalidOperationException
      */
@@ -118,8 +106,6 @@ class RowManager extends AbstractManager
     /**
      * Moves the row down.
      *
-     * @param Model\RowInterface $row
-     *
      * @return Model\RowInterface the sibling row that has been swapped.
      * @throws InvalidOperationException
      */
@@ -141,11 +127,7 @@ class RowManager extends AbstractManager
     }
 
     /**
-     * Fix the blocks positions.
-     *
-     * @param Model\RowInterface $row
-     *
-     * @return RowManager
+     * Fixes the blocks positions.
      */
     public function fixBlocksPositions(Model\RowInterface $row): RowManager
     {

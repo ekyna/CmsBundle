@@ -85,7 +85,7 @@ class ChainRouteCollection extends RouteCollection
      *
      * @param string|array $name The route name or an array of route names
      */
-    public function remove($name)
+    public function remove($name): void
     {
         foreach ((array)$name as $n) {
             foreach ($this->routeCollections as $routeCollection) {

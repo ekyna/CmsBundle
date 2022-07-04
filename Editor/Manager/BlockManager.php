@@ -17,37 +17,23 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class BlockManager extends AbstractManager
 {
-    private string $defaultType;
-
-
-    /**
-     * Constructor.
-     *
-     * @param string $defaultType
-     */
-    public function __construct(string $defaultType)
+    public function __construct(private readonly string $defaultType)
     {
-        $this->defaultType = $defaultType;
     }
 
     /**
      * Creates a block.
      *
-     * @param Model\RowInterface|string $rowOrName
-     * @param string|null               $type
-     * @param array                     $data
-     *
-     * @return Model\BlockInterface
      * @throws InvalidOperationException
      */
-    public function create($rowOrName, string $type = null, array $data = []): Model\BlockInterface
-    {
+    public function create(
+        Model\RowInterface|string $rowOrName,
+        string                    $type = null,
+        array                     $data = []
+    ): Model\BlockInterface {
         // Check if row or name is defined
-        if (
-            !$rowOrName instanceof Model\RowInterface &&
-            !(is_string($rowOrName) && !empty($rowOrName))
-        ) {
-            throw new InvalidOperationException('Excepted instance of RowInterface or string.');
+        if (is_string($rowOrName) && empty($rowOrName)) {
+            throw new InvalidOperationException('Excepted instance of RowInterface or non-empty string.');
         }
 
         // Default type if null
@@ -68,8 +54,8 @@ class BlockManager extends AbstractManager
         // Add to row if available
         if ($rowOrName instanceof Model\RowInterface) {
             $count = $rowOrName->getBlocks()->count();
-            $block
-                ->setPosition($count);
+
+            $block->setPosition($count);
 
             $rowOrName->addBlock($block);
         } else {
@@ -81,11 +67,6 @@ class BlockManager extends AbstractManager
 
     /**
      * Updates the block.
-     *
-     * @param Model\BlockInterface $block
-     * @param Request              $request
-     *
-     * @return Response|null
      *
      * @throws EditorExceptionInterface
      */
@@ -99,10 +80,6 @@ class BlockManager extends AbstractManager
 
     /**
      * Changes the block type.
-     *
-     * @param Model\BlockInterface $block The block
-     * @param string               $type  The block new type
-     * @param array                $data  The block new data
      *
      * @throws InvalidOperationException
      */
@@ -134,8 +111,6 @@ class BlockManager extends AbstractManager
 
     /**
      * Deletes the block.
-     *
-     * @param Model\BlockInterface $block
      *
      * @return Model\BlockInterface The removed block.
      * @throws InvalidOperationException
@@ -174,8 +149,6 @@ class BlockManager extends AbstractManager
     /**
      * Moves the block up.
      *
-     * @param Model\BlockInterface $block
-     *
      * @return Model\RowInterface The sibling row where the block has been moved into.
      * @throws InvalidOperationException
      */
@@ -208,8 +181,6 @@ class BlockManager extends AbstractManager
 
     /**
      * Moves the block down.
-     *
-     * @param Model\BlockInterface $block
      *
      * @return Model\RowInterface The sibling row where the block has been moved into.
      * @throws InvalidOperationException
@@ -244,8 +215,6 @@ class BlockManager extends AbstractManager
     /**
      * Moves the block to the left.
      *
-     * @param Model\BlockInterface $block
-     *
      * @return Model\BlockInterface The sibling block that has been swapped.
      * @throws InvalidOperationException
      */
@@ -268,8 +237,6 @@ class BlockManager extends AbstractManager
 
     /**
      * Moves the block to the right.
-     *
-     * @param Model\BlockInterface $block
      *
      * @return Model\BlockInterface The sibling block that has been swapped.
      * @throws InvalidOperationException

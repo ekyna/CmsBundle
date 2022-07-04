@@ -17,37 +17,23 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ContainerManager extends AbstractManager
 {
-    private string $defaultType;
-
-
-    /**
-     * Constructor.
-     *
-     * @param string $defaultType
-     */
-    public function __construct(string $defaultType)
+    public function __construct(private readonly string $defaultType)
     {
-        $this->defaultType = $defaultType;
     }
 
     /**
      * Creates a new container.
      *
-     * @param Model\ContentInterface|string $contentOrName
-     * @param string|null                   $type
-     * @param array                         $data
-     *
-     * @return Model\ContainerInterface
      * @throws InvalidOperationException
      */
-    public function create($contentOrName, string $type = null, array $data = []): Model\ContainerInterface
-    {
+    public function create(
+        Model\ContentInterface|string $contentOrName,
+        string                        $type = null,
+        array                         $data = []
+    ): Model\ContainerInterface {
         // Check if container or name is defined
-        if (
-            !$contentOrName instanceof Model\ContentInterface &&
-            !(is_string($contentOrName) && !empty($contentOrName))
-        ) {
-            throw new InvalidOperationException('Excepted instance of ContentInterface or string.');
+        if (is_string($contentOrName) && empty($contentOrName)) {
+            throw new InvalidOperationException('Excepted instance of ContentInterface or non-empty string.');
         }
 
         // Default type if null
@@ -82,11 +68,6 @@ class ContainerManager extends AbstractManager
 
     /**
      * Updates the container.
-     *
-     * @param Model\ContainerInterface $container
-     * @param Request                  $request
-     *
-     * @return Response|null
      */
     public function update(Model\ContainerInterface $container, Request $request): ?Response
     {
@@ -145,8 +126,7 @@ class ContainerManager extends AbstractManager
                 $removed[] = $viewBuilder->buildRow($row)->getAttributes()->getId();
                 $this->editor->getRowManager()->delete($row, true);
             }
-        }
-        // Create default row and block if switching to any but 'any' plugin
+        } // Create default row and block if switching to any but 'any' plugin
         elseif (0 == $container->getRows()->count()) {
             $this->editor->getRowManager()->create($container);
         }
@@ -159,8 +139,6 @@ class ContainerManager extends AbstractManager
 
     /**
      * Deletes the container.
-     *
-     * @param Model\ContainerInterface $container
      *
      * @return Model\ContainerInterface The removed container.
      * @throws InvalidOperationException
@@ -198,8 +176,6 @@ class ContainerManager extends AbstractManager
     /**
      * Moves the container up.
      *
-     * @param Model\ContainerInterface $container
-     *
      * @return Model\ContainerInterface the sibling container that has been swapped.
      * @throws InvalidOperationException
      */
@@ -223,8 +199,6 @@ class ContainerManager extends AbstractManager
     /**
      * Moves the container down.
      *
-     * @param Model\ContainerInterface $container
-     *
      * @return Model\ContainerInterface the sibling container that has been swapped.
      * @throws InvalidOperationException
      */
@@ -246,11 +220,7 @@ class ContainerManager extends AbstractManager
     }
 
     /**
-     * Fix the rows positions.
-     *
-     * @param Model\ContainerInterface $container
-     *
-     * @return ContainerManager
+     * Fixes the rows positions.
      */
     public function fixRowsPositions(Model\ContainerInterface $container): ContainerManager
     {

@@ -55,7 +55,7 @@ interface RowInterface
     /**
      * Set blocks
      *
-     * @param Collection|BlockInterface[] $blocks
+     * @param Collection<BlockInterface> $blocks
      *
      * @return RowInterface|$this
      */
@@ -82,7 +82,7 @@ interface RowInterface
     /**
      * Get blocks
      *
-     * @return Collection|BlockInterface[]
+     * @return Collection<BlockInterface>
      */
     public function getBlocks(): Collection;
 

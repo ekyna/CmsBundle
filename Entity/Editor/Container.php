@@ -145,7 +145,7 @@ class Container extends AbstractResource implements EM\ContainerInterface
     /**
      * @inheritDoc
      */
-    public function setRows(ArrayCollection $rows): EM\ContainerInterface
+    public function setRows(Collection $rows): EM\ContainerInterface
     {
         foreach ($rows as $row) {
             $this->addRow($row);

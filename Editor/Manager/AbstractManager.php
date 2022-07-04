@@ -24,19 +24,13 @@ abstract class AbstractManager implements EditorAwareInterface
 
     private ?PropertyAccessorInterface $propertyAccessor = null;
 
-
-    /**
-     * Returns the property accessor.
-     *
-     * @return PropertyAccessorInterface
-     */
     private function getPropertyAccessor(): PropertyAccessorInterface
     {
-        if (null === $this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        if (null !== $this->propertyAccessor) {
+            return $this->propertyAccessor;
         }
 
-        return $this->propertyAccessor;
+        return $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
     /**
@@ -51,14 +45,14 @@ abstract class AbstractManager implements EditorAwareInterface
     {
         $collection = $this->getPropertyAccessor()->getValue($parent, $childrenPropertyPath);
 
-        if ($collection instanceOf PersistentCollection) {
+        if ($collection instanceof PersistentCollection) {
             if (false === $collection->isInitialized()) {
                 $collection->initialize();
             }
             $collection = $collection->unwrap();
         }
 
-        if (!$collection instanceOf ArrayCollection) {
+        if (!$collection instanceof ArrayCollection) {
             throw new InvalidArgumentException('Expected ArrayCollection.');
         }
 

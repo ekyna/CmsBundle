@@ -9,9 +9,12 @@ import Dispatcher from './dispatcher';
 import {Util, OffsetInterface, Button, ButtonChoiceConfig, Toolbar, ToolbarView, Slider, ControlInterface} from './ui';
 import {SizeInterface, ResizeEventData} from "./viewport";
 import {BasePlugin} from './plugin/base-plugin';
-import RouteParams = FOS.RouteParams;
 import {Bootstrap3Adapter} from "./layout/bootstrap3";
 import {CommonAdapter} from "./layout/common";
+
+interface RouteParams {
+    [index: string]: any;
+}
 
 const DEFAULT_WIDGET_ACTIONS = {
     edit: false,

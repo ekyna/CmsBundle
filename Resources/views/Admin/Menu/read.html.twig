@@ -12,12 +12,8 @@
             'label': 'field.name',
             'label_trans_domain': 'EkynaUi'
         }) }}
-        {{ show_row(menu.parent, 'entity', {
-            'label': 'field.parent',
-            'label_trans_domain': 'EkynaUi',
-            'property': 'name',
-            'route': 'admin_ekyna_cms_menu_read',
-            'route_parameters_map': {'menuId': 'id'}
+        {{ show_row(menu.parent, 'resource', {
+            'resource': 'ekyna_cms.menu'
         }) }}
         <hr>
         {{ show_row(menu.translations, 'translations', {

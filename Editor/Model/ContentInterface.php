@@ -34,7 +34,7 @@ interface ContentInterface extends RM\TimestampableInterface, CopyInterface, RM\
     /**
      * Set containers
      *
-     * @param Collection|ContainerInterface[] $containers
+     * @param Collection<ContainerInterface> $containers
      *
      * @return ContentInterface|$this
      */

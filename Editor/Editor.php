@@ -28,12 +28,7 @@ class Editor
     private const VIEWPORT_DESKTOP = 'desktop';
     private const VIEWPORT_ADJUST  = 'adjust';
 
-
-    private RepositoryInterface     $repository;
-    private Plugin\PluginRegistry   $pluginRegistry;
-    private LocaleProviderInterface $contentLocaleProvider;
-    private PageHelper              $pageHelper;
-    private array                   $config;
+    private array $config;
 
     private bool $enabled       = false;
     private int  $viewportWidth = 0;
@@ -45,182 +40,121 @@ class Editor
     private ?Manager\ContentManager   $contentManager   = null;
     private ?View\ViewBuilder         $viewBuilder      = null;
 
-
-    /**
-     * Constructor.
-     *
-     * @param RepositoryInterface     $repository
-     * @param Plugin\PluginRegistry   $pluginRegistry
-     * @param LocaleProviderInterface $contentLocaleProvider
-     * @param PageHelper              $pageHelper
-     * @param array                   $config
-     */
     public function __construct(
-        RepositoryInterface $repository,
-        Plugin\PluginRegistry $pluginRegistry,
-        LocaleProviderInterface $contentLocaleProvider,
-        PageHelper $pageHelper,
-        array $config
+        private readonly RepositoryInterface $repository,
+        private readonly Plugin\PluginRegistry $pluginRegistry,
+        private readonly LocaleProviderInterface $contentLocaleProvider,
+        private readonly PageHelper $pageHelper,
+        array   $config
     ) {
-        $this->repository = $repository;
-        $this->pluginRegistry = $pluginRegistry;
-        $this->contentLocaleProvider = $contentLocaleProvider;
-        $this->pageHelper = $pageHelper;
-
         $this->config = array_replace(static::getDefaultConfig(), $config);
     }
 
-    /**
-     * Returns the config.
-     *
-     * @return array
-     */
     public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * Returns the factory.
-     *
-     * @return RepositoryInterface
-     */
     public function getRepository(): RepositoryInterface
     {
         return $this->repository;
     }
 
-    /**
-     * Returns the block manager.
-     *
-     * @return Manager\BlockManager
-     */
     public function getBlockManager(): Manager\BlockManager
     {
-        if (null === $this->blockManager) {
-            $this->blockManager = new Manager\BlockManager(
-                $this->config['default_block_plugin']
-            );
-            $this->blockManager->setEditor($this);
+        if (null !== $this->blockManager) {
+            return $this->blockManager;
         }
+
+        $this->blockManager = new Manager\BlockManager(
+            $this->config['default_block_plugin']
+        );
+
+        $this->blockManager->setEditor($this);
 
         return $this->blockManager;
     }
 
-    /**
-     * Returns the row manager.
-     *
-     * @return Manager\RowManager
-     */
     public function getRowManager(): Manager\RowManager
     {
-        if (null === $this->rowManager) {
-            $this->rowManager = new Manager\RowManager();
-            $this->rowManager->setEditor($this);
+        if (null !== $this->rowManager) {
+            return $this->rowManager;
         }
+
+        $this->rowManager = new Manager\RowManager();
+        $this->rowManager->setEditor($this);
 
         return $this->rowManager;
     }
 
-    /**
-     * Returns the container manager.
-     *
-     * @return Manager\ContainerManager
-     */
     public function getContainerManager(): Manager\ContainerManager
     {
-        if (null === $this->containerManager) {
-            $this->containerManager = new Manager\ContainerManager(
-                $this->config['default_container_plugin']
-            );
-            $this->containerManager->setEditor($this);
+        if (null !== $this->containerManager) {
+            return $this->containerManager;
         }
+
+        $this->containerManager = new Manager\ContainerManager(
+            $this->config['default_container_plugin']
+        );
+
+        $this->containerManager->setEditor($this);
 
         return $this->containerManager;
     }
 
-    /**
-     * Returns the content manager.
-     *
-     * @return Manager\ContentManager
-     */
     public function getContentManager(): Manager\ContentManager
     {
-        if (null === $this->contentManager) {
-            $this->contentManager = new Manager\ContentManager();
-            $this->contentManager->setEditor($this);
+        if (null !== $this->contentManager) {
+            return $this->contentManager;
         }
+
+        $this->contentManager = new Manager\ContentManager();
+        $this->contentManager->setEditor($this);
 
         return $this->contentManager;
     }
 
-    /**
-     * Returns the layout adapter.
-     *
-     * @return AdapterInterface
-     */
     public function getLayoutAdapter(): AdapterInterface
     {
-        if (null === $this->layoutAdapter) {
-            $class = $this->config['layout']['adapter'];
-
-            $this->layoutAdapter = new $class();
-            $this->layoutAdapter->setEditor($this);
+        if (null !== $this->layoutAdapter) {
+            return $this->layoutAdapter;
         }
+
+        $class = $this->config['layout']['adapter'];
+
+        $this->layoutAdapter = new $class();
+        $this->layoutAdapter->setEditor($this);
 
         return $this->layoutAdapter;
     }
 
-    /**
-     * Returns the view builder.
-     *
-     * @return View\ViewBuilder
-     */
     public function getViewBuilder(): View\ViewBuilder
     {
-        if (null === $this->viewBuilder) {
-            $this->viewBuilder = new View\ViewBuilder();
-            $this->viewBuilder->setEditor($this);
+        if (null !== $this->viewBuilder) {
+            return $this->viewBuilder;
         }
+
+        $this->viewBuilder = new View\ViewBuilder();
+        $this->viewBuilder->setEditor($this);
 
         return $this->viewBuilder;
     }
 
-    /**
-     * Sets the enabled.
-     *
-     * @param bool $enabled
-     */
     public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
     }
 
-    /**
-     * Returns the enabled.
-     *
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * Sets the viewport width.
-     *
-     * @param int $width
-     */
     public function setViewportWidth(int $width): void
     {
         $this->viewportWidth = $width;
     }
 
-    /**
-     * Returns the viewport width.
-     *
-     * @return int
-     */
     public function getViewportWidth(): int
     {
         return $this->viewportWidth;
@@ -228,10 +162,6 @@ class Editor
 
     /**
      * Returns the block plugin by name.
-     *
-     * @param string $name
-     *
-     * @return Plugin\Block\PluginInterface
      */
     public function getBlockPlugin(string $name): Plugin\Block\PluginInterface
     {
@@ -240,10 +170,6 @@ class Editor
 
     /**
      * Returns the container plugin by name.
-     *
-     * @param string $name
-     *
-     * @return Plugin\Container\PluginInterface
      */
     public function getContainerPlugin(string $name): Plugin\Container\PluginInterface
     {
@@ -251,9 +177,7 @@ class Editor
     }
 
     /**
-     * Returns the content locale.
-     *
-     * @return array
+     * Returns the content data.
      */
     public function getContentData(): array
     {
@@ -269,12 +193,8 @@ class Editor
 
     /**
      * Creates a default content for the given subject.
-     *
-     * @param string|CM\ContentSubjectInterface $subjectOrName
-     *
-     * @return EM\ContentInterface
      */
-    public function createDefaultContent($subjectOrName): EM\ContentInterface
+    public function createDefaultContent(CM\ContentSubjectInterface|string $subjectOrName): EM\ContentInterface
     {
         return $this->getContentManager()->create($subjectOrName);
     }
@@ -282,16 +202,11 @@ class Editor
     /**
      * Creates a default container.
      *
-     * @param string|null              $type
-     * @param array                    $data
-     * @param EM\ContentInterface|null $content
-     *
-     * @return EM\ContainerInterface
      * @throws Exception\InvalidOperationException
      */
     public function createDefaultContainer(
-        string $type = null,
-        array $data = [],
+        string              $type = null,
+        array               $data = [],
         EM\ContentInterface $content = null
     ): EM\ContainerInterface {
         return $this->getContainerManager()->create($content, $type, $data);
@@ -300,10 +215,6 @@ class Editor
     /**
      * Creates a default row.
      *
-     * @param array                      $data
-     * @param EM\ContainerInterface|null $container
-     *
-     * @return EM\RowInterface
      * @throws Exception\InvalidOperationException
      */
     public function createDefaultRow(array $data = [], EM\ContainerInterface $container = null): EM\RowInterface
@@ -314,16 +225,11 @@ class Editor
     /**
      * Creates a default block.
      *
-     * @param string|null          $type
-     * @param array                $data
-     * @param EM\RowInterface|null $row
-     *
-     * @return EM\BlockInterface
      * @throws Exception\InvalidOperationException
      */
     public function createDefaultBlock(
-        string $type = null,
-        array $data = [],
+        string          $type = null,
+        array           $data = [],
         EM\RowInterface $row = null
     ): EM\BlockInterface {
         return $this->getBlockManager()->create($row, $type, $data);
@@ -331,8 +237,6 @@ class Editor
 
     /**
      * Returns the plugins configuration.
-     *
-     * @return array
      */
     public function getPluginsConfig(): array
     {
@@ -360,8 +264,6 @@ class Editor
 
     /**
      * Returns the default editor configuration.
-     *
-     * @return array
      */
     private static function getDefaultConfig(): array
     {
@@ -377,8 +279,6 @@ class Editor
 
     /**
      * Returns the default viewports configuration.
-     *
-     * @return array
      */
     public static function getDefaultViewportsConfig(): array
     {
@@ -422,8 +322,6 @@ class Editor
 
     /**
      * Returns the default viewports configuration.
-     *
-     * @return array
      */
     public static function getViewportsKeys(): array
     {
@@ -438,8 +336,6 @@ class Editor
 
     /**
      * Returns the default layout configuration.
-     *
-     * @return array
      */
     public static function getDefaultLayoutConfig(): array
     {

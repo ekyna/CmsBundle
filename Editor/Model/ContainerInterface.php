@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\CmsBundle\Editor\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ekyna\Component\Resource\Copier\CopyInterface;
 use Ekyna\Component\Resource\Model as RM;
@@ -105,11 +104,11 @@ interface ContainerInterface
     /**
      * Sets the rows.
      *
-     * @param ArrayCollection|RowInterface[] $rows
+     * @param Collection<RowInterface> $rows
      *
      * @return ContainerInterface|$this
      */
-    public function setRows(ArrayCollection $rows): ContainerInterface;
+    public function setRows(Collection $rows): ContainerInterface;
 
     /**
      * Adds the row.
@@ -132,7 +131,7 @@ interface ContainerInterface
     /**
      * Returns the rows.
      *
-     * @return Collection|RowInterface[]
+     * @return Collection<RowInterface>
      */
     public function getRows(): Collection;
 

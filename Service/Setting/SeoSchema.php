@@ -9,7 +9,7 @@ use Ekyna\Bundle\SettingBundle\Model\I18nParameter;
 use Ekyna\Bundle\SettingBundle\Schema\AbstractSchema;
 use Ekyna\Bundle\SettingBundle\Schema\LocalizedSchemaInterface;
 use Ekyna\Bundle\SettingBundle\Schema\LocalizedSchemaTrait;
-use Ekyna\Bundle\SettingBundle\Schema\SettingsBuilder;
+use Ekyna\Bundle\SettingBundle\Schema\SettingBuilder;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -27,7 +27,7 @@ class SeoSchema extends AbstractSchema implements LocalizedSchemaInterface
 {
     use LocalizedSchemaTrait;
 
-    public function buildSettings(SettingsBuilder $builder): void
+    public function buildSettings(SettingBuilder $builder): void
     {
         $builder
             ->setDefaults(array_merge([

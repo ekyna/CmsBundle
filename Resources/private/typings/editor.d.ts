@@ -1,4 +1,6 @@
-import RouteParams = FOS.RouteParams;
+interface RouteParams {
+    [index: string]: any;
+}
 
 declare module 'ekyna-cms/editor/plugin/base-plugin' {
     export class BasePlugin {

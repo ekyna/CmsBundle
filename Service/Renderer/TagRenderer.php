@@ -20,12 +20,9 @@ class TagRenderer
     /**
      * Renders the tags.
      *
-     * @param TagsSubjectInterface|Collection|TagInterface[] $subjectOrTags
-     * @param array                                          $options
-     *
-     * @return string
+     * @param TagsSubjectInterface|Collection<TagInterface>|array<TagInterface> $subjectOrTags
      */
-    public function renderTags($subjectOrTags, array $options = []): string
+    public function renderTags(TagsSubjectInterface|Collection|array $subjectOrTags, array $options = []): string
     {
         if ($subjectOrTags instanceof TagsSubjectInterface) {
             $tags = $subjectOrTags->getTags();
@@ -64,10 +61,6 @@ class TagRenderer
 
     /**
      * Returns the renderer.
-     *
-     * @param array $options
-     *
-     * @return callable
      */
     private function getRenderer(array $options): callable
     {

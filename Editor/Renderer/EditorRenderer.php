@@ -23,40 +23,18 @@ use Twig\TemplateWrapper;
  */
 class EditorRenderer
 {
-    protected Editor                 $editor;
-    protected PageHelper             $pageHelper;
-    protected TagManager             $tagManager;
-    private Environment              $environment;
-    protected EntityManagerInterface $manager;
-    protected array                  $config;
+    protected array $config;
 
     private ?TemplateWrapper $template = null;
 
-
-    /**
-     * Constructor.
-     *
-     * @param Editor                 $editor
-     * @param PageHelper             $pageHelper
-     * @param TagManager             $tagManager
-     * @param Environment            $environment
-     * @param EntityManagerInterface $manager
-     * @param array                  $config
-     */
     public function __construct(
-        Editor $editor,
-        PageHelper $pageHelper,
-        TagManager $tagManager,
-        Environment $environment,
-        EntityManagerInterface $manager,
-        array $config = []
+        protected readonly Editor $editor,
+        protected readonly PageHelper $pageHelper,
+        protected readonly TagManager $tagManager,
+        protected readonly Environment $environment,
+        protected readonly EntityManagerInterface $manager,
+        array     $config = []
     ) {
-        $this->editor = $editor;
-        $this->pageHelper = $pageHelper;
-        $this->tagManager = $tagManager;
-        $this->environment = $environment;
-        $this->manager = $manager;
-
         $this->config = array_replace([
             'template'        => '@EkynaCms/Editor/content.html.twig',
             'default_content' => '<p></p>', // TODO
@@ -65,8 +43,6 @@ class EditorRenderer
 
     /**
      * Renders the document data attribute.
-     *
-     * @return string
      */
     public function renderDocumentData(): string
     {
@@ -80,15 +56,12 @@ class EditorRenderer
     /**
      * Renders the content.
      *
-     * @param CM\ContentSubjectInterface|EM\ContentInterface|View\ContentView|null $content
-     *
-     * @return string
-     *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\RenderingException
      */
-    public function renderContent($content = null): string
-    {
+    public function renderContent(
+        CM\ContentSubjectInterface|EM\ContentInterface|View\ContentView|string|null $content = null
+    ): string {
         $repository = $this->editor->getRepository();
 
         if (null === $content) {
@@ -140,15 +113,13 @@ class EditorRenderer
     /**
      * Renders the container.
      *
-     * @param string|EM\ContainerInterface|View\ContainerView $container
-     * @param string|null                                     $type
-     * @param array                                           $data
-     *
-     * @return string
      * @throws Exception\InvalidArgumentException
      */
-    public function renderContainer($container, string $type = null, array $data = []): string
-    {
+    public function renderContainer(
+        EM\ContainerInterface|View\ContainerView|string $container,
+        string                                          $type = null,
+        array                                           $data = []
+    ): string {
         if (is_string($container)) {
             if (null === $element = $this->editor->getRepository()->findContainerByName($container)) {
                 $this->persist($element = $this->editor->getContainerManager()->create($container, $type, $data));
@@ -178,13 +149,9 @@ class EditorRenderer
     /**
      * Renders the row.
      *
-     * @param EM\RowInterface|View\RowView $row
-     * @param array                        $data
-     *
-     * @return string
      * @throws Exception\InvalidArgumentException
      */
-    public function renderRow($row, array $data = []): string
+    public function renderRow(EM\RowInterface|View\RowView|string $row, array $data = []): string
     {
         if (is_string($row)) {
             if (null === $element = $this->editor->getRepository()->findRowByName($row)) {
@@ -215,15 +182,13 @@ class EditorRenderer
     /**
      * Renders the block.
      *
-     * @param EM\BlockInterface|View\BlockView $block
-     * @param string|null                      $type
-     * @param array                            $data
-     *
-     * @return string
      * @throws Exception\InvalidArgumentException
      */
-    public function renderBlock($block, string $type = null, array $data = []): string
-    {
+    public function renderBlock(
+        EM\BlockInterface|View\BlockView|string $block,
+        string                                  $type = null,
+        array                                   $data = []
+    ): string {
         if (is_string($block)) {
             if (null === $element = $this->editor->getRepository()->findBlockByName($block)) {
                 $this->persist($element = $this->editor->getBlockManager()->create($block, $type, $data));
@@ -263,7 +228,7 @@ class EditorRenderer
 
         try {
             $this->template = $this->environment->load($name = $this->config['template']);
-        } catch (Error $e) {
+        } catch (Error) {
             throw new Exception\RenderingException("Failed to load $name template.");
         }
 
@@ -287,10 +252,8 @@ class EditorRenderer
 
     /**
      * Persists the element and flushes the manager.
-     *
-     * @param object $element
      */
-    private function persist(object $element)
+    private function persist(object $element): void
     {
         $this->manager->persist($element);
         $this->manager->flush();

@@ -1,4 +1,4 @@
-@ui-color: #404040;
+@slide-show-ui-color: #404040;
 
 .cms-slide-show {
     height: 400px;
@@ -45,7 +45,7 @@
                     &.slide {
                         -webkit-border-radius: 10px;
                         -moz-border-radius: 10px;
-                        border: 2px solid @ui-color;
+                        border: 2px solid @slide-show-ui-color;
                         background-color: rgba(255, 255, 255, .5);
                         border-radius: 10px;
                         box-shadow: 0 2px 7px rgba(0, 0, 0, .33);
@@ -53,7 +53,7 @@
 
                     &.play {
                         font-family: Helvetica, Arial, sans-serif;
-                        color: @ui-color;
+                        color: @slide-show-ui-color;
                         text-shadow: 0 2px 7px rgba(0, 0, 0, .33);
 
                         &:before, &before {
@@ -98,7 +98,7 @@
     }
 
     > .cms-slide-show-timer {
-        background-color: @ui-color;
+        background-color: @slide-show-ui-color;
         bottom: 0;
         height: 1px;
         left: 0;
@@ -117,7 +117,7 @@
         z-index: 100;
 
         &:before {
-            color: @ui-color;
+            color: @slide-show-ui-color;
             display: inline-block;
             font-family: monospace;
             font-size: 40px;

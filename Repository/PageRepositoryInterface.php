@@ -6,6 +6,7 @@ namespace Ekyna\Bundle\CmsBundle\Repository;
 
 use DateTime;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
+use Ekyna\Component\Resource\Repository\ResourceRepositoryInterface;
 use Ekyna\Component\Resource\Repository\TranslatableRepositoryInterface;
 
 /**
@@ -13,10 +14,7 @@ use Ekyna\Component\Resource\Repository\TranslatableRepositoryInterface;
  * @package Ekyna\Bundle\CmsBundle\Repository
  * @author  Étienne Dauvergne <contact@ekyna.com>
  *
- * @method PageInterface|null find(int $id)
- * @method PageInterface|null findOneBy(array $criteria, array $sorting = [])
- * @method PageInterface[] findAll()
- * @method PageInterface[] findBy(array $criteria, array $sorting = [], int $limit = null, int $offset = null)
+ * @implements ResourceRepositoryInterface<PageInterface>
  */
 interface PageRepositoryInterface extends TranslatableRepositoryInterface
 {

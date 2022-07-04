@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\CmsBundle\Service\Helper;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Service\Routing\RouteProvider;
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 use function call_user_func;
 
@@ -19,13 +19,13 @@ use function call_user_func;
 class CacheHelper
 {
     private CacheItemPoolInterface $cmsCache;
-    private ?CacheProvider         $resultCache;
+    private ?AdapterInterface      $resultCache;
     private array                  $locales;
     private string                 $pageClass;
 
     public function __construct(
         CacheItemPoolInterface $cmsCache,
-        ?CacheProvider         $resultCache,
+        ?AdapterInterface      $resultCache,
         array                  $locales,
         string                 $pageClass
     ) {

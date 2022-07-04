@@ -35,12 +35,8 @@
             'label': 'field.name',
             'label_trans_domain': 'EkynaUi'
         }) }}
-        {{ show_row(page.parent, 'entity', {
-            'label': 'field.parent',
-            'label_trans_domain': 'EkynaUi',
-            'property': 'name',
-            'route': 'admin_ekyna_cms_page_read',
-            'route_parameters_map': {'pageId': 'id'}
+        {{ show_row(page.parent, 'resource', {
+            'resource': 'ekyna_cms.page'
         }) }}
         {{ show_row(page.enabled, 'boolean', {
             'label': 'field.enabled',
