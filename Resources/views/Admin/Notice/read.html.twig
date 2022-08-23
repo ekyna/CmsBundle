@@ -15,21 +15,18 @@
 {% block main_contents -%}
     <div class="tab-pane active" id="notice-general">
         {{ show_row(notice.name, 'text', {
-            'label': 'field.name',
-            'trans_domain': 'EkynaUi'
+            'label': t('field.name', {}, 'EkynaUi')
         }) }}
         <div class="row">
             <div class="col-md-6">
                 {{ show_row(notice.theme|cms_theme, 'text', {
-                    'label': 'field.theme',
-                    'trans_domain': 'EkynaUi',
+                    'label': t('field.theme', {}, 'EkynaUi'),
                     'label_col': 4
                 }) }}
             </div>
             <div class="col-md-6">
                 {{ show_row(notice.icon|ui_fa_icon ~ ' (' ~ notice.icon ~ ')', 'text', {
-                    'label': 'field.icon',
-                    'trans_domain': 'EkynaUi',
+                    'label': t('field.icon', {}, 'EkynaUi'),
                     'label_col': 4
                 }) }}
             </div>
@@ -37,15 +34,13 @@
         <div class="row">
             <div class="col-md-6">
                 {{ show_row(notice.startAt, 'datetime', {
-                    'label': 'field.start_date',
-                    'trans_domain': 'EkynaUi',
+                    'label': t('field.start_date', {}, 'EkynaUi'),
                     'label_col': 4
                 }) }}
             </div>
             <div class="col-md-6">
                 {{ show_row(notice.endAt, 'datetime', {
-                    'label': 'field.end_date',
-                    'trans_domain': 'EkynaUi',
+                    'label': t('field.end_date', {}, 'EkynaUi'),
                     'label_col': 4
                 }) }}
             </div>
@@ -53,8 +48,7 @@
         {{ show_row(notice.translations, 'translations', {
             'fields': {
                 'content': {
-                    'label': 'field.content',
-                    'trans_domain': 'EkynaUi',
+                    'label': t('field.content', {}, 'EkynaUi'),
                     'type': 'tinymce',
                     'options': {
                         'route': 'admin_ekyna_cms_notice_tinymce',

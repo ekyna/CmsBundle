@@ -30,8 +30,8 @@ class SlideType extends AbstractResourceType
             ->setProfileable(false)
             ->addDefaultSort('position', ColumnSort::ASC)
             ->addColumn('name', TextType::class, [
-                'label'        => t('field.name', [], 'EkynaUi'),
-                'position'     => 10,
+                'label'    => t('field.name', [], 'EkynaUi'),
+                'position' => 10,
             ])
             ->addColumn('actions', BType\Column\ActionsType::class, [
                 'resource' => $this->dataClass,
