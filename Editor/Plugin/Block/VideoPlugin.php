@@ -11,7 +11,7 @@ use Ekyna\Bundle\CmsBundle\Form\Type\Editor\VideoBlockType;
 use Ekyna\Bundle\MediaBundle\Model\AspectRatio;
 use Ekyna\Bundle\MediaBundle\Model\MediaInterface;
 use Ekyna\Bundle\MediaBundle\Repository\MediaRepository;
-use Ekyna\Bundle\MediaBundle\Service\Renderer;
+use Ekyna\Bundle\MediaBundle\Service\MediaRenderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -48,7 +48,7 @@ class VideoPlugin extends AbstractPlugin
     public function __construct(
         array   $config,
         private readonly MediaRepository $mediaRepository,
-        private readonly Renderer $mediaRenderer
+        private readonly MediaRenderer $mediaRenderer
     ) {
         parent::__construct(array_replace([
             'default_poster' => '/bundles/ekynacms/img/default-image.gif',

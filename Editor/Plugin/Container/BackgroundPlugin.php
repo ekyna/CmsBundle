@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\CmsBundle\Editor\Plugin\Container;
 
 use Ekyna\Bundle\CmsBundle\Editor\Model\ContainerInterface;
@@ -7,7 +9,7 @@ use Ekyna\Bundle\CmsBundle\Editor\Plugin\PropertyDefaults;
 use Ekyna\Bundle\CmsBundle\Editor\View\ContainerView;
 use Ekyna\Bundle\CmsBundle\Form\Type\Editor\BackgroundContainerType;
 use Ekyna\Bundle\MediaBundle\Repository\MediaRepository;
-use Ekyna\Bundle\MediaBundle\Service\Renderer;
+use Ekyna\Bundle\MediaBundle\Service\MediaRenderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,37 +31,16 @@ class BackgroundPlugin extends AbstractPlugin
         'theme' => null,
     ];
 
-    /**
-     * @var MediaRepository
-     */
-    private $mediaRepository;
-
-    /**
-     * @var Renderer
-     */
-    private $mediaRenderer;
-
-
-    /**
-     * Constructor.
-     *
-     * @param array           $config
-     * @param MediaRepository $mediaRepository
-     * @param Renderer        $renderer
-     */
     public function __construct(
-        array $config,
-        MediaRepository $mediaRepository,
-        Renderer $renderer
+        array                            $config,
+        private readonly MediaRepository $mediaRepository,
+        private readonly MediaRenderer   $mediaRenderer
     ) {
         parent::__construct(array_replace([
-            'filter'                 => 'cms_container_background',
-            'themes'                 => PropertyDefaults::getDefaultThemeChoices(),
-            'default_color'          => '',
+            'filter'        => 'cms_container_background',
+            'themes'        => PropertyDefaults::getDefaultThemeChoices(),
+            'default_color' => '',
         ], $config));
-
-        $this->mediaRepository = $mediaRepository;
-        $this->mediaRenderer = $renderer;
     }
 
     /**
