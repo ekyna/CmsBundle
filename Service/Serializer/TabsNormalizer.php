@@ -17,22 +17,10 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    protected LocaleProviderInterface $localeProvider;
-    protected MediaRepository $mediaRepository;
-
-
-    /**
-     * Constructor.
-     *
-     * @param LocaleProviderInterface $localeProvider
-     * @param MediaRepository         $mediaRepository
-     */
     public function __construct(
-        LocaleProviderInterface $localeProvider,
-        MediaRepository $mediaRepository
+        protected readonly LocaleProviderInterface $localeProvider,
+        protected readonly MediaRepository         $mediaRepository
     ) {
-        $this->localeProvider = $localeProvider;
-        $this->mediaRepository = $mediaRepository;
     }
 
     /**
@@ -55,7 +43,7 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
                 'locale'       => $translation->getLocale(),
                 'title'        => $translation->getTitle(),
                 'content'      => $translation->getContent(),
-                'media'        => $translation->getMedia() ? $translation->getMedia()->getId() : null,
+                'media'        => $translation->getMedia()?->getId(),
                 'button_label' => $translation->getButtonLabel(),
                 'button_url'   => $translation->getButtonUrl(),
             ];
@@ -79,7 +67,7 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
                 $datum['translations'][$translation->getLocale()] = [
                     'locale'       => $translation->getLocale(),
                     'title'        => $translation->getTitle(),
-                    'media'        => $translation->getMedia() ? $translation->getMedia()->getId() : null,
+                    'media'        => $translation->getMedia()?->getId(),
                     'button_label' => $translation->getButtonLabel(),
                     'button_url'   => $translation->getButtonUrl(),
                 ];
@@ -131,7 +119,7 @@ class TabsNormalizer implements NormalizerInterface, DenormalizerInterface
                 ->setCurrentLocale($this->localeProvider->getCurrentLocale())
                 ->setFallbackLocale($this->localeProvider->getFallbackLocale())
                 ->setAnchor($datum['anchor'])
-                ->setPosition($datum['position']);
+                ->setPosition((int)$datum['position']);
 
             foreach ($datum['translations'] as $trans) {
                 $translation = new Model\TabTranslation();
