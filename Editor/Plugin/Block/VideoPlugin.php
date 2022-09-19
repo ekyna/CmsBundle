@@ -107,8 +107,8 @@ class VideoPlugin extends AbstractPlugin
     ): WidgetView {
         $data = array_replace_recursive(
             self::DEFAULT_DATA,
-            $block->getData(),
             self::DEFAULT_TRANSLATION_DATA,
+            $block->getData(),
             $block->translate($this->localeProvider->getCurrentLocale(), true)->getData()
         );
 
