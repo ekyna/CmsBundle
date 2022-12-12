@@ -115,7 +115,7 @@ class PageType extends AbstractResourceType
                 }
 
                 $form->add('controller', Type\ChoiceType::class, [
-                    'label'        => t('field.name', [], 'EkynaCms'),
+                    'label'        => t('page.field.controller', [], 'EkynaCms'),
                     'admin_helper' => 'CMS_PAGE_CONTROLLER',
                     'choices'      => $controllers,
                     'required'     => true,

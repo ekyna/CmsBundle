@@ -55,7 +55,7 @@ class PageType extends AbstractResourceType
                     Action\DeleteAction::class,
                 ],
                 'buttons'               => [
-                    function (RowInterface $row) {
+                    function (RowInterface $row): ?array {
                         $page = $row->getData(null);
 
                         if (!$page->isEnabled() || $page->isDynamicPath()) {
@@ -70,7 +70,7 @@ class PageType extends AbstractResourceType
                             'path'   => $this->urlGenerator->generate($page->getRoute()),
                         ];
                     },
-                    function (RowInterface $row) {
+                    function (RowInterface $row): ?array {
                         $page = $row->getData(null);
 
                         if (!$page->isEnabled() || $page->isDynamicPath()) {

@@ -1,11 +1,12 @@
-define(['require', 'jquery', 'routing', 'bootstrap'], function (require, $, Router) {
+define(['require', 'jquery', 'bootstrap'], function (require, $) {
     "use strict";
 
-    var EkynaCms = function () {};
+    let EkynaCms = function () {
+    };
 
     EkynaCms.prototype.init = function () {
         // Editor tabs widgets
-        var $tabsWidget = $('.cms-tabs');
+        let $tabsWidget = $('.cms-tabs');
         if (0 < $tabsWidget.length) {
             require(['ekyna-cms/cms/tabs'], function (Tabs) {
                 Tabs.init($tabsWidget);
@@ -13,7 +14,7 @@ define(['require', 'jquery', 'routing', 'bootstrap'], function (require, $, Rout
         }
 
         // Slide shows
-        var $slideShow = $('.cms-slide-show');
+        let $slideShow = $('.cms-slide-show');
         if (0 < $slideShow.length) {
             require(['ekyna-cms/slide-show/slide-show'], function (SlideShow) {
                 $slideShow.each(function () {
@@ -30,33 +31,29 @@ define(['require', 'jquery', 'routing', 'bootstrap'], function (require, $, Rout
             e.preventDefault();
             e.stopPropagation();
 
-            var element = e.currentTarget;
-            element.addEventListener('copy', function (event) {
-                event.preventDefault();
-                if (event.clipboardData) {
-                    var url = window.location.protocol + '//'
-                        + window.location.host
-                        + window.location.pathname + '#'
-                        + $(element).closest('.cms-container').attr('id');
+            let element = e.currentTarget,
+                $element = $(element),
+                url = window.location.protocol + '//'
+                    + window.location.host
+                    + window.location.pathname + '#'
+                    + $(element).closest('.cms-container').attr('id');
 
-                    event.clipboardData.setData("text/plain", url);
+            navigator.clipboard.writeText(url).then(() => {
+                $element
+                    .tooltip({
+                        title: 'Copied to clipboard',
+                        placement: 'left',
+                        trigger: 'manual',
+                        container: 'body'
+                    })
+                    .tooltip('show');
 
-                    $(element)
-                        .tooltip({
-                            title: 'Copied to clipboard',
-                            placement: 'left',
-                            trigger: 'manual',
-                            container: 'body'
-                        })
-                        .tooltip('show');
-
-                    setTimeout(function () {
-                        $(element).tooltip('hide');
-                    }, 1500);
-                }
+                setTimeout(function () {
+                    $element.tooltip('hide');
+                }, 1500);
+            }, () => {
+                /* clipboard write failed */
             });
-
-            document.execCommand("Copy");
 
             return false;
         });
