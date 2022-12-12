@@ -3,12 +3,15 @@
 import * as $ from 'jquery';
 import * as Router from 'routing';
 import * as Modal from 'ekyna-modal';
+import * as Api from 'ekyna-api';
 import Dispatcher from './dispatcher';
 
 import {MainToolbar, MainToolbarView, ViewportButtonConfig} from './controls';
 import {ViewportModel, ViewportView} from './viewport';
 import {DocumentManager, DocumentData, PluginManager, PluginRegistryConfig} from './document-manager';
 import {Button, Select, SelectChoiceConfig} from "./ui";
+
+Api.init('admin_api_login');
 
 interface EditorConfig {
     hostname: string
