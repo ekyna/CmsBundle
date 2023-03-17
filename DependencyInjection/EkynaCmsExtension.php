@@ -73,7 +73,7 @@ class EkynaCmsExtension extends Extension implements PrependExtensionInterface
         // Page updater
         $container
             ->getDefinition('ekyna_cms.updater.page')
-            ->replaceArgument(6, $config['page']);
+            ->replaceArgument(7, $config['page']);
 
         // Page form type
         $container
@@ -93,7 +93,7 @@ class EkynaCmsExtension extends Extension implements PrependExtensionInterface
         // Page validator
         $container
             ->getDefinition('ekyna_cms.validator.page')
-            ->replaceArgument(1, $config['page']);
+            ->replaceArgument(2, $config['page']['controllers']);
 
         // Locale switcher
         $container

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Ekyna\Bundle\CmsBundle\Command\CachePurgeCommand;
 use Ekyna\Bundle\CmsBundle\Command\GenerateMenusCommand;
 use Ekyna\Bundle\CmsBundle\Command\GeneratePagesCommand;
 
@@ -22,6 +23,13 @@ return static function (ContainerConfigurator $container) {
         ->set('ekyna_cms.command.generate_pages', GeneratePagesCommand::class)
             ->args([
                 service('ekyna_cms.generator.page'),
+            ])
+            ->tag('console.command')
+
+        // Cache purge command
+        ->set('ekyna_cms.command.purge_cache', CachePurgeCommand::class)
+            ->args([
+                service('ekyna_cms.helper.cache'),
             ])
             ->tag('console.command')
     ;

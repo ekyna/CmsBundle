@@ -30,6 +30,7 @@
         <field name="static" column="static" type="boolean" />
         <field name="locked" column="locked" type="boolean" />
         <field name="controller" column="controller" type="string" length="64" nullable="true" />
+        <field name="template" column="template" type="string" length="128" nullable="true" />
         <field name="advanced" column="advanced" type="boolean" />
         <field name="dynamicPath" column="dynamic_path" type="boolean" />
         <field name="enabled" column="enabled" type="boolean" />

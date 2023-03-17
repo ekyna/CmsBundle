@@ -161,8 +161,12 @@ class CmsRenderer
     /**
      * Returns the page controller title.
      */
-    public function getPageControllerTitle(string $name): string
+    public function getPageControllerTitle(?string $name): string
     {
+        if (null === $name) {
+            return '';
+        }
+
         if (!array_key_exists($name, $this->config['page']['controllers'])) {
             throw new InvalidArgumentException(sprintf('Undefined controller "%s".', $name));
         }

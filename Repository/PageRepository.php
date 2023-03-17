@@ -112,7 +112,7 @@ class PageRepository extends TranslatableRepository implements PageRepositoryInt
         $qb = $this->createQueryBuilder('p');
 
         return $qb
-            ->select('p.route, p.controller, t.path, t.locale')
+            ->select('p.route, p.controller, p.template, t.path, t.locale')
             ->join('p.translations', 't')
             ->andWhere($qb->expr()->eq('p.static', 0))
             ->getQuery()

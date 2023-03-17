@@ -7,8 +7,9 @@ ekyna_cms:
         invalid_path: Le chemin (uri) de la page n'est pas valide.
         route_not_found: La route de cette page est introuvable.
         title_is_mandatory: Vous devez spécifier tous les champs "Titre" des traductions de page.
-        controller_is_mandatory: Veuillez sélectionner un gabarit.
-        invalid_controller: Ce gabarit n'est pas valide.
+        controller_xor_template: Veuillez sélectionner un contrôleur ou un template mais pas les deux.
+        invalid_controller: Ce contrôleur n'est pas valide.
+        invalid_template: Ce template n'est pas valide.
         unique_name: Veuillez saisir un nom unique.
         unique_path: Veuillez saisir une url unique.
     menu:

@@ -30,7 +30,8 @@ page:
         edit: Edit page
         remove: Remove page
     field:
-        controller: Template
+        controller: Controller
+        template: Template
     value:
         root: Root
     alert:

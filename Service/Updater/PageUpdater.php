@@ -10,6 +10,7 @@ use Ekyna\Bundle\CmsBundle\Repository\MenuRepositoryInterface;
 use Ekyna\Bundle\CmsBundle\Repository\PageRepositoryInterface;
 use Ekyna\Bundle\CmsBundle\Service\Helper\RoutingHelper;
 use Ekyna\Bundle\ResourceBundle\Service\Http\TagManager;
+use Ekyna\Bundle\UiBundle\Service\TwigHelper;
 use RuntimeException;
 
 /**
@@ -19,30 +20,16 @@ use RuntimeException;
  */
 class PageUpdater
 {
-    private PageRepositoryInterface $pageRepository;
-    private RoutingHelper           $routingHelper;
-    private MenuUpdater             $menuUpdater;
-    private MenuRepositoryInterface $menuRepository;
-    private EntityManagerInterface  $entityManager;
-    private TagManager              $tagManager;
-    private array                   $config;
-
     public function __construct(
-        PageRepositoryInterface $pageRepository,
-        RoutingHelper           $routingHelper,
-        MenuUpdater             $menuUpdater,
-        MenuRepositoryInterface $menuRepository,
-        EntityManagerInterface  $entityManager,
-        TagManager              $tagManager,
-        array                   $config
+        private readonly PageRepositoryInterface $pageRepository,
+        private readonly RoutingHelper           $routingHelper,
+        private readonly MenuUpdater             $menuUpdater,
+        private readonly MenuRepositoryInterface $menuRepository,
+        private readonly EntityManagerInterface  $entityManager,
+        private readonly TagManager              $tagManager,
+        private readonly TwigHelper              $twigHelper,
+        private readonly array                   $config
     ) {
-        $this->pageRepository = $pageRepository;
-        $this->routingHelper = $routingHelper;
-        $this->menuUpdater = $menuUpdater;
-        $this->menuRepository = $menuRepository;
-        $this->entityManager = $entityManager;
-        $this->tagManager = $tagManager;
-        $this->config = $config;
     }
 
     /**
@@ -98,12 +85,20 @@ class PageUpdater
      */
     private function isAdvanced(PageInterface $page): ?bool
     {
-        if (null !== $controller = $page->getController()) {
-            if (array_key_exists($controller, $this->config['controllers'])) {
-                return $this->config['controllers'][$controller]['advanced'];
+        if (null !== $template = $page->getTemplate()) {
+            if (!$this->twigHelper->templateExists($template)) {
+                throw new RuntimeException("Template '$template' does not exist.");
             }
 
-            throw new RuntimeException("Undefined page controller '$controller'.");
+            return true;
+        }
+
+        if (null !== $controller = $page->getController()) {
+            if (!array_key_exists($controller, $this->config['controllers'])) {
+                throw new RuntimeException("Undefined page controller '$controller'.");
+            }
+
+            return $this->config['controllers'][$controller]['advanced'];
         }
 
         return null;

@@ -53,6 +53,7 @@ return static function (ContainerConfigurator $container) {
                 service('ekyna_cms.repository.menu'),
                 service('doctrine.orm.entity_manager'),
                 service('ekyna_resource.http.tag_manager'),
+                service('ekyna_ui.helper.twig'),
                 abstract_arg('Page configuration'),
             ])
 

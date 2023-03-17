@@ -18,7 +18,8 @@ return static function (ContainerConfigurator $container) {
         ->set('ekyna_cms.validator.page', PageValidator::class)
             ->args([
                 service('ekyna_cms.helper.routing'),
-                abstract_arg('Page configuration'),
+                service('ekyna_ui.helper.twig'),
+                abstract_arg('The available page cms controllers'),
                 param('ekyna_resource.locales'),
             ])
             ->tag('validator.constraint_validator')

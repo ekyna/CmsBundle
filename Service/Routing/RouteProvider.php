@@ -7,6 +7,7 @@ namespace Ekyna\Bundle\CmsBundle\Service\Routing;
 use Ekyna\Bundle\CmsBundle\Repository\PageRepositoryInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use RuntimeException;
+use Symfony\Bundle\FrameworkBundle\Controller\TemplateController;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -83,22 +84,31 @@ class RouteProvider
      */
     protected function transformDataToRoute(array $data): Route
     {
+        // TODO Host (from resource bundle)
+        $route = new Route($data['path']);
+        $route
+            ->setDefaults([
+                '_locale'          => $data['locale'],
+                '_canonical_route' => $data['route'],
+            ])
+            ->setMethods(['GET']);
+
+        if (!empty($template = $data['template'])) {
+            $route->setDefaults([
+                '_controller' => TemplateController::class,
+                'template'   => $template,
+            ]);
+
+            return $route;
+        }
+
         $controller = $data['controller'];
 
         if (!isset($this->config['controllers'][$controller])) {
             throw new RuntimeException(sprintf('Undefined controller "%s".', $controller));
         }
 
-        // TODO Host (from resource bundle)
-
-        $route = new Route($data['path']);
-        $route
-            ->setDefaults([
-                '_controller'      => $this->config['controllers'][$controller]['value'],
-                '_locale'          => $data['locale'],
-                '_canonical_route' => $data['route'],
-            ])
-            ->setMethods(['GET']);
+        $route->setDefault('_controller', $this->config['controllers'][$controller]['value']);
 
         return $route;
     }

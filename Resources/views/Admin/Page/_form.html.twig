@@ -23,6 +23,9 @@
             {% if form.controller is defined %}
                 {{ form_row(form.controller) }}
             {% endif %}
+            {% if form.template is defined %}
+                {{ form_row(form.template) }}
+            {% endif %}
             {{ form_row(form.translations) }}
         </div>
         <div class="tab-pane" id="page-seo">

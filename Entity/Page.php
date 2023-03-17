@@ -28,6 +28,7 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     protected bool    $static;
     protected bool    $locked;
     protected ?string $controller = null;
+    protected ?string $template = null;
     protected bool    $advanced;
     protected bool    $dynamicPath;
     protected bool    $enabled;
@@ -219,6 +220,24 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
     public function getController(): ?string
     {
         return $this->controller;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setTemplate(?string $template): Cms\PageInterface
+    {
+        $this->template = $template;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTemplate(): ?string
+    {
+        return $this->template;
     }
 
     /**

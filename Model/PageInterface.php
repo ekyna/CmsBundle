@@ -37,7 +37,7 @@ interface PageInterface extends
     /**
      * Returns the name
      *
-     * @return string
+     * @return string|null
      */
     public function getName(): ?string;
 
@@ -53,7 +53,7 @@ interface PageInterface extends
     /**
      * Returns the title
      *
-     * @return string
+     * @return string|null
      */
     public function getTitle(): ?string;
 
@@ -69,7 +69,7 @@ interface PageInterface extends
     /**
      * Returns the breadcrumb
      *
-     * @return string
+     * @return string|null
      */
     public function getBreadcrumb(): ?string;
 
@@ -85,7 +85,7 @@ interface PageInterface extends
     /**
      * Returns the html
      *
-     * @return string
+     * @return string|null
      */
     public function getHtml(): ?string;
 
@@ -101,7 +101,7 @@ interface PageInterface extends
     /**
      * Returns the path
      *
-     * @return string
+     * @return string|null
      */
     public function getPath(): ?string;
 
@@ -117,7 +117,7 @@ interface PageInterface extends
     /**
      * Returns the route
      *
-     * @return string
+     * @return string|null
      */
     public function getRoute(): ?string;
 
@@ -165,9 +165,23 @@ interface PageInterface extends
     /**
      * Returns the controller
      *
-     * @return string
+     * @return string|null
      */
     public function getController(): ?string;
+
+    /**
+     * Sets the template.
+     *
+     * @param string|null $template
+     *
+     * @return PageInterface
+     */
+    public function setTemplate(?string $template): PageInterface;
+
+    /**
+     * @return string|null
+     */
+    public function getTemplate(): ?string;
 
     /**
      * Sets whether this page is advanced

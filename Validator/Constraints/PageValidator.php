@@ -6,6 +6,7 @@ namespace Ekyna\Bundle\CmsBundle\Validator\Constraints;
 
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Service\Helper\RoutingHelper;
+use Ekyna\Bundle\UiBundle\Service\TwigHelper;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -17,15 +18,12 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class PageValidator extends ConstraintValidator
 {
-    private RoutingHelper $routingHelper;
-    private array         $pageConfig;
-    private array         $locales;
-
-    public function __construct(RoutingHelper $routingHelper, array $pageConfig, array $locales)
-    {
-        $this->routingHelper = $routingHelper;
-        $this->pageConfig = $pageConfig;
-        $this->locales = $locales;
+    public function __construct(
+        private readonly RoutingHelper $routingHelper,
+        private readonly TwigHelper    $twigHelper,
+        private readonly array         $controllers,
+        private readonly array         $locales
+    ) {
     }
 
     /**
@@ -84,28 +82,47 @@ class PageValidator extends ConstraintValidator
                         ->addViolation();
                 }
             }
-        } else {
-            // Check that the parent page is not locked
-            if (!is_null($parentPage = $value->getParent()) && $parentPage->isLocked()) {
-                $this->context
-                    ->buildViolation($constraint->invalidParent)
-                    ->atPath('parent')
-                    ->addViolation();
-            }
-            // Check that the controller is defined
-            if (null === $controller = $value->getController()) {
-                $this->context
-                    ->buildViolation($constraint->controllerIsMandatory)
-                    ->atPath('controller')
-                    ->addViolation();
-            }
-            // Check that the controller exists
-            if (!array_key_exists($controller, $this->pageConfig['controllers'])) {
-                $this->context
-                    ->buildViolation($constraint->invalidController)
-                    ->atPath('controller')
-                    ->addViolation();
-            }
+
+            return;
+        }
+
+        // Check that the parent page is not locked
+        if (!is_null($parentPage = $value->getParent()) && $parentPage->isLocked()) {
+            $this->context
+                ->buildViolation($constraint->invalidParent)
+                ->atPath('parent')
+                ->addViolation();
+
+            return;
+        }
+
+        $templateIsSet = null !== $template = $value->getTemplate();
+        $controllerIsSet = null !== $controller = $value->getController();
+
+        if (!($controllerIsSet xor $templateIsSet)) {
+            $this->context
+                ->buildViolation($constraint->controllerXorTemplate)
+                ->atPath('controller')
+                ->addViolation();
+
+            return;
+        }
+
+        if ($templateIsSet && !$this->twigHelper->templateExists($template)) {
+            $this->context
+                ->buildViolation($constraint->invalidTemplate)
+                ->atPath('template')
+                ->addViolation();
+
+            return;
+        }
+
+        // Check that the controller exists
+        if (array_key_exists($controller, $this->controllers)) {
+            $this->context
+                ->buildViolation($constraint->invalidController)
+                ->atPath('controller')
+                ->addViolation();
         }
     }
 }

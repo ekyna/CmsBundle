@@ -32,21 +32,21 @@
 {% block main_contents -%}
     <div class="tab-pane active" id="{{ resource_name }}-general">
         {{ show_row(page.name, 'text', {
-            'label': 'field.name',
-            'label_trans_domain': 'EkynaUi'
+            'label': t('field.name', {}, 'EkynaUi')
         }) }}
         {{ show_row(page.parent, 'resource', {
             'resource': 'ekyna_cms.page'
         }) }}
         {{ show_row(page.enabled, 'boolean', {
-            'label': 'field.enabled',
-            'label_trans_domain': 'EkynaUi'
+            'label': t('field.enabled', {}, 'EkynaUi')
         }) }}
 
         {% if not page.static -%}
             {{ show_row(cms_page_controller(page.controller), 'text', {
-                'label': 'page.field.controller',
-                'label_trans_domain': 'EkynaCms'
+                'label': t('page.field.controller', {}, 'EkynaCms')
+            }) }}
+            {{ show_row(page.template, 'text', {
+                'label': t('page.field.template', {}, 'EkynaCms')
             }) }}
         {%- endif %}
 
@@ -54,16 +54,13 @@
             {{ show_row(page.translations, 'translations', {
                 'fields': {
                     'title': {
-                        'label': 'field.title',
-                        'options': {'label_trans_domain': 'EkynaUi'}
+                        'label': t('field.title', {}, 'EkynaUi')
                     },
                     'breadcrumb': {
-                        'label': 'field.breadcrumb',
-                        'options': {'label_trans_domain': 'EkynaUi'}
+                        'label': t('field.breadcrumb', {}, 'EkynaUi')
                     },
                     'path': {
-                        'label': 'field.url',
-                        'options': {'label_trans_domain': 'EkynaUi'}
+                        'label': t('field.url', {}, 'EkynaUi')
                     }
                 }
             }) }}
@@ -71,23 +68,19 @@
             {{ show_row(page.translations, 'translations', {
                 'fields': {
                     'title': {
-                        'label': 'field.title',
-                        'options': {'label_trans_domain': 'EkynaUi'}
+                        'label': t('field.title', {}, 'EkynaUi')
                     },
                     'breadcrumb': {
-                        'label': 'field.breadcrumb',
-                        'options': {'label_trans_domain': 'EkynaUi'}
+                        'label': t('field.breadcrumb', {}, 'EkynaUi')
                     },
                     'path': {
-                        'label': 'field.url',
-                        'options': {'label_trans_domain': 'EkynaUi'}
+                        'label': t('field.url', {}, 'EkynaUi')
                     },
                     'html': {
-                        'label': 'field.content',
+                        'label': t('field.content', {}, 'EkynaUi'),
                         'type': 'tinymce',
                         'property_path': null,
                         'options': {
-                            'label_trans_domain': 'EkynaUi',
                             'field': 'html'
                         }
                     }

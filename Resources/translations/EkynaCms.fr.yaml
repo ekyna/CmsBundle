@@ -30,7 +30,8 @@ page:
         edit: Modifier la page
         remove: Supprimer la page
     field:
-        controller: Gabarit
+        controller: Contrôleur
+        template: Template
     value:
         root: Racine
     alert:

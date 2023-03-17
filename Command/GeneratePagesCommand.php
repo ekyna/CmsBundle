@@ -44,7 +44,6 @@ class GeneratePagesCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('ekyna:cms:generate:page')
             ->addOption('truncate', null, InputOption::VALUE_NONE, 'Whether to first remove the pages or not.')
             ->setDescription('Generates CMS pages.');
     }
