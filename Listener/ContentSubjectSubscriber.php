@@ -43,7 +43,7 @@ class ContentSubjectSubscriber
                 [
                     'name'                 => 'content_id',
                     'referencedColumnName' => 'id',
-                    'onDelete'             => 'RESTRICT',
+                    'onDelete'             => 'SET NULL',
                     'nullable'             => true,
                 ],
             ],
