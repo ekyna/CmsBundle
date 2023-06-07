@@ -108,17 +108,19 @@ class PageValidator extends ConstraintValidator
             return;
         }
 
-        if ($templateIsSet && !$this->twigHelper->templateExists($template)) {
-            $this->context
-                ->buildViolation($constraint->invalidTemplate)
-                ->atPath('template')
-                ->addViolation();
+        if ($templateIsSet) {
+            if (!$this->twigHelper->templateExists($template)) {
+                $this->context
+                    ->buildViolation($constraint->invalidTemplate)
+                    ->atPath('template')
+                    ->addViolation();
+            }
 
             return;
         }
 
         // Check that the controller exists
-        if (array_key_exists($controller, $this->controllers)) {
+        if (!array_key_exists($controller, $this->controllers)) {
             $this->context
                 ->buildViolation($constraint->invalidController)
                 ->atPath('controller')
