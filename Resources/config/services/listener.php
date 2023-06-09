@@ -26,7 +26,6 @@ return static function (ContainerConfigurator $container) {
         ->args([
             service('ekyna_cms.editor.editor'),
             service('ekyna_cms.helper.page'),
-            service('ekyna_cms.locale_switcher'),
             service('security.authorization_checker'),
             service('request_stack'),
         ])
