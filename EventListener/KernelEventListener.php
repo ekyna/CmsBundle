@@ -8,34 +8,25 @@ use Ekyna\Bundle\CmsBundle\Editor\Editor;
 use Ekyna\Bundle\CmsBundle\Service\Helper\PageHelper;
 use League\Uri\Uri;
 use League\Uri\UriModifier;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 use function preg_match;
-use function strpos;
 
 /**
  * Class KernelEventListener
  * @package Ekyna\Bundle\CmsBundle\EventListener
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class KernelEventListener implements EventSubscriberInterface
+class KernelEventListener
 {
-    private Editor                        $editor;
-    private PageHelper                    $pageHelper;
-    private AuthorizationCheckerInterface $authorizationChecker;
-    private RequestStack                  $requestStack;
-    private string                        $filterRegExp;
     private bool $enabled = false;
-
 
     /**
      * KernelEventListener constructor.
@@ -47,17 +38,12 @@ class KernelEventListener implements EventSubscriberInterface
      * @param string                        $filterRegExp
      */
     public function __construct(
-        Editor $editor,
-        PageHelper $pageHelper,
-        AuthorizationCheckerInterface $authorizationChecker,
-        RequestStack $requestStack,
-        string $filterRegExp = '~^/(admin|api|css|js|media|images|_(profiler|wdt))~'
+        private readonly Editor                        $editor,
+        private readonly PageHelper                    $pageHelper,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly RequestStack                  $requestStack,
+        private readonly string                        $filterRegExp = '~^/(admin|api|css|js|media|images|_(profiler|wdt))~'
     ) {
-        $this->editor = $editor;
-        $this->pageHelper = $pageHelper;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->requestStack = $requestStack;
-        $this->filterRegExp = $filterRegExp;
     }
 
     /**
@@ -75,7 +61,7 @@ class KernelEventListener implements EventSubscriberInterface
 
         // Enable editor for admin routes
         $route = $request->attributes->get('_route');
-        if (0 === strpos($route, 'admin_ekyna_cms_editor_')) {
+        if (str_starts_with($route, 'admin_ekyna_cms_editor_')) {
             $this->editor->setEnabled(true);
             $this->enabled = true;
 
@@ -142,16 +128,5 @@ class KernelEventListener implements EventSubscriberInterface
             ->setExpires()
             ->setLastModified()
             ->setPrivate();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            KernelEvents::REQUEST  => ['onKernelRequest', 0],
-            KernelEvents::RESPONSE => ['onKernelResponse', 0],
-        ];
     }
 }

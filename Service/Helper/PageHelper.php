@@ -10,6 +10,8 @@ use Psr\Cache\CacheItemPoolInterface;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 
+use function preg_match;
+
 /**
  * Class PageHelper
  * @package Ekyna\Bundle\CmsBundle\Service\Helper
@@ -66,6 +68,10 @@ class PageHelper
      */
     public function findByRoute(string $route): ?PageInterface
     {
+        if (preg_match('~^([a-zA-Z0-9_-]+)\.([a-z]{2})$~', $route, $matches)) {
+            $route = $matches[1];
+        }
+
         if (!in_array($route, $this->getCmsRoutes(), true)) {
             return null;
         }

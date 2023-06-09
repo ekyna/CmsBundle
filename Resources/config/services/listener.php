@@ -15,89 +15,106 @@ use Ekyna\Bundle\CmsBundle\Listener\ContentSubjectSubscriber;
 use Ekyna\Bundle\CmsBundle\Listener\PageElasticaSubscriber;
 use Ekyna\Bundle\CmsBundle\Listener\SeoSubjectSubscriber;
 use Ekyna\Bundle\CmsBundle\Listener\TagsSubjectSubscriber;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 return static function (ContainerConfigurator $container) {
-    $container
-        ->services()
+    $services = $container->services();
 
-        // Kernel event listener
+    // Kernel event listener
+    $services
         ->set('ekyna_cms.listener.kernel', KernelEventListener::class)
-            ->args([
-                service('ekyna_cms.editor.editor'),
-                service('ekyna_cms.helper.page'),
-                service('security.authorization_checker'),
-                service('request_stack'),
-            ])
-            ->tag('kernel.event_subscriber')
+        ->args([
+            service('ekyna_cms.editor.editor'),
+            service('ekyna_cms.helper.page'),
+            service('ekyna_cms.locale_switcher'),
+            service('security.authorization_checker'),
+            service('request_stack'),
+        ])
+        ->tag('kernel.event_listener', [
+            'event'  => KernelEvents::REQUEST,
+            'method' => 'onKernelRequest',
+        ])
+        ->tag('kernel.event_listener', [
+            'event'  => KernelEvents::RESPONSE,
+            'method' => 'onKernelResponse',
+        ]);
 
-        // Page event listener
+    // Page event listener
+    $services
         ->set('ekyna_cms.listener.page', PageEventListener::class)
-            ->args([
-                service('ekyna_resource.orm.persistence_helper'),
-                service('ekyna_cms.updater.page'),
-                service('ekyna_cms.updater.page_redirection'),
-                service('ekyna_cms.helper.cache'),
-            ])
-            ->tag('resource.event_subscriber')
+        ->args([
+            service('ekyna_resource.orm.persistence_helper'),
+            service('ekyna_cms.updater.page'),
+            service('ekyna_cms.updater.page_redirection'),
+            service('ekyna_cms.helper.cache'),
+        ])
+        ->tag('resource.event_subscriber');
 
+    $services
         ->set('ekyna_cms.listener.page_translation', PageTranslationListener::class)
-            ->args([
-                service('ekyna_resource.orm.persistence_helper'),
-                service('event_dispatcher'),
-                service('ekyna_cms.helper.cache'),
-            ])
-            ->tag('resource.event_subscriber')
-            ->tag('doctrine.event_listener', [
-                'event'      => Events::postFlush,
-                'connection' => 'default',
-            ])
+        ->args([
+            service('ekyna_resource.orm.persistence_helper'),
+            service('event_dispatcher'),
+            service('ekyna_cms.helper.cache'),
+        ])
+        ->tag('resource.event_subscriber')
+        ->tag('doctrine.event_listener', [
+            'event'      => Events::postFlush,
+            'connection' => 'default',
+        ]);
 
-        // Menu event listener
+    // Menu event listener
+    $services
         ->set('ekyna_cms.listener.menu', MenuEventListener::class)
-            ->args([
-                service('ekyna_resource.orm.persistence_helper'),
-                service('ekyna_cms.updater.menu'),
-            ])
-            ->tag('resource.event_subscriber')
+        ->args([
+            service('ekyna_resource.orm.persistence_helper'),
+            service('ekyna_cms.updater.menu'),
+        ])
+        ->tag('resource.event_subscriber');
 
-        // Notice event listener
+    // Notice event listener
+    $services
         ->set('ekyna_cms.listener.notice', NoticeEventListener::class)
-            ->args([
-                service('doctrine.orm.entity_manager'),
-            ])
-            ->tag('resource.event_subscriber')
+        ->args([
+            service('doctrine.orm.entity_manager'),
+        ])
+        ->tag('resource.event_subscriber');
 
-        // Public URL event listener
+    // Public URL event listener
+    $services
         ->set('ekyna_cms.listener.public_url', PublicUrlEventSubscriber::class)
-            ->tag('resource.event_subscriber')
+        ->tag('resource.event_subscriber');
 
-        // Metadata listeners
-        // TODO merge metadata subscribers
+    // Metadata listeners
+    // TODO merge metadata subscribers
+    $services
         ->set('ekyna_cms.listener.content_subject_metadata', ContentSubjectSubscriber::class)
-            ->tag('doctrine.event_listener', [
-                'event'      => Events::loadClassMetadata,
-                'connection' => 'default',
-            ])
+        ->tag('doctrine.event_listener', [
+            'event'      => Events::loadClassMetadata,
+            'connection' => 'default',
+        ]);
+    $services
         ->set('ekyna_cms.listener.seo_subject_metadata', SeoSubjectSubscriber::class)
-            ->tag('doctrine.event_listener', [
-                'event'      => Events::loadClassMetadata,
-                'connection' => 'default',
-            ])
+        ->tag('doctrine.event_listener', [
+            'event'      => Events::loadClassMetadata,
+            'connection' => 'default',
+        ]);
+    $services
         ->set('ekyna_cms.listener.tags_subject_metadata', TagsSubjectSubscriber::class)
-            ->tag('doctrine.event_listener', [
-                'event'      => Events::loadClassMetadata,
-                'connection' => 'default',
-            ])
+        ->tag('doctrine.event_listener', [
+            'event'      => Events::loadClassMetadata,
+            'connection' => 'default',
+        ]);
 
-        // Page elastica listener
+    // Page elastica listener
+    $services
         ->set('ekyna_cms.listener.page_elastica', PageElasticaSubscriber::class)
-            ->args([
-                service('fos_elastica.object_persister.ekyna_cms.page'),
-                param('ekyna_cms.class.page'),
-            ])
-            ->tag('doctrine.event_listener', [
-                'event'      => Events::onFlush,
-                'connection' => 'default',
-            ])
-    ;
+        ->args([
+            service('fos_elastica.object_persister.ekyna_cms.page'),
+            param('ekyna_cms.class.page'),
+        ])
+        ->tag('doctrine.event_listener', [
+            'event'      => Events::onFlush,
+            'connection' => 'default',
+        ]);
 };

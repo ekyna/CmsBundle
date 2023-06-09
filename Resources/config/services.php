@@ -77,6 +77,7 @@ return static function (ContainerConfigurator $container) {
 
         // Locale switcher
         ->set('ekyna_cms.locale_switcher', LocaleSwitcher::class)
+            ->lazy()
             ->args([
                 service('ekyna_resource.helper'),
                 service('ekyna_resource.manager.factory'),
