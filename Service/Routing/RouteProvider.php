@@ -94,10 +94,8 @@ class RouteProvider
             ->setMethods(['GET']);
 
         if (!empty($template = $data['template'])) {
-            $route->setDefaults([
-                '_controller' => TemplateController::class,
-                'template'   => $template,
-            ]);
+            $route->setDefault('_controller', TemplateController::class);
+            $route->setDefault('template', $template);
 
             return $route;
         }
