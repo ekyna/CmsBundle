@@ -28,7 +28,6 @@ class PageHelper
     private ?array   $routes  = null;
     private ?Request $request = null;
 
-    private bool           $currentPageLoaded = false;
     private ?PageInterface $currentPage;
 
     private bool           $homePageLoaded = false;
@@ -46,9 +45,23 @@ class PageHelper
      */
     public function init(Request $request): ?PageInterface
     {
+        if (null !== $this->request) {
+            throw new RuntimeException('The page helper has already been initialized.');
+        }
+
         $this->request = $request;
 
-        return $this->getCurrent();
+        return $this->currentPage = $this->findByRequest($this->request);
+    }
+
+    /**
+     * Returns whether the helper has been initialized.
+     *
+     * @return bool
+     */
+    public function isInitialized(): bool
+    {
+        return null !== $this->request;
     }
 
     /**
@@ -84,17 +97,7 @@ class PageHelper
      */
     public function getCurrent(): ?PageInterface
     {
-        if ($this->currentPageLoaded) {
-            return $this->currentPage;
-        }
-
-        if (null === $this->request) {
-            throw new RuntimeException('The page helper must be initialized first.');
-        }
-
-        $this->currentPageLoaded = true;
-
-        return $this->currentPage = $this->findByRequest($this->request);
+        return $this->currentPage;
     }
 
     /**
