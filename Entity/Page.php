@@ -7,6 +7,8 @@ namespace Ekyna\Bundle\CmsBundle\Entity;
 use Ekyna\Bundle\CmsBundle\Model as Cms;
 use Ekyna\Component\Resource\Model as RM;
 
+use function sprintf;
+
 /**
  * Class Page
  * @package Ekyna\Bundle\CmsBundle\Entity
@@ -312,6 +314,6 @@ class Page extends RM\AbstractTranslatable implements Cms\PageInterface
 
     public static function getRouteCacheTag(string $route, string $locale): string
     {
-        return "ekyna_cms.page[route=$route][locale=$locale]";
+        return sprintf('ekyna_cms.page_%s_%s', $route, $locale);
     }
 }

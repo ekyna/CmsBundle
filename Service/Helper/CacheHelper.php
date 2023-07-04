@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\CmsBundle\Service\Helper;
 
+use Doctrine\Common\Cache\Psr6\DoctrineProvider;
 use Ekyna\Bundle\CmsBundle\Model\PageInterface;
 use Ekyna\Bundle\CmsBundle\Service\Routing\RouteProvider;
 use Psr\Cache\CacheItemPoolInterface;
@@ -18,21 +19,12 @@ use function call_user_func;
  */
 class CacheHelper
 {
-    private CacheItemPoolInterface $cmsCache;
-    private ?AdapterInterface      $resultCache;
-    private array                  $locales;
-    private string                 $pageClass;
-
     public function __construct(
-        CacheItemPoolInterface $cmsCache,
-        ?AdapterInterface      $resultCache,
-        array                  $locales,
-        string                 $pageClass
+        private readonly CacheItemPoolInterface $cmsCache,
+        private readonly ?AdapterInterface      $resultCache,
+        private readonly array                  $locales,
+        private readonly string                 $pageClass
     ) {
-        $this->cmsCache = $cmsCache;
-        $this->resultCache = $resultCache;
-        $this->locales = $locales;
-        $this->pageClass = $pageClass;
     }
 
     /**
@@ -54,11 +46,12 @@ class CacheHelper
         }
 
         /** @see \Ekyna\Bundle\CmsBundle\Entity\Page::getRouteCacheTag */
+        $cache = DoctrineProvider::wrap($this->resultCache);
 
         foreach ($this->locales as $locale) {
-            $this->resultCache->delete(
-                call_user_func($this->pageClass . '::getRouteCacheTag', $page->getRoute(), $locale)
-            );
+            $id = call_user_func($this->pageClass . '::getRouteCacheTag', $page->getRoute(), $locale);
+
+            $cache->delete($id);
         }
     }
 }

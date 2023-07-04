@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\CmsBundle\EventListener;
 
+use Doctrine\Common\Cache\Psr6\DoctrineProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Ekyna\Bundle\CmsBundle\Event\NoticeEvents;
 use Ekyna\Bundle\CmsBundle\Repository\NoticeRepositoryInterface;
@@ -58,11 +59,11 @@ class NoticeEventListener implements EventSubscriberInterface
      */
     private function clearQueryCache(): void
     {
-        $this
-            ->manager
-            ->getConfiguration()
-            ->getResultCacheImpl()
-            ->delete(NoticeRepositoryInterface::CACHE_KEY);
+        $cache = $this->manager->getConfiguration()->getResultCache();
+
+        $cache = DoctrineProvider::wrap($cache);
+
+        $cache->delete(NoticeRepositoryInterface::CACHE_KEY);
     }
 
     /**
