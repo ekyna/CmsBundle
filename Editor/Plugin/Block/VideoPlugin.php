@@ -112,6 +112,14 @@ class VideoPlugin extends AbstractPlugin
             $block->translate($this->localeProvider->getCurrentLocale(), true)->getData()
         );
 
+        $fallbackData = $block->translate($this->localeProvider->getFallbackLocale())->getData();
+        if (!isset($data['poster']['media']) && isset($fallbackData['poster']['media'])) {
+            $data['poster']['media'] = $fallbackData['poster']['media'];
+        }
+        if (!isset($data['video']['media']) && isset($fallbackData['video']['media'])) {
+            $data['video']['media'] = $fallbackData['video']['media'];
+        }
+
         $view = parent::createWidget($block, $adapter, $options, $position);
         $view->getAttributes()->addClass('cms-video');
 

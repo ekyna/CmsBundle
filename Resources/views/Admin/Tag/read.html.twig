@@ -15,21 +15,18 @@
 {% block main_contents -%}
     <div class="tab-pane active" id="tag-general">
         {{ show_row(tag.name, 'text', {
-            'label': 'field.name',
-            'trans_domain': 'EkynaUi'
+            'label': t('field.name', {}, 'EkynaUi'),
         }) }}
         <div class="row">
             <div class="col-md-6">
                 {{ show_row(tag.theme|cms_theme, 'text', {
-                    'label': 'field.theme',
-                    'trans_domain': 'EkynaUi',
+                    'label': t('field.theme', {}, 'EkynaUi'),
                     'label_col': 4
                 }) }}
             </div>
             <div class="col-md-6">
                 {{ show_row(tag.icon|ui_fa_icon ~ ' (' ~ tag.icon ~ ')', 'text', {
-                    'label': 'field.icon',
-                    'trans_domain': 'EkynaUi',
+                    'label': t('field.icon', {}, 'EkynaUi'),
                     'label_col': 4
                 }) }}
             </div>

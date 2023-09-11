@@ -151,9 +151,19 @@ class ImagePlugin extends AbstractPlugin
         $this->upgrade($block);
 
         $data = array_replace_recursive(
+            self::DEFAULT_DATA,
+            self::DEFAULT_TRANSLATION_DATA,
             $block->getData(),
-            $block->translate($this->localeProvider->getCurrentLocale())->getData()
+            $block->translate($this->localeProvider->getCurrentLocale())->getData(),
         );
+
+        $fallbackData = $block->translate($this->localeProvider->getFallbackLocale())->getData();
+        if (!isset($data['image']['media']) && isset($fallbackData['image']['media'])) {
+            $data['image']['media'] = $fallbackData['image']['media'];
+        }
+        if (!isset($data['hover']['media']) && isset($fallbackData['hover']['media'])) {
+            $data['hover']['media'] = $fallbackData['hover']['media'];
+        }
 
         $view = parent::createWidget($block, $adapter, $options, $position);
         $view->getAttributes()->addClass('cms-image');

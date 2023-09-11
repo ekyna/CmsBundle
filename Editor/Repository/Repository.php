@@ -139,6 +139,14 @@ class Repository implements RepositoryInterface
     /**
      * @inheritDoc
      */
+    public function findContainerCopies(Model\ContainerInterface $container): array
+    {
+        return $this->getContainerRepository()->findByCopy($container);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function findRowByName(string $name): ?Model\RowInterface
     {
         return $this->getRowRepository()->findOneByName($name);

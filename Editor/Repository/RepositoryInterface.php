@@ -97,6 +97,15 @@ interface RepositoryInterface
     public function findContainerByName(string $name): ?EM\ContainerInterface;
 
     /**
+     * Returns the container copies.
+     *
+     * @param EM\ContainerInterface $container
+     *
+     * @return array<int, EM\ContainerInterface>
+     */
+    public function findContainerCopies(EM\ContainerInterface $container): array;
+
+    /**
      * Finds the row by name.
      *
      * @param string $name

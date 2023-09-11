@@ -145,11 +145,31 @@ class ContainerManager extends AbstractManager
      */
     public function delete(Model\ContainerInterface $container): Model\ContainerInterface
     {
-        // Ensure not named / alone
-        if ($container->isAlone() || $container->isNamed() || $container->isTitled()) {
+        // Ensure not alone
+        if ($container->isAlone()) {
             throw new InvalidOperationException(
-                "The container can't be removed because it is named or the parent content does not have enough children."
+                "The container can't be removed because its parent content does not have enough children."
             );
+        }
+
+        // Ensure not named
+        if ($container->isNamed()) {
+            throw new InvalidOperationException(
+                "The container can't be removed because its named."
+            );
+        }
+
+        // Ensure not copied
+        if ($container->isTitled()) {
+            $copies = $this->editor->getRepository()->findContainerCopies($container);
+
+            if (!empty($copies)) {
+                // TODO List copies pages.
+
+                throw new InvalidOperationException(
+                    "The container can't be removed because it is copied on other pages."
+                );
+            }
         }
 
         // Check if the container is not the only content container (a content must have at least one container).

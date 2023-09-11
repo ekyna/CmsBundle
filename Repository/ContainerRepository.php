@@ -69,6 +69,24 @@ class ContainerRepository extends ResourceRepository implements LocaleProviderAw
     }
 
     /**
+     * Returns the containers that copies the given one.
+     *
+     * @param ContainerInterface $container
+     *
+     * @return array<int, ContainerInterface>
+     */
+    public function findByCopy(ContainerInterface $container): array
+    {
+        $qb = $this->createQueryBuilder('c');
+
+        return $qb
+            ->andWhere($qb->expr()->eq('c.copy', ':container'))
+            ->getQuery()
+            ->setParameter('container', $container)
+            ->getResult();
+    }
+
+    /**
      * Returns the numbers of containers that copies the given one.
      *
      * @param ContainerInterface $container
@@ -78,11 +96,10 @@ class ContainerRepository extends ResourceRepository implements LocaleProviderAw
     public function getCopyCount(ContainerInterface $container): int
     {
         $qb = $this->createQueryBuilder('c');
-        $qb
-            ->select('COUNT(c.id)')
-            ->andWhere($qb->expr()->eq('c.copy', ':copy'));
 
         return (int) $qb
+            ->select('COUNT(c.id)')
+            ->andWhere($qb->expr()->eq('c.copy', ':copy'))
             ->getQuery()
             ->setParameter('copy', $container)
             ->getSingleResult(Query::HYDRATE_SINGLE_SCALAR);
