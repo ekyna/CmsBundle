@@ -37,7 +37,14 @@ class TagsSubjectSubscriber
             'fieldName'    => 'tags',
             'targetEntity' => Model\TagInterface::class,
             'joinTable'    => [
-                'name' => $metadata->getTableName() . '_tags',
+                'name'               => $metadata->getTableName() . '_tags',
+                'inverseJoinColumns' => [
+                    [
+                        'name'                 => 'tag_id',
+                        'referencedColumnName' => 'id',
+                        'onDelete'             => 'CASCADE',
+                    ],
+                ],
             ],
         ]);
     }

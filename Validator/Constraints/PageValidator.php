@@ -43,8 +43,8 @@ class PageValidator extends ConstraintValidator
          * @var Page          $constraint
          */
 
-        // Validates the translations title
-        if (!in_array('Generator', $constraint->groups)) {
+        // Validates the translation's titles
+        if ('Generator' !== $this->context->getGroup()) {
             foreach ($this->locales as $locale) {
                 if (empty($value->translate($locale, true)->getTitle())) {
                     $this->context

@@ -13,6 +13,8 @@ use Symfony\Component\Intl\Locales;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
+use function str_repeat;
+
 /**
  * Class EditorController
  * @package Ekyna\Bundle\CmsBundle\Controller\Editor
@@ -147,14 +149,9 @@ class EditorController
      */
     private function pageToArray(PageInterface $page, string $locale): array
     {
-        $tabs = '';
-        for ($l = 0; $l < $page->getLevel(); $l++) {
-            $tabs .= ' • ';
-        }
-
         return [
             'value' => $page->getId(),
-            'title' => $tabs . $page->translate($locale)->getTitle(),
+            'title' => str_repeat(' • ', $page->getLevel()) . $page->translate($locale)->getTitle(),
             'data'  => [
                 'locked' => $page->isLocked(),
                 'path'   => $this->urlGenerator->generate(
