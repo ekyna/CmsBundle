@@ -24,12 +24,12 @@ class PageNormalizer extends TranslatableNormalizer
     {
         $data = parent::normalize($page, $format, $context);
 
-        if ($this->contextHasGroup(['Default', 'Page'], $context)) {
+        if (self::contextHasGroup(['Default', 'Page'], $context)) {
             // Seo
             if (null !== $seo = $page->getSeo()) {
                 $data['seo'] = $seo->getId();
             }
-        } elseif ($this->contextHasGroup('Search', $context)) {
+        } elseif (self::contextHasGroup('Search', $context)) {
             // Seo
             if (null !== $seo = $page->getSeo()) {
                 $data['seo'] = $this->normalizeObject($seo, $format, $context);

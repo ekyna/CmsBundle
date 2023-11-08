@@ -24,7 +24,7 @@ class ContentNormalizer extends TranslatableNormalizer
     {
         $data = parent::normalize($content, $format, $context);
 
-        if ($this->contextHasGroup(['Search', 'Content'], $context)) {
+        if (self::contextHasGroup(['Search', 'Content'], $context)) {
             // TODO localized block's text
             // $data[$locale] = ...
         }
