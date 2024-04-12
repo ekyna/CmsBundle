@@ -37,7 +37,9 @@ class TagsType extends AbstractColumnType
      */
     public function buildColumn(ColumnBuilderInterface $builder, array $options): void
     {
-        $builder->setSortable(false);
+        $builder
+            ->setSortable(false)
+            ->setExportable(false);
     }
 
     /**
