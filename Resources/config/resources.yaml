@@ -102,6 +102,7 @@ resources:
                     templates: '@EkynaCms/Admin/Page'
                 admin_toggle:
                     properties: enabled
+                admin_tinymce: ~
                 admin_tree:
                     create_child:
                         template: '@EkynaCms/Admin/Page/create_child.html.twig'
