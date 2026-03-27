@@ -41,20 +41,4 @@ class ContentNormalizer extends TranslatableNormalizer
 
         throw new Exception('Not yet implemented');
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function supportsNormalization($data, string $format = null): bool
-    {
-        return $data instanceof ContentInterface;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function supportsDenormalization($data, string $type, string $format = null): bool
-    {
-        return class_exists($type) && is_subclass_of($type, ContentInterface::class);
-    }
 }
